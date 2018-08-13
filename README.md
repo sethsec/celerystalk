@@ -1,6 +1,6 @@
 # celerystalk
 
-celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*). Scan each service the same way so you don't have to keep track of what you ran where. celerystalk works well when used against one host, but it was designed for scanning multiple hosts.  
+celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*). Scan each service the same way so you don't have to keep track of what you ran where. celerystalk works well when used against one host, but it was designed for scanning multiple hosts. celerystalk uses [Celery](http://www.celeryproject.org/) as the task queue and celery uses Redis as the broker.      
 
 ### Install/Setup
 
@@ -23,8 +23,8 @@ The basic workflow:
     Nessus: Run nessus against your target(s) and export a .nessus file
    ``` 
 
-1. **Configure celerystalk:** For each service type (i.e., http, https, ssh), configure what commands you want to run (config.ini) using [TARGET],[PORT], and[OUTPUT] placeholders. 
-     ```ini
+1. **Configure celerystalk:** For each service type (i.e., http, https, ssh), configure which commands you want to run in the (config.ini). Add your own commands using [TARGET],[PORT], and[OUTPUT] placeholders. Disable any command by commenting it out with a ; or a #.  
+     ```
     [http]
     whatweb             : whatweb http://[TARGET]:[PORT] -a3 --colour=never > [OUTPUT].txt
     cewl                : cewl http://[TARGET]:[PORT]/ -m 6 -w [OUTPUT].txt
@@ -39,7 +39,7 @@ The basic workflow:
  
    ```
 1. **Launch Scan:** Run celerystalk against the nmap or nessus XML and it will submit tasks to celery workers which asynchronously execute them and log output to your output directory
-    ```bash    
+    ```    
     Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
     Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
     Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
@@ -50,7 +50,7 @@ The basic workflow:
     Simulation mode:            celerystalk scan -f <file> -o /pentest -d
     ```   
 1. **Query Status:** Asynchronously check the status of the tasks queue, as frequently as you like
-    ```bash
+    ```
     Query Tasks:                celerystalk query [-w workspace]
                                 celerystalk query [-w workspace] watch                               
                                 celerystalk query [-w workspace] brief
@@ -59,13 +59,13 @@ The basic workflow:
     ```
 
 1. **Cancel/Pause/Resume Tasks:** Cancel/Pause/Resume any task(s) that are currently running or in the queue.
-```bash
+```
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
                                 celerystalk <verb> all                #Cancel/Pause/Resume all tasks from default workspaces
                                 celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
 ```
 1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file (Run this as often as you like) 
-    ```bash
+    ```
     Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
                                 celerystalk report /pentest/10.0.0.1  #Create a report for a single host
     ```
