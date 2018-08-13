@@ -1,6 +1,10 @@
 # celerystalk
 
-celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*). Scan each service the same way so you don't have to keep track of what you ran where. celerystalk works well when used against one host, but it was designed for scanning multiple hosts. celerystalk uses [Celery](http://www.celeryproject.org/) as the task queue and celery uses Redis as the broker.      
+celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*). 
+* Scan each service the same way so you don't have to keep track of what you ran where.
+* The IPs in the nmap/nessus scan define the scope, but if you give it domains with the -d flag celerystalk will check to see if any subdomains are in scope. If they are in scope, celerystalk will ron all http/https tools against the subdomains/virtualhosts.  
+* Designed for scanning multiple hosts (but works well for scanning one host at a time) 
+* celerystalk uses [Celery](http://www.celeryproject.org/) as the task queue and celery uses Redis as the broker.       
 
 ### Install/Setup
 
