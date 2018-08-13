@@ -1,0 +1,12 @@
+python-libnmap
+netaddr
+simplejson
+requests
+celery
+redis
+flower
+docopt==0.6.2
+infi.docopt-completion
+python-libnessus
+sqlalchemy
+bleach

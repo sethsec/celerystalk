@@ -1,0 +1,274 @@
+#!/usr/bin/env python
+
+"""
+Usage:
+    celerystalk scan -f <nmap_file> -o <output_dir> [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
+    celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
+    celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
+    celerystalk report <report_dir> [-w <workspace>]
+    celerystalk cancel ([all]|[<task_ids>]) [-w <workspace>]
+    celerystalk pause  ([all]|[<task_ids>]) [-w <workspace>]
+    celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
+    celerystalk shutdown
+    celerystalk (help | -h | --help)
+
+Options:
+    -h --help         Show this screen
+    -v --version      Show version
+    -f <nmap_file>    Nmap xml import file
+    -o <output_dir>   Output directory
+    -t <targets>      Target(s): IP, IP Range, CIDR
+    -w <workspace>    Workspace [default: Default]
+    -d --domains      Domains to scan for vhosts
+    -s --simulation   Simulation mode.  Submit tasks comment out all commands
+
+Examples:
+
+    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
+    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
+    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
+    Find in scope vhosts:       celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
+                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Simulation mode:            celerystalk scan -f <file> -o /pentest -d
+    Query Tasks:                celerystalk query [-w workspace]
+    Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
+                                celerystalk report /pentest/10.0.0.1  #Create a report for a single host
+    Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
+                                celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
+                                celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
+                                celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
+                                celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
+    Shutdown Celery processes:  celerystalk shutdown
+"""
+
+from docopt import docopt
+import os
+from time import sleep
+import sys
+import subprocess
+import lib.cancel
+import lib.scan
+import lib.resume
+import lib.pause
+import lib.utils
+import lib.report
+import lib.query
+#
+# from lib.resume import resume_paused_tasks
+# from lib.pause import pause_running_tasks
+# from lib.utils import nmap_parser, nmap_scan, start_services, \
+#     shutdown_background_jobs, target_splitter, nessus_parser
+# from lib.report import report
+# from lib.query import query_sqlite
+from lib import db
+
+
+def print_banner():
+#     print("""
+#              _                 _        _ _
+#       __ ___| |___ _ _ _  _ __| |_ __ _| | |__
+#      / _/ -_| / -_| '_| || (_-|  _/ _` | | / /
+#      \__\___|_\___|_|  \_, /__/\__\__,_|_|_\_\\
+#                        |__/
+# """)
+    print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner that supports distributed workers")
+    print("\t\tby @sethsec")
+    print("\t\tv1.0, 20180718\n")
+
+
+def main(arguments):
+    if arguments["-w"]:
+        workspace = arguments["-w"]
+    else:
+        workspace = 'Default'
+
+    db.create_task_table()
+    db.create_path_table()
+    db.create_services_table()
+    db.create_vhosts_table()
+
+
+
+    # Query - Inform user about job status
+    if arguments["query"]:
+        try:
+            if arguments["watch"]:
+                if arguments["summary"]:
+                    subprocess.call(["watch", "./celerystalk", "query", "summary","-w",workspace])
+                    #lib.query.query_sqlite(workspace, repeat=True,summary=arguments["summary"])
+                else:
+                    subprocess.call(["watch", "./celerystalk", "query", "brief","-w",workspace])
+                    #lib.query.query_sqlite(workspace,repeat=True)
+            else:
+                if arguments["summary"]:
+                    lib.query.query_sqlite(workspace,summary=arguments["summary"])
+                elif arguments["brief"]:
+                    lib.query.query_sqlite(workspace,repeat=True)
+                else:
+                    lib.query.query_sqlite(workspace)
+        except KeyboardInterrupt:
+            sys.exit(0)
+        except EnvironmentError as e:
+            print(e)
+
+    if arguments["cancel"]:
+        paused_tasks = db.get_paused_tasks(workspace)
+        running_tasks = db.get_running_tasks(workspace)
+        pending_tasks = db.get_pending_tasks(workspace)
+        if (len(pending_tasks) == 0) and (len(running_tasks) == 0) and (len(paused_tasks) == 0):
+            print("[+] There were no tasks to cancel. Are you sure you have the right workspace?\n")
+            exit()
+
+        if arguments["all"]:
+            lib.cancel.cancel_tasks("all", workspace)
+            # if len(paused_tasks) > 0:
+            #     print("\n[+] Resuming all paused tasks.\n")
+            #     resume_paused_tasks("all", workspace)
+            # if len(running_tasks) > 0:
+            #     print("\n[+] Canceling all tasks.\n")
+            #     cancel_tasks("all", workspace)
+        elif arguments["<task_ids>"]:
+            lib.cancel.cancel_tasks(arguments["<task_ids>"], workspace)
+            #
+            # if len(paused_tasks) > 0:
+            #     print("\n[+] Resuming any selected tasks that are paused.\n")
+            #     resume_paused_tasks(arguments["<task_ids>"], workspace)
+            # if len(running_tasks) > 0:
+            #     print("\n[+] Canceling selected tasks.\n")
+            #     cancel_tasks(arguments["<task_ids>"], workspace)
+        exit()
+
+    if arguments["pause"]:
+        if arguments["all"]:
+            num_paused = lib.pause.pause_running_tasks("all",workspace)
+            sleep(3)
+            num_paused = lib.pause.pause_running_tasks("all",workspace,repeat="True")
+        elif arguments["<task_ids>"]:
+            num_paused = lib.pause.pause_running_tasks(arguments["<task_ids>"], workspace)
+        else:
+            print("[!] You need to specify the tasks to pause, or specify \"all\".\n")
+            exit()
+        if num_paused > 0:
+            print("\n")
+        else:
+            print("[+] There were no tasks to pause.\n")
+        exit()
+
+    if arguments["resume"]:
+        if arguments["all"]:
+            num_resumed = lib.resume.resume_paused_tasks("all",workspace)
+        elif arguments["<task_ids>"]:
+            num_resumed = lib.resume.resume_paused_tasks(arguments["<task_ids>"], workspace)
+        else:
+            exit()
+        if num_resumed > 0:
+            print("\n")
+        else:
+            print("[+] There were no tasks to resume.\n")
+        exit()
+
+
+    if arguments["shutdown"]:
+        lib.utils.shutdown_background_jobs()
+        exit()
+
+    # Run Report
+    if arguments["report"]:
+        if arguments["<report_dir>"]:
+            output_dir = os.path.join(arguments["<report_dir>"], '')
+        else:
+            print('Specify directory to recursively scan for celerystalk output')
+        lib.report.report(output_dir)
+        exit()
+
+    # Parse nmap then run celerystalk (for just some hosts in target file)
+    if arguments["-f"] and arguments["-t"]:
+        if arguments["-o"] is None:
+            print('Specify report directory')
+        else:
+            output_dir = os.path.join(arguments["-o"], '')
+            # Before doing anything host specific, make sure the user specified output directory exists (i.e., /pentest)
+            try:
+                os.stat(output_dir)
+            except:
+                print("[+] Output directory does not exist. Creating " + output_dir)
+                os.mkdir(output_dir)
+        #TODO: make this read the file and be better :)
+        print(arguments["-f"])
+
+        lib.utils.start_services()
+        #(json_config, supported_services) = read_config_ini()
+        target_list = lib.utils.target_splitter(arguments["-t"])
+
+        for target in target_list:
+            if "nessus" in arguments["-f"]:
+                nessus_report = lib.utils.nessus_parser(arguments["-f"])
+                # process_nessus_data(nessus_report, output_dir, arguments["--simulation"],workspace)
+                lib.scan.process_nessus_data2(nessus_report, workspace,target=target)
+                if arguments["<domains>"]:
+                    lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
+                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace,target=target)
+
+            else:
+                nmap_report = lib.utils.nmap_parser(arguments["-f"])
+                # process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
+                lib.scan.process_nmap_data2(nmap_report, workspace,target=target)
+                if arguments["<domains>"]:
+                    lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
+                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace,target=target)
+        exit()
+
+    # Parse nmap then run celerystalk (for ALL hosts in target file)
+    if arguments["-f"]:
+        if arguments["-o"] is None:
+            print('Specify report directory')
+        else:
+            output_dir = os.path.join(arguments["-o"], '')
+            # Before doing anything host specific, make sure the user specified output directory exists (i.e., /pentest)
+            try:
+                os.stat(output_dir)
+            except:
+                print("[+] Output directory does not exist. Creating " + output_dir)
+                os.mkdir(output_dir)
+
+        lib.utils.start_services()
+        #(json_config, supported_services) = read_config_ini()
+        if "nessus" in arguments["-f"]:
+            nessus_report = lib.utils.nessus_parser(arguments["-f"])
+            #process_nessus_data(nessus_report, output_dir, arguments["--simulation"],workspace)
+            lib.scan.process_nessus_data2(nessus_report, workspace)
+            if arguments["<domains>"]:
+                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
+            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+
+        else:
+            nmap_report = lib.utils.nmap_parser(arguments["-f"])
+            #process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
+            lib.scan.process_nmap_data2(nmap_report, workspace)
+            if arguments["<domains>"]:
+                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
+            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+
+    #commenting this out for now.
+    # # Scan targets with nmap and then run celerystalk
+    #
+    # if arguments["-t"]:
+    #     if arguments["-o"] is None:
+    #         print('Specify report directory')
+    #     else:
+    #         output_dir = os.path.join(arguments["-o"], '')
+    #     lib.utils.start_services()
+    #     #(json_config, supported_services) = read_config_ini()
+    #     nmap_report = lib.scan.nmap_scan(arguments["-t"], output_dir)
+    #     lib.scan.process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
+
+
+if __name__ == "__main__":
+    arguments = docopt(__doc__, version='celerystalk 1.0')
+    #print(arguments)
+    print_banner()
+    if arguments["help"]:
+        print(__doc__)
+    main(arguments)

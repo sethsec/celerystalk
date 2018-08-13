@@ -1,0 +1,4 @@
+.idea
+*.pid
+*.sqlite3
+*.pyc
