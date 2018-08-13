@@ -59,11 +59,11 @@ The basic workflow:
     ```
 
 1. **Cancel/Pause/Resume Tasks:** Cancel/Pause/Resume any task(s) that are currently running or in the queue.
-```
+    ```
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
                                 celerystalk <verb> all                #Cancel/Pause/Resume all tasks from default workspaces
                                 celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
-```
+    ```
 1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file (Run this as often as you like) 
     ```
     Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
