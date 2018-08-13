@@ -1,13 +1,18 @@
 # celerystalk
 
 celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*). 
-* Scan each service the same way so you don't have to keep track of what you ran where.
-* The IPs in the nmap/nessus scan define the scope, but if you give it domains with the -d flag celerystalk will check to see if any subdomains are in scope. If they are in scope, celerystalk will ron all http/https tools against the subdomains/virtualhosts.  
-* Designed for scanning multiple hosts (but works well for scanning one host at a time) 
-* celerystalk uses [Celery](http://www.celeryproject.org/) as the task queue and celery uses Redis as the broker.       
+* **Consistency** - Scan each service the same way so you don't have to keep track of what you ran where.  
+* **Scalability** - Designed for scanning multiple hosts (but works well for scanning one host at a time)
+* **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
+* **Workspaces** - Supports multiple workspaces, kind of like how Metasploit does it
+* **Job Control** - Supports canceling, pausing, and resuming of tasks, similar to how Burp Scanner does it
+* **Easy to use** - Uses a command based interface inspired by CracMapExec 
+* **Measure twice, cut once** - Suppports a simulation mode which shows you which commands will run 
+* **Uses Celery** - celerystalk uses [Celery](http://www.celeryproject.org/) to execute your commands asynchronously 
+* **Uses Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
+     
 
 ### Install/Setup
-
 Kali: 
 
 ```
@@ -22,10 +27,13 @@ The basic workflow:
 
 1. **Run Nmap or Nessus:** 
      
-    ```
-    Nnmap: Run nmap against your target(s) with version detection on and output to XML (nmap target -Pn -p- -sV -oX target.xml)
-    Nessus: Run nessus against your target(s) and export a .nessus file
-   ``` 
+   * Nnmap: Run nmap against your target(s). Required: enable version detection (-sV) and output to XML (-oX filename.xml). All other nmap options are up to you. Here are some examples:
+      * ```
+           nmap target(s) -Pn -p- -sV -oX filename.xml 
+           nmap -iL target_list.txt -Pn -sV -oX filename.xml
+        ```
+   * Nessus: Run nessus against your target(s) and export results as a .nessus file
+    
 
 1. **Configure celerystalk:** For each service type (i.e., http, https, ssh), configure which commands you want to run in the (config.ini). Add your own commands using [TARGET],[PORT], and[OUTPUT] placeholders. Disable any command by commenting it out with a ; or a #.  
      ```
@@ -38,10 +46,7 @@ The basic workflow:
     gobuster-common     : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,301,302,307,403,500' -e -n -q > [OUTPUT].txt
     photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT] -o [OUTPUT]
     ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
-  
-
- 
-   ```
+    ```
 1. **Launch Scan:** Run celerystalk against the nmap or nessus XML and it will submit tasks to celery workers which asynchronously execute them and log output to your output directory
     ```    
     Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
