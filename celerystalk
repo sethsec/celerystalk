@@ -31,7 +31,7 @@ Examples:
     Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -d
+    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
     Query Tasks:                celerystalk query [-w workspace]
     Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
                                 celerystalk report /pentest/10.0.0.1  #Create a report for a single host

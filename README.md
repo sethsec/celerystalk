@@ -47,7 +47,7 @@ The basic workflow:
     Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -d
+    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
     ```   
 1. **Query Status:** Asynchronously check the status of the tasks queue, as frequently as you like
     ```
