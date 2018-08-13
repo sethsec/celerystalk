@@ -212,13 +212,15 @@ def domain_scope_checker(domain,workspace):
         #If the domain does not resolve, skip it!
         pass
     unique_db_hosts = db.get_unique_hosts(workspace)
+    in_scope = "False"
     for domain_tuple in domain_tuples:
-        in_scope = False
         ip = str(domain_tuple[1])
         for item in unique_db_hosts:
             if ip in item:
                 # print("Domain: {domain} - Resolved IP: {ip} is in scope.").format(domain=domain,ip=ip)
-                in_sccope = True
+                in_scope = "True"
                 return 1,ip
-    if not in_scope:
-        return 0,ip
+    if in_scope == "False":
+        for domain_tuple in domain_tuples:
+            ip = str(domain_tuple[1])
+            return 0,ip

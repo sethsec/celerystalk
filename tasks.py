@@ -127,7 +127,7 @@ def post_process(*args):
                                     # right now, every executed command gets sent to a generic post_process task that can do
                                     # additinoal stuff based on the command that just ran.
                                     post_process.si(populated_command, output_base_dir, workspace, ip, host_dir, simulation,
-                                                    scanned_service_port,db_scanned_service,scanned_service_protocol),
+                                                    scanned_service_port,db_scanned_service,scanned_service_protocol,celery_path),
                                 )()  # .apply_async()
 
                                 host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
@@ -290,7 +290,7 @@ def post_process_domains(vhosts,populated_command,output_base_dir,workspace,doma
             db_vhost = (ip,vhost,in_scope,0,workspace)
             db.create_vhost(db_vhost)
         else:
-            db_vhost = ("", vhost, in_scope, 0, workspace)
+            db_vhost = ("", vhost, 0, 0, workspace)
             db.create_vhost(db_vhost)
 
     #pull all in scope vhosts that have not been submitted
@@ -338,7 +338,7 @@ def post_process_domains(vhosts,populated_command,output_base_dir,workspace,doma
                                     post_process.si(populated_command, output_base_dir, workspace, scannable_vhost, host_dir,
                                                           simulation,
                                                           scanned_service_port, scanned_service_name,
-                                                          scanned_service_protocol),
+                                                          scanned_service_protocol,celery_path),
                                 )()  # .apply_async()
 
                                 #task_id_list.append(result.task_id)
@@ -347,7 +347,7 @@ def post_process_domains(vhosts,populated_command,output_base_dir,workspace,doma
                                 f.write(populated_command + "\n\n")
                                 f.close()
 
-    db.update_vhosts_submitted(ip,scannable_vhost,workspace,1)
+        db.update_vhosts_submitted(ip,scannable_vhost,workspace,1)
 
             # for entry in config["services"][service]["output"]:
             #     if (service == "http") or (service == "https"):
