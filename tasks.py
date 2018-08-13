@@ -75,7 +75,7 @@ def run_cmd(populated_command,celery_path,task_id,path=None):
 
 @app.task
 def post_process(*args):
-    populated_command,output_base_dir, workspace, ip, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol = args
+    populated_command,output_base_dir, workspace, ip, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
 
 
     #json_config = read_config_post(path)
@@ -122,7 +122,7 @@ def post_process(*args):
                                     cel_create_task.subtask(args=(populated_command, ip, workspace, task_id)),
                                     # run the command. run_task takes care of marking the task as started and then completed.
                                     # The si tells run_cmd to ignore the data returned from a previous task
-                                    run_cmd.si(populated_command,task_id).set(task_id=task_id),
+                                    run_cmd.si(populated_command,celery_path,task_id).set(task_id=task_id),
 
                                     # right now, every executed command gets sent to a generic post_process task that can do
                                     # additinoal stuff based on the command that just ran.
@@ -280,7 +280,7 @@ def cel_create_task(*args,**kwargs):
 
 
 @app.task()
-def post_process_domains(vhosts,populated_command,output_base_dir,workspace,domain,simulation):
+def post_process_domains(vhosts,populated_command,output_base_dir,workspace,domain,simulation,celery_path):
     config,supported_services = config_parser.read_config_ini()
     #(populated_command,output_base_dir,workspace,domain,simulation) = args
     vhosts = vhosts.splitlines()
@@ -331,7 +331,7 @@ def post_process_domains(vhosts,populated_command,output_base_dir,workspace,doma
 
                                     # run the command. run_task takes care of marking the task as started and then completed.
                                     # The si tells run_cmd to ignore the data returned from a previous task
-                                    run_cmd.si(populated_command,task_id).set(task_id=task_id),
+                                    run_cmd.si(populated_command,celery_path,task_id).set(task_id=task_id),
 
                                     # right now, every executed command gets sent to a generic post_process task that can do
                                     # additinoal stuff based on the command that just ran.

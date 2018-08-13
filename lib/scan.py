@@ -246,7 +246,7 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                         # right now, every executed command gets sent to a generic post_process task that can do
                         # additinoal stuff based on the command that just ran.
                         tasks.post_process.si(populated_command, output_base_dir, workspace, ip, host_dir, simulation,
-                                        scanned_service_port, scanned_service_name, scanned_service_protocol),
+                                        scanned_service_port, scanned_service_name, scanned_service_protocol,celery_path),
                     )()  # .apply_async()
 
                     task_id_list.append(result.task_id)
@@ -266,9 +266,9 @@ def find_subdomains(domains,simulation,workspace,output_base_dir):
                     val = val.split("\n")
                     for cmd in val:
                         populated_command = cmd.replace("[DOMAIN]", domain)
-                        if simulation:
-                            #debug - sends jobs to celery, but with a # in front of every one.
-                            populated_command = "#" + populated_command
+                        # if simulation:
+                        #     #debug - sends jobs to celery, but with a # in front of every one.
+                        #     populated_command = "#" + populated_command
 
                         # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
                         # that allows me to pass it to all of the tasks in the chain.
@@ -285,5 +285,5 @@ def find_subdomains(domains,simulation,workspace,output_base_dir):
 
                             # right now, every executed command gets sent to a generic post_process task that can do
                             # additinoal stuff based on the command that just ran.
-                            tasks.post_process_domains.s(populated_command, output_base_dir, workspace, domain, simulation),
+                            tasks.post_process_domains.s(populated_command, output_base_dir, workspace, domain, simulation,celery_path),
                         )()  # .apply_async()

@@ -1,13 +1,14 @@
 # celerystalk
 
-celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*). 
-* **Consistency** - Scan each service the same way so you don't have to keep track of what you ran where.  
+celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*) 
+* **Consistency** - Scan each service the same way so you don't have to keep track of what you ran where 
 * **Scalability** - Designed for scanning multiple hosts (but works well for scanning one host at a time)
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
 * **Workspaces** - Supports multiple workspaces, kind of like how Metasploit does it
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, similar to how Burp Scanner does it
-* **Easy to use** - Uses a command based interface inspired by CracMapExec 
-* **Measure twice, cut once** - Suppports a simulation mode which shows you which commands will run 
+* **Easy to use** - Uses a command based interface inspired by CrackMapExec 
+* **Measure twice, cut once** - A simulation mode tells you which tools will run without running them.
+* **Flexible** - Target only a subset of the hosts scanned in an previous nmap/nessus file. 
 * **Uses Celery** - celerystalk uses [Celery](http://www.celeryproject.org/) to execute your commands asynchronously 
 * **Uses Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
      
