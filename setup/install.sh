@@ -35,7 +35,8 @@ cd Photon
 pip install -r requirements.txt
 
 cd $CELERYSTALK_DIR
-
+cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
+. /etc/bash_completion.d/celerystalk.sh
 echo "[+] You are ready to go."
 ../celerystalk -h
 

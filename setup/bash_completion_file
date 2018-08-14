@@ -1,0 +1,227 @@
+
+_celerystalk()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 1 ]; then
+        COMPREPLY=( $( compgen -W '-h --help help pause resume scan cancel shutdown report query' -- $cur) )
+    else
+        case ${COMP_WORDS[1]} in
+            pause)
+            _celerystalk_pause
+        ;;
+            help)
+            _celerystalk_help
+        ;;
+            resume)
+            _celerystalk_resume
+        ;;
+            scan)
+            _celerystalk_scan
+        ;;
+            cancel)
+            _celerystalk_cancel
+        ;;
+            shutdown)
+            _celerystalk_shutdown
+        ;;
+            report)
+            _celerystalk_report
+        ;;
+            query)
+            _celerystalk_query
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_pause()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+	    COMPREPLY=( $( compgen -W 'all <task_id(s)> -w ' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            all)
+            _celerystalk_pause_all
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_pause_all()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_help()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_resume()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+	    COMPREPLY=( $( compgen -W 'all <task_id(s)> -w' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            all)
+            _celerystalk_resume_all
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_resume_all()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_scan()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -fW '-f -o -w -t -d --domains -s --simulation ' -- $cur) )
+    fi
+}
+
+_celerystalk_cancel()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+	    COMPREPLY=( $( compgen -W 'all <task_id(s)> -w' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            all)
+            _celerystalk_cancel_all
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_cancel_all()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_shutdown()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_report()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -fW '-w ' -- $cur) )
+    fi
+}
+
+_celerystalk_query()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W '-w full brief summary watch' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            full)
+            _celerystalk_query_full
+        ;;
+            watch)
+            _celerystalk_query_watch
+        ;;
+            brief)
+            _celerystalk_query_brief
+        ;;
+            summary)
+            _celerystalk_query_summary
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_query_full()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_query_watch()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_query_brief()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_query_summary()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+complete -o bashdefault -o default -o filenames -F _celerystalk celerystalk
