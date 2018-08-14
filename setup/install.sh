@@ -6,7 +6,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [ ! -f config.ini ]; then
-    cp config_default.ini config.ini
+    cp config_default.ini ../config.ini
     echo "[+] Copied config.ini.repo to config.ini"
 fi
 echo "[+] Updating apt sources"
@@ -35,9 +35,9 @@ cd Photon
 pip install -r requirements.txt
 
 cd $CELERYSTALK_DIR
-chmod +x celerystalk
+
 echo "[+] You are ready to go."
-./celerystalk -h
+../celerystalk -h
 
 
 
