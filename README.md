@@ -18,8 +18,10 @@ Kali:
 
 ```
 # git clone https://github.com/sethsec/celerystalk.git
-# cd celerystalk
+# cd celerystalk/setup
 # ./install.sh
+# cd ..
+# ./celerystalk -h
 ```
 
 

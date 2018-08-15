@@ -136,10 +136,6 @@ def post_process(*args):
                                 f.close()
 
 
-
-
-
-
     if "gobuster" in populated_command:
         #f.write("\nPost_gobuster!\n\n")
         #print("gobuster")
@@ -171,46 +167,11 @@ def post_process(*args):
                 exit()
 
         for url in lines:
-            print("\nurl: " + str(url))
             url = url.split("?")[0].replace("//","/")
-            print("\nurl modified: " + str(url))
-            path = urlparse.urlparse(url).path
-            print(path)
-            scheme = urlparse.urlparse(url).scheme
-            print(scheme)
-            netloc = urlparse.urlparse(url).netloc
-            print(netloc)
-            dirlist = os.path.split(url)
-            print(dirlist)
-            db_path = (ip, scanned_service_port, url, 0, workspace)
-            db.insert_new_path(db_path)
-
-
-
-
-
-            # scanned_service = path.split(":")[0]
-            # print(scanned_service)
-
-
-            # path = urlparse.urlparse(scanned_url).path
-            # print(path)
-            # scheme = urlparse.urlparse(scanned_url).scheme
-            # print(scheme)
-            # netloc = urlparse.urlparse(scanned_url).netloc
-            # print(netloc)
-            # dirlist = os.path.split(path)
-            # print(dirlist)
-            # for index in range(len(dirlist)):
-            #     path_part_list = dirlist[1:index]
-            #     print(path_part_list)
-            #     path = '/'.join(path_part_list)
-            #     print(path)
-            #     new_url = scheme + "://" + netloc + path
-            #     print(new_url)
-            #     db_path = (ip,scanned_service_port, new_url, 0, workspace)
-            #     db.insert_new_path(db_path)
-
+            if url.startswith("http"):
+                db_path = (ip, scanned_service_port, url, 0, workspace)
+                db.insert_new_path(db_path)
+                print("\nurl: " + str(url))
 
 
 
