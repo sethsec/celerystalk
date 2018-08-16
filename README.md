@@ -54,8 +54,7 @@ Kali:
     ```
     [domain-recon]
     amass               : /opt/amass/amass -d [DOMAIN]
-    sublist3r           : python /opt/Sublist3r/sublist3r.py -d [DOMAIN] -c --silent
-    subfinder           : /opt/subfinder 
+    sublist3r           : python /opt/Sublist3r/sublist3r.py -d [DOMAIN]
     ```  
 
     ***Service Configuration*** The rest of the confi.ini sections define which commands you want celerystalk to run for each identified service (i.e., http, https, ssh).    
