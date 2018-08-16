@@ -210,7 +210,7 @@ def domain_scope_checker(domain,workspace):
             domain_tuples.append((domain, ip))
     except:
         #If the domain does not resolve, skip it!
-        pass
+        return 0,""
     unique_db_hosts = db.get_unique_hosts(workspace)
     in_scope = "False"
     for domain_tuple in domain_tuples:

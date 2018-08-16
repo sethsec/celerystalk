@@ -11,6 +11,7 @@ import os.path
 from celery.signals import after_task_publish
 from celery.utils import uuid
 import sys
+import re
 
 
 #app = Celery('tasks', broker='redis://localhost:6379', backend='redis://localhost:6379')
@@ -137,26 +138,16 @@ def post_process(*args):
 
 
     if "gobuster" in populated_command:
-        #f.write("\nPost_gobuster!\n\n")
-        #print("gobuster")
-        #print(args)
-        #print(populated_command,output_base_dir, workspace, ip, host_dir, simulation, scanned_service_port)
-        #f.write(populated_command + "\n")
-        # print(populated_command + " - populatd command\n")
         post_gobuster_filename = populated_command.split(">")[1].split("&")[0].strip()
-        print(post_gobuster_filename + " - post gobuster filename \n")
+        print("Post gobuster filename" + post_gobuster_filename +  "\n")
         populated_command_list = populated_command.split(" ")
-        # print("\npopulated_command_list\n")
-        # print(populated_command_list)
 
         index=0
         for arg in populated_command_list:
             if "-u" == populated_command_list[index]:
                 if "http" in populated_command_list[index+1]:
                     scanned_url = populated_command_list[index+1]
-
-                print("\nscanned_url\n")
-                print(scanned_url)
+                    #print("Scanned_url: " + scanned_url)
             index = index + 1
 
         with open(post_gobuster_filename,'r') as gobuster_file:
@@ -171,7 +162,7 @@ def post_process(*args):
             if url.startswith("http"):
                 db_path = (ip, scanned_service_port, url, 0, workspace)
                 db.insert_new_path(db_path)
-                print("\nurl: " + str(url))
+                print("Found Url: " + str(url))
 
 
 
@@ -214,8 +205,8 @@ def post_process(*args):
 
 
 
-    else:
-        print("Not gobuster: " + populated_command + "\n")
+    #else:
+        #print("Not gobuster: " + populated_command + "\n")
     #f.close()
 
 
@@ -243,16 +234,22 @@ def cel_create_task(*args,**kwargs):
 @app.task()
 def post_process_domains(vhosts,populated_command,output_base_dir,workspace,domain,simulation,celery_path):
     config,supported_services = config_parser.read_config_ini()
-    #(populated_command,output_base_dir,workspace,domain,simulation) = args
     vhosts = vhosts.splitlines()
+    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     for vhost in vhosts:
-        in_scope,ip = utils.domain_scope_checker(vhost,workspace)
-        if in_scope == 1:
-            db_vhost = (ip,vhost,in_scope,0,workspace)
-            db.create_vhost(db_vhost)
-        else:
-            db_vhost = ("", vhost, 0, 0, workspace)
-            db.create_vhost(db_vhost)
+        #print("raw:\t" + vhost)
+        vhost = ansi_escape.sub('', vhost)
+        #print("escaped:\t" + vhost)
+        if re.match(r'\w', vhost):
+            in_scope,ip = utils.domain_scope_checker(vhost,workspace)
+            if in_scope == 1:
+                print("Found subdomain (in scope):\t" + vhost)
+                db_vhost = (ip,vhost,1, 0,workspace)
+                db.create_vhost(db_vhost)
+            else:
+                print("Found subdomain (out of scope):\t" + vhost)
+                db_vhost = (ip, vhost, 0, 0, workspace)
+                db.create_vhost(db_vhost)
 
     #pull all in scope vhosts that have not been submitted
     inscope_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
