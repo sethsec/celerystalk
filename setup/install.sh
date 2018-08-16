@@ -28,17 +28,26 @@ if [ ! -f /opt/amass/amass ]; then
     unzip /opt/amass/amass_2.4.2_linux_386.zip -d /opt/amass
 fi
 
-echo "[+] Downloading Photon Web Spider to /opt/Photon/photon.py"
-cd /opt/
-git clone https://github.com/s0md3v/Photon.git
-cd Photon
-pip install -r requirements.txt
+if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
+    echo "[+] Downloading sublist3r to /opt/Sublist3r"
+    cd /opt/
+    git clone https://github.com/aboul3la/Sublist3r.git
+    cd Sublist3r/
+    pip install -r requirements.txt
+fi
+
+if [ ! -f /opt/Photon/photon.py ]; then
+    echo "[+] Downloading Photon Web Spider to /opt/Photon/photon.py"
+    cd /opt/
+    git clone https://github.com/s0md3v/Photon.git
+    cd Photon
+    pip install -r requirements.txt
+fi
 
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
-. /etc/bash_completion.d/celerystalk.sh
-echo "[+] You are ready to go."
 ../celerystalk -h
-
-
+echo ""
+echo "[+] Back up a directory and you are ready to go."
+exec bash
 
