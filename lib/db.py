@@ -14,7 +14,8 @@ def create_task_table():
     sql_create_tasks_table = """ CREATE TABLE IF NOT EXISTS tasks (
                                     id INTEGER PRIMARY KEY,
                                     task_id text NOT NULL,
-                                    pid integer,                                    
+                                    pid integer,
+                                    command_name text,                                    
                                     command text NOT NULL,
                                     ip text NOT NULL,                                
                                     status text NOT NULL,
@@ -120,8 +121,8 @@ def create_task(task):
     :param workspace:
     :return:
     """
-    sql = ''' INSERT INTO tasks(task_id, pid, command, ip, status, workspace)
-              VALUES(?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO tasks(task_id, pid, command_name, command, ip, status, workspace)
+              VALUES(?,?,?,?,?,?,?) '''
 
     CUR.execute(sql, task)
     CONNECTION.commit()
