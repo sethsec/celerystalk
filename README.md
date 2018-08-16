@@ -25,7 +25,7 @@ Kali:
 ```
 
 
-The basic workflow: 
+### Using celerystalk 
 
 
 1. **Run Nmap or Nessus:** 
@@ -38,7 +38,31 @@ The basic workflow:
    * Nessus: Run nessus against your target(s) and export results as a .nessus file
     
 
-1. **Configure celerystalk:** For each service type (i.e., http, https, ssh), configure which commands you want to run in the (config.ini). Add your own commands using [TARGET],[PORT], and[OUTPUT] placeholders. Disable any command by commenting it out with a ; or a #.  
+1. **Configure which tools you'd like celerystalk to execute:** The install script drops a config.ini file in the celerystalk folder. The config.ini script is broken up into three sections.  
+
+    ***Service Mapping*** - The first section maps multiple Nmap and Nessus service names to celerystalk service names (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
+    ```
+    [nmap-service-names]
+    http = http,http-alt,http-proxy,www,http?
+    https = ssl/http,https,ssl/http-alt,ssl/http?
+    ftp = ftp,ftp?
+    mysql = mysql
+    dns = dns,domain,domain
+    ```
+
+    ***Domain Recon Tools*** - The second section defines the tools you'd like to use for subdomain discovery (an optional feature):
+    ```
+    [domain-recon]
+    amass               : /opt/amass/amass -d [DOMAIN]
+    sublist3r           : python /opt/Sublist3r/sublist3r.py -d [DOMAIN] -c --silent
+    subfinder           : /opt/subfinder 
+    ```  
+
+    ***Service Configuration*** The rest of the confi.ini sections define which commands you want celerystalk to run for each identified service (i.e., http, https, ssh).    
+    * Disable any command by commenting it out with a ; or a #. 
+    * Add your own commands using [TARGET],[PORT], and [OUTPUT] placeholders.
+    
+    Here is an example:   
      ```
     [http]
     whatweb             : whatweb http://[TARGET]:[PORT] -a3 --colour=never > [OUTPUT].txt
@@ -50,18 +74,21 @@ The basic workflow:
     photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT] -o [OUTPUT]
     ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
     ```
-1. **Launch Scan:** Run celerystalk against the nmap or nessus XML and it will submit tasks to celery workers which asynchronously execute them and log output to your output directory
+1. **Launch Scan:** Run celerystalk scan using the nmap or nessus XML file.  It will submit tasks to celery which asynchronously executes them and log output to your output directory. 
+
+    You can run specify domains to look for subdomains aka virtualhosts that are in scope. By default, the scope is defined as the list of imported IP addresses in the imported Nnap/Nessus.xml.
+     
     ```    
     Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
     Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
     Find in scope vhosts:       celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test    
     Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
     Simulation mode:            celerystalk scan -f <file> -o /pentest -s
     ```   
-1. **Query Status:** Asynchronously check the status of the tasks queue, as frequently as you like
+1. **Query Status:** Asynchronously check the status of the tasks queue, as frequently as you like. The watch mode actually executes the linux watch command so that you don't fill up your entire terminal buffer :)
     ```
     Query Tasks:                celerystalk query [-w workspace]
                                 celerystalk query [-w workspace] watch                               
@@ -71,12 +98,19 @@ The basic workflow:
     ```
 
 1. **Cancel/Pause/Resume Tasks:** Cancel/Pause/Resume any task(s) that are currently running or in the queue.
+
+    * *Canceling a running task* will send a kill -TERM.  
+    * *Canceling a queued task* will make celery ignore it (uses celery's revoke).
+    * *Canceling all tasks* will kill running tasks and revoke all queued tasks.    
+    * *Pausing a single task* uses kill -STOP to suspend the process.
+    * *Pausing all tasks* is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.
+    * *Resuming tasks* send kill -CONT which allows the process to start up again where it left off.    
     ```
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
                                 celerystalk <verb> all                #Cancel/Pause/Resume all tasks from default workspaces
                                 celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
     ```
-1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file (Run this as often as you like) 
+1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file. Run this as often as you like. Each time you run the report it overwrites the previous report.  
     ```
     Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
                                 celerystalk report /pentest/10.0.0.1  #Create a report for a single host
