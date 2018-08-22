@@ -1,6 +1,7 @@
 # celerystalk
 
 celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*) 
+* **Configurable** - celerystalk is the framework. Some common tools are in the default config, but you can add tool you want 
 * **Consistency** - Scan each service the same way so you don't have to keep track of what you ran where 
 * **Scalability** - Designed for scanning multiple hosts (but works well for scanning one host at a time)
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
@@ -8,9 +9,11 @@ celerystalk automates your network scanning/enumeration process with asynchronou
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, similar to how Burp Scanner does it
 * **Easy to use** - Uses a command based interface inspired by CrackMapExec 
 * **Measure twice, cut once** - A simulation mode tells you which tools will run without running them.
-* **Flexible** - Target only a subset of the hosts scanned in an previous nmap/nessus file. 
+* **Flexible** - Target only a subset of the hosts scanned in an previous nmap/nessus file.
+* **Screenshots** - The report contains screenshots of every url identified using gobuster 
 * **Uses Celery** - celerystalk uses [Celery](http://www.celeryproject.org/) to execute your commands asynchronously 
 * **Uses Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
+ 
      
 
 ### Install/Setup
