@@ -44,6 +44,14 @@ if [ ! -f /opt/Photon/photon.py ]; then
     pip install -r requirements.txt
 fi
 
+if [ ! -f /usr/local/bin/chromedriver ]; then
+    echo "[+] Downloading chromedriver /usr/local/bin/chromedriver"
+    cd /usr/local/bin/
+    wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+    unzip chromedriver_linux64.zip
+    rm chromedriver_linux64.zip
+fi
+
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
 ../celerystalk -h

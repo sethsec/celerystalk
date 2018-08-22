@@ -2,6 +2,39 @@ import os
 import glob
 import bleach
 from bleach.sanitizer import Cleaner
+import lib.db
+
+def paths_report(host):
+#     hosts = lib.db.get_unique_hosts_with_paths(workspace)
+#     html_code = ""
+#     for host in hosts:
+#         all_paths = lib.db.get_all_paths_for_host(workspace,host)
+#         for row in all_paths:
+#             ip,port,path,url_screenshot_filename,workspace = row
+#             html_code = html_code + """
+#             <div class="hover_img">
+#      <a href="#">{0}<span><img src="{1}" alt="image" height="100" /></span></a>
+# </div>
+#             """.format(path,url_screenshot_filename)
+
+    html_code = ""
+
+    all_paths = lib.db.get_all_paths_for_host(host)
+    html_code = """<div id="linkwrap">"""
+    for row in all_paths:
+        ip,port,path,url_screenshot_filename,workspace = row
+#         html_code = html_code + """
+#         <div class="hover_img">
+#  <a href="#">{0}<span><img src="{1}" alt="image" height="400" /></span></a>
+# </div>
+#         """.format(path,url_screenshot_filename)
+
+        html_code = html_code + """<a class="link" href="#">{0}<span><img src="{1}" alt="image"/></span></a><br>\n""".format(path,url_screenshot_filename)
+    html_code = html_code + "</div>"
+    return html_code
+
+
+
 
 def report(output_dir,workspace=None):
     cleaner = Cleaner()
@@ -23,7 +56,7 @@ def report(output_dir,workspace=None):
         print("[+] Report file (single host): {0}".format(host_report_file_name))
 
 
-    if report_count > 1:
+    if report_count > 0:
 
         #HTML Report
         combined_report_file_name = output_dir + 'celerystalkReport-combined.html'
@@ -67,6 +100,8 @@ def report(output_dir,workspace=None):
             combined_report_file_txt.write('\n' + '*' * 80 + '\n\n')
 
             with open(report, 'r') as host_report_file:
+                screenshot_html = paths_report(host)
+                combined_report_file.write(screenshot_html)
                 combined_report_file.write('<pre>\n')
                 for line in host_report_file:
                     #HTML report
@@ -138,6 +173,38 @@ body {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
 }
+
+.hover_img a { position:relative; }
+.hover_img a span { position:relative; left:100px; display:none; z-index:99;}
+.hover_img a:hover span { display:block; overflow: visible; }
+
+#linkwrap {
+	position:relative;
+	
+
+}
+.link img { 
+	border:5px solid gray;
+	margin:3px;
+	float:left;
+	width:100%;
+	border-style: outset;
+	border-radius: 25px;
+	
+}
+.link span { 
+	position:absolute;
+	visibility:hidden;
+}
+.link:hover, .link:hover span { 
+	visibility:visible;
+	top:0; left:250px; 
+	z-index:1;
+}
+
+
+
+
 </style>
 </head>
 <body>
