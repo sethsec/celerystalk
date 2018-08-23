@@ -1,4 +1,4 @@
-# celerystalk
+# celerystalk (currently in BETA - Bug reports of any kind are welcome!)
 
 celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*) 
 * **Configurable** - celerystalk is the framework. Some common tools are in the default config, but you can add tool you want 
