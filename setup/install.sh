@@ -44,10 +44,20 @@ if [ ! -f /opt/Photon/photon.py ]; then
     pip install -r requirements.txt
 fi
 
+if [ ! -f /usr/local/bin/chromedriver ]; then
+    echo "[+] Downloading chromedriver /usr/local/bin/chromedriver"
+    cd /usr/local/bin/
+    wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+    unzip chromedriver_linux64.zip
+    rm chromedriver_linux64.zip
+fi
+
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
 ../celerystalk -h
 echo ""
 echo "[+] Back up a directory and you are ready to go."
-exec bash
+echo ""
+echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
+echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
 

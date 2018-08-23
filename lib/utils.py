@@ -7,6 +7,39 @@ from libnessus.parser import NessusParser
 from netaddr import IPAddress, IPRange, IPNetwork
 import socket
 import db
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import os
+
+
+def take_screenshot(url,output):
+    #Source: https://medium.com/@ronnyml/website-screenshot-generator-with-python-593d6ddb56cb
+    #Source: https://medium.com/@pyzzled/running-headless-chrome-with-selenium-in-python-3f42d1f5ff1d
+    #Source: https://stackoverflow.com/questions/50642308/org-openqa-selenium-webdriverexception-unknown-error-devtoolsactiveport-file-d
+
+    # instantiate a chrome options object so you can set the size and headless preference
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    driver = '/usr/local/bin/chromedriver'
+    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver)
+    try:
+        # capture the screen
+        driver.get(url)
+        #driver.get_screenshot_as_file(output)
+        print("output in takescreenshot: " + output)
+        print(url)
+        screenshot = driver.save_screenshot(output)
+        driver.quit()
+        return screenshot
+    except:
+        return False
+
+
+
 
 def task_splitter(id):
     task_list=[]
@@ -99,6 +132,8 @@ def nmap_scan(hosts, output_dir):
     f.close()
     print("[+] Nmap scan saved to: {0}".format(nmap_xml))
     return nmap_report
+
+
 
 
 def nmap_follow_up_scan(hosts, port):

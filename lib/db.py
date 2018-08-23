@@ -14,9 +14,11 @@ def create_task_table():
     sql_create_tasks_table = """ CREATE TABLE IF NOT EXISTS tasks (
                                     id INTEGER PRIMARY KEY,
                                     task_id text NOT NULL,
-                                    pid integer,                                    
+                                    pid integer,
+                                    command_name text,                                    
                                     command text NOT NULL,
-                                    ip text NOT NULL,                                
+                                    ip text NOT NULL,
+                                    output_dir NOT NULL,                                
                                     status text NOT NULL,
                                     workspace text NOT NULL,
                                     start_time text,
@@ -56,6 +58,7 @@ def create_path_table():
                                         port int NOT NULL,
                                         path text NOT NULL UNIQUE,
                                         submitted int,
+                                        url_screenshot_filename text,
                                         workspace text NOT NULL
                                     ); """
 
@@ -120,8 +123,8 @@ def create_task(task):
     :param workspace:
     :return:
     """
-    sql = ''' INSERT INTO tasks(task_id, pid, command, ip, status, workspace)
-              VALUES(?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO tasks(task_id, pid, command_name, command, ip, output_dir, status, workspace)
+              VALUES(?,?,?,?,?,?,?,?) '''
 
     CUR.execute(sql, task)
     CONNECTION.commit()
@@ -157,8 +160,8 @@ def insert_new_path(db_path):
     :param db_path:
     :return:
     """
-    sql = '''INSERT OR IGNORE INTO paths(ip,port,path,submitted,workspace)
-              VALUES(?,?,?,?,?)  '''
+    sql = '''INSERT OR IGNORE INTO paths(ip,port,path,submitted,url_screenshot_filename,workspace)
+              VALUES(?,?,?,?,?,?)  '''
     CUR.execute(sql, db_path)
     CONNECTION.commit()
 
@@ -239,6 +242,17 @@ def get_paused_tasks(workspace,ip=None):
     paused_rows = CUR.fetchall()
     return paused_rows
 
+def get_unique_hosts_in_workspace(workspace):
+    CUR.execute("SELECT DISTINCT ip,output_dir FROM tasks WHERE workspace=?", (workspace,))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def get_unique_hosts_in_output_dir(output_dir):
+    CUR.execute("SELECT DISTINCT ip,output_dir FROM tasks WHERE output_dir LIKE ?", (output_dir,))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
 
 def get_service(ip,port,protocol,workspace):
     CUR.execute("SELECT * FROM services WHERE ip=? AND port=? and proto=? and workspace=?", (ip,port,protocol,workspace))
@@ -282,12 +296,23 @@ def get_total_tasks(workspace):
     CONNECTION.commit()
     return total_count
 
-def get_unsubmitted_paths(workspace):
-    CUR.execute("SELECT path FROM paths WHERE workspace = ?" (workspace,))
-    unsubmitted_paths = CUR.fetchall()
+def get_all_paths(workspace):
+    CUR.execute("SELECT * FROM paths WHERE workspace = ?", (workspace,))
+    all_paths = CUR.fetchall()
     CONNECTION.commit()
-    return unsubmitted_paths
+    return all_paths
 
+def get_all_paths_for_host(ip):
+    CUR.execute("SELECT ip,port,path,url_screenshot_filename,workspace FROM paths WHERE ip = ?", (ip,))
+    all_paths_for_host = CUR.fetchall()
+    CONNECTION.commit()
+    return all_paths_for_host
+
+def get_unique_hosts_with_paths(workspace):
+    CUR.execute("SELECT DISTINCT ip FROM paths WHERE workspace=?", (workspace,))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
 
 def update_task_status_started(status,task_id,pid,start_time):
     CUR.execute("UPDATE tasks SET status=?,pid=?,start_time=? WHERE task_id=?", (status,pid,start_time,task_id))
@@ -311,6 +336,10 @@ def update_task_status_paused(task_id):
 
 def update_task_status_resumed(task_id):
     CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("STARTED",task_id))
+    CONNECTION.commit()
+
+def update_task_status_error(task_id):
+    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("ERROR",task_id))
     CONNECTION.commit()
 
 
