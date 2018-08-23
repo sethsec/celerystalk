@@ -33,6 +33,9 @@ def report(workspace,target_list=None):
         a=""
     else:
         unique_hosts = lib.db.get_unique_hosts_in_workspace(workspace)
+        if len(unique_hosts) == 0:
+            print("[!] - There are no hosts in the [{0}] workspace. Try another?\n".format(workspace))
+            exit()
 
     print("\n[+] Generating a report for the [" + workspace + "] workspace (" + str(len(unique_hosts)) +") unique host(s)\n")
 

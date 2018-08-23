@@ -70,7 +70,7 @@ def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner that supports distributed workers")
     print("\t\tby @sethsec")
-    print("\t\tBuild: 103\n")
+    print("\t\tBuild: 104\n")
 
 
 def main(arguments):
