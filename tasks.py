@@ -143,8 +143,8 @@ def post_process(*args):
 
 
     if "gobuster" in populated_command:
-        scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + ip  + "_" + str(
-            scanned_service_port) + "_" + scanned_service_protocol + "_" + "screens/"
+        scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",ip + "_" + str(
+            scanned_service_port) + "_" + scanned_service_protocol)
 
         try:
             os.stat(scan_output_base_file_dir)
@@ -171,7 +171,7 @@ def post_process(*args):
                 exit()
 
         for url in lines:
-            url = url.split("?")[0].replace("//","/")
+            #url = url.split("?")[0].replace("//","/")
             if url.startswith("http"):
                 url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
                     .replace("/", "_") \
@@ -181,7 +181,49 @@ def post_process(*args):
                 db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
                 db.insert_new_path(db_path)
                 print("Found Url: " + str(url))
-                lib.utils.take_screenshot(url,url_screenshot_filename)
+                result = lib.utils.take_screenshot(url,url_screenshot_filename)
+
+    if "photon" in populated_command:
+        scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", ip + "_" + str(
+            scanned_service_port) + "_" + scanned_service_protocol)
+
+        try:
+            os.stat(scan_output_base_file_dir)
+        except:
+            os.makedirs(scan_output_base_file_dir)
+
+        post_photon_filename = populated_command.split(">")[1].lstrip()
+        print("Post photon filename" + post_photon_filename + "\n")
+        populated_command_list = populated_command.split(" ")
+
+        index=0
+        for arg in populated_command_list:
+            if "-u" == populated_command_list[index]:
+                if "http" in populated_command_list[index+1]:
+                    scanned_url = populated_command_list[index+1]
+                    #print("Scanned_url: " + scanned_url)
+            index = index + 1
+
+        with open(post_photon_filename,'r') as photon_file:
+            lines = photon_file.read().splitlines()
+            print(lines)
+            if len(lines) > 100:
+                #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
+                exit()
+
+        for url in lines:
+            #url = url.split("?")[0].replace("//","/")
+            if url.startswith("http"):
+                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                    .replace("/", "_") \
+                    .replace("\\", "") \
+                    .replace(":", "_") + ".png"
+                url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                db.insert_new_path(db_path)
+                print("Found Url: " + str(url))
+                result = lib.utils.take_screenshot(url,url_screenshot_filename)
+                print(result)
 
 
 
@@ -239,8 +281,8 @@ def post_process(*args):
 
 @app.task()
 def cel_create_task(*args,**kwargs):
-    command_name, populated_command, ip, workspace, task_id = args
-    db_task = (task_id, 1, command_name, populated_command, ip, 'SUBMITTED', workspace)
+    command_name, populated_command, ip, output_dir, workspace, task_id = args
+    db_task = (task_id, 1, command_name, populated_command, ip, output_dir, 'SUBMITTED', workspace)
     db.create_task(db_task)
     #return populated_command
 

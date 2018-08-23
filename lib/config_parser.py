@@ -25,6 +25,59 @@ def read_config_ini():
     return config,supported_services
 
 
+def extract_bb_nmap_options():
+    config = ConfigParser(allow_no_value=True)
+    config.read(['config.ini'])
+
+    for (key, val) in config.items("nmap-commands"):
+        if key == "bug_bounty_mode":
+            bb_nmap_command = val
+            options = bb_nmap_command.replace('nmap', '').replace('[TARGET]', '')
+            return options
+
+
+    # try:
+    #     bb_nmap_command = config['nmap-commands']['bug_bounty_mode']
+    #     options = bb_nmap_command.replace('nmap','').replace('[TARGET]','')
+    #     return options
+    # except:
+    #     print("Are you sure only command is enabled in this section?")
+
+
+
+
+
+
+def read_bb_scope_ini(bb_scope_file):
+    bb_config = ConfigParser(allow_no_value=True)
+    bb_config.read([bb_scope_file])
+
+    in_scope_domains = []
+    in_scope_hosts = []
+    out_of_scope_hosts = []
+
+    #print(type(bb_config.items(['in-scope-domains'])))
+
+    try:
+        for key,val in bb_config.items('in-scope-domains'):
+            in_scope_domains.append(key)
+    except:
+        pass
+    try:
+        for key in bb_config.items('in-scope-hosts'):
+            in_scope_hosts.append(key)
+    except:
+        pass
+    try:
+        for key in bb_config.items('out-of-scope-hosts'):
+            out_of_scope_hosts.append(key)
+    except:
+        pass
+
+    return in_scope_domains,in_scope_hosts,out_of_scope_hosts
+
+
+
 
 
 # def read_config():

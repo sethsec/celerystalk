@@ -10,3 +10,4 @@ infi.docopt-completion
 python-libnessus
 sqlalchemy
 bleach
+selenium

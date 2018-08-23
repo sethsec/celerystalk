@@ -17,7 +17,8 @@ def create_task_table():
                                     pid integer,
                                     command_name text,                                    
                                     command text NOT NULL,
-                                    ip text NOT NULL,                                
+                                    ip text NOT NULL,
+                                    output_dir NOT NULL,                                
                                     status text NOT NULL,
                                     workspace text NOT NULL,
                                     start_time text,
@@ -122,8 +123,8 @@ def create_task(task):
     :param workspace:
     :return:
     """
-    sql = ''' INSERT INTO tasks(task_id, pid, command_name, command, ip, status, workspace)
-              VALUES(?,?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO tasks(task_id, pid, command_name, command, ip, output_dir, status, workspace)
+              VALUES(?,?,?,?,?,?,?,?) '''
 
     CUR.execute(sql, task)
     CONNECTION.commit()
@@ -241,6 +242,17 @@ def get_paused_tasks(workspace,ip=None):
     paused_rows = CUR.fetchall()
     return paused_rows
 
+def get_unique_hosts_in_workspace(workspace):
+    CUR.execute("SELECT DISTINCT ip,output_dir FROM tasks WHERE workspace=?", (workspace,))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def get_unique_hosts_in_output_dir(output_dir):
+    CUR.execute("SELECT DISTINCT ip,output_dir FROM tasks WHERE output_dir LIKE ?", (output_dir,))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
 
 def get_service(ip,port,protocol,workspace):
     CUR.execute("SELECT * FROM services WHERE ip=? AND port=? and proto=? and workspace=?", (ip,port,protocol,workspace))

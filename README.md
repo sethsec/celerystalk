@@ -10,7 +10,7 @@ celerystalk automates your network scanning/enumeration process with asynchronou
 * **Easy to use** - Uses a command based interface inspired by CrackMapExec 
 * **Measure twice, cut once** - A simulation mode tells you which tools will run without running them.
 * **Flexible** - Target only a subset of the hosts scanned in an previous nmap/nessus file.
-* **Screenshots** - The report contains screenshots of every url identified using gobuster 
+* **Screenshots** - The report contains screenshots of every url identified using gobuster and Photon (spider) 
 * **Uses Celery** - celerystalk uses [Celery](http://www.celeryproject.org/) to execute your commands asynchronously 
 * **Uses Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
  
@@ -30,14 +30,43 @@ Kali:
 
 ### Using celerystalk 
 
+####Quick Examples
+
+**[CTF/HackTheBox mode]** - How to scan one host by IP only
+
+```bash
+# nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
+# ./celerystalk scan -f tenten.xml -o /htb                          # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk report                                              # Generate report
+# firefox /htb/celerystalkReports/Workspace-Report--Default.html &  # View report 
+```
+
+**[Vulnerability Assessment Mode]** - How to scan a list of in scope hosts/networks and any subdomains that resolve to any of the in scope IPs
+
+```bash
+# nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
+# ./celerystalk scan -f client.xml -o /assessments/client -d client.com,client.net  # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
+# ./celerystalk report                                                              # Generate report
+# firefox /assessments/client/celerystalkReports/Workspace-Report--Default.html &   # View report 
+```
+
+**[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope.
+```bash
+Not ready yet.  Coming soon...
+```
+
+
+####Some more detail
 
 1. **Run Nmap or Nessus:** 
      
-   * Nnmap: Run nmap against your target(s). Required: enable version detection (-sV) and output to XML (-oX filename.xml). All other nmap options are up to you. Here are some examples:
-      * ```
-           nmap target(s) -Pn -p- -sV -oX filename.xml 
-           nmap -iL target_list.txt -Pn -sV -oX filename.xml
-        ```
+   * Nmap: Run nmap against your target(s). Required: enable version detection (-sV) and output to XML (-oX filename.xml). All other nmap options are up to you. Here are some examples:
+     ```
+      nmap target(s) -Pn -p- -sV -oX filename.xml 
+      nmap -iL target_list.txt -Pn -sV -oX filename.xml
+     ```
    * Nessus: Run nessus against your target(s) and export results as a .nessus file
     
 
@@ -114,8 +143,7 @@ Kali:
     ```
 1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file. Run this as often as you like. Each time you run the report it overwrites the previous report.  
     ```
-    Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
-                                celerystalk report /pentest/10.0.0.1  #Create a report for a single host
+    Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
     ```
 
 
@@ -125,7 +153,7 @@ Usage:
     celerystalk scan -f <nmap_file> -o <output_dir> [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
     celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
     celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
-    celerystalk report <report_dir> [-w <workspace>]
+    celerystalk report [-w <workspace>]
     celerystalk cancel ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk pause  ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
@@ -156,8 +184,7 @@ Examples:
                                 celerystalk query [-w workspace] watch
                                 celerystalk query [-w workspace] summary
                                 celerystalk query [-w workspace] summary watch
-    Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
-                                celerystalk report /pentest/10.0.0.1  #Create a report for a single host
+    Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace 
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
                                 celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
                                 celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace

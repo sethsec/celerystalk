@@ -67,9 +67,9 @@ def process_nessus_data2(nessus_report,workspace,target=None):
 
 def process_nmap_data2(nmap_report,workspace, target=None):
     for scanned_host in nmap_report.hosts:
-        print(scanned_host)
+        #print(scanned_host)
         ip=scanned_host.id
-        print(ip)
+        #print(ip)
         if (IPAddress(ip) == target) or (target is None):
             for scanned_service_item in scanned_host.services:
                 if scanned_service_item.state == "open":
@@ -119,7 +119,7 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
     for row in unique_hosts:
 
         ip = row[0]
-        print("in proccess_db_services - ip:" + ip)
+        #print("in proccess_db_services - ip:" + ip)
         if (IPAddress(ip) == target) or (target is None):
             host_dir = output_base_dir + ip
             host_data_dir = host_dir + "/celerystalkOutput/"
@@ -143,7 +143,7 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
             result = chain(
                 # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                 # in celery the same way a task does, for instance, you can't find it in flower
-                tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, workspace, task_id)),
+                tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, output_base_dir, workspace, task_id)),
 
                 # run the command. run_task takes care of marking the task as started and then completed.
                 # The si tells run_cmd to ignore the data returned from a previous task
@@ -153,7 +153,7 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
 
 
             task_id_list.append(result.task_id)
-            print "IP Address: {0}".format(ip)
+            #print "IP Address: {0}".format(ip)
             db_services = db.get_all_services_for_ip(ip, workspace)
 
             for db_service in db_services:
@@ -179,7 +179,7 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                         # in celery the same way a task does, for instance, you can't find it in flower
-                        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, workspace, task_id)),
+                        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, output_base_dir, workspace, task_id)),
 
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
@@ -243,7 +243,7 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                 result = chain(
                     # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                     # in celery the same way a task does, for instance, you can't find it in flower
-                    tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, workspace, task_id)),
+                    tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, output_base_dir, workspace, task_id)),
 
                     # run the command. run_task takes care of marking the task as started and then completed.
                     # The si tells run_cmd to ignore the data returned from a previous task
@@ -279,7 +279,7 @@ def find_subdomains(domains,simulation,workspace,output_base_dir,scan_mode,out_o
                         result = chain(
                             # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                             # in celery the same way a task does, for instance, you can't find it in flower
-                            tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, workspace, task_id)),
+                            tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, output_base_dir, workspace, task_id)),
 
                             # run the command. run_task takes care of marking the task as started and then completed.
                             # The si tells run_cmd to ignore the data returned from a previous task
@@ -291,7 +291,7 @@ def find_subdomains(domains,simulation,workspace,output_base_dir,scan_mode,out_o
                         )()  # .apply_async()
                     else:
                         result = chain(
-                            tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, workspace, task_id)),
+                            tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, output_base_dir, workspace, task_id)),
                             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
                             tasks.post_process_domains_bb.s(cmd_name, populated_command, output_base_dir, workspace,
                                                          domain, simulation, celery_path,out_of_scope_hosts),
@@ -308,13 +308,13 @@ def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
     config.read(['config.ini'])
 
 
-    print(config_nmap_options)
+    #print(config_nmap_options)
     cmd_name = "nmap_bug_bounty_mode"
     populated_command = "nmap " + host + config_nmap_options
 
     task_id = uuid()
     result = chain(
-        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, host, workspace, task_id)),
+        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, host, output_base_dir, workspace, task_id)),
         tasks.cel_nmap_scan.si(cmd_name, populated_command, host, config_nmap_options, celery_path, task_id,workspace).set(task_id=task_id),
         tasks.cel_scan_process_nmap_data.s(workspace),
         tasks.cel_process_db_services.si(output_base_dir, simulation, workspace,host=host),

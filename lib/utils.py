@@ -26,14 +26,18 @@ def take_screenshot(url,output):
 
     driver = '/usr/local/bin/chromedriver'
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver)
+    try:
+        # capture the screen
+        driver.get(url)
+        #driver.get_screenshot_as_file(output)
+        print("output in takescreenshot: " + output)
+        print(url)
+        screenshot = driver.save_screenshot(output)
+        driver.quit()
+        return screenshot
+    except:
+        return False
 
-    # capture the screen
-    driver.get(url)
-    #driver.get_screenshot_as_file(output)
-    print("output in takescreenshot: " + output)
-    print(url)
-    screenshot = driver.save_screenshot(output)
-    driver.quit()
 
 
 
