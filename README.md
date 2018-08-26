@@ -1,22 +1,25 @@
 # celerystalk (currently in BETA - Bug reports of any kind are welcome!)
 
-celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*) 
-* **Configurable** - celerystalk is the framework. Some common tools are in the default config, but you can add tool you want 
-* **Consistency** - Scan each service the same way so you don't have to keep track of what you ran where 
-* **Scalability** - Designed for scanning multiple hosts (but works well for scanning one host at a time)
+celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*). 
+
+* **Configurable** - Some common tools are in the default config, but you can add any tool you want 
+* **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
+* **Scalability** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
 * **Workspaces** - Supports multiple workspaces, kind of like how Metasploit does it
-* **Job Control** - Supports canceling, pausing, and resuming of tasks, similar to how Burp Scanner does it
+* **Job Control** - Supports canceling, pausing, and resuming of tasks, kind of how Burp scanner does it
 * **Easy to use** - Uses a command based interface inspired by CrackMapExec 
-* **Measure twice, cut once** - A simulation mode tells you which tools will run without running them.
-* **Flexible** - Target only a subset of the hosts scanned in an previous nmap/nessus file.
-* **Screenshots** - The report contains screenshots of every url identified using gobuster and Photon (spider) 
-* **Uses Celery** - celerystalk uses [Celery](http://www.celeryproject.org/) to execute your commands asynchronously 
-* **Uses Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
- 
+* **Measure twice, cut once** - A simulation mode tells you which tools will run without running them
+* **Flexible** - Target only a subset of the hosts scanned in an previous Nmap/Nessus file
+
+Under the hood:
+* **Celery** - [Celery](http://www.celeryproject.org/) is used to execute your commands asynchronously 
+* **Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
+* **Selenium** is used with chromedriver to take *screenshots of every url identified* using gobuster and Photon (spider)
+* **SQLite** is used to keep persist data and manage workspaces
      
 
-### Install/Setup
+## Install/Setup
 Kali: 
 
 ```
@@ -28,13 +31,13 @@ Kali:
 ```
 
 
-### Using celerystalk 
+## Using celerystalk 
 
-####Quick Examples
+### Quick mode
 
 **[CTF/HackTheBox mode]** - How to scan one host by IP only
 
-```bash
+```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
 # ./celerystalk scan -f tenten.xml -o /htb                          # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
@@ -44,7 +47,7 @@ Kali:
 
 **[Vulnerability Assessment Mode]** - How to scan a list of in scope hosts/networks and any subdomains that resolve to any of the in scope IPs
 
-```bash
+```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
 # ./celerystalk scan -f client.xml -o /assessments/client -d client.com,client.net  # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
@@ -58,7 +61,7 @@ Not ready yet.  Coming soon...
 ```
 
 
-####Some more detail
+###Some more detail
 
 1. **Run Nmap or Nessus:** 
      
@@ -105,9 +108,9 @@ Not ready yet.  Coming soon...
     photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT] -o [OUTPUT]
     ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
     ```
-1. **Launch Scan:** Run celerystalk scan using the nmap or nessus XML file.  It will submit tasks to celery which asynchronously executes them and log output to your output directory. 
+1. **Launch Scan:** Run celerystalk scan using the nmap or nessus XML file.  It will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
 
-    You can run specify domains to look for subdomains aka virtualhosts that are in scope. By default, the scope is defined as the list of imported IP addresses in the imported Nnap/Nessus.xml.
+    If you specify the -d flag, celerystalk will perfrom subdomain recon using your specified tools.  It will then check to see if the IP associated with each subdomain found is in the list of IP's in your nmap/nessus file.  If the subdomain is in scope celerystalk will scan it using the subdomain/virtualhost.
      
     ```    
     Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
@@ -119,7 +122,7 @@ Not ready yet.  Coming soon...
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
     Simulation mode:            celerystalk scan -f <file> -o /pentest -s
     ```   
-1. **Query Status:** Asynchronously check the status of the tasks queue, as frequently as you like. The watch mode actually executes the linux watch command so that you don't fill up your entire terminal buffer :)
+1. **Query Status:** Asynchronously check the status of the tasks queue as frequently as you like. The watch mode actually executes the linux watch command so that you don't fill up your entire terminal buffer :)
     ```
     Query Tasks:                celerystalk query [-w workspace]
                                 celerystalk query [-w workspace] watch                               
@@ -134,7 +137,7 @@ Not ready yet.  Coming soon...
     * *Canceling a queued task* will make celery ignore it (uses celery's revoke).
     * *Canceling all tasks* will kill running tasks and revoke all queued tasks.    
     * *Pausing a single task* uses kill -STOP to suspend the process.
-    * *Pausing all tasks* is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.
+    * *Pausing all tasks* attemps to -STOP all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.
     * *Resuming tasks* send kill -CONT which allows the process to start up again where it left off.    
     ```
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
@@ -147,7 +150,7 @@ Not ready yet.  Coming soon...
     ```
 
 
-### Usage
+## Usage
 ```
 Usage:
     celerystalk scan -f <nmap_file> -o <output_dir> [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
@@ -193,7 +196,7 @@ Examples:
     Shutdown Celery processes:  celerystalk shutdown
 ```
 
-### Credit
+## Credit
 This project was inspired by many great tools:  
 1. https://github.com/codingo/Reconnoitre by @codingo_
 1. https://github.com/frizb/Vanquish by @frizb
