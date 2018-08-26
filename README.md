@@ -1,22 +1,22 @@
 # celerystalk (currently in BETA - Bug reports of any kind are welcome!)
 
-celerystalk automates your network scanning/enumeration process with asynchronous jobs (aka *tasks*) 
-* **Configurable** - celerystalk is the framework. Some common tools are in the default config, but you can add any tool you want 
+celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*). 
+
+* **Configurable** - Some common tools are in the default config, but you can add any tool you want 
 * **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
 * **Scalability** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
 * **Workspaces** - Supports multiple workspaces, kind of like how Metasploit does it
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, kind of how Burp scanner does it
 * **Easy to use** - Uses a command based interface inspired by CrackMapExec 
-* **Measure twice, cut once** - A simulation mode tells you which tools will run without running them.
-* **Flexible** - Target only a subset of the hosts scanned in an previous nmap/nessus file.
-* **Screenshots** - The report contains screenshots of every url identified using gobuster and Photon (spider) 
+* **Measure twice, cut once** - A simulation mode tells you which tools will run without running them
+* **Flexible** - Target only a subset of the hosts scanned in an previous Nmap/Nessus file
 
 Under the hood:
 * **Celery** - [Celery](http://www.celeryproject.org/) is used to execute your commands asynchronously 
 * **Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
-* **Selenium** is used with the chromedriver to screenshots
-* **SQLite** is used to keep persist data
+* **Selenium** is used with chromedriver to take *screenshots of every url identified* using gobuster and Photon (spider)
+* **SQLite** is used to keep persist data and manage workspaces
      
 
 ## Install/Setup
