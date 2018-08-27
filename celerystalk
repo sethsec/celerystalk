@@ -35,8 +35,7 @@ Examples:
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
     Simulation mode:            celerystalk scan -f <file> -o /pentest -s
     Query Tasks:                celerystalk query [-w workspace]
-    Create Report:              celerystalk report /pentest           #Create a report for all scanneed hosts in /pentest
-                                celerystalk report /pentest/10.0.0.1  #Create a report for a single host
+    Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
                                 celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
                                 celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
