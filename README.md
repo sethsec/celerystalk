@@ -1,6 +1,6 @@
 # celerystalk (currently in BETA - Bug reports of any kind are welcome!)
 
-celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*). 
+celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run. 
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want 
 * **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
