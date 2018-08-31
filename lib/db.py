@@ -4,6 +4,10 @@ from sqlite3 import Error
 CONNECTION = sqlite3.connect("csdb.sqlite3")
 CUR = CONNECTION.cursor()
 
+#############################
+#Table Creation
+#############################
+
 def create_task_table():
     """ create a table from the create_table_sql statement
     :param conn: Connection object
@@ -103,7 +107,9 @@ def create_vhosts_table():
     except Error as e:
         print(e)
 
-
+#############################
+# Table: Workspace
+#############################
 
 def create_workspace(db_workspace):
     """
@@ -115,6 +121,24 @@ def create_workspace(db_workspace):
               VALUES(?,?) '''
     CUR.execute(sql_create_workspace,db_workspace)
     CONNECTION.commit()
+
+def get_output_dir_for_workspace(workspace):
+    CUR.execute("SELECT output_dir FROM workspace where name = ?", (workspace,))
+    workspace = CUR.fetchall()
+    CONNECTION.commit()
+    return workspace
+
+def get_all_workspaces():
+    CUR.execute("SELECT * FROM workspace")
+    workspaces = CUR.fetchall()
+    CONNECTION.commit()
+    return workspaces
+
+
+
+#############################
+# Table: Tasks
+#############################
 
 def create_task(task):
     """
@@ -128,46 +152,6 @@ def create_task(task):
     CUR.execute(sql, task)
     CONNECTION.commit()
 
-def create_service(db_service):
-    """
-
-    :param workspace:
-    :return:
-    """
-    sql = ''' INSERT INTO services(ip,port,proto,service,workspace)
-              VALUES(?,?,?,?,?) '''
-    CUR.execute(sql, db_service)
-    CONNECTION.commit()
-
-
-def create_vhost(db_vhost):
-    """
-
-    :param workspace:
-    :return:
-    """
-    sql = ''' INSERT OR IGNORE INTO vhosts(ip,vhost,in_scope,submitted,workspace)
-              VALUES(?,?,?,?,?) '''
-    CUR.execute(sql, db_vhost)
-    CONNECTION.commit()
-
-
-def insert_new_path(db_path):
-    """
-
-    :param db_path:
-    :return:
-    """
-    sql = '''INSERT OR IGNORE INTO paths(ip,port,path,submitted,url_screenshot_filename,workspace)
-              VALUES(?,?,?,?,?,?)  '''
-    CUR.execute(sql, db_path)
-    CONNECTION.commit()
-
-def get_output_dir_for_workspace(workspace):
-    CUR.execute("SELECT output_dir FROM workspace where name = ?", (workspace,))
-    workspace = CUR.fetchall()
-    CONNECTION.commit()
-    return workspace
 
 def get_completed_task_count(workspace):
     CUR.execute("SELECT count(*) FROM tasks where status = ? AND workspace = ?", ("COMPLETED", workspace))
@@ -263,6 +247,56 @@ def get_unique_hosts_in_output_dir(output_dir):
     CONNECTION.commit()
     return host_rows
 
+def get_total_tasks(workspace):
+    CUR.execute("SELECT count(*) FROM tasks where workspace = ?", (workspace,))
+    total_count = CUR.fetchall()
+    CONNECTION.commit()
+    return total_count
+
+def update_task_status_started(status,task_id,pid,start_time):
+    CUR.execute("UPDATE tasks SET status=?,pid=?,start_time=? WHERE task_id=?", (status,pid,start_time,task_id))
+    CONNECTION.commit()
+
+
+def update_task_status_completed(status,task_id,run_time):
+    CUR.execute("UPDATE tasks SET status=?,run_time=? WHERE task_id=?", (status, run_time, task_id))
+    CONNECTION.commit()
+
+
+def update_task_status_cancelled(task_id):
+    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("CANCELLED",task_id))
+    CONNECTION.commit()
+
+
+def update_task_status_paused(task_id):
+    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("PAUSED",task_id))
+    CONNECTION.commit()
+
+
+def update_task_status_resumed(task_id):
+    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("STARTED",task_id))
+    CONNECTION.commit()
+
+def update_task_status_error(task_id):
+    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("ERROR",task_id))
+    CONNECTION.commit()
+
+
+#############################
+# Table: Services
+#############################
+
+def create_service(db_service):
+    """
+
+    :param workspace:
+    :return:
+    """
+    sql = ''' INSERT INTO services(ip,port,proto,service,workspace)
+              VALUES(?,?,?,?,?) '''
+    CUR.execute(sql, db_service)
+    CONNECTION.commit()
+
 def get_service(ip,port,protocol,workspace):
     CUR.execute("SELECT * FROM services WHERE ip=? AND port=? and proto=? and workspace=?", (ip,port,protocol,workspace))
     service_row = CUR.fetchall()
@@ -270,7 +304,7 @@ def get_service(ip,port,protocol,workspace):
     return service_row
 
 def get_all_services(workspace):
-    CUR.execute("SELECT * FROM services WHERE workspace=?", (workspace,))
+    CUR.execute("SELECT * FROM services WHERE workspace=? ORDER BY ip,port", (workspace,))
     service_rows = CUR.fetchall()
     CONNECTION.commit()
     return service_rows
@@ -287,6 +321,25 @@ def get_unique_hosts(workspace):
     CONNECTION.commit()
     return host_rows
 
+def update_service(ip,port,proto,service,workspace):
+    CUR.execute("UPDATE services SET service=? WHERE ip=? AND port=? AND proto=? AND workspace=?", (service,ip,port,proto,workspace))
+    CONNECTION.commit()
+
+
+#############################
+# Table: Vhosts
+#############################
+
+def create_vhost(db_vhost):
+    """
+
+    :param workspace:
+    :return:
+    """
+    sql = ''' INSERT OR IGNORE INTO vhosts(ip,vhost,in_scope,submitted,workspace)
+              VALUES(?,?,?,?,?) '''
+    CUR.execute(sql, db_vhost)
+    CONNECTION.commit()
 
 def get_unique_inscope_vhosts_for_ip(ip,workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE ip=? AND workspace=? AND in_scope=?", (ip,workspace,1))
@@ -320,14 +373,37 @@ def get_vhost_ip(scannable_vhost,workspace):
     CONNECTION.commit()
     return ip
 
-def get_total_tasks(workspace):
-    CUR.execute("SELECT count(*) FROM tasks where workspace = ?", (workspace,))
-    total_count = CUR.fetchall()
+def get_vhosts_table(workspace):
+    CUR.execute("SELECT ip,vhost,in_scope FROM vhosts WHERE workspace=? ORDER BY ip,vhost,in_scope", (workspace,))
+    vhost_rows = CUR.fetchall()
     CONNECTION.commit()
-    return total_count
+    return vhost_rows
+
+
+def update_vhosts_submitted(ip,vhost,workspace,submitted):
+    CUR.execute("UPDATE vhosts SET submitted=? WHERE ip=? AND vhost=? AND workspace=?", (submitted,ip,vhost,workspace))
+    CONNECTION.commit()
+
+
+
+
+#############################
+# Table: Paths
+#############################
+
+def insert_new_path(db_path):
+    """
+
+    :param db_path:
+    :return:
+    """
+    sql = '''INSERT OR IGNORE INTO paths(ip,port,path,submitted,url_screenshot_filename,workspace)
+              VALUES(?,?,?,?,?,?)  '''
+    CUR.execute(sql, db_path)
+    CONNECTION.commit()
 
 def get_all_paths(workspace):
-    CUR.execute("SELECT * FROM paths WHERE workspace = ?", (workspace,))
+    CUR.execute("SELECT * FROM paths WHERE workspace = ? ORDER BY ip,port,path", (workspace,))
     all_paths = CUR.fetchall()
     CONNECTION.commit()
     return all_paths
@@ -350,51 +426,6 @@ def get_unique_hosts_with_paths(workspace):
     CONNECTION.commit()
     return host_rows
 
-def update_task_status_started(status,task_id,pid,start_time):
-    CUR.execute("UPDATE tasks SET status=?,pid=?,start_time=? WHERE task_id=?", (status,pid,start_time,task_id))
-    CONNECTION.commit()
-
-
-def update_task_status_completed(status,task_id,run_time):
-    CUR.execute("UPDATE tasks SET status=?,run_time=? WHERE task_id=?", (status, run_time, task_id))
-    CONNECTION.commit()
-
-
-def update_task_status_cancelled(task_id):
-    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("CANCELLED",task_id))
-    CONNECTION.commit()
-
-
-def update_task_status_paused(task_id):
-    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("PAUSED",task_id))
-    CONNECTION.commit()
-
-
-def update_task_status_resumed(task_id):
-    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("STARTED",task_id))
-    CONNECTION.commit()
-
-def update_task_status_error(task_id):
-    CUR.execute("UPDATE tasks SET status=? WHERE task_id=?", ("ERROR",task_id))
-    CONNECTION.commit()
-
-
-# def insert_new_path(path,b,workspace):
-#
-#     CUR.execute("INSERT OR IGNORE INTO path values (?,?,?)", (path,b,workspace))
-#
-#     CONNECTION.commit()
-
 def update_path(path,submitted,workspace):
     CUR.execute("UPDATE paths SET submitted=? WHERE path=? AND workspace=?", (submitted,path,workspace))
-    CONNECTION.commit()
-
-
-def update_service(ip,port,proto,service,workspace):
-    CUR.execute("UPDATE services SET service=? WHERE ip=? AND port=? AND proto=? AND workspace=?", (service,ip,port,proto,workspace))
-    CONNECTION.commit()
-
-
-def update_vhosts_submitted(ip,vhost,workspace,submitted):
-    CUR.execute("UPDATE vhosts SET submitted=? WHERE ip=? AND vhost=? AND workspace=?", (submitted,ip,vhost,workspace))
     CONNECTION.commit()

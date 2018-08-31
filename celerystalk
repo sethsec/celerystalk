@@ -11,8 +11,8 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk pause  ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
-    celerystalk db [workspaces]
-    celerystalk db -w workspace ([services] | [hosts] | [paths])
+    celerystalk db workspaces
+    celerystalk db ([services] | [hosts] | [paths]) [-w <workspace>]
     celerystalk shutdown
     celerystalk (help | -h | --help)
 
@@ -31,22 +31,22 @@ Options:
 
 Examples:
 
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
-    Find in scope vhosts:       celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
-                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
-    Query Tasks:                celerystalk query [-w workspace]
-    Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
-    Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
-                                celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
-                                celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
-                                celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
-                                celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
-    Shutdown Celery processes:  celerystalk shutdown
+    Start from Nmap XML file:   ./celerystalk scan -f /pentest/nmap.xml -o /pentest
+    Start from Nessus file:     ./celerystalk scan -f /pentest/scan.nessus -o /pentest
+    Specify workspace:          ./celerystalk scan -f <file> -o /pentest -w test
+    Find in scope vhosts:       ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Scan subset hosts in XML:   ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
+                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
+                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Simulation mode:            ./celerystalk scan -f <file> -o /pentest -s
+    Query Tasks:                ./celerystalk query [-w workspace]
+    Create Report:              ./celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
+    Cancel/Pause/Resume Tasks:  ./celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
+                                ./celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
+                                ./celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
+                                ./celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
+                                ./celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
+    Shutdown Celery processes:  ./celerystalk shutdown
 """
 
 # Not ready yet (still in dev):
@@ -68,7 +68,7 @@ import lib.query
 import lib.config_parser
 import socket
 from lib import db
-import pandas as pd
+from prettytable import PrettyTable
 
 def print_banner():
 
@@ -176,13 +176,52 @@ def main(arguments):
     ####################################
     if arguments["db"]:
         if arguments["workspaces"]:
-            workspace_rows = [("Workspace","Output Directory")]
-            workspace_rows = workspace_rows + [("---------","---------------")]
-            workspace_rows = workspace_rows + lib.db.get_all_workspaces()
-            #print(workspace_rows)
-            df = pd.DataFrame(workspace_rows)
-            print(df.to_string(index=False,header=False))
+
+            columns = ["Workspace", "Output Directory"]
+            workspace_rows = lib.db.get_all_workspaces()
+            workspaces_table = PrettyTable(columns)
+            for row in workspace_rows:
+                workspaces_table.add_row(row)
+            print(workspaces_table)
             print("\n\n")
+        else:
+            if arguments["hosts"]:
+                print("[+] Showing hosts for the [{0}] workspace\n".format(workspace))
+                columns = ["IP","vhost","in_scope"]
+                host_rows = lib.db.get_vhosts_table(workspace)
+                hosts_table = PrettyTable(columns)
+                hosts_table.align[columns[0]] = "l"
+                hosts_table.align[columns[1]] = "l"
+                for row in host_rows:
+                    hosts_table.add_row(row)
+                print(hosts_table)
+                print("\n\n")
+            elif arguments["services"]:
+                print("[+] Showing services for the [{0}] workspace\n".format(workspace))
+                columns = ["IP", "Port", "Protocol","Service"]
+                services_rows = lib.db.get_all_services(workspace)
+                services_table = PrettyTable(columns)
+                services_table.align[columns[0]] = "l"
+                services_table.align[columns[1]] = "l"
+                services_table.align[columns[3]] = "l"
+                for row in services_rows:
+                    services_table.add_row(row[1:5])
+                print(services_table)
+                print("\n\n")
+            elif arguments["paths"]:
+                print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
+                columns = ["IP", "Port", "Path"]
+                paths_rows = lib.db.get_all_paths(workspace)
+                paths_table = PrettyTable(columns)
+                paths_table.align[columns[0]] = "l"
+                paths_table.align[columns[1]] = "l"
+                paths_table.align[columns[2]] = "l"
+                for row in paths_rows:
+                    paths_table.add_row(row[1:4])
+                print(paths_table)
+                print("\n\n")
+
+
 
 
     ####################################
@@ -339,7 +378,7 @@ def main(arguments):
 
 if __name__ == "__main__":
     arguments = docopt(__doc__, version='celerystalk 1.0')
-    print(arguments)
+    #print(arguments)
     print_banner()
     if arguments["help"]:
        print(__doc__)
