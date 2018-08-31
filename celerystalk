@@ -2,15 +2,17 @@
 
 """
 Usage:
-    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
-    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>]  [-s]
-    celerystalk scan -o <output_dir> -u <url> [-w <workspace>]  [-s]
+    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-c <config_file>] [-s]
+    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>] [-c <config_file>] [-s]
+    celerystalk scan -o <output_dir> -u <url> [-w <workspace>] [-c <config_file>] [-s]
     celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
     celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
     celerystalk report [-w <workspace>]
     celerystalk cancel ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk pause  ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
+    celerystalk db [workspaces]
+    celerystalk db -w workspace ([services] | [hosts] | [paths])
     celerystalk shutdown
     celerystalk (help | -h | --help)
 
@@ -24,6 +26,7 @@ Options:
     -w <workspace>      Workspace [default: Default]
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
+    -c <config_file>    Point to your own config file (Default: ./config.ini)
 
 
 Examples:
@@ -65,7 +68,7 @@ import lib.query
 import lib.config_parser
 import socket
 from lib import db
-
+import pandas as pd
 
 def print_banner():
 
@@ -165,6 +168,22 @@ def main(arguments):
         else:
             lib.report.report(workspace)
         exit()
+
+
+
+    ####################################
+    # Dump data from DB
+    ####################################
+    if arguments["db"]:
+        if arguments["workspaces"]:
+            workspace_rows = [("Workspace","Output Directory")]
+            workspace_rows = workspace_rows + [("---------","---------------")]
+            workspace_rows = workspace_rows + lib.db.get_all_workspaces()
+            #print(workspace_rows)
+            df = pd.DataFrame(workspace_rows)
+            print(df.to_string(index=False,header=False))
+            print("\n\n")
+
 
     ####################################
     # Scan
