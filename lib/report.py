@@ -7,17 +7,20 @@ import urllib
 
 def paths_report(host):
     all_paths = lib.db.get_all_paths_for_host(host)
-    html_code = """<div id="linkwrap">"""
+    html_code = ""
     for row in all_paths:
         ip,port,path,url_screenshot_filename,workspace = row
         try:
             os.stat(url_screenshot_filename)
             url_screenshot_filename = urllib.quote(url_screenshot_filename)
+            html_code = html_code + """\n<div id="linkwrap">\n"""
             html_code = html_code + """<a class="link" href="#">[Screenshot]<span><img src="{1}" alt="image"/></span></a>  <a href="{0}">{0}</a><br>\n""".format(path,url_screenshot_filename)
+            html_code = html_code + "</div>\n"
         except:
             print("Could not find screenshot for " + path)
+            html_code = html_code + """\n<div id="linkwrap">\n"""
             html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
-    html_code = html_code + "</div>"
+            html_code = html_code + "</div>\n"
     return html_code
 
 
