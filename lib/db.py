@@ -374,7 +374,7 @@ def get_vhost_ip(scannable_vhost,workspace):
     return ip
 
 def get_vhosts_table(workspace):
-    CUR.execute("SELECT ip,vhost,in_scope FROM vhosts WHERE workspace=? ORDER BY ip,vhost,in_scope ASC", (workspace,))
+    CUR.execute("SELECT ip,vhost,in_scope FROM vhosts WHERE workspace=? ORDER BY in_scope DESC, ip,vhost,", (workspace,))
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
