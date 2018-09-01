@@ -24,7 +24,7 @@ def take_screenshot(url,output):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = '/usr/local/bin/chromedriver'
+    driver = '/usr/bin/chromedriver'
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver)
     try:
         # capture the screen

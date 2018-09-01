@@ -83,6 +83,8 @@ def main(arguments):
     else:
         workspace = 'Default'
 
+
+
     db.create_task_table()
     db.create_path_table()
     db.create_services_table()

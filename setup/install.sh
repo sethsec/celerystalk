@@ -12,7 +12,7 @@ fi
 echo "[+] Updating apt sources"
 apt update -y
 echo "[+] Installing redis-server, gobuster, seclists"
-apt install gobuster redis-server seclists -y
+apt install gobuster redis-server seclists chromium chromium-driver
 
 CELERYSTALK_DIR=`pwd`
 
@@ -42,14 +42,6 @@ if [ ! -f /opt/Photon/photon.py ]; then
     git clone https://github.com/s0md3v/Photon.git
     cd Photon
     pip install -r requirements.txt
-fi
-
-if [ ! -f /usr/local/bin/chromedriver ]; then
-    echo "[+] Downloading chromedriver /usr/local/bin/chromedriver"
-    cd /usr/local/bin/
-    wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
-    unzip chromedriver_linux64.zip
-    rm chromedriver_linux64.zip
 fi
 
 cd $CELERYSTALK_DIR

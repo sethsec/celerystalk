@@ -351,7 +351,7 @@ def post_process_domains(vhosts,command_name,populated_command,output_base_dir,w
                             result = chain(
                                 # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                                 # in celery the same way a task does, for instance, you can't find it in flower
-                                cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile, workspace, task_id)),
+                                cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt", workspace, task_id)),
 
                                 # run the command. run_task takes care of marking the task as started and then completed.
                                 # The si tells run_cmd to ignore the data returned from a previous task
@@ -440,7 +440,7 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
 
                             task_id = uuid()
                             result = chain(
-                                cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile,workspace, task_id)),
+                                cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt",workspace, task_id)),
                                 run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
                                 post_process.si(cmd_name, populated_command, output_base_dir, workspace, scannable_vhost,
                                                 host_dir,
