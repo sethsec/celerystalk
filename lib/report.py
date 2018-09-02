@@ -283,10 +283,10 @@ def populate_report_data(report_file,vhost,workspace):
         try:
             with open(output_file, "r") as scan_file:
                 for line in scan_file:
-                    if linecount < 500:
+                    if linecount < 300:
                         report_file.write(line)
                     linecount = linecount + 1
-                if linecount > 500:
-                    report_file.write("<<<Snip... Only displaying first 500 of the total " + str(linecount) + " lines>>>\n")
+                if linecount > 300:
+                    report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
         except:
             report_file.write("[!] Error opening file: " + output_file + "\n[!] This is normal if you executed a simulation, otherwise, please file an issue")
