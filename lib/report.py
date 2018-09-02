@@ -266,7 +266,7 @@ def populate_report_data(report_file,vhost,workspace):
     #     pass
 
     for output_file,command_name,command,status,start_time,run_time in reportable_tasks:
-
+        output_file = os.path.normpath(output_file)
         report_file.write('\n\n')
         report_file.write('-' * 50 + '\n')
         report_file.write("Command Name:\t" + command_name + '\n')
@@ -289,4 +289,4 @@ def populate_report_data(report_file,vhost,workspace):
                 if linecount > 500:
                     report_file.write("<<<Snip... Only displaying first 500 of the total " + str(linecount) + " lines>>>\n")
         except:
-            print("Error opening file: " + output_file)
+            report_file.write("[!] Error opening file: " + output_file + "\n[!] This is normal if you executed a simulation, otherwise, please file an issue")

@@ -95,7 +95,7 @@ def create_vhosts_table():
     sql_create_vhosts_table = """ CREATE TABLE IF NOT EXISTS vhosts (
                                         id INTEGER PRIMARY KEY,
                                         ip text,
-                                        vhost text NOT NULL,
+                                        vhost text NOT NULL UNIQUE,
                                         in_scope int NOT NULL,
                                         submitted int NOT NULL,                                                                                
                                         workspace text

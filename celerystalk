@@ -264,25 +264,20 @@ def main(arguments):
 
         if arguments["-f"] and arguments["-t"] and not arguments["<bb_scope_file>"]:
             scan_mode = "VAPT"
-
             target_list = lib.utils.target_splitter(arguments["-t"])
 
             for target in target_list:
                 if "nessus" in arguments["-f"]:
                     nessus_report = lib.utils.nessus_parser(arguments["-f"])
-                    # process_nessus_data(nessus_report, output_dir, arguments["--simulation"],workspace)
                     lib.scan.process_nessus_data2(nessus_report, workspace,target=target)
-                    if arguments["<domains>"]:
-                        lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-                    lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace,target=target)
-
                 else:
                     nmap_report = lib.utils.nmap_parser(arguments["-f"])
-                    # process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
                     lib.scan.process_nmap_data2(nmap_report, workspace,target=target)
-                    if arguments["<domains>"]:
-                        lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-                    lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace,target=target)
+
+            if arguments["<domains>"]:
+                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,
+                                         scan_mode)
+            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace, target=target)
             exit()
 
         ####################################
@@ -291,11 +286,9 @@ def main(arguments):
         if arguments["-f"]:
             scan_mode = "VAPT"
 
-
             #(json_config, supported_services) = read_config_ini()
             if "nessus" in arguments["-f"]:
                 nessus_report = lib.utils.nessus_parser(arguments["-f"])
-                #process_nessus_data(nessus_report, output_dir, arguments["--simulation"],workspace)
                 lib.scan.process_nessus_data2(nessus_report, workspace)
                 if arguments["<domains>"]:
                     lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
@@ -303,7 +296,6 @@ def main(arguments):
 
             else:
                 nmap_report = lib.utils.nmap_parser(arguments["-f"])
-                #process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
                 lib.scan.process_nmap_data2(nmap_report, workspace)
                 if arguments["<domains>"]:
                     lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)

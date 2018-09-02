@@ -1,6 +1,6 @@
 # celerystalk (currently in BETA - Bug reports of any kind are welcome!)
 
-celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run. 
+celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want 
 * **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
@@ -20,6 +20,8 @@ Under the hood:
      
 
 ## Install/Setup
+**At this time you must install and run celerystalk as root**  
+
 Kali: 
 
 ```
@@ -42,7 +44,16 @@ Kali:
 # ./celerystalk scan -f tenten.xml -o /htb                          # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
-# firefox /htb/celerystalkReports/Workspace-Report--Default.html &  # View report 
+# firefox /htb/celerystalkReports/Workspace-Report[Default.html] &  # View report 
+```
+
+**[URL Mode]** - How to scan a URL (scans the specified path, not the root).  
+
+```
+# ./celerystalk scan -u http://10.10.10.10/secret_folder/ -o /assessments/client t  # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
+# ./celerystalk report                                                              # Generate report
+# firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
 ```
 
 **[Vulnerability Assessment Mode]** - How to scan a list of in scope hosts/networks and any subdomains that resolve to any of the in scope IPs
@@ -52,7 +63,7 @@ Kali:
 # ./celerystalk scan -f client.xml -o /assessments/client -d client.com,client.net  # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
 # ./celerystalk report                                                              # Generate report
-# firefox /assessments/client/celerystalkReports/Workspace-Report--Default.html &   # View report 
+# firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
 ```
 
 **[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope.
