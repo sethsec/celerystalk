@@ -54,8 +54,8 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None):
     start_ctime = time.ctime(start_time)
     start = timer()
 
-    f.write("[+] CMD EXECUTED: " + str(start_ctime) + " - " + populated_command + "\n")
-    f.write(task_id)
+    #f.write("[+] CMD EXECUTED: " + str(start_ctime) + " - " + populated_command + "\n")
+    #f.write(task_id)
     print(populated_command)
 
     #The except isnt working yet if I kill the process from linux cli. i guess that is not enough to trigger an exception.
@@ -65,9 +65,11 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None):
         db.update_task_status_started("STARTED", task_id, pid, start_time_int)
         out,err = p.communicate()
         end = timer()
+        end_ctime = time.ctime(end)
         run_time = end - start
         db.update_task_status_completed("COMPLETED", task_id, run_time)
-        f.write("\n[-] CMD COMPLETED in " + str(run_time) + " - " + populated_command + "\n")
+        #f.write("\n[-] CMD COMPLETED in " + str(run_time) + " - " + populated_command + "\n")
+        f.write("\n" + str(start_ctime) + "\t" + str(end_ctime) + "\t" + str("{:.2f}".format(run_time)) + "\t" + command_name + "\t" + populated_command)
     except:
         end = timer()
         run_time = end - start
@@ -91,55 +93,55 @@ def post_process(*args):
     #print("post")
 
 
-    if "amass" in populated_command:
-        json_config = config_parser.read_config()
-        post_amass_filename = populated_command.split(">")[1].rstrip()
-        with open(post_amass_filename,'r') as amass_file:
-            lines = amass_file.read().splitlines()
-            for vhost in lines:
-                in_scope,ip = utils.domain_scope_checker(vhost,workspace)
-                db_vhost = (ip,vhost,in_scope,0,workspace)
-                db.create_vhost(db_vhost)
-
-            #pull all in scope vhosts that have not been submitted
-            for scannable_vhost in db.get_inscope_vhosts(workspace):
-                scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + str(scanned_service_port) + "_" + scanned_service_protocol + "_"
-                for db_scanned_service in db.get_all_services_for_ip(ip,workspace):
-                #run chain on each one and then update db as submitted
-
-                    for entry in json_config["services"][db_scanned_service]["output"]:
-                        if (db_scanned_service == "http") or (db_scanned_service == "https"):
-                            for cmd in entry["commands"]:
-                                if simulation:
-                                    # debug - sends jobs to celery, but with a # in front of every one.
-                                    populated_command = (("#" + cmd) % {"IP": scannable_vhost, "PORT": scanned_service_port,
-                                                                        "OUTPUTDIR": scan_output_base_file_name})
-                                else:
-                                    populated_command = (cmd % {"IP": scannable_vhost, "PORT": scanned_service_port,
-                                                                "OUTPUTDIR": scan_output_base_file_name})
-
-
-
-                                task_id = uuid()
-                                result = chain(
-                                    # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                                    # in celery the same way a task does, for instance, you can't find it in flower
-                                    #cel_create_task.subtask(args=(populated_command, ip, workspace, task_id), task_id=task_id),
-                                    cel_create_task.subtask(args=(cmd_name, populated_command, ip, workspace, task_id)),
-                                    # run the command. run_task takes care of marking the task as started and then completed.
-                                    # The si tells run_cmd to ignore the data returned from a previous task
-                                    run_cmd.si(cmd_name, populated_command,celery_path,task_id).set(task_id=task_id),
-
-                                    # right now, every executed command gets sent to a generic post_process task that can do
-                                    # additinoal stuff based on the command that just ran.
-                                    post_process.si(cmd_name, populated_command, output_base_dir, workspace, ip, host_dir, simulation,
-                                                    scanned_service_port,db_scanned_service,scanned_service_protocol,celery_path),
-                                )()  # .apply_async()
-
-                                host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
-                                f = open(host_audit_log, 'a')
-                                f.write(populated_command + "\n\n")
-                                f.close()
+    # if "amass" in populated_command:
+    #     json_config = config_parser.read_config()
+    #     post_amass_filename = populated_command.split(">")[1].rstrip()
+    #     with open(post_amass_filename,'r') as amass_file:
+    #         lines = amass_file.read().splitlines()
+    #         for vhost in lines:
+    #             in_scope,ip = utils.domain_scope_checker(vhost,workspace)
+    #             db_vhost = (ip,vhost,in_scope,0,workspace)
+    #             db.create_vhost(db_vhost)
+    #
+    #         #pull all in scope vhosts that have not been submitted
+    #         for scannable_vhost in db.get_inscope_vhosts(workspace):
+    #             scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + str(scanned_service_port) + "_" + scanned_service_protocol + "_"
+    #             for db_scanned_service in db.get_all_services_for_ip(ip,workspace):
+    #             #run chain on each one and then update db as submitted
+    #
+    #                 for entry in json_config["services"][db_scanned_service]["output"]:
+    #                     if (db_scanned_service == "http") or (db_scanned_service == "https"):
+    #                         for cmd_name,cmd in entry["commands"]:
+    #                             if simulation:
+    #                                 # debug - sends jobs to celery, but with a # in front of every one.
+    #                                 populated_command = (("#" + cmd) % {"IP": scannable_vhost, "PORT": scanned_service_port,
+    #                                                                     "OUTPUTDIR": scan_output_base_file_name})
+    #                             else:
+    #                                 populated_command = (cmd % {"IP": scannable_vhost, "PORT": scanned_service_port,
+    #                                                             "OUTPUTDIR": scan_output_base_file_name})
+    #
+    #
+    #
+    #                             task_id = uuid()
+    #                             result = chain(
+    #                                 # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+    #                                 # in celery the same way a task does, for instance, you can't find it in flower
+    #                                 #cel_create_task.subtask(args=(populated_command, ip, workspace, task_id), task_id=task_id),
+    #                                 cel_create_task.subtask(args=(cmd_name, populated_command, ip, output_base_dir, workspace, task_id)),
+    #                                 # run the command. run_task takes care of marking the task as started and then completed.
+    #                                 # The si tells run_cmd to ignore the data returned from a previous task
+    #                                 run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+    #
+    #                                 # right now, every executed command gets sent to a generic post_process task that can do
+    #                                 # additinoal stuff based on the command that just ran.
+    #                                 post_process.si(cmd_name, populated_command, output_base_dir, workspace, ip, host_dir, simulation,
+    #                                                 scanned_service_port,db_scanned_service,scanned_service_protocol,celery_path),
+    #                             )()  # .apply_async()
+    #
+    #                             host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
+    #                             f = open(host_audit_log, 'a')
+    #                             f.write(populated_command + "\n\n")
+    #                             f.close()
 
 
     if "gobuster" in populated_command:
@@ -149,7 +151,7 @@ def post_process(*args):
         try:
             os.stat(scan_output_base_file_dir)
         except:
-            os.mkdir(scan_output_base_file_dir)
+            os.makedirs(scan_output_base_file_dir)
 
         post_gobuster_filename = populated_command.split(">")[1].split("&")[0].strip()
         print("Post gobuster filename" + post_gobuster_filename + "\n")
@@ -207,9 +209,9 @@ def post_process(*args):
         with open(post_photon_filename,'r') as photon_file:
             lines = photon_file.read().splitlines()
             print(lines)
-            if len(lines) > 100:
+            if len(lines) > 300:
                 #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                exit()
+                lines = lines[:300]
 
         for url in lines:
             #url = url.split("?")[0].replace("//","/")
@@ -337,7 +339,7 @@ def post_process_domains(vhosts,command_name,populated_command,output_base_dir,w
                         for (cmd_name, cmd) in config.items(section):
                             outfile = scan_output_base_file_name + cmd_name
                             populated_command = cmd.replace("[TARGET]", scannable_vhost).replace("[PORT]",
-                                str(scanned_service_port)).replace("[OUTPUT]", outfile)
+                                str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]", "")
                             if simulation:
                                 # debug - sends jobs to celery, but with a # in front of every one.
                                 populated_command = "#" + populated_command
@@ -349,15 +351,15 @@ def post_process_domains(vhosts,command_name,populated_command,output_base_dir,w
                             result = chain(
                                 # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                                 # in celery the same way a task does, for instance, you can't find it in flower
-                                cel_create_task.subtask(args=(populated_command, scannable_vhost, workspace, task_id)),
+                                cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt", workspace, task_id)),
 
                                 # run the command. run_task takes care of marking the task as started and then completed.
                                 # The si tells run_cmd to ignore the data returned from a previous task
-                                run_cmd.si(populated_command,celery_path,task_id).set(task_id=task_id),
+                                run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
 
                                 # right now, every executed command gets sent to a generic post_process task that can do
                                 # additinoal stuff based on the command that just ran.
-                                post_process.si(populated_command, output_base_dir, workspace, scannable_vhost, host_dir,
+                                post_process.si(cmd_name, populated_command, output_base_dir, workspace, scannable_vhost, host_dir,
                                                       simulation,
                                                       scanned_service_port, scanned_service_name,
                                                       scanned_service_protocol,celery_path),
@@ -427,7 +429,8 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
                             outfile = scan_output_base_file_name + cmd_name
                             populated_command = cmd.replace("[TARGET]", scannable_vhost)\
                                                     .replace("[PORT]",str(scanned_service_port))\
-                                                    .replace("[OUTPUT]", outfile)
+                                                    .replace("[OUTPUT]", outfile) \
+                                                    .replace("[PATH]", "")
                             if simulation:
                                 # debug - sends jobs to celery, but with a # in front of every one.
                                 populated_command = "#" + populated_command
@@ -437,9 +440,9 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
 
                             task_id = uuid()
                             result = chain(
-                                cel_create_task.subtask(args=(populated_command, scannable_vhost, workspace, task_id)),
-                                run_cmd.si(populated_command, celery_path, task_id).set(task_id=task_id),
-                                post_process.si(populated_command, output_base_dir, workspace, scannable_vhost,
+                                cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt",workspace, task_id)),
+                                run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+                                post_process.si(cmd_name, populated_command, output_base_dir, workspace, scannable_vhost,
                                                 host_dir,
                                                 simulation,
                                                 scanned_service_port, scanned_service_name,
@@ -452,6 +455,8 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
                             f.close()
 
         db.update_vhosts_submitted(ip, scannable_vhost, workspace, 1)
+
+
 
 
 
@@ -476,8 +481,8 @@ def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery
     start_ctime = time.ctime(start_time)
     start = timer()
 
-    f.write("[+] CMD EXECUTED: " + str(start_ctime) + " - " + populated_command + "\n")
-    f.write(task_id)
+    #f.write(str(start_ctime)+ "," + "CMD EXECUTED" + "," + populated_command + "\n")
+    #f.write(task_id)
     print(populated_command)
 
     #The except isnt working yet if I kill the process from linux cli. i guess that is not enough to trigger an exception.
@@ -488,9 +493,14 @@ def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery
     rc = nm.run()
     nmap_report = NmapParser.parse(nm.stdout)
     end = timer()
+    end_ctime = time.ctime(end)
     run_time = end - start
     db.update_task_status_completed("COMPLETED", task_id, run_time)
-    f.write("\n[-] CMD COMPLETED in " + str(run_time) + " - " + populated_command + "\n")
+
+    #f.write("\n" + str(end_ctime) + "," + "CMD COMPLETED" + ","" + str(run_time) + " - " + populated_command + "\n")
+
+    f.write(str(start_ctime)  + "," + str(end_ctime) + "," + str(run_time) + cmd_name + "\n")
+
     # except:
     #     end = timer()
     #     run_time = end - start

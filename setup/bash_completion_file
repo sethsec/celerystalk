@@ -5,7 +5,7 @@ _celerystalk()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 1 ]; then
-        COMPREPLY=( $( compgen -W '-h --help help pause resume scan cancel shutdown report query' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help help pause resume scan cancel shutdown report query db' -- $cur) )
     else
         case ${COMP_WORDS[1]} in
             pause)
@@ -31,6 +31,9 @@ _celerystalk()
         ;;
             query)
             _celerystalk_query
+        ;;
+            db)
+            _celerystalk_db
         ;;
         esac
 
@@ -223,5 +226,75 @@ _celerystalk_query_summary()
         COMPREPLY=( $( compgen -W ' ' -- $cur) )
     fi
 }
+
+_celerystalk_db()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W '-w workspaces hosts services paths' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            full)
+            _celerystalk_db_workspaces
+        ;;
+            watch)
+            _celerystalk_db_hosts
+        ;;
+            brief)
+            _celerystalk_db_services
+        ;;
+            summary)
+            _celerystalk_db_paths
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_db_workspaces()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+
+_celerystalk_db_hosts()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_db_services()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_db_paths()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+
+
 
 complete -o bashdefault -o default -o filenames -F _celerystalk celerystalk

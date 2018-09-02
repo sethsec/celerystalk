@@ -82,8 +82,12 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
 
     if cancelled_rows.__len__() > 0:
         nothing = ""
-
-        print("\n[+] Cancelled Tasks ({0}): \n".format(len(cancelled_rows)))
+        if repeat:
+            cancelled_rows_orig = cancelled_rows
+            cancelled_rows = cancelled_rows[:5]
+            print("\n[+] Cancelled Tasks ({0}) - (Only showing first 5 when in brief mode): \n".format(len(cancelled_rows_orig)))
+        else:
+            print("\n[+] Cancelled Tasks ({0}): \n".format(len(cancelled_rows)))
         for cancelled_row in cancelled_rows:
             id = cancelled_row[0]
             command = cancelled_row[1]
@@ -94,6 +98,9 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
                 print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
             else:
                 print("  [" + str(id) + "]\t" + command)
+        if repeat:
+            if len(cancelled_rows_orig) > 5:
+                print("  +{0} more rows".format(len(cancelled_rows_orig) - 5))
 
 
 

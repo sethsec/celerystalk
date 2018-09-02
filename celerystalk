@@ -2,14 +2,17 @@
 
 """
 Usage:
-    celerystalk scan -f <nmap_file> -o <output_dir> [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
-    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>]  [-s]
+    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-c <config_file>] [-s]
+    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>] [-c <config_file>] [-s]
+    celerystalk scan -o <output_dir> -u <url> [-w <workspace>] [-c <config_file>] [-s]
     celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
     celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
     celerystalk report [-w <workspace>]
     celerystalk cancel ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk pause  ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
+    celerystalk db workspaces
+    celerystalk db ([services] | [hosts] | [paths]) [-w <workspace>]
     celerystalk shutdown
     celerystalk (help | -h | --help)
 
@@ -19,29 +22,31 @@ Options:
     -f <nmap_file>      Nmap xml import file
     -o <output_dir>     Output directory
     -t <targets>        Target(s): IP, IP Range, CIDR
+    -u <url>            URL to parse and scan with all configured tools
     -w <workspace>      Workspace [default: Default]
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
+    -c <config_file>    Point to your own config file (Default: ./config.ini)
 
 
 Examples:
 
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
-    Find in scope vhosts:       celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
-                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
-    Query Tasks:                celerystalk query [-w workspace]
-    Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
-    Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
-                                celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
-                                celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
-                                celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
-                                celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
-    Shutdown Celery processes:  celerystalk shutdown
+    Start from Nmap XML file:   ./celerystalk scan -f /pentest/nmap.xml -o /pentest
+    Start from Nessus file:     ./celerystalk scan -f /pentest/scan.nessus -o /pentest
+    Specify workspace:          ./celerystalk scan -f <file> -o /pentest -w test
+    Find in scope vhosts:       ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Scan subset hosts in XML:   ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
+                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
+                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Simulation mode:            ./celerystalk scan -f <file> -o /pentest -s
+    Query Tasks:                ./celerystalk query [-w workspace]
+    Create Report:              ./celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
+    Cancel/Pause/Resume Tasks:  ./celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
+                                ./celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
+                                ./celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
+                                ./celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
+                                ./celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
+    Shutdown Celery processes:  ./celerystalk shutdown
 """
 
 # Not ready yet (still in dev):
@@ -63,7 +68,7 @@ import lib.query
 import lib.config_parser
 import socket
 from lib import db
-
+from prettytable import PrettyTable
 
 def print_banner():
 
@@ -78,12 +83,13 @@ def main(arguments):
     else:
         workspace = 'Default'
 
+
+
     db.create_task_table()
     db.create_path_table()
     db.create_services_table()
     db.create_vhosts_table()
-
-
+    db.create_workspace_table()
 
     # Query - Inform user about job status
     if arguments["query"]:
@@ -166,12 +172,66 @@ def main(arguments):
         exit()
 
 
+
     ####################################
-    # Scan - Targeted - Parse nessus/nmap then run celerystalk for just some hosts in target file
+    # Dump data from DB
+    ####################################
+    if arguments["db"]:
+        if arguments["workspaces"]:
+
+            columns = ["Workspace", "Output Directory"]
+            workspace_rows = lib.db.get_all_workspaces()
+            workspaces_table = PrettyTable(columns)
+            for row in workspace_rows:
+                workspaces_table.add_row(row)
+            print(workspaces_table)
+            print("\n\n")
+        else:
+            if arguments["hosts"]:
+                print("[+] Showing hosts for the [{0}] workspace\n".format(workspace))
+                columns = ["IP","vhost","in_scope"]
+                host_rows = lib.db.get_vhosts_table(workspace)
+                hosts_table = PrettyTable(columns)
+                hosts_table.align[columns[0]] = "l"
+                hosts_table.align[columns[1]] = "l"
+                for row in host_rows:
+                    hosts_table.add_row(row)
+                print(hosts_table)
+                print("\n\n")
+            elif arguments["services"]:
+                print("[+] Showing services for the [{0}] workspace\n".format(workspace))
+                columns = ["IP", "Port", "Protocol","Service"]
+                services_rows = lib.db.get_all_services(workspace)
+                services_table = PrettyTable(columns)
+                services_table.align[columns[0]] = "l"
+                services_table.align[columns[1]] = "l"
+                services_table.align[columns[3]] = "l"
+                for row in services_rows:
+                    services_table.add_row(row[1:5])
+                print(services_table)
+                print("\n\n")
+            elif arguments["paths"]:
+                print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
+                columns = ["IP", "Port", "Path"]
+                paths_rows = lib.db.get_all_paths(workspace)
+                paths_table = PrettyTable(columns)
+                paths_table.align[columns[0]] = "l"
+                paths_table.align[columns[1]] = "l"
+                paths_table.align[columns[2]] = "l"
+                for row in paths_rows:
+                    paths_table.add_row(row[1:4])
+                print(paths_table)
+                print("\n\n")
+
+
+
+
+    ####################################
+    # Scan
     ####################################
 
-    if arguments["-f"] and arguments["-t"] and not arguments["<bb_scope_file>"]:
-        scan_mode = "VAPT"
+    if arguments["scan"]:
+        celery_path = sys.path[0]
         if arguments["-o"] is None:
             print('Specify report directory')
         else:
@@ -181,78 +241,73 @@ def main(arguments):
                 os.stat(output_dir)
             except:
                 print("[+] Output directory does not exist. Creating " + output_dir)
-                os.mkdir(output_dir)
-        #TODO: make this read the file and be better :)
-        print(arguments["-f"])
-
+                os.makedirs(output_dir)
         lib.utils.start_services()
-        #(json_config, supported_services) = read_config_ini()
-        target_list = lib.utils.target_splitter(arguments["-t"])
 
-        for target in target_list:
+        db_workspace = (workspace, arguments["-o"])
+        db.create_workspace(db_workspace)
+
+
+        ####################################
+        # Scan - URL - Parse use provided URL and run all celerystalk tools against it
+        ####################################
+        if arguments["-u"]:
+            lib.scan.process_url(arguments["-u"], output_dir, workspace, arguments["--simulation"])
+
+
+
+
+
+        ####################################
+        # Scan - Targeted - Parse nessus/nmap then run celerystalk for just some hosts in target file
+        ####################################
+
+        if arguments["-f"] and arguments["-t"] and not arguments["<bb_scope_file>"]:
+            scan_mode = "VAPT"
+            target_list = lib.utils.target_splitter(arguments["-t"])
+
+            for target in target_list:
+                if "nessus" in arguments["-f"]:
+                    nessus_report = lib.utils.nessus_parser(arguments["-f"])
+                    lib.scan.process_nessus_data2(nessus_report, workspace,target=target)
+                else:
+                    nmap_report = lib.utils.nmap_parser(arguments["-f"])
+                    lib.scan.process_nmap_data2(nmap_report, workspace,target=target)
+
+            if arguments["<domains>"]:
+                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,
+                                         scan_mode)
+            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace, target=target)
+            exit()
+
+        ####################################
+        # Scan - All - Parse nessus/nmap then run celerystalk for ALL hosts in target file
+        ####################################
+        if arguments["-f"]:
+            scan_mode = "VAPT"
+
+            #(json_config, supported_services) = read_config_ini()
             if "nessus" in arguments["-f"]:
                 nessus_report = lib.utils.nessus_parser(arguments["-f"])
-                # process_nessus_data(nessus_report, output_dir, arguments["--simulation"],workspace)
-                lib.scan.process_nessus_data2(nessus_report, workspace,target=target)
+                lib.scan.process_nessus_data2(nessus_report, workspace)
                 if arguments["<domains>"]:
                     lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace,target=target)
+                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
             else:
                 nmap_report = lib.utils.nmap_parser(arguments["-f"])
-                # process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
-                lib.scan.process_nmap_data2(nmap_report, workspace,target=target)
+                lib.scan.process_nmap_data2(nmap_report, workspace)
                 if arguments["<domains>"]:
                     lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace,target=target)
-        exit()
+                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
-    ####################################
-    # Scan - All - Parse nessus/nmap then run celerystalk for ALL hosts in target file
-    ####################################
-    if arguments["-f"]:
-        scan_mode = "VAPT"
-        if arguments["-o"] is None:
-            print('Specify report directory')
-        else:
-            output_dir = os.path.join(arguments["-o"], '')
-            # Before doing anything host specific, make sure the user specified output directory exists (i.e., /pentest)
-            try:
-                os.stat(output_dir)
-            except:
-                print("[+] Output directory does not exist. Creating " + output_dir)
-                os.makedirs(output_dir)
-
-        lib.utils.start_services()
-        #(json_config, supported_services) = read_config_ini()
-        if "nessus" in arguments["-f"]:
-            nessus_report = lib.utils.nessus_parser(arguments["-f"])
-            #process_nessus_data(nessus_report, output_dir, arguments["--simulation"],workspace)
-            lib.scan.process_nessus_data2(nessus_report, workspace)
-            if arguments["<domains>"]:
-                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-
-        else:
-            nmap_report = lib.utils.nmap_parser(arguments["-f"])
-            #process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
-            lib.scan.process_nmap_data2(nmap_report, workspace)
-            if arguments["<domains>"]:
-                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-
-    #commenting this out for now.
-    # # Scan targets with nmap and then run celerystalk
-    #
-    # if arguments["-t"]:
-    #     if arguments["-o"] is None:
-    #         print('Specify report directory')
-    #     else:
-    #         output_dir = os.path.join(arguments["-o"], '')
-    #     lib.utils.start_services()
-    #     #(json_config, supported_services) = read_config_ini()
-    #     nmap_report = lib.scan.nmap_scan(arguments["-t"], output_dir)
-    #     lib.scan.process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
+        #commenting this out for now.
+        # # Scan targets with nmap and then run celerystalk
+        #
+        # if arguments["-t"]:
+        #     #(json_config, supported_services) = read_config_ini()
+        #     nmap_report = lib.scan.nmap_scan(arguments["-t"], output_dir)
+        #     lib.scan.process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
 
 
 
@@ -260,72 +315,60 @@ def main(arguments):
 
 
 
-    ####################################
-    # Scan - Bug Bounty mode - take domains, find subdomains, run nmap, run celerystalk (for ALL hosts in target file)
-    ####################################
+        ####################################
+        # Scan - Bug Bounty mode - take domains, find subdomains, run nmap, run celerystalk (for ALL hosts in target file)
+        ####################################
 
-    if arguments["<bb_scope_file>"]:
-        scan_mode = "BB"
-        in_scope_domains, in_scope_hosts, out_of_scope_hosts = lib.config_parser.read_bb_scope_ini(
-            arguments["<bb_scope_file>"])
+        if arguments["<bb_scope_file>"]:
+            scan_mode = "BB"
+            in_scope_domains, in_scope_hosts, out_of_scope_hosts = lib.config_parser.read_bb_scope_ini(
+                arguments["<bb_scope_file>"])
 
-        if arguments["-o"] is None:
-            print('Specify report directory')
-        else:
-            output_dir = os.path.join(arguments["-o"], '')
-            # Before doing anything host specific, make sure the user specified output directory exists (i.e., /pentest)
-            try:
-                os.stat(output_dir)
-            except:
-                print("[+] Output directory does not exist. Creating " + output_dir)
-                os.makedirs(output_dir)
 
-        lib.utils.start_services()
+            #submit the in scope hosts to celery
+            for in_scope_host in in_scope_hosts:
+                in_scope_host = in_scope_host[0]
+                #try:
+                ip = socket.gethostbyname(in_scope_host)
 
-        #submit the in scope hosts to celery
-        for in_scope_host in in_scope_hosts:
-            in_scope_host = in_scope_host[0]
-            #try:
-            ip = socket.gethostbyname(in_scope_host)
+                #nmap_report = lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
+                lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
+                db_vhost = (ip, in_scope_host, 1, 0, workspace)  # in this mode all vhosts are in scope
+                print(db_vhost)
+                db.create_vhost(db_vhost)
+                #lib.scan.process_nmap_data2(nmap_report, workspace)
+                #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+                # except:
+                #     print("2There was an issue running the nmap scan against {0}.").format(in_scope_host)
+                #     ip = ""
+                #     db_vhost = (ip, in_scope_host, 0, 0, workspace)  # not in scope if no IP
+                #     print(db_vhost)
+                #     db.create_vhost(db_vhost)
 
-            #nmap_report = lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
-            lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
-            db_vhost = (ip, in_scope_host, 1, 0, workspace)  # in this mode all vhosts are in scope
-            print(db_vhost)
-            db.create_vhost(db_vhost)
-            #lib.scan.process_nmap_data2(nmap_report, workspace)
+            for domain in in_scope_domains:
+                print("domain pulled from in scope domains")
+                print(domain)
+                lib.scan.find_subdomains(domain, arguments["--simulation"], workspace, output_dir,
+                                         scan_mode,out_of_scope_hosts)
             #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-            # except:
-            #     print("2There was an issue running the nmap scan against {0}.").format(in_scope_host)
-            #     ip = ""
-            #     db_vhost = (ip, in_scope_host, 0, 0, workspace)  # not in scope if no IP
-            #     print(db_vhost)
-            #     db.create_vhost(db_vhost)
-
-        for domain in in_scope_domains:
-            print("domain pulled from in scope domains")
-            print(domain)
-            lib.scan.find_subdomains(domain, arguments["--simulation"], workspace, output_dir,
-                                     scan_mode,out_of_scope_hosts)
-        #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
 
 
 
 
-        # in_scope_domains_string = ",",join(in_scope_domains)
-        # lib.scan.find_subdomains(in_scope_domains_string, arguments["--simulation"], workspace, output_dir,scan_mode)
-        #
-        #
-        # lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-        #
-        # else:
-        #     nmap_report = lib.utils.nmap_parser(arguments["-f"])
-        #     #process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
-        #     lib.scan.process_nmap_data2(nmap_report, workspace)
-        #     if arguments["<domains>"]:
-        #         lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
-        #     lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+            # in_scope_domains_string = ",",join(in_scope_domains)
+            # lib.scan.find_subdomains(in_scope_domains_string, arguments["--simulation"], workspace, output_dir,scan_mode)
+            #
+            #
+            # lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+            #
+            # else:
+            #     nmap_report = lib.utils.nmap_parser(arguments["-f"])
+            #     #process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
+            #     lib.scan.process_nmap_data2(nmap_report, workspace)
+            #     if arguments["<domains>"]:
+            #         lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
+            #     lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
 if __name__ == "__main__":
     arguments = docopt(__doc__, version='celerystalk 1.0')
