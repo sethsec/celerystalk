@@ -11,6 +11,7 @@ celerystalk allows you to automate your network scanning/enumeration process wit
 * **Easy to use** - Uses a command based interface inspired by CrackMapExec 
 * **Measure twice, cut once** - A simulation mode tells you which tools will run without running them
 * **Flexible** - Target only a subset of the hosts scanned in an previous Nmap/Nessus file
+* **Audit Log** - Every executed command is logged in a file which contains start and end times, and the duration. 
 
 Under the hood:
 * **Celery** - [Celery](http://www.celeryproject.org/) is used to execute your commands asynchronously 
@@ -47,6 +48,8 @@ Kali:
 # firefox /htb/celerystalkReports/Workspace-Report[Default.html] &  # View report 
 ```
 
+[![asciicast](https://asciinema.org/a/MZoVvJkEjnKngOhqkRAogvoly)](https://asciinema.org/a/MZoVvJkEjnKngOhqkRAogvoly)
+
 **[URL Mode]** - How to scan a URL (scans the specified path, not the root).  
 
 ```
@@ -65,6 +68,8 @@ Kali:
 # ./celerystalk report                                                              # Generate report
 # firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
 ```
+[![asciicast](https://asciinema.org/a/vqsuG97k4WH9WUFf1NYZGTOzG)](https://asciinema.org/a/vqsuG97k4WH9WUFf1NYZGTOzG)
+
 
 **[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope.
 ```bash
