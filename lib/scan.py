@@ -90,7 +90,7 @@ def process_nmap_data2(nmap_report,workspace, target=None):
                     db.update_vhosts_submitted(ip,ip,workspace,0)
             else:
                 db_vhost = (ip, ip, 1, 0, workspace)  # in this mode all vhosts are in scope
-                print(db_vhost)
+                #print(db_vhost)
                 db.create_vhost(db_vhost)
 
             for scanned_service_item in scanned_host.services:
