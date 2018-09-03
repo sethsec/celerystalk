@@ -29,7 +29,7 @@ def process_nessus_data2(nessus_report,workspace,target=None):
                     db.update_vhosts_submitted(ip, ip, workspace, 0)
             else:
                 db_vhost = (ip, ip, 1, 0, workspace)  # in this mode all vhosts are in scope
-                print(db_vhost)
+                #print(db_vhost)
                 db.create_vhost(db_vhost)
             # Step 1: pull all report items in the port scanner family to get every port. The services names are IANA
             #         default as this point, which is why we need the next two loops.
