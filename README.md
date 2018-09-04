@@ -1,8 +1,9 @@
 # celerystalk
 
-celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
+celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
-* **Configurable** - Some common tools are in the default config, but you can add any tool you want 
+* **Configurable** - Some common tools are in the default config, but you can add any tool you want
+* **Service Aware** - Uses nmap/nessus service names rather than port numbers to decide which tools to run 
 * **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
 * **Scalability** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
@@ -22,7 +23,8 @@ Under the hood:
 
 ## Install/Setup
 
-**Supported Operating Systems:** Kali 
+* **Supported Operating Systems:** Kali 
+* **Supported Python Version:** 2.x
 
 ```
 # git clone https://github.com/sethsec/celerystalk.git
@@ -69,7 +71,7 @@ Under the hood:
 [![asciicast](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z.png)](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z)
 
 
-**[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope
+**[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope.
 ```bash
 Not ready yet.  Coming soon...
 ```
