@@ -1,29 +1,30 @@
-# celerystalk (currently in BETA - Bug reports of any kind are welcome!)
+# celerystalk
 
-celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
+celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
-* **Configurable** - Some common tools are in the default config, but you can add any tool you want 
+* **Configurable** - Some common tools are in the default config, but you can add any tool you want
+* **Service Aware** - Uses nmap/nessus service names rather than port numbers to decide which tools to run 
 * **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
 * **Scalability** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
-* **Workspaces** - Supports multiple workspaces, kind of like how Metasploit does it
-* **Job Control** - Supports canceling, pausing, and resuming of tasks, kind of how Burp scanner does it
+* **Workspaces** - Supports multiple workspaces, inspired by Metasploit workspaces
+* **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
 * **Easy to use** - Uses a command based interface inspired by CrackMapExec 
-* **Measure twice, cut once** - A simulation mode tells you which tools will run without running them
+* **Measure twice, cut once** - A simulation mode shows you which tools will run without running them
 * **Flexible** - Target only a subset of the hosts scanned in an previous Nmap/Nessus file
-* **Audit Log** - Every executed command is logged in a file which contains start and end times, and the duration. 
+* **Audit Log** - Every executed command is logged in a file which contains start and end times, and the duration 
 
 Under the hood:
 * **Celery** - [Celery](http://www.celeryproject.org/) is used to execute your commands asynchronously 
 * **Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
 * **Selenium** is used with chromedriver to take *screenshots of every url identified* using gobuster and Photon (spider)
-* **SQLite** is used to keep persist data and manage workspaces
+* **SQLite** is used to persist data and manage workspaces
      
 
 ## Install/Setup
-**At this time you must install and run celerystalk as root**  
 
-Kali: 
+* **Supported Operating Systems:** Kali 
+* **Supported Python Version:** 2.x
 
 ```
 # git clone https://github.com/sethsec/celerystalk.git
@@ -32,6 +33,7 @@ Kali:
 # cd ..
 # ./celerystalk -h
 ```
+**At this time you must install and run celerystalk as root** - Sudo won't work either - any command that requires root that is kicked off asynchronously after the sudo grace period ends will fail to run.  
 
 
 ## Using celerystalk - The basics
@@ -57,7 +59,7 @@ Kali:
 # firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
 ```
 
-**[Vulnerability Assessment Mode]** - How to scan a list of in scope hosts/networks and any subdomains that resolve to any of the in scope IPs
+**[Vulnerability Assessment Mode]** - How to scan a list of in-scope hosts/networks and any subdomains that resolve to any of the in-scope IPs
 
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
@@ -87,7 +89,7 @@ Not ready yet.  Coming soon...
    * Nessus: Run nessus against your target(s) and export results as a .nessus file
     
 
-1. **Configure which tools you'd like celerystalk to execute:** The install script drops a config.ini file in the celerystalk folder. The config.ini script is broken up into three sections.  
+1. **Configure which tools you'd like celerystalk to execute:** The install script drops a config.ini file in the celerystalk folder. The config.ini script is broken up into three sections:  
 
     ***Service Mapping*** - The first section maps multiple Nmap and Nessus service names to celerystalk service names (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
     ```
@@ -106,7 +108,7 @@ Not ready yet.  Coming soon...
     sublist3r           : python /opt/Sublist3r/sublist3r.py -d [DOMAIN]
     ```  
 
-    ***Service Configuration*** The rest of the confi.ini sections define which commands you want celerystalk to run for each identified service (i.e., http, https, ssh).    
+    ***Service Configuration*** - The rest of the confi.ini sections define which commands you want celerystalk to run for each identified service (i.e., http, https, ssh).    
     * Disable any command by commenting it out with a ; or a #. 
     * Add your own commands using [TARGET],[PORT], and [OUTPUT] placeholders.
     
@@ -136,7 +138,7 @@ Not ready yet.  Coming soon...
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
     Simulation mode:            celerystalk scan -f <file> -o /pentest -s
     ```   
-1. **Query Status:** Asynchronously check the status of the tasks queue as frequently as you like. The watch mode actually executes the linux watch command so that you don't fill up your entire terminal buffer :)
+1. **Query Status:** Asynchronously check the status of the tasks queue as frequently as you like. The watch mode actually executes the linux watch command so you don't fill up your entire terminal buffer.
     ```
     Query Tasks:                celerystalk query [-w workspace]
                                 celerystalk query [-w workspace] watch                               
@@ -147,12 +149,12 @@ Not ready yet.  Coming soon...
 
 1. **Cancel/Pause/Resume Tasks:** Cancel/Pause/Resume any task(s) that are currently running or in the queue.
 
-    * *Canceling a running task* will send a kill -TERM.  
+    * *Canceling a running task* will send a *kill -TERM*.  
     * *Canceling a queued task* will make celery ignore it (uses celery's revoke).
     * *Canceling all tasks* will kill running tasks and revoke all queued tasks.    
-    * *Pausing a single task* uses kill -STOP to suspend the process.
-    * *Pausing all tasks* attemps to -STOP all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.
-    * *Resuming tasks* send kill -CONT which allows the process to start up again where it left off.    
+    * *Pausing a single task* uses *kill -STOP* to suspend the process.
+    * *Pausing all tasks* attemps to *kill -STOP* all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.
+    * *Resuming tasks* sends a *kill -CONT* which allows the process to start up again where it left off.    
     ```
     Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
                                 celerystalk <verb> all                #Cancel/Pause/Resume all tasks from default workspaces
@@ -218,7 +220,7 @@ This project was inspired by many great tools:
 1. https://github.com/1N3/Sn1per
 1. https://github.com/SrFlipFlop/Network-Security-Analysis by @SrFlipFlop
 
-Thanks to @offensivesecurity and @hackthebox_eu for their lab networks :)
+Thanks to @offensivesecurity and @hackthebox_eu for their lab networks
 
 Also, thanks to:
 1. @decidedlygray for pointing me towards celery, helping me solve python problems that were over my head, and for the extensive beta testing  
