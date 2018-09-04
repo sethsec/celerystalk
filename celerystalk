@@ -72,7 +72,8 @@ from prettytable import PrettyTable
 
 def print_banner():
 
-    print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner that supports distributed workers")
+    print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
+    print("\t\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: 105\n")
 

@@ -76,7 +76,7 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
             else:
                 print(output_prefix + command)
         if repeat:
-            if completed_rows_orig > 5:
+            if len(completed_rows_orig) > 5:
                 print("  +{0} more rows".format(len(completed_rows_orig)-5))
 
 
