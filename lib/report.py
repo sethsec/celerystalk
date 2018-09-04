@@ -149,7 +149,7 @@ def report(workspace,target_list=None):
     print("[+] Report file (All workspace hosts): {0}\n".format(combined_report_file_name_txt))
     print("\n[+] For quick access, open with local firefox (works over ssh with x forwarding):\n")
     print("\tfirefox " + combined_report_file_name + " &\n")
-    print("[+] Or you can copy the celerystalkReports folder, which contains everythign you need to view the report\n")
+    print("[+] Or you can copy the celerystalkReports folder, which contains everything you need to view the report\n")
 
 
 
