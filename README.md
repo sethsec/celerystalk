@@ -48,7 +48,7 @@ Kali:
 # firefox /htb/celerystalkReports/Workspace-Report[Default.html] &  # View report 
 ```
 
-[![asciicast](https://asciinema.org/a/MZoVvJkEjnKngOhqkRAogvoly.png)](https://asciinema.org/a/MZoVvJkEjnKngOhqkRAogvoly)
+[![asciicast](https://asciinema.org/a/Tg0FkxF7rXksYniwB5cbmk1Qg.png)](https://asciinema.org/a/Tg0FkxF7rXksYniwB5cbmk1Qg)
 
 **[URL Mode]** - How to scan a URL (scans the specified path, not the root).  
 
@@ -68,7 +68,7 @@ Kali:
 # ./celerystalk report                                                              # Generate report
 # firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
 ```
-[![asciicast](https://asciinema.org/a/vqsuG97k4WH9WUFf1NYZGTOzG.png)](https://asciinema.org/a/vqsuG97k4WH9WUFf1NYZGTOzG)
+[![asciicast](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z.png)](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z)
 
 
 **[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope.
