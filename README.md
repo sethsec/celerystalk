@@ -1,4 +1,4 @@
-# celerystalk (currently in BETA - Bug reports of any kind are welcome!)
+# celerystalk
 
 celerystalk allows you to automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
