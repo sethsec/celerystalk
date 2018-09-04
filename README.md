@@ -34,9 +34,7 @@ Kali:
 ```
 
 
-## Using celerystalk 
-
-### Quick mode
+## Using celerystalk - The basics
 
 **[CTF/HackTheBox mode]** - How to scan one host by IP only
 
@@ -77,7 +75,7 @@ Not ready yet.  Coming soon...
 ```
 
 
-### Some more detail
+## Using celerystalk - Some more detail
 
 1. **Run Nmap or Nessus:** 
      
