@@ -35,6 +35,15 @@ def extract_bb_nmap_options():
             options = bb_nmap_command.replace('nmap', '').replace('[TARGET]', '')
             return options
 
+def extract_udp_scan_nmap_options():
+    config = ConfigParser(allow_no_value=True)
+    config.read(['config.ini'])
+
+    for (key, val) in config.items("nmap-commands"):
+        if key == "udp_scan":
+            udp_nmap_command = val
+            options = udp_nmap_command.replace('nmap', '').replace('[TARGET]', '')
+            return options
 
     # try:
     #     bb_nmap_command = config['nmap-commands']['bug_bounty_mode']
