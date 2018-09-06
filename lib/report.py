@@ -13,8 +13,9 @@ def paths_report(host):
         try:
             os.stat(url_screenshot_filename)
             url_screenshot_filename = urllib.quote(url_screenshot_filename)
+            url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
             html_code = html_code + """\n<div id="linkwrap">\n"""
-            html_code = html_code + """<a class="link" href="#">[Screenshot]<span><img src="{1}" alt="image"/></span></a>  <a href="{0}">{0}</a><br>\n""".format(path,url_screenshot_filename)
+            html_code = html_code + """<a class="link" href="#">[Screenshot]<span><img src="{1}" alt="image"/></span></a>  <a href="{0}">{0}</a><br>\n""".format(path,url_screenshot_filename_relative)
             html_code = html_code + "</div>\n"
         except:
             #print("Could not find screenshot for " + path)

@@ -17,13 +17,13 @@ celerystalk helps you automate your network scanning/enumeration process with as
 Under the hood:
 * **Celery** - [Celery](http://www.celeryproject.org/) is used to execute your commands asynchronously 
 * **Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
-* **Selenium** is used with chromedriver to take *screenshots of every url identified* using gobuster and Photon (spider)
+* **Selenium** is used with geckodriver to take *screenshots of every url identified* using gobuster and Photon (spider)
 * **SQLite** is used to persist data and manage workspaces
      
 
 ## Install/Setup
 
-* **Supported Operating Systems:** Kali 
+* **Supported Operating Systems:** Kali (Setup script supports ubuntu, but for now you're on your own for installing tools like gobuster, nikto, etc...)
 * **Supported Python Version:** 2.x
 
 ```
