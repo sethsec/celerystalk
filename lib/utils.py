@@ -8,8 +8,11 @@ from netaddr import IPAddress, IPRange, IPNetwork
 import socket
 import db
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+#from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
+from pyvirtualdisplay import Display
 import os
+import time
 
 
 def take_screenshot(url,output):
@@ -18,17 +21,27 @@ def take_screenshot(url,output):
     #Source: https://stackoverflow.com/questions/50642308/org-openqa-selenium-webdriverexception-unknown-error-devtoolsactiveport-file-d
 
     # instantiate a chrome options object so you can set the size and headless preference
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options = Options()
+    # chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--window-size=1920x1080")
+    # chrome_options.add_argument("--no-sandbox")
+    # chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options.add_argument("--allow-http-screen-capture")
+    # chrome_options.add_argument("--ignore-certificate-errors")
+    # chrome_options.add_argument("--disable-gpu")
+    #
+    # driver = '/usr/bin/chromedriver'
+    # driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver)
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    options = Options()
+    options.add_argument("--headless")
+    driver = webdriver.Firefox(firefox_options=options)
 
-    driver = '/usr/bin/chromedriver'
-    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver)
     try:
         # capture the screen
         driver.get(url)
+        #time.sleep(3)
         #driver.get_screenshot_as_file(output)
         print("output in takescreenshot: " + output)
         print(url)
@@ -37,6 +50,7 @@ def take_screenshot(url,output):
         return screenshot
     except:
         return False
+    display.stop()
 
 
 
