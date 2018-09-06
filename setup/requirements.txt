@@ -11,3 +11,4 @@ infi.docopt-completion
 sqlalchemy
 bleach
 selenium
+prettytable

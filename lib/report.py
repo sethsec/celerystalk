@@ -17,7 +17,7 @@ def paths_report(host):
             html_code = html_code + """<a class="link" href="#">[Screenshot]<span><img src="{1}" alt="image"/></span></a>  <a href="{0}">{0}</a><br>\n""".format(path,url_screenshot_filename)
             html_code = html_code + "</div>\n"
         except:
-            print("Could not find screenshot for " + path)
+            #print("Could not find screenshot for " + path)
             html_code = html_code + """\n<div id="linkwrap">\n"""
             html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
             html_code = html_code + "</div>\n"

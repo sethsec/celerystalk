@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DISTRO=`grep "^ID=" /etc/os-release | cut -d\= -f2`
+
 if [[ $EUID -ne 0 ]]; then
    echo " [!]This script must be run as root" 1>&2
    exit 1
@@ -11,8 +13,16 @@ if [ ! -f config.ini ]; then
 fi
 echo "[+] Updating apt sources"
 apt update -y
+
 echo "[+] Installing redis-server, gobuster, seclists"
-apt install gobuster redis-server seclists chromium chromium-driver
+if [ "$DISTRO" == "kali" ]; then
+    echo "kali"
+    apt install gobuster redis-server seclists chromium chromium-driver -y
+elif [ "$DISTRO" == "ubuntu" ]; then
+    echo "ubuntu"
+    apt install redis-server chromium-chromedriver -y
+    ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+fi
 
 CELERYSTALK_DIR=`pwd`
 

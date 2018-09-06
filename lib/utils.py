@@ -10,6 +10,7 @@ import db
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
+import time
 
 
 def take_screenshot(url,output):
@@ -29,6 +30,7 @@ def take_screenshot(url,output):
     try:
         # capture the screen
         driver.get(url)
+        time.sleep(3)
         #driver.get_screenshot_as_file(output)
         print("output in takescreenshot: " + output)
         print(url)
