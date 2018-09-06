@@ -168,7 +168,7 @@ def post_process(*args):
         with open(post_gobuster_filename,'r') as gobuster_file:
             lines = gobuster_file.read().splitlines()
             print(lines)
-            if len(lines) > 100:
+            if len(lines) > 300:
                 #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
                 exit()
 
