@@ -36,7 +36,7 @@ def take_screenshot(url,output):
     display.start()
     options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Firefox(firefox_options=options, executable_path='/usr/bin/geckodriver')
+    driver = webdriver.Firefox(firefox_options=options)
 
     try:
         # capture the screen
