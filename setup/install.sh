@@ -20,7 +20,7 @@ if [ "$DISTRO" == "kali" ]; then
     apt install gobuster redis-server seclists chromium chromium-driver -y
 elif [ "$DISTRO" == "ubuntu" ]; then
     echo "ubuntu"
-    apt install redis-server chromium-chromedriver -y
+    apt install python-pip unzip redis-server chromium-chromedriver -y
     ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
 fi
 
