@@ -17,7 +17,7 @@ apt update -y
 echo "[+] Installing redis-server, gobuster, seclists"
 if [ "$DISTRO" == "kali" ]; then
     echo "kali"
-    apt install gobuster redis-server seclists firefox xvfb -y
+    apt install gobuster redis-server seclists firefox-esr xvfb -y
 elif [ "$DISTRO" == "ubuntu" ]; then
     echo "ubuntu"
     apt install python-pip unzip redis-server firefox xvfb jq -y
