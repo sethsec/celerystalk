@@ -91,7 +91,7 @@ Not ready yet.  Coming soon...
 
 1. **Configure which tools you'd like celerystalk to execute:** The install script drops a config.ini file in the celerystalk folder. The config.ini script is broken up into three sections:  
 
-    ***Service Mapping*** - The first section maps multiple Nmap and Nessus service names to celerystalk service names (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
+    ***Service Mapping*** - The first section normalizes Nmap & Nessus service names for celerystalk (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
     ```
     [nmap-service-names]
     http = http,http-alt,http-proxy,www,http?
