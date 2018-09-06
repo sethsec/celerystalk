@@ -372,15 +372,15 @@ def main(arguments):
             #     lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
 if __name__ == "__main__":
-    arguments = docopt(__doc__, version='celerystalk 1.0')
-    #print(arguments)
-    print_banner()
-    if arguments["help"]:
-       print(__doc__)
     try:
         os.stat('/etc/bash_completion.d/celerystalk.sh')
     except:
         print("[!] Run the installer first:\n\ncd setup && ./install.sh && cd ..\n")
         exit()
+    arguments = docopt(__doc__, version='celerystalk 1.0')
+    #print(arguments)
+    print_banner()
+    if arguments["help"]:
+       print(__doc__)
     main(arguments)
 
