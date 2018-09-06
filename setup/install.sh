@@ -17,28 +17,10 @@ apt update -y
 echo "[+] Installing redis-server, gobuster, seclists"
 if [ "$DISTRO" == "kali" ]; then
     echo "kali"
-    apt install gobuster redis-server seclists firefox-esr xvfb -y
+    apt install gobuster redis-server seclists firefox-esr xvfb jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
     echo "ubuntu"
     apt install python-pip unzip redis-server firefox xvfb jq -y
-    #ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
-    if [ ! -f /usr/bin/geckodriver ]; then
-        install_dir="/usr/bin"
-        json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
-        if [[ $(uname) == "Darwin" ]]; then
-            url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("macos"))')
-        elif [[ $(uname) == "Linux" ]]; then
-            url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
-            echo $url
-        else
-            echo "can't determine OS"
-            exit 1
-        fi
-        curl -s -L "$url" | tar -xz
-        chmod +x geckodriver
-        mv geckodriver "$install_dir"
-        echo "installed geckodriver binary in $install_dir"
-    fi
 fi
 
 CELERYSTALK_DIR=`pwd`
@@ -47,6 +29,25 @@ echo "[+] Starting redis-server"
 /etc/init.d/redis-server start
 echo "[+] Installing python requirements via pip"
 pip install -r requirements.txt
+
+
+if [ ! -f /usr/bin/geckodriver ]; then
+    # https://gist.github.com/cgoldberg/4097efbfeb40adf698a7d05e75e0ff51#file-geckodriver-install-sh
+    install_dir="/usr/bin"
+    json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
+    if [[ $(uname) == "Linux" ]]; then
+        url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
+        echo $url
+    else
+        echo "can't determine OS"
+        exit 1
+    fi
+    curl -s -L "$url" | tar -xz
+    chmod +x geckodriver
+    mv geckodriver "$install_dir"
+    echo "installed geckodriver binary in $install_dir"
+fi
+
 
 if [ ! -f /opt/amass/amass ]; then
     echo "[+] Downloading OWASP Amass to /opt/amass/amass"
