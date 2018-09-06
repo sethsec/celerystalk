@@ -377,5 +377,10 @@ if __name__ == "__main__":
     print_banner()
     if arguments["help"]:
        print(__doc__)
+    try:
+        os.stat('/etc/bash_completion.d/celerystalk.sh')
+    except:
+        print("[!] Run the installer first:\n\ncd setup && ./install.sh && cd ..\n")
+        exit()
     main(arguments)
 
