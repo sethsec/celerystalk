@@ -43,8 +43,8 @@ def take_screenshot(url,output):
         driver.get(url)
         #time.sleep(3)
         #driver.get_screenshot_as_file(output)
-        print("output in takescreenshot: " + output)
-        print(url)
+        #print("output in takescreenshot: " + output)
+        #print(url)
         screenshot = driver.save_screenshot(output)
         driver.quit()
         return screenshot

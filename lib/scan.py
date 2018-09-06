@@ -347,7 +347,6 @@ def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
     #print(config_nmap_options)
     cmd_name = "nmap_bug_bounty_mode"
     populated_command = "nmap " + host + config_nmap_options
-
     task_id = uuid()
     result = chain(
         tasks.cel_create_task.subtask(args=(cmd_name, populated_command, host, output_base_dir, workspace, task_id)),
@@ -362,10 +361,16 @@ def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
 def process_url(url,output_base_dir,workspace,simulation):
     celery_path = sys.path[0]
     config,supported_services = config_parser.read_config_ini()
+    task_id_list = []
+
+
 
     try:
         parsed_url = urlparse.urlparse(url)
         scheme = parsed_url[0]
+        if not scheme:
+            print("\n[!] URL parameter (-u) requires that you specify the scheme (http:// or https://)\n")
+            exit()
         if ":" in parsed_url[1]:
             target,port = parsed_url[1].split(':')
         else:
@@ -376,7 +381,8 @@ def process_url(url,output_base_dir,workspace,simulation):
                 port = 443
         path = parsed_url[2]
     except:
-        print("problem parsing url")
+        if not scheme:
+            exit()
     try:
         ip = socket.gethostbyname(target)
     except:
@@ -398,7 +404,7 @@ def process_url(url,output_base_dir,workspace,simulation):
     summary_file = open(summary_file_name, 'a')
 
     db_vhost = (ip, target, 1, 1, workspace)  # in this mode all vhosts are in scope
-    print(db_vhost)
+    #print(db_vhost)
     db.create_vhost(db_vhost)
 
     #Insert port/service combo into services table
@@ -417,9 +423,9 @@ def process_url(url,output_base_dir,workspace,simulation):
         url_screenshot_filename = url_screenshot_filename.replace("__", "")
         db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
         db.insert_new_path(db_path)
-        print("Found Url: " + str(url))
+        #print("Found Url: " + str(url))
         result = utils.take_screenshot(url, url_screenshot_filename)
-        print(result)
+        #print(result)
 
 
     #TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
@@ -453,8 +459,9 @@ def process_url(url,output_base_dir,workspace,simulation):
                                               simulation,port, scheme,proto,celery_path),
                     )()  # .apply_async()
 
-                    #task_id_list.append(result.task_id)
+                    task_id_list.append(result.task_id)
                     host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
                     f = open(host_audit_log, 'a')
                     f.write(populated_command + "\n\n")
                     f.close()
+    print("[+] Submitted {0} tasks to queue.\n".format(len(task_id_list)))
