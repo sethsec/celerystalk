@@ -165,7 +165,8 @@ Not ready yet.  Coming soon...
     Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
     ```
     
-    Screenshot: 
+    Screenshot:
+     
     ![](https://preview.ibb.co/ixYTsz/report.png)
 
 ## Usage
