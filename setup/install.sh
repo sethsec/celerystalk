@@ -35,15 +35,15 @@ if [ ! -f /usr/bin/geckodriver ]; then
     #From: https://github.com/FortyNorthSecurity/EyeWitness/blob/master/setup/setup.sh
     MACHINE_TYPE=`uname -m`
     if [ ${MACHINE_TYPE} == 'x86_64' ]; then
-      wget https://github.com/mozilla/geckodriver/releases/download/v0.13.0/geckodriver-v0.13.0-linux64.tar.gz
-      tar -xvf geckodriver-v0.13.0-linux64.tar.gz
-      rm geckodriver-v0.13.0-linux64.tar.gz
+      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
+      tar -xvf geckodriver-v0.22.0-linux64.tar.gz
+      rm geckodriver-v0.22.0-linux64.tar.gz
       mv geckodriver /usr/sbin
       ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
     else
-      wget https://github.com/mozilla/geckodriver/releases/download/v0.13.0/geckodriver-v0.13.0-linux32.tar.gz
-      tar -xvf geckodriver-v0.13.0-linux32.tar.gz
-      rm geckodriver-v0.13.0-linux64.tar.gz
+      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux32.tar.gz
+      tar -xvf geckodriver-v0.22.0-linux32.tar.gz
+      rm geckodriver-v0.22.0-linux64.tar.gz
       mv geckodriver /usr/sbin
       ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
     fi
