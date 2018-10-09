@@ -28,16 +28,14 @@ def take_screenshot(urls_to_screenshot):
             driver = webdriver.Firefox(firefox_options=options)
             # capture the screen
             driver.get(url)
-            print("Taking screenshot of [{0}]".format(output))
+            print("Taking screenshot of [{0}]".format(url))
             screenshot = driver.save_screenshot(output)
-            return screenshot
         except WebDriverException, e:
             #print('exception: {0}'.format(e))
-            print("Error taking screenshot of [{0}]".format(output))
+            print("Error taking screenshot of [{0}]".format(url))
         except Exception, e:
             print('exception: {0}'.format(e))
             #print(type(e).__name__)
-            return False
         finally:
             driver.quit()
     display.stop()

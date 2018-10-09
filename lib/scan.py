@@ -169,10 +169,11 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                 populated_command = "#" + populated_command
             #outfile = scan_output_base_host_filename + "_nmap_UDP_service_scan.txt"
             task_id = uuid()
+            utils.create_task(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)
             result = chain(
                 # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                 # in celery the same way a task does, for instance, you can't find it in flower
-                tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)),
+                #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)),
 
                 # run the command. run_task takes care of marking the task as started and then completed.
                 # The si tells run_cmd to ignore the data returned from a previous task
@@ -208,10 +209,11 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                     outfile = scan_output_base_file_name + "_nmap_service_scan.txt"
 
                     task_id = uuid()
+                    utils.create_task(cmd_name, populated_command, ip, outfile , workspace, task_id)
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                         # in celery the same way a task does, for instance, you can't find it in flower
-                        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile , workspace, task_id)),
+                        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile , workspace, task_id)),
 
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
@@ -276,10 +278,11 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                     # that allows me to pass it to all of the tasks in the chain.
 
                     task_id = uuid()
+                    utils.create_task(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                         # in celery the same way a task does, for instance, you can't find it in flower
-                        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)),
+                        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)),
 
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
@@ -311,30 +314,118 @@ def find_subdomains(domains,simulation,workspace,output_base_dir,scan_mode,out_o
                     # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
                     # that allows me to pass it to all of the tasks in the chain.
                     task_id = uuid()
+                    utils.create_task(cmd_name, populated_command, domain, "", workspace, task_id)
+                    process_domain_tuple = (cmd_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, scan_mode)
                     if scan_mode == "VAPT":
                         result = chain(
                             # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                             # in celery the same way a task does, for instance, you can't find it in flower
-                            tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
+                            #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
 
                             # run the command. run_task takes care of marking the task as started and then completed.
                             # The si tells run_cmd to ignore the data returned from a previous task
-                            tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id).set(task_id=task_id),
+                            tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id,process_domain_tuple=process_domain_tuple).set(task_id=task_id),
 
                             # right now, every executed command gets sent to a generic post_process task that can do
                             # additinoal stuff based on the command that just ran.
-                            tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,scan_mode),
+                            #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,scan_mode),
                         )()  # .apply_async()
                     else:
                         result = chain(
-                            tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
+                            #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
                             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
                             tasks.post_process_domains_bb.s(cmd_name, populated_command, output_base_dir, workspace,
                                                          domain, simulation, celery_path,out_of_scope_hosts),
                         )()
 
 
+def post_process_domains(vhosts,process_domain_tuple):
 
+    command_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, scan_mode = process_domain_tuple
+    config,supported_services = config_parser.read_config_ini()
+    vhosts = vhosts.splitlines()
+    # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
+    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+    for vhost in vhosts:
+        #print("raw:\t" + vhost)
+        vhost = ansi_escape.sub('', vhost)
+        #print("escaped:\t" + vhost)
+        if re.match(r'\w', vhost):
+            in_scope,ip = utils.domain_scope_checker(vhost,workspace)
+            if in_scope == 1:
+                print("Found subdomain (in scope):\t" + vhost)
+                db_vhost = (ip,vhost,1, 0,workspace)
+                db.create_vhost(db_vhost)
+            else:
+                print("Found subdomain (out of scope):\t" + vhost)
+                db_vhost = (ip, vhost, 0, 0, workspace)
+                db.create_vhost(db_vhost)
+
+        # elif scan_mode == "BB":
+        #
+        #     cmd_name, cmd = config['nmap-bug-bounty_mode']
+        #
+        #     utils.
+        #
+        #     db_vhost = ("", vhost, 1, 0, workspace)
+        #     db.create_vhost(db_vhost)
+
+
+    #pull all in scope vhosts that have not been submitted
+    inscope_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
+    for scannable_vhost in inscope_vhosts:
+        scannable_vhost = scannable_vhost[0]
+        ip = db.get_vhost_ip(scannable_vhost,workspace)
+        ip = ip[0][0]
+        db_scanned_services = db.get_all_services_for_ip(ip, workspace)
+        for (id,ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace) in db_scanned_services:
+        #run chain on each one and then update db as submitted
+            scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" +  str(scanned_service_port) + "_" + scanned_service_protocol + "_"
+            host_dir = output_base_dir + "/" + ip
+
+            #TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
+            for section in config.sections():
+                if (section == "http") or (section == "https"):
+                    if section == scanned_service_name:
+                        for (cmd_name, cmd) in config.items(section):
+                            outfile = scan_output_base_file_name + cmd_name
+                            populated_command = cmd.replace("[TARGET]", scannable_vhost).replace("[PORT]",
+                                str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]", "")
+                            if simulation:
+                                # debug - sends jobs to celery, but with a # in front of every one.
+                                populated_command = "#" + populated_command
+
+                            # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
+                            # that allows me to pass it to all of the tasks in the chain.
+
+                            task_id = uuid()
+                            utils.create_task(cmd_name, populated_command, scannable_vhost, outfile + ".txt", workspace, task_id)
+
+
+                            result = chain(
+                                # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+                                # in celery the same way a task does, for instance, you can't find it in flower
+                                #tasks.cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt", workspace, task_id)),
+
+                                # run the command. run_task takes care of marking the task as started and then completed.
+                                # The si tells run_cmd to ignore the data returned from a previous task
+                                tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+
+                                # right now, every executed command gets sent to a generic post_process task that can do
+                                # additinoal stuff based on the command that just ran.
+                                tasks.post_process.si(cmd_name, populated_command, output_base_dir, workspace, scannable_vhost, host_dir,
+                                                      simulation,
+                                                      scanned_service_port, scanned_service_name,
+                                                      scanned_service_protocol,celery_path),
+                            )()  # .apply_async()
+
+                            #task_id_list.append(result.task_id)
+                            host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
+                            f = open(host_audit_log, 'a')
+                            f.write(populated_command + "\n\n")
+                            f.close()
+
+        db.update_vhosts_submitted(ip,scannable_vhost,workspace,1)
 
 
 def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
@@ -348,8 +439,9 @@ def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
     cmd_name = "nmap_bug_bounty_mode"
     populated_command = "nmap " + host + config_nmap_options
     task_id = uuid()
+    utils.create_task(cmd_name, populated_command, host, output_base_dir, workspace, task_id)
     result = chain(
-        tasks.cel_create_task.subtask(args=(cmd_name, populated_command, host, output_base_dir, workspace, task_id)),
+        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, host, output_base_dir, workspace, task_id)),
         tasks.cel_nmap_scan.si(cmd_name, populated_command, host, config_nmap_options, celery_path, task_id,workspace).set(task_id=task_id),
         tasks.cel_scan_process_nmap_data.s(workspace),
         tasks.cel_process_db_services.si(output_base_dir, simulation, workspace,host=host),
@@ -362,8 +454,7 @@ def process_url(url,output_base_dir,workspace,simulation):
     celery_path = sys.path[0]
     config,supported_services = config_parser.read_config_ini()
     task_id_list = []
-
-
+    urls_to_screenshot = []
 
     try:
         parsed_url = urlparse.urlparse(url)
@@ -424,7 +515,8 @@ def process_url(url,output_base_dir,workspace,simulation):
         db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
         db.insert_new_path(db_path)
         #print("Found Url: " + str(url))
-        result = utils.take_screenshot(url, url_screenshot_filename)
+        urls_to_screenshot.append((url, url_screenshot_filename))
+        result = utils.take_screenshot(urls_to_screenshot)
         #print(result)
 
 
@@ -444,10 +536,11 @@ def process_url(url,output_base_dir,workspace,simulation):
                     # that allows me to pass it to all of the tasks in the chain.
 
                     task_id = uuid()
+                    utils.create_task(cmd_name,populated_command, target, outfile + ".txt", workspace, task_id)
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                         # in celery the same way a task does, for instance, you can't find it in flower
-                        tasks.cel_create_task.subtask(args=(cmd_name,populated_command, target, outfile + ".txt", workspace, task_id)),
+                        #tasks.cel_create_task.subtask(args=(cmd_name,populated_command, target, outfile + ".txt", workspace, task_id)),
 
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
