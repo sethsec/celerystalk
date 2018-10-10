@@ -13,6 +13,7 @@ Usage:
     celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk db workspaces
     celerystalk db ([services] | [hosts] | [paths]) [-w <workspace>]
+    celerystalk db export [-w <workspace>]
     celerystalk shutdown
     celerystalk (help | -h | --help)
 
@@ -31,22 +32,46 @@ Options:
 
 Examples:
 
-    Start from Nmap XML file:   ./celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     ./celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Specify workspace:          ./celerystalk scan -f <file> -o /pentest -w test
-    Find in scope vhosts:       ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Scan subset hosts in XML:   ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
-                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
-                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:            ./celerystalk scan -f <file> -o /pentest -s
-    Query Tasks:                ./celerystalk query [-w workspace]
-    Create Report:              ./celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
-    Cancel/Pause/Resume Tasks:  ./celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
-                                ./celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
-                                ./celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
-                                ./celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
-                                ./celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
-    Shutdown Celery processes:  ./celerystalk shutdown
+    Start from Nmap XML file:
+                ./celerystalk scan -f /pentest/nmap.xml -o /pentest
+    Start from Nessus file:
+                ./celerystalk scan -f /pentest/scan.nessus -o /pentest
+    Specify a workspace (Uses [Default] workspace if not specified):
+                ./celerystalk scan -f <file> -o /pentest -w test
+    Find in scope vhosts using subdomain recon tools and scan any subodmain that is resolves ton an IP in scan file:
+                ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Scan subset hosts in Nmap/Nessus XML:
+                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
+                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
+                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Simulation mode:
+                ./celerystalk scan -f <file> -o /pentest -s
+    Query tasks:
+                ./celerystalk query [-w workspace]
+    Create a report for all scanned hosts in a workspace:
+                ./celerystalk report [-w workspace]
+    Cancel/Pause/Resume tasks 5, 6, and 10-20 in the Default workspace:
+                ./celerystalk <verb> 5,6,10-20
+    Cancel/Pause/Resume all tasks in the Default workspace:
+                ./celerystalk <verb> all
+    Cancel/Pause/Resume all tasks in the test workspace:
+                ./celerystalk <verb> all -w test
+    Cancel/Pause/Resume all tasks related to 10.0.0.1 in the Default workspace:
+                ./celerystalk <verb> 10.0.0.1
+    Cancel/Pause/Resume all tasks related to 10.0.0.0/24 in the Default workspace:
+                ./celerystalk <verb> 10.0.0.0/24
+    List all current workspaces in the database:
+                ./celerystalk db workspaces
+    List all hosts in the Default workspace
+                ./celerystalk db hosts [-w workspace]
+    List all services in the Default workspace
+                ./celerystalk db services
+    List all paths in the Default workspace
+                ./celerystalk db paths
+    Save hosts,services, and paths as CSV files in the output directory associated with a workspace
+                ./celerystalk db export
+    Shutdown celery processes:
+                ./celerystalk shutdown
 """
 
 # Not ready yet (still in dev):
@@ -69,6 +94,7 @@ import lib.config_parser
 import socket
 from lib import db
 from prettytable import PrettyTable
+import csv
 
 def print_banner():
 
@@ -223,7 +249,33 @@ def main(arguments):
                     paths_table.add_row(row[1:4])
                 print(paths_table)
                 print("\n\n")
+            elif arguments["export"]:
+                output_dir = db.get_output_dir_for_workspace(workspace)[0][0]
+                host_rows = lib.db.get_vhosts_table(workspace)
+                hosts_filename = workspace + "_hosts.csv"
+                hosts_output_file = os.path.join(output_dir,hosts_filename)
+                with open(hosts_output_file, 'wb') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["IP","vhost","in_scope"])
+                    writer.writerows(host_rows)
+                print("[+] Saved all hosts in the [{0}] workspace to {1}".format(workspace,hosts_output_file))
 
+                services_rows = lib.db.get_all_services(workspace)
+                services_filename = workspace + "_services.csv"
+                services_output_file = os.path.join(output_dir, services_filename)
+                with open(services_output_file, 'wb') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["IP", "Port", "Protocol","Service"])
+                    writer.writerows(services_rows)
+                print("[+] Saved all ports in the [{0}] workspace to {1}".format(workspace,services_output_file))
+                paths_rows = lib.db.get_all_paths(workspace)
+                paths_filename = workspace + "_paths.csv"
+                paths_output_file = os.path.join(output_dir, paths_filename)
+                with open(paths_output_file, 'wb') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["IP", "Port", "Path"])
+                    writer.writerows(paths_rows)
+                print("[+] Saved all paths in the [{0}] workspace to {1}.\n".format(workspace,paths_output_file))
 
 
 
