@@ -8,52 +8,37 @@ from netaddr import IPAddress, IPRange, IPNetwork
 import socket
 import db
 from selenium import webdriver
-#from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import WebDriverException
 from pyvirtualdisplay import Display
 import os
 import time
 
 
-def take_screenshot(url,output):
-    #Source: https://medium.com/@ronnyml/website-screenshot-generator-with-python-593d6ddb56cb
-    #Source: https://medium.com/@pyzzled/running-headless-chrome-with-selenium-in-python-3f42d1f5ff1d
-    #Source: https://stackoverflow.com/questions/50642308/org-openqa-selenium-webdriverexception-unknown-error-devtoolsactiveport-file-d
+def take_screenshot(urls_to_screenshot):
 
-    # instantiate a chrome options object so you can set the size and headless preference
-    # chrome_options = Options()
-    # chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--window-size=1920x1080")
-    # chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--disable-dev-shm-usage")
-    # chrome_options.add_argument("--allow-http-screen-capture")
-    # chrome_options.add_argument("--ignore-certificate-errors")
-    # chrome_options.add_argument("--disable-gpu")
-    #
-    # driver = '/usr/bin/chromedriver'
-    # driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver)
     display = Display(visible=0, size=(800, 600))
     display.start()
     options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Firefox(firefox_options=options)
 
-    try:
-        # capture the screen
-        driver.get(url)
-        #time.sleep(3)
-        #driver.get_screenshot_as_file(output)
-        #print("output in takescreenshot: " + output)
-        #print(url)
-        screenshot = driver.save_screenshot(output)
-        driver.quit()
-        return screenshot
-    except:
-        return False
+
+    for url,output in urls_to_screenshot:
+        try:
+            driver = webdriver.Firefox(firefox_options=options)
+            # capture the screen
+            driver.get(url)
+            print("Taking screenshot of [{0}]".format(url))
+            screenshot = driver.save_screenshot(output)
+        except WebDriverException, e:
+            #print('exception: {0}'.format(e))
+            print("Error taking screenshot of [{0}]".format(url))
+        except Exception, e:
+            print('exception: {0}'.format(e))
+            #print(type(e).__name__)
+        finally:
+            driver.quit()
     display.stop()
-
-
-
 
 def task_splitter(id):
     task_list=[]
@@ -273,3 +258,8 @@ def domain_scope_checker(domain,workspace):
         for domain_tuple in domain_tuples:
             ip = str(domain_tuple[1])
             return 0,ip
+
+
+def create_task(command_name, populated_command, ip, output_dir, workspace, task_id):
+    db_task = (task_id, 1, command_name, populated_command, ip, output_dir, 'SUBMITTED', workspace)
+    db.create_task(db_task)

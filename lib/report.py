@@ -129,7 +129,13 @@ def report(workspace,target_list=None):
             for line in host_report_file:
                 #HTML report
                 line = unicode(line, errors='ignore')
-                sanitized = bleach.clean(line)
+                try:
+                    sanitized = bleach.clean(line)
+                except:
+                    print("[!] Could not output santize the following line (Not including it in report to be safe):")
+                    print("     " + line)
+                    sanitized = ""
+
                 combined_report_file.write(sanitized)
                 #txt Report
                 combined_report_file_txt.write(line)
