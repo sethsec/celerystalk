@@ -28,7 +28,7 @@ CELERYSTALK_DIR=`pwd`
 echo "[+] Starting redis-server"
 /etc/init.d/redis-server start
 echo "[+] Installing python requirements via pip"
-pip install -r requirements.txt
+pip install -r requirements.txt --upgrade
 
 
 if [ ! -f /usr/bin/geckodriver ]; then
