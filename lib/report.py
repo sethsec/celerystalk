@@ -174,14 +174,17 @@ body {
 }
 
 .sidenav {
-    width: 130px;
+    width: 160px;
     position: fixed;
     z-index: 1;
-    top: 20px;
-    left: 10px;
+    top: 0;
+    left: 0;
+    bottom: 0;
     background: #eee;
-    overflow-x: hidden;
+    overflow-x: auto;
+    overflow-y: auto
     padding: 8px 0;
+    display: block;
 }
 
 .sidenav a {
