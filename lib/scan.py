@@ -24,7 +24,7 @@ def process_nessus_data2(nessus_report,workspace,target=None):
         if (IPAddress(ip) == target) or (target is None):
             has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip, workspace)
             if has_vhost_been_scanned:
-                answer = raw_input("[!] {0} has already been scanned.  Scan again? [Y\\n] ".format(ip))
+                answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
                 if (answer == "Y") or (answer == "y") or (answer == ""):
                     db.update_vhosts_submitted(ip, ip, workspace, 0)
             else:
@@ -85,7 +85,7 @@ def process_nmap_data2(nmap_report,workspace, target=None):
             #has_vhost_been_scanned = db.get_unique_inscope_vhosts_for_ip(ip,workspace)
             has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip,workspace)
             if has_vhost_been_scanned:
-                answer = raw_input("[!] {0} has already been scanned.  Scan again? [Y\\n] ".format(ip))
+                answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
                 if (answer == "Y") or (answer == "y") or (answer == ""):
                     db.update_vhosts_submitted(ip,ip,workspace,0)
             else:
@@ -141,13 +141,18 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
     unique_unscanned_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
     for row in unique_unscanned_vhosts:
 
-        ip = row[0]
-        #print("in proccess_db_services - ip:" + ip)
-        if (IPAddress(ip) == target) or (target is None):
-            host_dir = output_base_dir + ip
+        vhost = row[0]
+        #print("in proccess_db_services - vhost:" + vhost)
+        vhost_ip = db.get_vhost_ip(vhost,workspace)[0]
+        #print(target)
+        #print(vhost_ip)
+        #print(str(vhost_ip))
+
+        if (IPAddress(vhost_ip[0]) == target) or (target is None):
+            host_dir = output_base_dir + vhost
             host_data_dir = host_dir + "/celerystalkOutput/"
             # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
-            utils.create_dir_structure(ip, host_dir)
+            utils.create_dir_structure(vhost, host_dir)
             #Next two lines create the file that will contain each command that was executed. This is not the audit log,
             #but a log of commands that can easily be copy/pasted if you need to run them again.
             summary_file_name = host_data_dir + "ScanSummary.log"
@@ -155,65 +160,66 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
 
             #THIS is just a work around until i have a real solution.  Really, UDP scans should be done
             #For every host in the scanned host list, launch a quick UDP scan (top 100 ports)
-            scan_output_base_host_filename = host_data_dir + ip
+            scan_output_base_host_filename = host_data_dir + vhost
             for (cmd_name, cmd) in config.items("nmap-commands"):
                 if cmd_name == "udp_scan":
                     udp_nmap_command = cmd
                 outfile = scan_output_base_host_filename + "_" + cmd_name
-                populated_command = cmd.replace("[TARGET]", ip).replace("[OUTPUT]", outfile)
+                populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
 
             #cmd_name = "udp-top100"
             #populated_command = 'nmap -sV -sC -Pn -sU --top-ports 100 -oN {0}_nmap_UDP_service_scan.txt -oX {0}_nmap_UDP_service_scan.xml {1}'.format(
-            #    scan_output_base_host_filename, ip)
+            #    scan_output_base_host_filename, vhost)
             if simulation:
                 populated_command = "#" + populated_command
             #outfile = scan_output_base_host_filename + "_nmap_UDP_service_scan.txt"
             task_id = uuid()
-            utils.create_task(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)
+            utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
             result = chain(
                 # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                 # in celery the same way a task does, for instance, you can't find it in flower
-                #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)),
+                #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)),
 
                 # run the command. run_task takes care of marking the task as started and then completed.
                 # The si tells run_cmd to ignore the data returned from a previous task
                 tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id).set(task_id=task_id),
 
             )()  # .apply_async()
-            db.update_vhosts_submitted(ip, ip, workspace, 1)
+            if not simulation:
+                db.update_vhosts_submitted(vhost, vhost, workspace, 1)
 
 
             task_id_list.append(result.task_id)
-            #print "IP Address: {0}".format(ip)
-            db_services = db.get_all_services_for_ip(ip, workspace)
+            #print "IP Address: {0}".format(vhost)
+            db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
 
             for db_service in db_services:
                 (id,ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace) = db_service
 
-                scan_output_base_file_name = host_data_dir + ip + "_" + str(scanned_service_port) + "_" + scanned_service_protocol + "_"
+                scan_output_base_file_name = host_data_dir + vhost + "_" + str(scanned_service_port) + "_" + scanned_service_protocol + "_"
 
                 #If the service name is not in the supported service list, give the user notice so they can add the service
                 # and add some commands to the service. This is a major GAP right now. If the service is not in the config,
                 # the script completely ignores it, which is not good!
                 if scanned_service_name not in supported_services:
-                    print("[!] Nmap reports {0}:{1} is running: [{2}]. There are no commands to run against {2} in config.ini.".format(ip, scanned_service_port, scanned_service_name))
-                    summary_file.write("[!] Nmap reports {0}:{1} is running: [{2}]. There are no commands to run against {2} in config.ini\n".format(ip, scanned_service_port, scanned_service_name))
-                    #updated_port_scan = utils.nmap_follow_up_scan(ip, scanned_service_port)
+                    print("[!] Nmap reports {0}:{1} is running: [{2}]. There are no commands to run against {2} in config.ini.".format(vhost, scanned_service_port, scanned_service_name))
+                    summary_file.write("[!] Nmap reports {0}:{1} is running: [{2}]. There are no commands to run against {2} in config.ini\n".format(vhost, scanned_service_port, scanned_service_name))
+                    #updated_port_scan = utils.nmap_follow_up_scan(vhost, scanned_service_port)
                     #scanned_service_name = updated_port_scan.hosts[0]._services[0].service
                     cmd_name = "nmap_service_scan"
                     populated_command = 'nmap -sV -sC -Pn -p {0} -oN {1}_nmap_service_scan.txt {2}'.format(
-                        scanned_service_port, scan_output_base_file_name, ip)
+                        scanned_service_port, scan_output_base_file_name, vhost)
                     if simulation:
                         populated_command = "#" + populated_command
 
                     outfile = scan_output_base_file_name + "_nmap_service_scan.txt"
 
                     task_id = uuid()
-                    utils.create_task(cmd_name, populated_command, ip, outfile , workspace, task_id)
+                    utils.create_task(cmd_name, populated_command, vhost, outfile , workspace, task_id)
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                         # in celery the same way a task does, for instance, you can't find it in flower
-                        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile , workspace, task_id)),
+                        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, vhost, outfile , workspace, task_id)),
 
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
@@ -223,7 +229,7 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
 
                     task_id_list.append(result.task_id)
                 else:
-                    parse_config_and_send_commands_to_celery(scanned_service_name, scanned_service_port, scan_output_base_file_name, config, simulation, output_base_dir, host_dir, workspace, task_id_list,ip,scanned_service_protocol)
+                    parse_config_and_send_commands_to_celery(scanned_service_name, scanned_service_port, scan_output_base_file_name, config, simulation, output_base_dir, host_dir, workspace, task_id_list,vhost,scanned_service_protocol)
                 #task_id_list = task_id_list + new_tasks_list
             summary_file.close()
 

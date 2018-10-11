@@ -131,7 +131,7 @@ Not ready yet.  Coming soon...
     ```    
     Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
     Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Find in scope vhosts:       celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Scan all in scope vhosts:   celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
     Specify workspace:          celerystalk scan -f <file> -o /pentest -w test    
     Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
                                 celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
@@ -172,48 +172,74 @@ Not ready yet.  Coming soon...
 ## Usage
 ```
 Usage:
-    celerystalk scan -f <nmap_file> -o <output_dir> [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
+    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
+    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>] [-s]
+    celerystalk scan -o <output_dir> -u <url> [-w <workspace>] [-s]
     celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
     celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
     celerystalk report [-w <workspace>]
     celerystalk cancel ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk pause  ([all]|[<task_ids>]) [-w <workspace>]
     celerystalk resume ([all]|[<task_ids>]) [-w <workspace>]
+    celerystalk db workspaces
+    celerystalk db ([services] | [hosts] | [paths]) [-w <workspace>]
+    celerystalk db export [-w <workspace>]
     celerystalk shutdown
     celerystalk (help | -h | --help)
 
 Options:
-    -h --help         Show this screen
-    -v --version      Show version
-    -f <nmap_file>    Nmap xml import file
-    -o <output_dir>   Output directory
-    -t <targets>      Target(s): IP, IP Range, CIDR
-    -w <workspace>    Workspace [default: Default]
-    -d --domains      Domains to scan for vhosts
-    -s --simulation   Simulation mode.  Submit tasks comment out all commands
+    -h --help           Show this screen
+    -v --version        Show version
+    -f <nmap_file>      Nmap xml import file
+    -o <output_dir>     Output directory
+    -t <targets>        Target(s): IP, IP Range, CIDR
+    -u <url>            URL to parse and scan with all configured tools
+    -w <workspace>      Workspace [default: Default]
+    -d --domains        Domains to scan for vhosts
+    -s --simulation     Simulation mode.  Submit tasks comment out all commands
 
 Examples:
 
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
-    Find in scope vhosts:       celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
-                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -d
-    Query Tasks:                celerystalk query [-w workspace]
-                                celerystalk query [-w workspace] watch
-                                celerystalk query [-w workspace] summary
-                                celerystalk query [-w workspace] summary watch
-    Create Report:              celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace 
-    Cancel/Pause/Resume Tasks:  celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
-                                celerystalk <verb> all                #Cancel/Pause/Resume all tasks from all workspaces
-                                celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
-                                celerystalk <verb> 10.0.0.1           #Cancel/Pause/Resume all tasks related to 10.0.0.1
-                                celerystalk <verb> 10.0.0.0/24        #Cancel/Pause/Resume all tasks related to 10.0.0.0/24
-    Shutdown Celery processes:  celerystalk shutdown
-```
+    Start from Nmap XML file:
+                ./celerystalk scan -f /pentest/nmap.xml -o /pentest
+    Start from Nessus file:
+                ./celerystalk scan -f /pentest/scan.nessus -o /pentest
+    Specify a workspace (Uses [Default] workspace if not specified):
+                ./celerystalk scan -f <file> -o /pentest -w test
+    Find in scope vhosts using subdomain recon tools and scan any subodmain that is resolves ton an IP in scan file:
+                ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Scan subset hosts in Nmap/Nessus XML:
+                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
+                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
+                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Simulation mode:
+                ./celerystalk scan -f <file> -o /pentest -s
+    Query tasks:
+                ./celerystalk query [-w workspace]
+    Create a report for all scanned hosts in a workspace:
+                ./celerystalk report [-w workspace]
+    Cancel/Pause/Resume tasks 5, 6, and 10-20 in the Default workspace:
+                ./celerystalk <verb> 5,6,10-20
+    Cancel/Pause/Resume all tasks in the Default workspace:
+                ./celerystalk <verb> all
+    Cancel/Pause/Resume all tasks in the test workspace:
+                ./celerystalk <verb> all -w test
+    Cancel/Pause/Resume all tasks related to 10.0.0.1 in the Default workspace:
+                ./celerystalk <verb> 10.0.0.1
+    Cancel/Pause/Resume all tasks related to 10.0.0.0/24 in the Default workspace:
+                ./celerystalk <verb> 10.0.0.0/24
+    List all current workspaces in the database:
+                ./celerystalk db workspaces
+    List all hosts in the Default workspace
+                ./celerystalk db hosts [-w workspace]
+    List all services in the Default workspace
+                ./celerystalk db services
+    List all paths in the Default workspace
+                ./celerystalk db paths
+    Save hosts,services, and paths as CSV files in the output directory associated with a workspace
+                ./celerystalk db export
+    Shutdown celery processes:
+                ./celerystalk shutdown```
 
 ## Credit
 This project was inspired by many great tools:  

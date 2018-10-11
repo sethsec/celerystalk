@@ -105,6 +105,7 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
 
 
     if pending_rows.__len__() > 0:
+
         if repeat:
             pending_rows_orig = pending_rows
             pending_rows = pending_rows[:5]
@@ -119,10 +120,15 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
 
             command_length = len(command)
             if command_length > terminal_width - 11:
-
-                print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
+                if int(id) > 999:
+                    print(" [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
+                else:
+                    print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
             else:
-                print("  [" + str(id) + "]\t" + command)
+                if int(id) > 999:
+                    print(" [" + str(id) + "]\t" + command)
+                else:
+                    print("  [" + str(id) + "]\t" + command)
             #pending_row_id = pending_row_id + 1
         if repeat:
             if len(pending_rows_orig) > 5:
