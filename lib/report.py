@@ -174,14 +174,17 @@ body {
 }
 
 .sidenav {
-    width: 130px;
+    width: 160px;
     position: fixed;
     z-index: 1;
-    top: 20px;
-    left: 10px;
+    top: 0;
+    left: 0;
+    bottom: 0;
     background: #eee;
-    overflow-x: hidden;
+    overflow-x: auto;
+    overflow-y: auto
     padding: 8px 0;
+    display: block;
 }
 
 .sidenav a {
@@ -197,7 +200,7 @@ body {
 }
 
 .main {
-    margin-left: 140px; /* Same width as the sidebar + left position in px */
+    margin-left: 170px; /* Same width as the sidebar + left position in px */
     font-size: 14px; /* Increased text to enable scrolling */
     padding: 0px 10px;
 }
@@ -228,7 +231,7 @@ body {
 }
 .link:hover, .link:hover span { 
     visibility:visible;
-    top:0; left:250px; 
+    top:0; left:280px; 
     z-index:1;
     
 }
