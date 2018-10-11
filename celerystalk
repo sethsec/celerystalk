@@ -2,9 +2,9 @@
 
 """
 Usage:
-    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-c <config_file>] [-s]
-    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>] [-c <config_file>] [-s]
-    celerystalk scan -o <output_dir> -u <url> [-w <workspace>] [-c <config_file>] [-s]
+    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
+    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>] [-s]
+    celerystalk scan -o <output_dir> -u <url> [-w <workspace>] [-s]
     celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
     celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
     celerystalk report [-w <workspace>]
@@ -27,8 +27,6 @@ Options:
     -w <workspace>      Workspace [default: Default]
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
-    -c <config_file>    Point to your own config file (Default: ./config.ini)
-
 
 Examples:
 
@@ -96,12 +94,14 @@ from lib import db
 from prettytable import PrettyTable
 import csv
 
+build=str(108)
+
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
     print("\t\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
-    print("\t\tBuild: 106\n")
+    print("\t\tBuild: {0}\n".format(build))
 
 
 def main(arguments):
@@ -424,7 +424,7 @@ def main(arguments):
             #     lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
 if __name__ == "__main__":
-    arguments = docopt(__doc__, version='celerystalk 1.0.7')
+    arguments = docopt(__doc__, version='Build '+ build)
     #print(arguments)
     print_banner()
     if arguments["help"]:
