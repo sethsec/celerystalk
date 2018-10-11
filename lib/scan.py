@@ -24,7 +24,7 @@ def process_nessus_data2(nessus_report,workspace,target=None):
         if (IPAddress(ip) == target) or (target is None):
             has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip, workspace)
             if has_vhost_been_scanned:
-                answer = raw_input("[!] {0} has already been scanned.  Scan again? [Y\\n] ".format(ip))
+                answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
                 if (answer == "Y") or (answer == "y") or (answer == ""):
                     db.update_vhosts_submitted(ip, ip, workspace, 0)
             else:
@@ -85,7 +85,7 @@ def process_nmap_data2(nmap_report,workspace, target=None):
             #has_vhost_been_scanned = db.get_unique_inscope_vhosts_for_ip(ip,workspace)
             has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip,workspace)
             if has_vhost_been_scanned:
-                answer = raw_input("[!] {0} has already been scanned.  Scan again? [Y\\n] ".format(ip))
+                answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
                 if (answer == "Y") or (answer == "y") or (answer == ""):
                     db.update_vhosts_submitted(ip,ip,workspace,0)
             else:
