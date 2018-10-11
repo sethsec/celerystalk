@@ -200,7 +200,7 @@ body {
 }
 
 .main {
-    margin-left: 140px; /* Same width as the sidebar + left position in px */
+    margin-left: 170px; /* Same width as the sidebar + left position in px */
     font-size: 14px; /* Increased text to enable scrolling */
     padding: 0px 10px;
 }
@@ -231,7 +231,7 @@ body {
 }
 .link:hover, .link:hover span { 
     visibility:visible;
-    top:0; left:250px; 
+    top:0; left:280px; 
     z-index:1;
     
 }
