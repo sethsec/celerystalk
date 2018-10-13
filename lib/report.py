@@ -277,26 +277,34 @@ def populate_report_data(report_file,vhost,workspace):
 
     for output_file,command_name,command,status,start_time,run_time in reportable_tasks:
         output_file = os.path.normpath(output_file)
-        report_file.write('\n\n')
-        report_file.write('-' * 50 + '\n')
-        report_file.write("Command Name:\t" + command_name + '\n')
-        report_file.write("Start Time:\t" + start_time + '\n')
-        if status == "COMPLETED":
-            report_file.write("Run Time:\t" + run_time + '\n')
-        report_file.write("Command:\t" + command + '\n')
-        report_file.write("Output File:\t" + output_file + '\n')
-        report_file.write("Status:\t\t" + status + '\n')
-        report_file.write('-' * 50 + '\n\n')
-
-        linecount = 0
-
         try:
-            with open(output_file, "r") as scan_file:
-                for line in scan_file:
-                    if linecount < 300:
-                        report_file.write(line)
-                    linecount = linecount + 1
-                if linecount > 300:
-                    report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
-        except:
-            report_file.write("[!] Error opening file: " + output_file + "\n[!] This is normal if you executed a simulation, otherwise, please file an issue")
+
+            if os.stat(output_file).st_size == 0:
+                report_file.write('\n')
+                report_file.write('-' * 50 + '\n')
+                report_file.write("Command Name:\t" + command_name + ' [!] No data produced\n')
+
+                #report_file.write("{0} did not produce any data\n".format(command_name))
+                report_file.write('-' * 50)
+            else:
+                report_file.write('\n\n')
+                report_file.write('-' * 50 + '\n')
+                report_file.write("Command Name:\t" + command_name + '\n')
+                report_file.write("Start Time:\t" + start_time + '\n')
+                if status == "COMPLETED":
+                    report_file.write("Run Time:\t" + run_time + '\n')
+                report_file.write("Command:\t" + command + '\n')
+                report_file.write("Output File:\t" + output_file + '\n')
+                report_file.write("Status:\t\t" + status + '\n')
+                report_file.write('-' * 50 + '\n\n')
+
+                linecount = 0
+                with open(output_file, "r") as scan_file:
+                    for line in scan_file:
+                        if linecount < 300:
+                            report_file.write(line)
+                        linecount = linecount + 1
+                    if linecount > 300:
+                        report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
+        except OSError, e:
+            report_file.write("[!] No such file or directory: " + output_file + "\n")
