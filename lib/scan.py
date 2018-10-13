@@ -35,14 +35,15 @@ def process_nessus_data2(nessus_report,workspace,target=None):
             #         default as this point, which is why we need the next two loops.
             for report_item in scanned_host.get_report_items:
                 if report_item.plugin_family == "Port scanners":
-                    scanned_service_port = report_item.port
-                    scanned_service_protocol = report_item.protocol
-                    scanned_service_name = report_item.service
-                    db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
+                    if report_item.port != 0:
+                        scanned_service_port = report_item.port
+                        scanned_service_protocol = report_item.protocol
+                        scanned_service_name = report_item.service
+                        db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
 
-                    if not db_service:
-                        db_string = (ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
-                        db.create_service(db_string)
+                        if not db_service:
+                            db_string = (ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
+                            db.create_service(db_string)
 
             # Step 2: Cycle through the service detection items and update the services where we have a better idea of
             #         the real running service on the port. These are a subset of open ports which is why we need loop 1
