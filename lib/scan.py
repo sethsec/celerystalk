@@ -161,35 +161,40 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
             #THIS is just a work around until i have a real solution.  Really, UDP scans should be done
             #For every host in the scanned host list, launch a quick UDP scan (top 100 ports)
             scan_output_base_host_filename = host_data_dir + vhost
+
             for (cmd_name, cmd) in config.items("nmap-commands"):
                 if cmd_name == "udp_scan":
-                    udp_nmap_command = cmd
-                outfile = scan_output_base_host_filename + "_" + cmd_name
-                populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
+                    #print(cmd_name,cmd)
+                    outfile = scan_output_base_host_filename + "_" + cmd_name
+                    populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
+                    #print(cmd)
 
-            #cmd_name = "udp-top100"
-            #populated_command = 'nmap -sV -sC -Pn -sU --top-ports 100 -oN {0}_nmap_UDP_service_scan.txt -oX {0}_nmap_UDP_service_scan.xml {1}'.format(
-            #    scan_output_base_host_filename, vhost)
-            if simulation:
-                populated_command = "#" + populated_command
-            #outfile = scan_output_base_host_filename + "_nmap_UDP_service_scan.txt"
-            task_id = uuid()
-            utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
-            result = chain(
-                # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                # in celery the same way a task does, for instance, you can't find it in flower
-                #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)),
+                    #cmd_name = "udp-top100"
+                    #populated_command = 'nmap -sV -sC -Pn -sU --top-ports 100 -oN {0}_nmap_UDP_service_scan.txt -oX {0}_nmap_UDP_service_scan.xml {1}'.format(
+                    #    scan_output_base_host_filename, vhost)
+                    if simulation:
+                        populated_command = "#" + populated_command
+                    #outfile = scan_output_base_host_filename + "_nmap_UDP_service_scan.txt"
+                    task_id = uuid()
+                    utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
+                    result = chain(
+                        # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+                        # in celery the same way a task does, for instance, you can't find it in flower
+                        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)),
 
-                # run the command. run_task takes care of marking the task as started and then completed.
-                # The si tells run_cmd to ignore the data returned from a previous task
-                tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id).set(task_id=task_id),
+                        # run the command. run_task takes care of marking the task as started and then completed.
+                        # The si tells run_cmd to ignore the data returned from a previous task
+                        tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id).set(task_id=task_id),
 
-            )()  # .apply_async()
+                    )()  # .apply_async()
+                    task_id_list.append(result.task_id)
+
+
             if not simulation:
                 db.update_vhosts_submitted(vhost, vhost, workspace, 1)
 
 
-            task_id_list.append(result.task_id)
+
             #print "IP Address: {0}".format(vhost)
             db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
 
