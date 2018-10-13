@@ -299,12 +299,15 @@ def populate_report_data(report_file,vhost,workspace):
                 report_file.write('-' * 50 + '\n\n')
 
                 linecount = 0
-                with open(output_file, "r") as scan_file:
-                    for line in scan_file:
-                        if linecount < 300:
-                            report_file.write(line)
-                        linecount = linecount + 1
-                    if linecount > 300:
-                        report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
+                try:
+                    with open(output_file, "r") as scan_file:
+                        for line in scan_file:
+                            if linecount < 300:
+                                report_file.write(line)
+                            linecount = linecount + 1
+                        if linecount > 300:
+                            report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
+                except IOError:
+                    pass
         except OSError, e:
             report_file.write("[!] No such file or directory: " + output_file + "\n")
