@@ -35,7 +35,7 @@ def process_nessus_data2(nessus_report,workspace,target=None):
             #         default as this point, which is why we need the next two loops.
             for report_item in scanned_host.get_report_items:
                 if report_item.plugin_family == "Port scanners":
-                    if report_item.port != 0:
+                    if report_item.port != "0":
                         scanned_service_port = report_item.port
                         scanned_service_protocol = report_item.protocol
                         scanned_service_name = report_item.service
