@@ -12,6 +12,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import WebDriverException
 from pyvirtualdisplay import Display
 import os
+import re
 import time
 
 
@@ -68,9 +69,9 @@ def task_splitter(id):
 
 
 def create_dir_structure(ip, host_dir):
-    print("\n[+]" + "*" * 30)
-    print("[+] IP address: " + ip)
-    print("[+]" + "*" * 30 )
+    #print("\n[+]" + "*" * 30)
+    #print("[+] Target: " + ip)
+    #print("[+]" + "*" * 30 )
 
     try:
         os.stat(host_dir)
@@ -78,7 +79,7 @@ def create_dir_structure(ip, host_dir):
         os.mkdir(host_dir)
     #This is the subdirectory that will contain all of the tool output.
     host_data_dir = host_dir + "/celerystalkOutput"
-    print("[+] Creating scans directory at: %s" % host_data_dir)
+    #print("[+] Creating scans directory at: %s" % host_data_dir)
     try:
         os.stat(host_data_dir)
     except:
@@ -152,10 +153,10 @@ def nmap_follow_up_scan(hosts, port):
 
 def start_services():
     # maybe this first part should be somwhere else.   But for now, in order to run, celery worker and celery flower need to be started.
-    print("[+] Starting celery Worker")
+    #print("[+] Starting celery worker")
     start_celery_worker()
     start_redis()
-    print("[+] Reading config file")
+    #print("[+] Reading config file")
 
 
 def start_celery_worker():
@@ -188,6 +189,10 @@ def shutdown_background_jobs():
 def target_splitter(target_networks):
     scope_list = []
     for network in target_networks.split(","):
+                # check to see if a subdomain/vhost was specified (if it has a letter, its not an IP address)
+                if re.search('[a-zA-Z]', network):
+                    scope_list.append(network)
+                    break
                 # Simple check to see if there is a range included.
                 if "-" in str(network):
                     #print("range found")
@@ -245,7 +250,7 @@ def domain_scope_checker(domain,workspace):
     except:
         #If the domain does not resolve, skip it!
         return 0,""
-    unique_db_hosts = db.get_unique_hosts(workspace)
+    unique_db_hosts = db.get_unique_inscope_ips(workspace)
     in_scope = "False"
     for domain_tuple in domain_tuples:
         ip = str(domain_tuple[1])

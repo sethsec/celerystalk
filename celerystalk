@@ -2,9 +2,12 @@
 
 """
 Usage:
-    celerystalk scan -o <output_dir> -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
-    celerystalk scan -o <output_dir> -b <bb_scope_file> [-w <workspace>] [-s]
-    celerystalk scan -o <output_dir> -u <url> [-w <workspace>] [-s]
+    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-w <workspace>] [-o <output_dir>] [-u <url>]
+    celerystalk scan [-t <targets>] [-w <workspace>] [-s]
+    celerystalk rescan [-t <targets>] [-w <workspace>] [-s]
+    celerystalk scan [-o <output_dir>] -f <nmap_file>  [-w <workspace>] [-t <targets>] [-d <domains>] [-s]
+    celerystalk scan [-o <output_dir>] -b <bb_scope_file> [-w <workspace>] [-s]
+    celerystalk scan [-o <output_dir>] -u <url> [-w <workspace>] [-s]
     celerystalk query [-w <workspace>] ([full] | [summary] | [brief]) [watch]
     celerystalk query [-w <workspace>] [watch] ([full] | [summary] | [brief])
     celerystalk report [-w <workspace>]
@@ -22,6 +25,8 @@ Options:
     -v --version        Show version
     -f <nmap_file>      Nmap xml import file
     -o <output_dir>     Output directory
+    -S <scope_file>      Scope import file
+    -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
     -u <url>            URL to parse and scan with all configured tools
     -w <workspace>      Workspace [default: Default]
@@ -88,13 +93,14 @@ import lib.pause
 import lib.utils
 import lib.report
 import lib.query
+import lib.csimport
 import lib.config_parser
 import socket
 from lib import db
 from prettytable import PrettyTable
 import csv
 
-build=str(108)
+build=str(110)
 
 def print_banner():
 
@@ -216,7 +222,7 @@ def main(arguments):
         else:
             if arguments["hosts"]:
                 print("[+] Showing hosts for the [{0}] workspace\n".format(workspace))
-                columns = ["IP","vhost","in_scope"]
+                columns = ["IP","Vhost","In Scope","Submitted"]
                 host_rows = lib.db.get_vhosts_table(workspace)
                 hosts_table = PrettyTable(columns)
                 hosts_table.align[columns[0]] = "l"
@@ -277,6 +283,118 @@ def main(arguments):
                     writer.writerows(paths_rows)
                 print("[+] Saved all paths in the [{0}] workspace to {1}.\n".format(workspace,paths_output_file))
 
+    ####################################
+    # Import Stuff
+    ####################################
+    if arguments["import"]:
+        celery_path = sys.path[0]
+        workspace_exists = "False"
+        all_workspaces = lib.db.get_all_workspaces()
+
+        if all_workspaces:  #If if there at least one workspace in the DB
+            for db_workspace in all_workspaces:
+                if db_workspace[0] == workspace: #Is there any workspace that matches our current?
+                    workspace_exists = "True"
+                    output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]  #If so, grab the current output dir
+
+        if workspace_exists == "True":  #If we did find a workspace in the DB that matches the user specified workspace
+            if not output_dir:  #but if there is no output_dir specified
+                if arguments["-o"] is None: #and the user did not specify one at hte command line, yell at the user
+                    print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
+                    exit()
+                else:
+                    output_dir = os.path.join(arguments["-o"], '')  #if the user did specify an output_dir (and a DB one doesnt exist), create the dir
+                    try:
+                        os.stat(output_dir)
+                    except:
+                        print("[+] Output directory does not exist. Creating " + output_dir)
+                        os.makedirs(output_dir)
+            else:  #If there were no workspaces in the DB that matched the user specified workspace
+                if arguments["-o"]: #and the user did specify an output_dir
+                    arg_output_dir = os.path.join(arguments["-o"],'')
+                    if arg_output_dir != output_dir:  #if the user specified output dir is not the same as the db output_dir, ask the user whether they want to update it or ignore the command line output_dir
+                        output_dir_answer = raw_input("[!] The DB shows that the output directory for the [{0}] workspace is [{1}].\n\n   Do you want to update the output directory to [{2}]? (y\N)".format(workspace,output_dir,arg_output_dir))
+                        print("")
+                        if (output_dir_answer == "Y") or (output_dir_answer == "y"):  #if the user wants to use the command line dir, update the celerystalk db
+                            lib.db.update_workspace_output_dir(arg_output_dir,workspace)
+                            print("[+] Updated output directory for [{0}] workspace to [{1}].".format(workspace,arg_output_dir))
+                            try:
+                                os.stat(arg_output_dir)
+                            except:
+                                print("[+] Output directory does not exist. Creating " + arg_output_dir)
+                                os.makedirs(arg_output_dir)
+        else:  # if the user specified workspace does not exist already
+            if arguments["-o"] is None: #and the user has not specified an output dir, yell at the user
+                print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
+                exit()
+            else:
+                output_dir = os.path.join(arguments["-o"], '')  #but if has specified an output dir, create the dir
+                try:
+                    os.stat(output_dir)
+                except:
+                    print("[+] Output directory does not exist. Creating " + output_dir)
+                    os.makedirs(output_dir)
+            db_workspace = (workspace, output_dir)  # and create the workspace
+            #This will create a workspace, only if one does not exist with that name.
+            db.create_workspace(db_workspace)
+
+
+
+        #lib.utils.start_services()
+        in_scope_hosts_before = lib.db.get_unique_inscope_vhosts(workspace)
+
+        if arguments["-S"]:
+            lib.csimport.import_scope(arguments["-S"],workspace)
+
+        if arguments["-f"]:
+            if "nessus" in arguments["-f"]:
+                nessus_report = lib.utils.nessus_parser(arguments["-f"])
+                lib.csimport.process_nessus_data(nessus_report, workspace)
+            else:
+                nmap_report = lib.utils.nmap_parser(arguments["-f"])
+                lib.csimport.process_nmap_data(nmap_report, workspace)
+        if arguments["-D"]:
+            lib.csimport.import_vhosts(arguments["-D"],workspace)
+
+        if arguments["-u"]:
+            lib.csimport.import_url(arguments["-u"],workspace,output_dir)
+
+        # After all files have been proccessed, run this to see if any new hosts are now in scope!
+        lib.csimport.update_inscope_vhosts(workspace)
+
+        #This part is really just to tell the user what we have done.
+        in_scope_hosts = lib.db.get_unique_inscope_vhosts(workspace)
+        new_in_scope_hosts = in_scope_hosts.__len__() - in_scope_hosts_before.__len__()
+
+        if new_in_scope_hosts > 0:
+            print("[+] [{0}] hosts were just marked as in scope".format(new_in_scope_hosts))
+
+        if in_scope_hosts.__len__() == 0:
+            print("\n[!] There are no in scope hosts in the DB\n")
+        else:
+            print("[+] [{0}] hosts are currently marked as in scope\n".format(in_scope_hosts.__len__()))
+
+
+
+    ####################################
+    # ReScan
+    ####################################
+    if arguments["rescan"]:
+        #print(arguments["scan"])
+
+        arguments["scan"] = True
+        all_submitted_vhosts = lib.db.get_inscope_submitted_vhosts(workspace)
+        if arguments["-t"]:
+            target_list = lib.utils.target_splitter(arguments["-t"])
+            for target in target_list:
+                if target not in all_submitted_vhosts:
+                    print("[!] [{0}] has never been submitted, so it can't be rescanned.".format(target))
+        for submitted_vhost in all_submitted_vhosts:
+            vhost = submitted_vhost[0]
+            answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+            if (answer == "Y") or (answer == "y") or (answer == ""):
+                ip = db.get_vhost_ip(vhost,workspace)[0][0]
+                db.update_vhosts_submitted(ip, vhost, workspace, 0)
 
 
     ####################################
@@ -284,29 +402,35 @@ def main(arguments):
     ####################################
 
     if arguments["scan"]:
-        celery_path = sys.path[0]
-        if arguments["-o"] is None:
-            print('Specify report directory')
-        else:
-            output_dir = os.path.join(arguments["-o"], '')
-            # Before doing anything host specific, make sure the user specified output directory exists (i.e., /pentest)
-            try:
-                os.stat(output_dir)
-            except:
-                print("[+] Output directory does not exist. Creating " + output_dir)
-                os.makedirs(output_dir)
         lib.utils.start_services()
-
-        db_workspace = (workspace, arguments["-o"])
-        db.create_workspace(db_workspace)
-
+        celery_path = sys.path[0]
 
         ####################################
         # Scan - URL - Parse use provided URL and run all celerystalk tools against it
         ####################################
         if arguments["-u"]:
-            lib.scan.process_url(arguments["-u"], output_dir, workspace, arguments["--simulation"])
+            lib.scan.process_url(arguments["-u"], arguments["-o"], workspace, arguments["--simulation"])
 
+            exit()
+
+        # if arguments["-o"] is None:
+        #     print('Specify report directory')
+        # else:
+        #     output_dir = os.path.join(arguments["-o"], '')
+        #     # Before doing anything host specific, make sure the user specified output directory exists (i.e., /pentest)
+        #     try:
+        #         os.stat(output_dir)
+        #     except:
+        #         print("[+] Output directory does not exist. Creating " + output_dir)
+        #         os.makedirs(output_dir)
+        #
+        # db_workspace = (workspace, arguments["-o"])
+        # db.create_workspace(db_workspace)
+        if arguments["-t"]:
+            target_list = lib.utils.target_splitter(arguments["-t"])
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list)
+        else:
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"])
 
 
 
@@ -318,19 +442,13 @@ def main(arguments):
         if arguments["-f"] and arguments["-t"] and not arguments["<bb_scope_file>"]:
             scan_mode = "VAPT"
             target_list = lib.utils.target_splitter(arguments["-t"])
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"], target_list=target_list)
 
-            for target in target_list:
-                if "nessus" in arguments["-f"]:
-                    nessus_report = lib.utils.nessus_parser(arguments["-f"])
-                    lib.scan.process_nessus_data2(nessus_report, workspace,target=target)
-                else:
-                    nmap_report = lib.utils.nmap_parser(arguments["-f"])
-                    lib.scan.process_nmap_data2(nmap_report, workspace,target=target)
 
-            if arguments["<domains>"]:
-                lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,
-                                         scan_mode)
-            lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace, target=target)
+
+            #for target in target_list:
+            #    #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace, target=target)
+            #    lib.scan.process_db_vhosts(workspace,arguments["--simulation"],target_list=target_list)
             exit()
 
         ####################################
@@ -338,32 +456,8 @@ def main(arguments):
         ####################################
         if arguments["-f"]:
             scan_mode = "VAPT"
-
-            #(json_config, supported_services) = read_config_ini()
-            if "nessus" in arguments["-f"]:
-                nessus_report = lib.utils.nessus_parser(arguments["-f"])
-                lib.scan.process_nessus_data2(nessus_report, workspace)
-                if arguments["<domains>"]:
-                    lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-
-            else:
-                nmap_report = lib.utils.nmap_parser(arguments["-f"])
-                lib.scan.process_nmap_data2(nmap_report, workspace)
-                if arguments["<domains>"]:
-                    lib.scan.find_subdomains(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode)
-                lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-
-        #commenting this out for now.
-        # # Scan targets with nmap and then run celerystalk
-        #
-        # if arguments["-t"]:
-        #     #(json_config, supported_services) = read_config_ini()
-        #     nmap_report = lib.scan.nmap_scan(arguments["-t"], output_dir)
-        #     lib.scan.process_nmap_data(nmap_report, output_dir, arguments["--simulation"],workspace)
-
-
-
+            #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"])
 
 
 
@@ -404,6 +498,8 @@ def main(arguments):
                 lib.scan.find_subdomains(domain, arguments["--simulation"], workspace, output_dir,
                                          scan_mode,out_of_scope_hosts)
             #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+
+
 
 
 

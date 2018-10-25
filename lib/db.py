@@ -134,6 +134,9 @@ def get_all_workspaces():
     CONNECTION.commit()
     return workspaces
 
+def update_workspace_output_dir(output_dir,workspace):
+    CUR.execute("UPDATE workspace SET output_dir=? WHERE name=?", (output_dir,workspace))
+    CONNECTION.commit()
 
 
 #############################
@@ -341,6 +344,13 @@ def create_vhost(db_vhost):
     CUR.execute(sql, db_vhost)
     CONNECTION.commit()
 
+
+def get_host_by_ip(ip,workspace):
+    CUR.execute("SELECT ip FROM vhosts WHERE ip=? AND workspace=?", (ip,workspace))
+    vhost_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return vhost_rows
+
 def get_unique_inscope_vhosts_for_ip(ip,workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE ip=? AND workspace=? AND in_scope=?", (ip,workspace,1))
     vhost_rows = CUR.fetchall()
@@ -352,6 +362,36 @@ def get_unique_inscope_vhosts(workspace):
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
+
+def get_unique_out_of_scope_vhosts(workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE workspace=? AND in_scope=?", (workspace,0))
+    vhost_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return vhost_rows
+
+def get_unique_inscope_ips(workspace):
+    CUR.execute("SELECT DISTINCT ip FROM vhosts WHERE workspace=? AND in_scope=?", (workspace,1))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def get_in_scope_ip(ip,workspace):
+    CUR.execute("SELECT ip FROM vhosts WHERE ip=? AND workspace=? AND in_scope=?", (ip,workspace,1))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def get_submitted_in_scope_vhost(vhost,workspace):
+    CUR.execute("SELECT ip FROM vhosts WHERE ip=? AND workspace=? AND in_scope=? AND submitted=?", (ip,workspace,1,1))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def get_unique_out_of_scope_ips(workspace):
+    CUR.execute("SELECT DISTINCT ip FROM vhosts WHERE workspace=? AND in_scope=?", (workspace,0))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
 
 def get_inscope_unsubmitted_vhosts(workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE in_scope=? AND submitted=? AND workspace=?", (1,0,workspace))
@@ -366,6 +406,11 @@ def get_inscope_submitted_vhosts_for_ip(ip,workspace):
     CONNECTION.commit()
     return vhost_rows
 
+def get_inscope_submitted_vhosts(workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE in_scope=? AND submitted=? AND workspace=?", (1,1,workspace))
+    vhost_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return vhost_rows
 
 def get_vhost_ip(scannable_vhost,workspace):
     CUR.execute("SELECT ip FROM vhosts WHERE vhost=? AND workspace=?", (scannable_vhost,workspace))
@@ -374,16 +419,18 @@ def get_vhost_ip(scannable_vhost,workspace):
     return ip
 
 def get_vhosts_table(workspace):
-    CUR.execute("SELECT ip,vhost,in_scope FROM vhosts WHERE workspace=? ORDER BY in_scope DESC, ip,vhost", (workspace,))
+    CUR.execute("SELECT ip,vhost,in_scope,submitted FROM vhosts WHERE workspace=? ORDER BY in_scope DESC, ip,vhost", (workspace,))
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
-
 
 def update_vhosts_submitted(ip,vhost,workspace,submitted):
     CUR.execute("UPDATE vhosts SET submitted=? WHERE ip=? AND vhost=? AND workspace=?", (submitted,ip,vhost,workspace))
     CONNECTION.commit()
 
+def update_vhosts_in_scope(ip,vhost,workspace,in_scope):
+    CUR.execute("UPDATE vhosts SET in_scope=? WHERE ip=? AND vhost=? AND workspace=?", (in_scope,ip,vhost,workspace))
+    CONNECTION.commit()
 
 
 

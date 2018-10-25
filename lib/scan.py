@@ -1,7 +1,5 @@
 import os
-
-from netaddr import IPAddress
-
+from netaddr import *
 import tasks
 import sys
 from lib import config_parser, utils, db
@@ -11,119 +9,361 @@ from ConfigParser import ConfigParser
 import socket
 import re
 import urlparse
+import lib.db
+from random import shuffle
+
+def process_db_vhosts(workspace, simulation, target_list=None):
+    all_commands = []
+    output_base_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+    try:
+        os.stat(output_base_dir)
+    except:
+        print("[+] Output directory does not exist. Creating " + output_base_dir)
+        os.makedirs(output_base_dir)
+    unique_unscanned_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
+    unique_unscanned_vhosts_list = []
+    [unique_unscanned_vhosts_list.append(i[0]) for i in unique_unscanned_vhosts] #converts list of tuples that contains the IPs, to a list of IPs
+
+    if target_list:
+        for vhost in target_list:
+            for unscanned_vhost in unique_unscanned_vhosts_list:
+                if str(vhost) == str(unscanned_vhost):
+                    command_list = populate_comamnds(vhost,workspace,simulation,output_base_dir)
+                    print("Submitted [{1}] tasks for {0}".format(unscanned_vhost, len(command_list)))
+                    all_commands = all_commands + command_list
+    else:
+        for vhost in unique_unscanned_vhosts_list:
+            #print(vhost)
+            command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+            print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
+            all_commands = all_commands + command_list
+
+    shuffle(all_commands)
+    for populated_command_tuple in all_commands:
+        #print populated_command_tuple
+        send_commands_to_celery(populated_command_tuple,output_base_dir,simulation)
+
+    total_tasks_num = len(all_commands)
+    if total_tasks_num > 0:
+        print("\n\n[+] Summary:\tSubmitted {0} tasks to the [{1}] workspace.".format(total_tasks_num,workspace))
+        print("[+]\t\tThere might be additional tasks added to the queue during post processing\n[+]")
+        print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
+        if workspace == "Default":
+            print("[+]\t\tcelerystalk query [watch]")
+            print("[+]\t\tcelerystalk query brief [watch]")
+            print("[+]\t\tcelerystalk query summary [watch]\n")
+        else:
+            print("[+]\t\tcelerystalk query -w {0} [watch]".format(workspace))
+            print("[+]\t\tcelerystalk query -w {0} brief [watch]".format(workspace))
+            print("[+]\t\tcelerystalk query -w {0} summary [watch]\n".format(workspace))
 
 
-def process_nessus_data2(nessus_report,workspace,target=None):
-    for scanned_host in nessus_report.hosts:
-        #print scanned_host.address
-        ip = scanned_host.address
-        # this if takes care of only acting on the targets specififed at hte command line, if the target
-        # this if takes care of only acting on the targets specififed at hte command line, if the target
-        # param is used.  This is a very simple comparison now. In the future, i'd like to be able to use
-        # the target splitter function and be able to handle ranges and cidr's in the target option
-        if (IPAddress(ip) == target) or (target is None):
-            has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip, workspace)
-            if has_vhost_been_scanned:
-                answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
-                if (answer == "Y") or (answer == "y") or (answer == ""):
-                    db.update_vhosts_submitted(ip, ip, workspace, 0)
+def populate_comamnds(vhost,workspace,simulation,output_base_dir):
+    celery_path = sys.path[0]
+    config, supported_services = config_parser.read_config_ini()
+    task_id_list = []
+    populated_command_list = []
+    total_tasks_num = 0
+    vhost = str(vhost)
+    vhost_ip = db.get_vhost_ip(vhost, workspace)[0]
+    host_dir = output_base_dir + vhost
+    host_data_dir = host_dir + "/celerystalkOutput/"
+    # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
+    utils.create_dir_structure(vhost, host_dir)
+    # Next two lines create the file that will contain each command that was executed. This is not the audit log,
+    # but a log of commands that can easily be copy/pasted if you need to run them again.
+    summary_file_name = host_data_dir + "ScanSummary.log"
+    summary_file = open(summary_file_name, 'a')
+
+    # THIS is just a work around until i have a real solution.  Really, UDP scans should be done
+    # For every host in the scanned host list, launch a quick UDP scan (top 100 ports)
+    scan_output_base_host_filename = host_data_dir + vhost
+
+    ###################################
+    # If enabled in config, run a udp scan against the host.
+    ###################################
+
+    for (cmd_name, cmd) in config.items("nmap-commands"):
+        if cmd_name == "udp_scan":
+            outfile = scan_output_base_host_filename + "_" + cmd_name
+            populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
+
+            if simulation:
+                populated_command = "#" + populated_command
+
+            task_id = uuid()
+            scanned_service_port = ""
+            scanned_service_name = ""
+            scanned_service_protocol = ""
+            #utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
+            populated_command_list.append((cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id,scanned_service_port, scanned_service_name,scanned_service_protocol))
+
+    if not simulation:
+        db.update_vhosts_submitted(vhost, vhost, workspace, 1)
+
+    ###################################
+    # Time to parse the services from the DB
+    ###################################
+    db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
+
+    for db_service in db_services:
+        (id, ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
+         workspace) = db_service
+
+        scan_output_base_file_name = host_data_dir + vhost + "_" + str(
+            scanned_service_port) + "_" + scanned_service_protocol + "_"
+
+        # If the service name is not in the supported service list, give the user notice so they can add the service
+        # and add some commands to the service. This is a major GAP right now. If the service is not in the config,
+        # the script completely ignores it, which is not good!
+        if scanned_service_name not in supported_services:
+            print(
+                "[!] Nmap reports {0}:{1} is running: [{2}]. There are no commands to run against {2} in config.ini.".format(
+                    vhost, scanned_service_port, scanned_service_name))
+            summary_file.write(
+                "[!] Nmap reports {0}:{1} is running: [{2}]. There are no commands to run against {2} in config.ini\n".format(
+                    vhost, scanned_service_port, scanned_service_name))
+            # updated_port_scan = utils.nmap_follow_up_scan(vhost, scanned_service_port)
+            # scanned_service_name = updated_port_scan.hosts[0]._services[0].service
+            cmd_name = "nmap_service_scan"
+            populated_command = 'nmap -sV -sC -Pn -p {0} -oN {1}_nmap_service_scan.txt {2}'.format(
+                scanned_service_port, scan_output_base_file_name, vhost)
+            if simulation:
+                populated_command = "#" + populated_command
+
+            outfile = scan_output_base_file_name + "_nmap_service_scan.txt"
+
+            task_id = uuid()
+            populated_command_list.append((cmd_name, populated_command, vhost, outfile, workspace, task_id,scanned_service_port, scanned_service_name,scanned_service_protocol))
+        else:
+            for (key, val) in config.items("nmap-service-names"):
+                services = val.split(",")
+                for service in services:
+                    if service == scanned_service_name:
+                        mapped_service_name = key
+                        # print(config.items(mapped_service_name))
+                        for (cmd_name, cmd) in config.items(mapped_service_name):
+                            outfile = scan_output_base_file_name + cmd_name
+                            populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]", str(
+                                scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]",
+                                                                                            "")
+                            if simulation:
+                                # debug - sends jobs to celery, but with a # in front of every one.
+                                populated_command = "#" + populated_command
+
+                            # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
+                            # that allows me to pass it to all of the tasks in the chain.
+
+                            task_id = uuid()
+                            populated_command_list.append((cmd_name, populated_command, vhost, outfile + ".txt",
+                                              workspace, task_id,scanned_service_port, scanned_service_name,scanned_service_protocol))
+    #print(populated_command_list.__len__())
+    #print(populated_command_list)
+
+    return populated_command_list
+
+def send_commands_to_celery(populated_command_tuple,output_base_dir,simulation):
+
+    celery_path = sys.path[0]
+    cmd_name, populated_command, vhost, outfile, workspace, task_id,scanned_service_port, scanned_service_name,scanned_service_protocol = populated_command_tuple
+    host_dir = output_base_dir + vhost
+    host_data_dir = host_dir + "/celerystalkOutput/"
+
+    utils.create_task(cmd_name, populated_command, vhost, outfile, workspace, task_id)
+    result = chain(
+        # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+        # in celery the same way a task does, for instance, you can't find it in flower
+        # tasks.cel_create_task.subtask(args=(cmd_name, populated_command, ip, outfile + ".txt", workspace, task_id)),
+
+        # run the command. run_task takes care of marking the task as started and then completed.
+        # The si tells run_cmd to ignore the data returned from a previous task
+        tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+
+        # right now, every executed command gets sent to a generic post_process task that can do
+        # additinoal stuff based on the command that just ran.
+        tasks.post_process.si(cmd_name, populated_command, output_base_dir, workspace, vhost, host_dir,
+                              simulation,
+                              scanned_service_port, scanned_service_name, scanned_service_protocol,
+                              celery_path),
+    )()  # .apply_async()
+
+    #task_id_list.append(result.task_id)
+    host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(vhost)
+    f = open(host_audit_log, 'a')
+    f.write(populated_command + "\n\n")
+    f.close()
+
+def process_url(url, arguments_outdir, workspace, simulation):
+    celery_path = sys.path[0]
+    config, supported_services = config_parser.read_config_ini()
+    task_id_list = []
+    urls_to_screenshot = []
+
+    workspace_exists = "False"
+    all_workspaces = lib.db.get_all_workspaces()
+    print(all_workspaces)
+
+    if all_workspaces:  # If if there at least one workspace in the DB
+        for db_workspace in all_workspaces:
+            if db_workspace[0] == workspace:  # Is there any workspace that matches our current?
+                workspace_exists = "True"
+                output_dir = db_workspace[1]  # If so, grab the current output dir
+
+    if workspace_exists == "True":  # If we did find a workspace in the DB that matches the user specified workspace
+        if not output_dir:  # but if there is no output_dir specified
+            if arguments_outdir is None:  # and the user did not specify one at hte command line, yell at the user
+                print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
+                exit()
             else:
-                db_vhost = (ip, ip, 1, 0, workspace)  # in this mode all vhosts are in scope
-                #print(db_vhost)
-                db.create_vhost(db_vhost)
-            # Step 1: pull all report items in the port scanner family to get every port. The services names are IANA
-            #         default as this point, which is why we need the next two loops.
-            for report_item in scanned_host.get_report_items:
-                if report_item.plugin_family == "Port scanners":
-                    if report_item.port != "0":
-                        scanned_service_port = report_item.port
-                        scanned_service_protocol = report_item.protocol
-                        scanned_service_name = report_item.service
-                        db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
+                # if the user did specify an output_dir (and a DB one doesnt exist), create the dir
+                output_dir = os.path.join(arguments_outdir,'')
+                try:
+                    os.stat(output_dir)
+                except:
+                    print("[+] Output directory does not exist. Creating " + output_dir)
+                    os.makedirs(output_dir)
+        else:  # If there were no workspaces in the DB that matched the user specified workspace
+            if arguments_outdir:  # and the user did specify an output_dir
+                arg_output_dir = os.path.join(arguments_outdir, '')
+                # if the user specified output dir is not the same as the db output_dir, ask the user whether they want to update it or ignore the command line output_dir
+                if arg_output_dir != output_dir:
+                    output_dir_answer = raw_input(
+                        "[!] The DB shows that the output directory for the [{0}] workspace is [{1}].\n\n   Do you want to update the output directory to [{2}]? (y\N)".format(
+                            workspace, output_dir, arg_output_dir))
+                    print("")
+                    if (output_dir_answer == "Y") or (
+                            output_dir_answer == "y"):  # if the user wants to use the command line dir, update the celerystalk db
+                        lib.db.update_workspace_output_dir(arg_output_dir, workspace)
+                        print("[+] Updated output directory for [{0}] workspace to [{1}].".format(workspace,
+                                                                                                  arg_output_dir))
+                        try:
+                            os.stat(arg_output_dir)
+                        except:
+                            print("[+] Output directory does not exist. Creating " + arg_output_dir)
+                            os.makedirs(arg_output_dir)
 
-                        if not db_service:
-                            db_string = (ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
-                            db.create_service(db_string)
+    else:  # if the user specified workspace does not exist already
+        if arguments_outdir is None:  # and the user has not specified an output dir, yell at the user
+            print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
+            exit()
+        else:
+            output_dir = os.path.join(arguments_outdir, '')  # but if has specified an output dir, create the dir
+            try:
+                os.stat(output_dir)
+            except:
+                print("[+] Output directory does not exist. Creating " + output_dir)
+                os.makedirs(output_dir)
+        db_workspace = (workspace, output_dir)  # and create the workspace
+        # This will create a workspace, only if one does not exist with that name.
+        db.create_workspace(db_workspace)
 
-            # Step 2: Cycle through the service detection items and update the services where we have a better idea of
-            #         the real running service on the port. These are a subset of open ports which is why we need loop 1
-            for report_item in scanned_host.get_report_items:
-                if report_item.plugin_family == "Service detection":
-                    scanned_service_port = report_item.port
-                    scanned_service_protocol = report_item.protocol
-                    scanned_service_name = report_item.service
-                    db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
-                    if not db_service:
-                        db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace)
-                        db.create_service(db_string)
-                        #print("new service2: " + ip,scanned_service_port,scanned_service_name)
-                    else:
-                        db.update_service(ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
-                        #print("updating service servicename2: " + ip, scanned_service_port, scanned_service_name)
-                        #print("old service servicename2     : " + ip, scanned_service_port,str(db_service[0][4]))
+    try:
+        parsed_url = urlparse.urlparse(url)
+        scheme = parsed_url[0]
+        if not scheme:
+            print("\n[!] URL parameter (-u) requires that you specify the scheme (http:// or https://)\n")
+            exit()
+        if ":" in parsed_url[1]:
+            vhost, port = parsed_url[1].split(':')
+        else:
+            vhost = parsed_url[1]
+            if scheme == "http":
+                port = 80
+            elif scheme == "https":
+                port = 443
+        path = parsed_url[2]
+    except:
+        if not scheme:
+            exit()
+    try:
+        ip = socket.gethostbyname(vhost)
+    except:
+        print("Error getting IP")
+    proto = "tcp"
 
-            # Step 3: This is needed to split up HTTPS from HTTP
-            for report_item in scanned_host.get_report_items:
-                if (report_item.plugin_name == "TLS Version 1.0 Protocol Detection" or
-                report_item.plugin_name == "OpenSSL Detection" or
-                report_item.plugin_name == "SSL Version 2 and 3 Protocol Detection"):
-                    scanned_service_port = report_item.port
-                    scanned_service_protocol = report_item.protocol
-                    scanned_service_name = 'https'
-                    try:
-                        db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
-                                          workspace)
-                    except:
-                        print("if this errors that means there was no service to update as https which is a bigger problem")
+    if ip == vhost:
+        scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
+            port) + "_" + proto + "_"
+    else:
+        scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
+            port) + "_" + proto + "_"
 
-def process_nmap_data2(nmap_report,workspace, target=None):
-    for scanned_host in nmap_report.hosts:
+    host_dir = output_dir + "/" + ip
+    host_data_dir = host_dir + "/celerystalkOutput/"
+    # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
+    utils.create_dir_structure(ip, host_dir)
+    # Next two lines create the file that will contain each command that was executed. This is not the audit log,
+    # but a log of commands that can easily be copy/pasted if you need to run them again.
+    summary_file_name = host_data_dir + "ScanSummary.log"
+    summary_file = open(summary_file_name, 'a')
 
-        #print(scanned_host)
-        ip=scanned_host.id
-        #print(ip)
-        if (IPAddress(ip) == target) or (target is None):
-            #has_vhost_been_scanned = db.get_unique_inscope_vhosts_for_ip(ip,workspace)
-            has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip,workspace)
-            if has_vhost_been_scanned:
-                answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
-                if (answer == "Y") or (answer == "y") or (answer == ""):
-                    db.update_vhosts_submitted(ip,ip,workspace,0)
-            else:
-                db_vhost = (ip, ip, 1, 0, workspace)  # in this mode all vhosts are in scope
-                #print(db_vhost)
-                db.create_vhost(db_vhost)
+    db_vhost = (ip, vhost, 1, 1, workspace)  # in this mode all vhosts are in scope
+    # print(db_vhost)
+    db.create_vhost(db_vhost)
 
-            for scanned_service_item in scanned_host.services:
-                if scanned_service_item.state == "open":
-                    scanned_service_port = scanned_service_item.port
-                    scanned_service_name = scanned_service_item.service
-                    scanned_service_protocol = scanned_service_item.protocol
+    # Insert port/service combo into services table if it doesnt exist
+    db_service = db.get_service(ip, port, proto, workspace)
+    if not db_service:
+        db_string = (ip, port, proto, scheme, workspace)
+        db.create_service(db_string)
 
-                    if scanned_service_item.tunnel == 'ssl':
-                        scanned_service_name = 'https'
-                    db_service = db.get_service(ip, scanned_service_port, scanned_service_protocol, workspace)
-                    if not db_service:
-                        db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace)
-                        db.create_service(db_string)
-                    else:
-                        db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
-                                          workspace)
+    # Insert url into paths table and take screenshot
+    db_path = db.get_path(path, workspace)
+    if not db_path:
+        url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+            .replace("/", "_") \
+            .replace("\\", "") \
+            .replace(":", "_") + ".png"
+        url_screenshot_filename = url_screenshot_filename.replace("__", "")
+        db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
+        db.insert_new_path(db_path)
+        # print("Found Url: " + str(url))
+        urls_to_screenshot.append((url, url_screenshot_filename))
+        if not simulation:
+            result = tasks.cel_take_screenshot.delay(urls_to_screenshot)
+        # print(result)
 
-                    #Not using this yet, but I'd like to do send this to searchsploit
-                    try:
-                        scanned_service_product = scanned_service_item.service_dict['product']
-                    except:
-                        scanned_service_product = ''
-                    try:
-                        scanned_service_version = scanned_service_item.service_dict['version']
-                    except:
-                        scanned_service_version = ''
-                    try:
-                        scanned_service_extrainfo = scanned_service_item.service_dict['extrainfo']
-                    except:
-                        scanned_service_extrainfo = ''
-                    #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
+    # TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
+    for section in config.sections():
+        if (section == "http") or (section == "https"):
+            if section == scheme:
+                for (cmd_name, cmd) in config.items(section):
+                    outfile = scan_output_base_file_dir + cmd_name
+                    populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]",
+                                                                                str(port)).replace("[OUTPUT]",
+                                                                                                   outfile).replace(
+                        "[PATH]", path)
+                    if simulation:
+                        # debug - sends jobs to celery, but with a # in front of every one.
+                        populated_command = "#" + populated_command
+
+                    # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
+                    # that allows me to pass it to all of the tasks in the chain.
+
+                    task_id = uuid()
+                    utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
+                    result = chain(
+                        # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+                        # in celery the same way a task does, for instance, you can't find it in flower
+                        # tasks.cel_create_task.subtask(args=(cmd_name,populated_command, vhost, outfile + ".txt", workspace, task_id)),
+
+                        # run the command. run_task takes care of marking the task as started and then completed.
+                        # The si tells run_cmd to ignore the data returned from a previous task
+                        tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+
+                        # right now, every executed command gets sent to a generic post_process task that can do
+                        # additinoal stuff based on the command that just ran.
+                        tasks.post_process.si(cmd_name, populated_command, arguments_outdir, workspace, vhost,
+                                              host_dir,
+                                              simulation, port, scheme, proto, celery_path),
+                    )()  # .apply_async()
+
+                    task_id_list.append(result.task_id)
+                    host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
+                    f = open(host_audit_log, 'a')
+                    f.write(populated_command + "\n\n")
+                    f.close()
+    print("[+] Submitted {0} tasks to queue.\n".format(len(task_id_list)))
 
 
 def process_db_services(output_base_dir, simulation, workspace, target=None,host=None):
@@ -462,111 +702,3 @@ def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
 
 
 
-def process_url(url,output_base_dir,workspace,simulation):
-    celery_path = sys.path[0]
-    config,supported_services = config_parser.read_config_ini()
-    task_id_list = []
-    urls_to_screenshot = []
-
-    try:
-        parsed_url = urlparse.urlparse(url)
-        scheme = parsed_url[0]
-        if not scheme:
-            print("\n[!] URL parameter (-u) requires that you specify the scheme (http:// or https://)\n")
-            exit()
-        if ":" in parsed_url[1]:
-            target,port = parsed_url[1].split(':')
-        else:
-            target = parsed_url[1]
-            if scheme == "http":
-                port = 80
-            elif scheme == "https":
-                port = 443
-        path = parsed_url[2]
-    except:
-        if not scheme:
-            exit()
-    try:
-        ip = socket.gethostbyname(target)
-    except:
-        print("Error getting IP")
-    proto = "tcp"
-
-    if ip == target:
-        scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(port) + "_" + proto + "_"
-    else:
-        scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + target + "_" + str(port) + "_" + proto + "_"
-
-    host_dir = output_base_dir + "/" + ip
-    host_data_dir = host_dir + "/celerystalkOutput/"
-    # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
-    utils.create_dir_structure(ip, host_dir)
-    # Next two lines create the file that will contain each command that was executed. This is not the audit log,
-    # but a log of commands that can easily be copy/pasted if you need to run them again.
-    summary_file_name = host_data_dir + "ScanSummary.log"
-    summary_file = open(summary_file_name, 'a')
-
-    db_vhost = (ip, target, 1, 1, workspace)  # in this mode all vhosts are in scope
-    #print(db_vhost)
-    db.create_vhost(db_vhost)
-
-    #Insert port/service combo into services table
-    db_service = db.get_service(ip, port, proto, workspace)
-    if not db_service:
-        db_string = (ip, port, proto, scheme, workspace)
-        db.create_service(db_string)
-
-    # Insert url into paths table and take screenshot
-    db_path = db.get_path(path,workspace)
-    if not db_path:
-        url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-            .replace("/", "_") \
-            .replace("\\", "") \
-            .replace(":", "_") + ".png"
-        url_screenshot_filename = url_screenshot_filename.replace("__", "")
-        db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
-        db.insert_new_path(db_path)
-        #print("Found Url: " + str(url))
-        urls_to_screenshot.append((url, url_screenshot_filename))
-        result = utils.take_screenshot(urls_to_screenshot)
-        #print(result)
-
-
-    #TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
-    for section in config.sections():
-        if (section == "http") or (section == "https"):
-            if section == scheme:
-                for (cmd_name, cmd) in config.items(section):
-                    outfile = scan_output_base_file_dir + cmd_name
-                    populated_command = cmd.replace("[TARGET]", target).replace("[PORT]",
-                                            str(port)).replace("[OUTPUT]", outfile).replace("[PATH]", path)
-                    if simulation:
-                        # debug - sends jobs to celery, but with a # in front of every one.
-                        populated_command = "#" + populated_command
-
-                    # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
-                    # that allows me to pass it to all of the tasks in the chain.
-
-                    task_id = uuid()
-                    utils.create_task(cmd_name,populated_command, target, outfile + ".txt", workspace, task_id)
-                    result = chain(
-                        # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                        # in celery the same way a task does, for instance, you can't find it in flower
-                        #tasks.cel_create_task.subtask(args=(cmd_name,populated_command, target, outfile + ".txt", workspace, task_id)),
-
-                        # run the command. run_task takes care of marking the task as started and then completed.
-                        # The si tells run_cmd to ignore the data returned from a previous task
-                        tasks.run_cmd.si(cmd_name, populated_command, celery_path,task_id).set(task_id=task_id),
-
-                        # right now, every executed command gets sent to a generic post_process task that can do
-                        # additinoal stuff based on the command that just ran.
-                        tasks.post_process.si(cmd_name, populated_command, output_base_dir, workspace, target, host_dir,
-                                              simulation,port, scheme,proto,celery_path),
-                    )()  # .apply_async()
-
-                    task_id_list.append(result.task_id)
-                    host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
-                    f = open(host_audit_log, 'a')
-                    f.write(populated_command + "\n\n")
-                    f.close()
-    print("[+] Submitted {0} tasks to queue.\n".format(len(task_id_list)))

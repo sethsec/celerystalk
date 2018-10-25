@@ -3,6 +3,8 @@ from celery import Celery
 from celery import chain
 import time
 from timeit import default_timer as timer
+
+import lib.csimport
 from lib import db
 from lib import utils
 from lib import config_parser
@@ -111,26 +113,30 @@ def post_process(*args):
                     #print("Scanned_url: " + scanned_url)
             index = index + 1
 
-        with open(post_gobuster_filename,'r') as gobuster_file:
-            lines = gobuster_file.read().splitlines()
-            print(lines)
-            if len(lines) > 300:
-                #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                exit()
+        try:
+            with open(post_gobuster_filename,'r') as gobuster_file:
+                lines = gobuster_file.read().splitlines()
+                print(lines)
+                if len(lines) > 300:
+                    #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
+                    exit()
 
-        for url in lines:
-            #url = url.split("?")[0].replace("//","/")
-            if url.startswith("http"):
-                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                    .replace("/", "_") \
-                    .replace("\\", "") \
-                    .replace(":", "_") + ".png"
-                url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                db.insert_new_path(db_path)
-                print("Found Url: " + str(url))
-                urls_to_screenshot.append((url,url_screenshot_filename))
-                #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+            for url in lines:
+                #url = url.split("?")[0].replace("//","/")
+                if url.startswith("http"):
+                    url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                        .replace("/", "_") \
+                        .replace("\\", "") \
+                        .replace(":", "_") + ".png"
+                    url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                    db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                    db.insert_new_path(db_path)
+                    print("Found Url: " + str(url))
+                    urls_to_screenshot.append((url,url_screenshot_filename))
+                    #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+        except Exception, e:
+            if not simulation:
+                print("[!] Could not open {0}".format(post_gobuster_filename))
 
     if "photon" in populated_command:
         scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", ip + "_" + str(
@@ -153,30 +159,35 @@ def post_process(*args):
                     #print("Scanned_url: " + scanned_url)
             index = index + 1
 
-        with open(post_photon_filename,'r') as photon_file:
-            lines = photon_file.read().splitlines()
-            print(lines)
-            if len(lines) > 300:
-                #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                lines = lines[:300]
+        try:
+            with open(post_photon_filename,'r') as photon_file:
+                lines = photon_file.read().splitlines()
+                print(lines)
+                if len(lines) > 300:
+                    #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
+                    lines = lines[:300]
 
-        for url in lines:
-            #url = url.split("?")[0].replace("//","/")
-            if url.startswith("http"):
-                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                    .replace("/", "_") \
-                    .replace("\\", "") \
-                    .replace(":", "_") + ".png"
-                url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                db.insert_new_path(db_path)
-                print("Found Url: " + str(url))
-                urls_to_screenshot.append((str(url), url_screenshot_filename))
+            for url in lines:
+                #url = url.split("?")[0].replace("//","/")
+                if url.startswith("http"):
+                    url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                        .replace("/", "_") \
+                        .replace("\\", "") \
+                        .replace(":", "_") + ".png"
+                    url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                    db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                    db.insert_new_path(db_path)
+                    print("Found Url: " + str(url))
+                    urls_to_screenshot.append((str(url), url_screenshot_filename))
 
-                #result = lib.utils.take_screenshot(url,url_screenshot_filename)
-                #print(result)
+                    #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+                    #print(result)
+        except Exception, e:
+            if not simulation:
+                print ("[!] Could not open {0}".format(post_photon_filename))
 
-    lib.utils.take_screenshot(urls_to_screenshot)
+    if not simulation:
+        lib.utils.take_screenshot(urls_to_screenshot)
 
     #task_id = uuid()
     #cmd_name = "Screenshot"
@@ -463,15 +474,19 @@ def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery
     #     db.update_task_status_error("FAILED", task_id, run_time)
 
     f.close()
-    lib.scan.process_nmap_data2(nmap_report, workspace)
+    lib.csimport.process_nmap_data2(nmap_report, workspace)
     return nmap_report
 
 @app.task()
 def cel_scan_process_nmap_data(nmap_report,workspace):
-    lib.scan.process_nmap_data2(nmap_report,workspace)
+    lib.csimport.process_nmap_data2(nmap_report, workspace)
 
 @app.task()
 def cel_process_db_services(output_base_dir, simulation, workspace):
     lib.scan.process_db_services(output_base_dir, simulation, workspace)
 
 
+@app.task()
+def cel_take_screenshot(urls_to_screenshot):
+    #print("cel_take_screenshot")
+    lib.utils.take_screenshot(urls_to_screenshot)
