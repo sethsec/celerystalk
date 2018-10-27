@@ -29,13 +29,15 @@ def process_db_vhosts(workspace, simulation, target_list=None):
             for unscanned_vhost in unique_unscanned_vhosts_list:
                 if str(vhost) == str(unscanned_vhost):
                     command_list = populate_comamnds(vhost,workspace,simulation,output_base_dir)
-                    print("Submitted [{1}] tasks for {0}".format(unscanned_vhost, len(command_list)))
+                    if len(command_list) > 0:
+                        print("Submitted [{1}] tasks for {0}".format(unscanned_vhost, len(command_list)))
                     all_commands = all_commands + command_list
     else:
         for vhost in unique_unscanned_vhosts_list:
             #print(vhost)
             command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
-            print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
+            if len(command_list) > 0:
+                print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
             all_commands = all_commands + command_list
 
     shuffle(all_commands)
@@ -193,69 +195,14 @@ def send_commands_to_celery(populated_command_tuple,output_base_dir,simulation):
     f.write(populated_command + "\n\n")
     f.close()
 
-def process_url(url, arguments_outdir, workspace, simulation):
+def process_url(url, workspace, output_dir, arguments):
     celery_path = sys.path[0]
     config, supported_services = config_parser.read_config_ini()
     task_id_list = []
     urls_to_screenshot = []
+    simulation = arguments["--simulation"]
 
-    workspace_exists = "False"
-    all_workspaces = lib.db.get_all_workspaces()
-    print(all_workspaces)
 
-    if all_workspaces:  # If if there at least one workspace in the DB
-        for db_workspace in all_workspaces:
-            if db_workspace[0] == workspace:  # Is there any workspace that matches our current?
-                workspace_exists = "True"
-                output_dir = db_workspace[1]  # If so, grab the current output dir
-
-    if workspace_exists == "True":  # If we did find a workspace in the DB that matches the user specified workspace
-        if not output_dir:  # but if there is no output_dir specified
-            if arguments_outdir is None:  # and the user did not specify one at hte command line, yell at the user
-                print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
-                exit()
-            else:
-                # if the user did specify an output_dir (and a DB one doesnt exist), create the dir
-                output_dir = os.path.join(arguments_outdir,'')
-                try:
-                    os.stat(output_dir)
-                except:
-                    print("[+] Output directory does not exist. Creating " + output_dir)
-                    os.makedirs(output_dir)
-        else:  # If there were no workspaces in the DB that matched the user specified workspace
-            if arguments_outdir:  # and the user did specify an output_dir
-                arg_output_dir = os.path.join(arguments_outdir, '')
-                # if the user specified output dir is not the same as the db output_dir, ask the user whether they want to update it or ignore the command line output_dir
-                if arg_output_dir != output_dir:
-                    output_dir_answer = raw_input(
-                        "[!] The DB shows that the output directory for the [{0}] workspace is [{1}].\n\n   Do you want to update the output directory to [{2}]? (y\N)".format(
-                            workspace, output_dir, arg_output_dir))
-                    print("")
-                    if (output_dir_answer == "Y") or (
-                            output_dir_answer == "y"):  # if the user wants to use the command line dir, update the celerystalk db
-                        lib.db.update_workspace_output_dir(arg_output_dir, workspace)
-                        print("[+] Updated output directory for [{0}] workspace to [{1}].".format(workspace,
-                                                                                                  arg_output_dir))
-                        try:
-                            os.stat(arg_output_dir)
-                        except:
-                            print("[+] Output directory does not exist. Creating " + arg_output_dir)
-                            os.makedirs(arg_output_dir)
-
-    else:  # if the user specified workspace does not exist already
-        if arguments_outdir is None:  # and the user has not specified an output dir, yell at the user
-            print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
-            exit()
-        else:
-            output_dir = os.path.join(arguments_outdir, '')  # but if has specified an output dir, create the dir
-            try:
-                os.stat(output_dir)
-            except:
-                print("[+] Output directory does not exist. Creating " + output_dir)
-                os.makedirs(output_dir)
-        db_workspace = (workspace, output_dir)  # and create the workspace
-        # This will create a workspace, only if one does not exist with that name.
-        db.create_workspace(db_workspace)
 
     try:
         parsed_url = urlparse.urlparse(url)
@@ -353,7 +300,7 @@ def process_url(url, arguments_outdir, workspace, simulation):
 
                         # right now, every executed command gets sent to a generic post_process task that can do
                         # additinoal stuff based on the command that just ran.
-                        tasks.post_process.si(cmd_name, populated_command, arguments_outdir, workspace, vhost,
+                        tasks.post_process.si(cmd_name, populated_command, output_dir, workspace, vhost,
                                               host_dir,
                                               simulation, port, scheme, proto, celery_path),
                     )()  # .apply_async()
@@ -553,14 +500,17 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                     f.close()
 
 
-def find_subdomains(domains,simulation,workspace,output_base_dir,scan_mode,out_of_scope_hosts=None):
+def find_subdomains(domains,simulation,workspace,output_base_dir,scan_mode=None,out_of_scope_hosts=None):
     config, supported_services = config_parser.read_config_ini()
     celery_path = sys.path[0]
     for domain in domains.split(","):
         for section in config.sections():
             if section == "domain-recon":
                 for (cmd_name, cmd) in config.items(section):
-                    populated_command = cmd.replace("[DOMAIN]", domain)
+                    outfile = output_base_dir + domain + "_" + cmd_name
+                    populated_command = cmd.replace("[DOMAIN]", domain).replace("[OUTPUT]", outfile)
+                    if simulation:
+                        populated_command = "#" + populated_command
                     print(populated_command)
 
                     # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because

@@ -74,11 +74,11 @@ def import_vhosts(subdomains_file,workspace):
             if re.match(r'\w', vhost):
                 in_scope,ip = lib.utils.domain_scope_checker(vhost,workspace)
                 if in_scope == 1:
-                    print("[+] Found subdomain (in scope):\t\t" + vhost)
+                    print("[+] Found subdomain (in scope):\t\t\t" + vhost)
                     db_vhost = (ip,vhost,1, 0,workspace)
                     lib.db.create_vhost(db_vhost)
                 else:
-                    print("[+] Found subdomain (out of scope):\t" + vhost)
+                    print("[+] Found subdomain (out of scope):\t\t" + vhost)
                     db_vhost = (ip, vhost, 0, 0, workspace)
                     lib.db.create_vhost(db_vhost)
 
@@ -203,12 +203,12 @@ def process_nessus_data(nessus_report,workspace,target=None):
         #print(unique_db_ips)
         if unique_db_ips: #If this IP was in the db...
             if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
-                print("[+] [{0}] is already in the DB, but not in scope. Adding to scope".format(ip))
+                print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
                 lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
             # else:
             #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
         else: #if this ip was not already in the db, create a new host and mark it as in scope
-            print("[+] [{0}] is not in the DB. Adding it to DB and to scope".format(ip))
+            print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
             db_vhost = (ip, ip, 1, 0, workspace)
             db.create_vhost(db_vhost)
 
@@ -332,12 +332,12 @@ def process_nmap_data(nmap_report,workspace, target=None):
         #print(unique_db_ips)
         if unique_db_ips: #If this IP was in the db...
             if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
-                print("[+] [{0}] is already in the DB, but not in scope. Adding to scope".format(ip))
+                print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
                 lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
             # else:
             #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
         else: #if this ip was not already in the db, create a new host and mark it as in scope
-            print("[+] [{0}] is not in the DB. Adding it to DB and to scope".format(ip))
+            print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
             db_vhost = (ip, ip, 1, 0, workspace)
             db.create_vhost(db_vhost)
 
@@ -423,3 +423,40 @@ def process_nmap_data(nmap_report,workspace, target=None):
 #                     except:
 #                         scanned_service_extrainfo = ''
 #                     #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
+
+def importcommand(lib, workspace, output_dir, arguments):
+    celery_path = sys.path[0]
+
+    #lib.utils.start_services()
+    in_scope_hosts_before = lib.db.get_unique_inscope_vhosts(workspace)
+
+    if arguments["-S"]:
+        lib.csimport.import_scope(arguments["-S"],workspace)
+
+    if arguments["-f"]:
+        if "nessus" in arguments["-f"]:
+            nessus_report = lib.utils.nessus_parser(arguments["-f"])
+            lib.csimport.process_nessus_data(nessus_report, workspace)
+        else:
+            nmap_report = lib.utils.nmap_parser(arguments["-f"])
+            lib.csimport.process_nmap_data(nmap_report, workspace)
+    if arguments["-D"]:
+        lib.csimport.import_vhosts(arguments["-D"],workspace)
+
+    if arguments["-u"]:
+        lib.csimport.import_url(arguments["-u"],workspace,output_dir)
+
+    # After all files have been proccessed, run this to see if any new hosts are now in scope!
+    lib.csimport.update_inscope_vhosts(workspace)
+
+    #This part is really just to tell the user what we have done.
+    in_scope_hosts = lib.db.get_unique_inscope_vhosts(workspace)
+    new_in_scope_hosts = in_scope_hosts.__len__() - in_scope_hosts_before.__len__()
+
+    if new_in_scope_hosts > 0:
+        print("[+] [{0}] hosts were just marked as in scope".format(new_in_scope_hosts))
+
+    if in_scope_hosts.__len__() == 0:
+        print("\n[!] There are no in scope hosts in the DB\n")
+    else:
+        print("[+] [{0}] hosts are currently marked as in scope\n".format(in_scope_hosts.__len__()))
