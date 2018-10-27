@@ -199,7 +199,7 @@ def process_nessus_data(nessus_report,workspace,target=None):
         #print scanned_host.address
         ip = scanned_host.address
 
-        unique_db_ips = lib.db.get_host_by_ip(ip,workspace) #Returns data if IP is in database
+        unique_db_ips = lib.db.is_vhost_ip_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
         if unique_db_ips: #If this IP was in the db...
             if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
@@ -259,79 +259,14 @@ def process_nessus_data(nessus_report,workspace,target=None):
                     except:
                         print("if this errors that means there was no service to update as https which is a bigger problem")
 
-# def process_nessus_data2(nessus_report,workspace,target=None):
-#     for scanned_host in nessus_report.hosts:
-#         #print scanned_host.address
-#         ip = scanned_host.address
-#         # this if takes care of only acting on the targets specififed at hte command line, if the target
-#         # this if takes care of only acting on the targets specififed at hte command line, if the target
-#         # param is used.  This is a very simple comparison now. In the future, i'd like to be able to use
-#         # the target splitter function and be able to handle ranges and cidr's in the target option
-#         if (IPAddress(ip) == target) or (target is None):
-#             has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip, workspace)
-#             if has_vhost_been_scanned:
-#                 answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
-#                 if (answer == "Y") or (answer == "y") or (answer == ""):
-#                     db.update_vhosts_submitted(ip, ip, workspace, 0)
-#             else:
-#                 db_vhost = (ip, ip, 1, 0, workspace)  # in this mode all vhosts are in scope
-#                 #print(db_vhost)
-#                 db.create_vhost(db_vhost)
-#             # Step 1: pull all report items in the port scanner family to get every port. The services names are IANA
-#             #         default as this point, which is why we need the next two loops.
-#             for report_item in scanned_host.get_report_items:
-#                 if report_item.plugin_family == "Port scanners":
-#                     if report_item.port != "0":
-#                         scanned_service_port = report_item.port
-#                         scanned_service_protocol = report_item.protocol
-#                         scanned_service_name = report_item.service
-#                         db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
-#
-#                         if not db_service:
-#                             db_string = (ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
-#                             db.create_service(db_string)
-#
-#             # Step 2: Cycle through the service detection items and update the services where we have a better idea of
-#             #         the real running service on the port. These are a subset of open ports which is why we need loop 1
-#             for report_item in scanned_host.get_report_items:
-#                 if report_item.plugin_family == "Service detection":
-#                     scanned_service_port = report_item.port
-#                     scanned_service_protocol = report_item.protocol
-#                     scanned_service_name = report_item.service
-#                     db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
-#                     if not db_service:
-#                         db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace)
-#                         db.create_service(db_string)
-#                         #print("new service2: " + ip,scanned_service_port,scanned_service_name)
-#                     else:
-#                         db.update_service(ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
-#                         #print("updating service servicename2: " + ip, scanned_service_port, scanned_service_name)
-#                         #print("old service servicename2     : " + ip, scanned_service_port,str(db_service[0][4]))
-#
-#             # Step 3: This is needed to split up HTTPS from HTTP
-#             for report_item in scanned_host.get_report_items:
-#                 if (report_item.plugin_name == "TLS Version 1.0 Protocol Detection" or
-#                 report_item.plugin_name == "OpenSSL Detection" or
-#                 report_item.plugin_name == "SSL Version 2 and 3 Protocol Detection"):
-#                     scanned_service_port = report_item.port
-#                     scanned_service_protocol = report_item.protocol
-#                     scanned_service_name = 'https'
-#                     try:
-#                         db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
-#                                           workspace)
-#                     except:
-#                         print("if this errors that means there was no service to update as https which is a bigger problem")
-
-
 def process_nmap_data(nmap_report,workspace, target=None):
     for scanned_host in nmap_report.hosts:
         ip=scanned_host.id
-
-
-        unique_db_ips = lib.db.get_host_by_ip(ip,workspace) #Returns data if IP is in database
+        unique_db_ips = lib.db.is_vhost_ip_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
+
         if unique_db_ips: #If this IP was in the db...
-            if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
+            #if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
                 print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
                 lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
             # else:
@@ -373,56 +308,6 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
 
 
-
-
-# def process_nmap_data2(nmap_report,workspace, target=None):
-#     for scanned_host in nmap_report.hosts:
-#
-#         #print(scanned_host)
-#         ip=scanned_host.id
-#         #print(ip)
-#         if (IPAddress(ip) == target) or (target is None):
-#             #has_vhost_been_scanned = db.get_unique_inscope_vhosts_for_ip(ip,workspace)
-#             has_vhost_been_scanned = db.get_inscope_submitted_vhosts_for_ip(ip,workspace)
-#             if has_vhost_been_scanned:
-#                 answer = raw_input("[!] {0} has already been scanned. Scan it, and all vhosts associated with it, again? [Y\\n] ".format(ip))
-#                 if (answer == "Y") or (answer == "y") or (answer == ""):
-#                     db.update_vhosts_submitted(ip,ip,workspace,0)
-#             else:
-#                 db_vhost = (ip, ip, 1, 0, workspace)  # in this mode all vhosts are in scope
-#                 #print(db_vhost)
-#                 db.create_vhost(db_vhost)
-#
-#             for scanned_service_item in scanned_host.services:
-#                 if scanned_service_item.state == "open":
-#                     scanned_service_port = scanned_service_item.port
-#                     scanned_service_name = scanned_service_item.service
-#                     scanned_service_protocol = scanned_service_item.protocol
-#
-#                     if scanned_service_item.tunnel == 'ssl':
-#                         scanned_service_name = 'https'
-#                     db_service = db.get_service(ip, scanned_service_port, scanned_service_protocol, workspace)
-#                     if not db_service:
-#                         db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace)
-#                         db.create_service(db_string)
-#                     else:
-#                         db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
-#                                           workspace)
-#
-#                     #Not using this yet, but I'd like to do send this to searchsploit
-#                     try:
-#                         scanned_service_product = scanned_service_item.service_dict['product']
-#                     except:
-#                         scanned_service_product = ''
-#                     try:
-#                         scanned_service_version = scanned_service_item.service_dict['version']
-#                     except:
-#                         scanned_service_version = ''
-#                     try:
-#                         scanned_service_extrainfo = scanned_service_item.service_dict['extrainfo']
-#                     except:
-#                         scanned_service_extrainfo = ''
-#                     #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
 
 def importcommand(lib, workspace, output_dir, arguments):
     celery_path = sys.path[0]

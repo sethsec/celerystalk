@@ -351,6 +351,12 @@ def get_host_by_ip(ip,workspace):
     CONNECTION.commit()
     return vhost_rows
 
+def is_vhost_ip_in_db(ip,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=?", (ip,workspace))
+    vhost_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return vhost_rows
+
 def get_unique_inscope_vhosts_for_ip(ip,workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE ip=? AND workspace=? AND in_scope=?", (ip,workspace,1))
     vhost_rows = CUR.fetchall()

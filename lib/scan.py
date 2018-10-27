@@ -563,15 +563,6 @@ def post_process_domains(vhosts,process_domain_tuple):
                 db_vhost = (ip, vhost, 0, 0, workspace)
                 db.create_vhost(db_vhost)
 
-        # elif scan_mode == "BB":
-        #
-        #     cmd_name, cmd = config['nmap-bug-bounty_mode']
-        #
-        #     utils.
-        #
-        #     db_vhost = ("", vhost, 1, 0, workspace)
-        #     db.create_vhost(db_vhost)
-
 
     #pull all in scope vhosts that have not been submitted
     inscope_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
@@ -580,6 +571,8 @@ def post_process_domains(vhosts,process_domain_tuple):
         ip = db.get_vhost_ip(scannable_vhost,workspace)
         ip = ip[0][0]
         db_scanned_services = db.get_all_services_for_ip(ip, workspace)
+
+
         for (id,ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace) in db_scanned_services:
         #run chain on each one and then update db as submitted
             scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" +  str(scanned_service_port) + "_" + scanned_service_protocol + "_"
