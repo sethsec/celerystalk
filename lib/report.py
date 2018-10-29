@@ -48,30 +48,36 @@ def report(workspace,target_list=None):
 
 
     # HTML Report
+    output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+    workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
+    try:
+        os.stat(workspace_report_directory)
+    except:
+        os.mkdir(workspace_report_directory)
+
     for ip in unique_ips:
         ip = ip[0]
         unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
+
         #unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
         for vhost in unique_vhosts_for_ip:
             vhost = vhost[0]
             #ip = lib.db.get_vhost_ip(host,workspace)
             #vhost_src_directory = os.path.join(output_dir,str(ip),"celerystalkOutput")
             #print(host_src_directory)
-            output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
-            workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
+            #output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+            #workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
             #report_count = report_count +  1
             #These lines create a host specific report file
 
-            try:
-                os.stat(workspace_report_directory)
-            except:
-                os.mkdir(workspace_report_directory)
+
             host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
             host_report_file_names.append([vhost,host_report_file_name])
             host_report_file = open(host_report_file_name, 'w')
             populate_report_data(host_report_file,vhost,workspace)
             host_report_file.close()
             print("[+] Report file (single host): {0}".format(host_report_file_name))
+
 
     combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
     combined_report_file = open(combined_report_file_name, 'w')
@@ -155,7 +161,7 @@ def report(workspace,target_list=None):
     print("\n[+] Report file (All workspace hosts): {0} (has screenshots!!!)".format(combined_report_file_name))
     print("[+] Report file (All workspace hosts): {0}\n".format(combined_report_file_name_txt))
     print("\n[+] For quick access, open with local firefox (works over ssh with x forwarding):\n")
-    print("\tfirefox " + combined_report_file_name + " &\n")
+    print("firefox " + combined_report_file_name + " &\n")
     print("[+] Or you can copy the celerystalkReports folder, which contains everything you need to view the report\n")
 
 

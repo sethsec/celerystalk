@@ -352,6 +352,8 @@ def main(arguments):
             #this one is the catch all if the user only types scan and nothing else.
             lib.scan.process_db_vhosts(workspace, arguments["--simulation"])
 
+        print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
+        print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
 
 
 
@@ -402,4 +404,5 @@ if __name__ == "__main__":
     if arguments["help"]:
        print(__doc__)
     main(arguments)
+
 

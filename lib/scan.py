@@ -213,6 +213,7 @@ def process_url(url, workspace, output_dir, arguments):
 
 
 
+
     try:
         parsed_url = urlparse.urlparse(url)
         scheme = parsed_url[0]
@@ -231,10 +232,16 @@ def process_url(url, workspace, output_dir, arguments):
     except:
         if not scheme:
             exit()
-    try:
-        ip = socket.gethostbyname(vhost)
-    except:
-        print("Error getting IP")
+
+    #get ip from db, or if not in db, get it through dns
+    db_ip = lib.db.get_vhost_ip(vhost,workspace)
+    if db_ip:
+        ip = db_ip[0][0]
+    else:
+        try:
+            ip = socket.gethostbyname(vhost)
+        except:
+            print("Error getting IP")
     proto = "tcp"
 
     if ip == vhost:
@@ -255,7 +262,14 @@ def process_url(url, workspace, output_dir, arguments):
 
     db_vhost = (ip, vhost, 1, 1, workspace)  # in this mode all vhosts are in scope
     # print(db_vhost)
+    #create it if it doesnt exist (if it does, doing this doesnt change anything)
     db.create_vhost(db_vhost)
+    # mark this host as in scope now
+    lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+
+    #only mark it as submitted if it is not in scope.
+    if not simulation:
+        lib.db.update_vhosts_submitted(ip, vhost, workspace, 1)
 
     # Insert port/service combo into services table if it doesnt exist
     db_service = db.get_service(ip, port, proto, workspace)
@@ -263,6 +277,9 @@ def process_url(url, workspace, output_dir, arguments):
         db_string = (ip, port, proto, scheme, workspace)
         db.create_service(db_string)
 
+    #mark this host as in scope now
+    if not simulation:
+        db.update_vhosts_submitted(vhost, vhost, workspace, 1)
 # I might want to keep this, but i think it is redundant if we have gobuster and photon screenshots...
     # Insert url into paths table and take screenshot
     # db_path = db.get_path(path, workspace)
