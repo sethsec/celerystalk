@@ -237,6 +237,29 @@ def get_report_info_for_ip(workspace,ip):
     CONNECTION.commit()
     return report_info
 
+def get_report_info_for_vhost(workspace,vhost):
+    CUR.execute("SELECT output_file,command_name,command,status,start_time,run_time FROM tasks where vhost = ? AND workspace = ? AND (status = 'COMPLETED' or status = 'STARTED')", (vhost, workspace))
+    report_info = CUR.fetchall()
+    CONNECTION.commit()
+    return report_info
+
+def get_reportable_output_files_for_vhost(workspace,vhost):
+    CUR.execute("SELECT DISTINCT output_file FROM tasks where ip = ? AND workspace = ? AND (status = 'COMPLETED' or status = 'STARTED')", (vhost, workspace))
+    report_info = CUR.fetchall()
+    CONNECTION.commit()
+    return report_info
+
+def get_tasks_for_output_file(workspace,vhost,output_file):
+    CUR.execute("SELECT command_name,command,status,start_time,run_time FROM tasks where output_file = ? AND workspace = ? AND (status = 'COMPLETED' or status = 'STARTED')", (output_file, workspace))
+    report_info = CUR.fetchall()
+    CONNECTION.commit()
+    return report_info
+
+def get_output_file_for_command(workspace,command):
+    CUR.execute("SELECT DISTINCT output_file FROM tasks where workspace = ? AND command = ? AND (status = 'COMPLETED' or status = 'STARTED')", (workspace, command))
+    report_info = CUR.fetchall()
+    CONNECTION.commit()
+    return report_info
 
 def get_unique_hosts_in_workspace(workspace):
     CUR.execute("SELECT DISTINCT ip,output_dir FROM tasks WHERE name=?", (workspace,))

@@ -309,7 +309,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
 
 
 
-def importcommand(lib, workspace, output_dir, arguments):
+def importcommand(workspace, output_dir, arguments):
     celery_path = sys.path[0]
 
     #lib.utils.start_services()

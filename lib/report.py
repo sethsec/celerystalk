@@ -33,7 +33,7 @@ def report(workspace,target_list=None):
     report_count = 0
     host_report_file_names = []
     if target_list:
-        #for loop around targets in scope or somethign...
+        #TODO for loop around targets in scope or somethign...
         a=""
     else:
         #unique_hosts = lib.db.get_unique_hosts_in_workspace(workspace)
@@ -73,7 +73,7 @@ def report(workspace,target_list=None):
             host_report_file.close()
             print("[+] Report file (single host): {0}".format(host_report_file_name))
 
-    combined_report_file_name = os.path.join(workspace_report_directory,'Workspace-Report[' + workspace + '].html')
+    combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
     combined_report_file = open(combined_report_file_name, 'w')
     combined_report_file.write(populate_report_head())
 
@@ -95,7 +95,7 @@ def report(workspace,target_list=None):
 
 
     #Text Report
-    combined_report_file_name_txt = os.path.join(workspace_report_directory,'Workspace-Report[' + workspace + '].txt')
+    combined_report_file_name_txt = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].txt')
     combined_report_file_txt = open(combined_report_file_name_txt, 'w')
 
     # Create the rest of the report
@@ -259,55 +259,100 @@ def populate_report_data(report_file,vhost,workspace):
     :param workspace:
     :return:
     """
-    reportable_tasks = lib.db.get_report_info_for_ip(workspace,vhost)
 
-
-    # try:
-    #     #Start off the report with the scan summary log that prings which services were detected
-    #     summary_file_name = glob.glob(os.path.join(host_output_directory, "*ScanSummary.log"))[0]
-    #     with open(summary_file_name, "r") as summary_file:
-    #         report_file.write('-' * 80 + '\n')
-    #         report_file.write(summary_file_name + '\n')
-    #         report_file.write('-' * 80 + '\n')
-    #         report_file.write('\n')
-    #         for line in summary_file:
-    #             report_file.write(line)
-    # except:
-    #     pass
-
-    for output_file,command_name,command,status,start_time,run_time in reportable_tasks:
-        output_file = os.path.normpath(output_file)
-        try:
-
-            if os.stat(output_file).st_size == 0:
-                report_file.write('\n')
-                report_file.write('-' * 50 + '\n')
-                report_file.write("Command Name:\t" + command_name + ' [!] No data produced\n')
-
-                #report_file.write("{0} did not produce any data\n".format(command_name))
-                report_file.write('-' * 50)
-            else:
-                report_file.write('\n\n')
-                report_file.write('-' * 50 + '\n')
-                report_file.write("Command Name:\t" + command_name + '\n')
-                report_file.write("Start Time:\t" + start_time + '\n')
-                if status == "COMPLETED":
-                    report_file.write("Run Time:\t" + run_time + '\n')
-                report_file.write("Command:\t" + command + '\n')
-                report_file.write("Output File:\t" + output_file + '\n')
-                report_file.write("Status:\t\t" + status + '\n')
-                report_file.write('-' * 50 + '\n\n')
-
-                linecount = 0
+    reportable_output_files_for_vhost = lib.db.get_reportable_output_files_for_vhost(workspace,vhost)
+    for vhost_output_file in reportable_output_files_for_vhost:
+        vhost_output_file = vhost_output_file[0]
+        normalized_output_file = os.path.normpath(vhost_output_file)
+        tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
+        for command_name,command,status,start_time,run_time in tasks_for_output_file:
+            #Don't print header info for simulation jobs
+            if not command.startswith('#'):
                 try:
-                    with open(output_file, "r") as scan_file:
-                        for line in scan_file:
-                            if linecount < 300:
-                                report_file.write(line)
-                            linecount = linecount + 1
-                        if linecount > 300:
-                            report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
-                except IOError:
-                    pass
-        except OSError, e:
-            report_file.write("[!] No such file or directory: " + output_file + "\n")
+                    if os.stat(normalized_output_file).st_size == 0:
+                        report_file.write('\n')
+                        report_file.write('-' * 50 + '\n')
+                        report_file.write("Command Name:\t" + command_name + " (No data produced)\n")
+
+                        # report_file.write("{0} did not produce any data\n".format(command_name))
+                        report_file.write('-' * 50)
+                    else:
+                        report_file.write('\n\n')
+                        report_file.write('-' * 50 + '\n')
+                        report_file.write("Command Name:\t" + command_name + '\n')
+                        report_file.write("Start Time:\t" + start_time + '\n')
+                        if status == "COMPLETED":
+                            report_file.write("Run Time:\t" + run_time + '\n')
+                        report_file.write("Command:\t" + command + '\n')
+                        report_file.write("Output File:\t" + normalized_output_file + '\n')
+                        report_file.write("Status:\t\t" + status + '\n')
+                        report_file.write('-' * 50 + '\n\n')
+                except OSError, e:
+                    report_file.write('\n')
+                    report_file.write('-' * 50 + '\n')
+                    report_file.write("Command Name:\t" + command_name+ '\n')
+                    report_file.write("Command:\t" + command + '\n')
+                    report_file.write("\nNo such file or directory: " + normalized_output_file + "\n")
+                    # report_file.write("{0} did not produce any data\n".format(command_name))
+                    report_file.write('-' * 50)
+
+
+        linecount = 0
+        try:
+            with open(normalized_output_file, "r") as scan_file:
+                for line in scan_file:
+                    if linecount < 300:
+                        report_file.write(line)
+                    linecount = linecount + 1
+                if linecount > 300:
+                    report_file.write("\nSnip... Only displaying first 300 of the total " + str(
+                        linecount) + " lines...\n")
+        except IOError, e:
+            #dont tell the user at the concole that file didnt exist.
+            pass
+
+
+
+
+
+
+
+
+    # reportable_tasks = lib.db.get_report_info_for_vhost(workspace,vhost)
+    #
+    # for output_file,command_name,command,status,start_time,run_time in reportable_tasks:
+    #     output_file = os.path.normpath(output_file)
+    #     try:
+    #
+    #         if os.stat(output_file).st_size == 0:
+    #             report_file.write('\n')
+    #             report_file.write('-' * 50 + '\n')
+    #             report_file.write("Command Name:\t" + command_name + " (No data produced)\n")
+    #
+    #             #report_file.write("{0} did not produce any data\n".format(command_name))
+    #             report_file.write('-' * 50)
+    #         else:
+    #             report_file.write('\n\n')
+    #             report_file.write('-' * 50 + '\n')
+    #             report_file.write("Command Name:\t" + command_name + '\n')
+    #             report_file.write("Start Time:\t" + start_time + '\n')
+    #             if status == "COMPLETED":
+    #                 report_file.write("Run Time:\t" + run_time + '\n')
+    #             report_file.write("Command:\t" + command + '\n')
+    #             report_file.write("Output File:\t" + output_file + '\n')
+    #             report_file.write("Status:\t\t" + status + '\n')
+    #             report_file.write('-' * 50 + '\n\n')
+    #
+    #             linecount = 0
+    #             try:
+    #                 with open(output_file, "r") as scan_file:
+    #                     for line in scan_file:
+    #                         if linecount < 300:
+    #                             report_file.write(line)
+    #                         linecount = linecount + 1
+    #                     if linecount > 300:
+    #                         report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
+    #             except IOError:
+    #                 pass
+    #     except OSError, e:
+    #         report_file.write("\n[!] No such file or directory: " + output_file + "\n")

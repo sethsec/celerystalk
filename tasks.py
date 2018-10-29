@@ -80,7 +80,7 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
     f.close()
 
     if process_domain_tuple:
-        lib.scan.post_process_domains(out,process_domain_tuple)
+        lib.scan.determine_if_domains_are_in_scope(out,process_domain_tuple)
 
     return out
 
@@ -93,6 +93,7 @@ def post_process(*args):
 
     urls_to_screenshot = []
     if "gobuster" in populated_command:
+
         scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",ip + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
 
@@ -102,6 +103,7 @@ def post_process(*args):
             os.makedirs(scan_output_base_file_dir)
 
         post_gobuster_filename = populated_command.split(">")[1].split("&")[0].strip()
+
         print("Post gobuster filename" + post_gobuster_filename + "\n")
         populated_command_list = populated_command.split(" ")
 
@@ -147,7 +149,11 @@ def post_process(*args):
         except:
             os.makedirs(scan_output_base_file_dir)
 
-        post_photon_filename = populated_command.split(">")[1].lstrip()
+        #post_photon_filename = populated_command.split(">")[1].lstrip()
+        post_photon_filename = lib.db.get_output_file_for_command(workspace,populated_command)[0][0]
+        print(post_photon_filename)
+
+
         print("Post photon filename" + post_photon_filename + "\n")
         populated_command_list = populated_command.split(" ")
 
@@ -187,7 +193,12 @@ def post_process(*args):
                 print ("[!] Could not open {0}".format(post_photon_filename))
 
     if not simulation:
-        lib.utils.take_screenshot(urls_to_screenshot)
+        if len(urls_to_screenshot) > 0:
+            task_id = uuid()
+            populated_command = "firefox-esr screenshots | {0} | {1}".format(ip, scan_output_base_file_dir)
+            command_name = "Screenshots"
+            utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
+            cel_take_screenshot.delay(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
 
     #task_id = uuid()
     #cmd_name = "Screenshot"
@@ -487,6 +498,6 @@ def cel_process_db_services(output_base_dir, simulation, workspace):
 
 
 @app.task()
-def cel_take_screenshot(urls_to_screenshot):
+def cel_take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
     #print("cel_take_screenshot")
-    lib.utils.take_screenshot(urls_to_screenshot)
+    lib.utils.take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
