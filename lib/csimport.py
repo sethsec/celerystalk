@@ -6,8 +6,6 @@ import lib.db
 import lib.utils
 from lib import db
 import urlparse
-import socket
-
 
 
 def import_scope(scope_file,workspace):
@@ -60,8 +58,6 @@ def import_scope(scope_file,workspace):
                 #scopeList.append(net)
 
 
-
-
 def import_vhosts(subdomains_file,workspace):
     with open(subdomains_file) as vhosts:
         for vhost in vhosts.readlines():
@@ -81,6 +77,7 @@ def import_vhosts(subdomains_file,workspace):
                     print("[+] Found subdomain (out of scope):\t\t" + vhost)
                     db_vhost = (ip, vhost, 0, 0, workspace)
                     lib.db.create_vhost(db_vhost)
+
 
 def import_url(url,workspace,output_base_dir):
     celery_path = sys.path[0]
@@ -106,7 +103,6 @@ def import_url(url,workspace,output_base_dir):
     except:
         if not scheme:
             exit()
-
 
     in_scope, ip = lib.utils.domain_scope_checker(vhost, workspace)
     proto = "tcp"
@@ -168,14 +164,6 @@ def import_url(url,workspace,output_base_dir):
         db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
         lib.db.insert_new_path(db_path)
 
-    #print(in_scope,ip)
-#    try:
-#        ip = socket.gethostbyname(vhost)
-#    except:
-#        print("Error getting IP")
-
-
-
 
 def update_inscope_vhosts(workspace):
     vhosts = lib.db.get_unique_out_of_scope_vhosts(workspace)
@@ -211,8 +199,6 @@ def process_nessus_data(nessus_report,workspace,target=None):
             print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
             db_vhost = (ip, ip, 1, 0, workspace)
             db.create_vhost(db_vhost)
-
-
 
         # Step 1: pull all report items in the port scanner family to get every port. The services names are IANA
         #         default as this point, which is why we need the next two loops.
@@ -306,7 +292,6 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 except:
                     scanned_service_extrainfo = ''
                 #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
-
 
 
 def importcommand(workspace, output_dir, arguments):

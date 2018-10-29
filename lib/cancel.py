@@ -1,9 +1,7 @@
 import time
 from subprocess import Popen
-
 from lib import db
 from lib.utils import task_splitter
-
 
 def cancel_tasks(id, workspace,ip=None):
 

@@ -1,9 +1,9 @@
 import os
-import glob
 import bleach
 from bleach.sanitizer import Cleaner
 import lib.db
 import urllib
+
 
 def paths_report(host):
     all_paths = lib.db.get_all_paths_for_host(host)
@@ -25,8 +25,6 @@ def paths_report(host):
     return html_code
 
 
-
-
 def report(workspace,target_list=None):
 
     cleaner = Cleaner()
@@ -44,8 +42,6 @@ def report(workspace,target_list=None):
             exit()
 
     print("\n[+] Generating a report for the [" + workspace + "] workspace (" + str(len(unique_ips)) +") unique IP(s) and (" + str(len(unique_vhosts)) + ") unique vhosts(s)\n")
-
-
 
     # HTML Report
     output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
@@ -82,8 +78,6 @@ def report(workspace,target_list=None):
     combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
     combined_report_file = open(combined_report_file_name, 'w')
     combined_report_file.write(populate_report_head())
-
-
 
     # Create sidebar navigation
     for host,report in sorted(host_report_file_names):
@@ -165,8 +159,6 @@ def report(workspace,target_list=None):
     print("[+] Or you can copy the celerystalkReports folder, which contains everything you need to view the report\n")
 
 
-
-
 def populate_report_head():
     #https: // www.w3schools.com / howto / howto_css_fixed_sidebar.asp
     web_head =  ("""<!DOCTYPE html>
@@ -242,9 +234,6 @@ body {
     
 }
 
-
-
-
 </style>
 </head>
 <body>
@@ -252,9 +241,6 @@ body {
 <div class="sidenav">
 <a href="#top">Top</a>\n""")
     return web_head
-
-
-
 
 
 def populate_report_data(report_file,vhost,workspace):
@@ -316,49 +302,3 @@ def populate_report_data(report_file,vhost,workspace):
         except IOError, e:
             #dont tell the user at the concole that file didnt exist.
             pass
-
-
-
-
-
-
-
-
-    # reportable_tasks = lib.db.get_report_info_for_vhost(workspace,vhost)
-    #
-    # for output_file,command_name,command,status,start_time,run_time in reportable_tasks:
-    #     output_file = os.path.normpath(output_file)
-    #     try:
-    #
-    #         if os.stat(output_file).st_size == 0:
-    #             report_file.write('\n')
-    #             report_file.write('-' * 50 + '\n')
-    #             report_file.write("Command Name:\t" + command_name + " (No data produced)\n")
-    #
-    #             #report_file.write("{0} did not produce any data\n".format(command_name))
-    #             report_file.write('-' * 50)
-    #         else:
-    #             report_file.write('\n\n')
-    #             report_file.write('-' * 50 + '\n')
-    #             report_file.write("Command Name:\t" + command_name + '\n')
-    #             report_file.write("Start Time:\t" + start_time + '\n')
-    #             if status == "COMPLETED":
-    #                 report_file.write("Run Time:\t" + run_time + '\n')
-    #             report_file.write("Command:\t" + command + '\n')
-    #             report_file.write("Output File:\t" + output_file + '\n')
-    #             report_file.write("Status:\t\t" + status + '\n')
-    #             report_file.write('-' * 50 + '\n\n')
-    #
-    #             linecount = 0
-    #             try:
-    #                 with open(output_file, "r") as scan_file:
-    #                     for line in scan_file:
-    #                         if linecount < 300:
-    #                             report_file.write(line)
-    #                         linecount = linecount + 1
-    #                     if linecount > 300:
-    #                         report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
-    #             except IOError:
-    #                 pass
-    #     except OSError, e:
-    #         report_file.write("\n[!] No such file or directory: " + output_file + "\n")

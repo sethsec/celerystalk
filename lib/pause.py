@@ -1,8 +1,6 @@
 from subprocess import Popen
-
 from lib import db
 from lib.utils import task_splitter
-
 
 def pause_running_tasks(id,workspace=None,repeat=None):
     task_list = []

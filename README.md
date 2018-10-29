@@ -63,18 +63,14 @@ Under the hood:
 
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
-# ./celerystalk scan -f client.xml -o /assessments/client -d client.com,client.net  # Run all enabled commands
+# ./celerystalk import -f client.xml -o /assessments/client                         # Import scan | scope | domain data
+# ./celerystalk find_subdomains -d client.com,client.net                            # Find subdomains and determine if in scope
+# ./celerystalk scan                                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
 # ./celerystalk report                                                              # Generate report
 # firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
 ```
 [![asciicast](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z.png)](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z)
-
-
-**[Bug Bounty Mode]** - How to scan a bug bounty program by simply defining what domains/hosts are in scope and what is out of scope.
-```bash
-Not ready yet.  Coming soon...
-```
 
 
 ## Using celerystalk - Some more detail
@@ -124,6 +120,19 @@ Not ready yet.  Coming soon...
     photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT] -o [OUTPUT]
     ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
     ```
+
+1. **Import Data:** Import data into celerystalk
+
+    | Option | Description |
+    | --- | --- |
+    | -f scan.xml | <b>Nmap/Nessus xml</b><br>Adds all IP addresses from this file to hosts table and marks them all in scope.<br>Adds all ports and service types to services table. |
+    | -S scope.txt | <b>Scope file</b><br>Show file differences that haven't been staged |
+    | -D subdomains.txt | <b>Domains file</b><br>Determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope.| 
+    
+
+1. **Find Subdomains (Optional):** celerystalk will perfrom subdomain recon using the tools specified in the config.ini  It will then check to see if the IP associated with each subdomain found is in the list of IP's in your nmap/nessus file.  If the subdomain is in scope celerystalk will scan it using the subdomain/virtualhost.
+        
+
 1. **Launch Scan:** Run celerystalk scan using the nmap or nessus XML file.  It will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
 
     If you specify the -d flag, celerystalk will perfrom subdomain recon using your specified tools.  It will then check to see if the IP associated with each subdomain found is in the list of IP's in your nmap/nessus file.  If the subdomain is in scope celerystalk will scan it using the subdomain/virtualhost.
