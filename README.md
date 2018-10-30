@@ -132,7 +132,9 @@ Under the hood:
     ```
     Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
     Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/    
-    Specify workspace:          celerystalk import -f <file> -o /assessments -w test        
+    Specify workspace:          celerystalk import -f <file> -o /assessments -w test
+    
+    Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt        
     
     ```
     
