@@ -125,33 +125,54 @@ Under the hood:
 
    | Option | Description |
    | --- | --- |
-   | -f scan.xml | <b>Nmap/Nessus xml</b><br>Adds all IP addresses from this file to hosts table and marks them all in scope to be scanned.<br>Adds all ports and service types to services table. |
-   | -S scope.txt | <b>Scope file</b><br>Show file differences that haven't been staged |
-   | -D subdomains.txt | <b>(sub)Domains file</b><br>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.| 
+   | -f scan.xml | <b>Nmap/Nessus xml</b><br><ul><li>Adds all IP addresses from this file to hosts table and marks them all in scope to be scanned.</li><li>Adds all ports and service types to services table.</li></ul> |
+   | -S scope.txt | <b>Scope file</b><br><ul><li>Show file differences that haven't been staged </li></ul>|
+   | -D subdomains.txt | <b>(sub)Domains file</b><br><ul><li>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>| 
     
-
+    ```
+    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
+    Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/    
+    Specify workspace:          celerystalk import -f <file> -o /assessments -w test        
+    
+    ```
+    
 1. **Find Subdomains (Optional):** celerystalk will perfrom subdomain recon using the tools specified in the config.ini.
   
    | Option | Description |
    | --- | --- |
-   | -d domain1,domain2,etc| After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.
+   | -d domain1,domain2,etc| <ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>
 
-1. **Launch Scan:** Run celerystalk scan using the nmap or nessus XML file.  It will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
+    ```
+    Find subdomains:       celerystalk find_subdomains -d domain1.com,domain2.com
+    ```
+
+
+1. **Launch Scan:** I recommend using the import command first and running scan with no optinos, however you do have the option to do it all at once (import and scan) by using the flags below. celerystalk will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
 
    | Option | Description |
    | --- | --- |
-   | no options |  - Reads DB and scans every in scope IP and subdomain.<br> - Launches all enabled tools for IPs, but only http/http specific tools against virtualhosts   |
-   | -t ip,vhost,cidr | Scan a subset of the in scope IPs and/or subdomains |  
-   |-s | <b>Simulation</b><br> Sends all of the tasks to celery, but all commands are executed with a # before them rendering them inert |
-   | -f scan.xml | <b>Nmap/Nessus xml</b><br>Adds all IP addresses from this file to hosts table and marks them all in scope to be scanned.<br>Adds all ports and service types to services table. |
-   | -S scope.txt | <b>Scope file</b><br>Show file differences that haven't been staged |
-   | -D subdomains.txt | <b>(sub)Domains file</b><br>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.| 
-   | -d domain1,domain2,etc| After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.
-  
-
-    If you specify the -d flag, celerystalk will perfrom subdomain recon using your specified tools.  It will then check to see if the IP associated with each subdomain found is in the list of IP's in your nmap/nessus file.  If the subdomain is in scope celerystalk will scan it using the subdomain/virtualhost.
-     
+   | no options | <b>Scan all in scope hosts</b><ul><li>Reads DB and scans every in scope IP and subdomain.</li><li>Launches all enabled tools for IPs, but only http/http specific tools against virtualhosts</li></ul>   |
+   | -t ip,vhost,cidr | <b>Scan specific target(s)Nmap/Nessus xml</b><ul><li>Scan a subset of the in scope IPs and/or subdomains.</li></ul> |  
+   |-s | <b>Simulation</b><br> Sends all of the tasks to celery, but all commands are executed with a # before them rendering them inert.</li></ul> |
+   |<b>Use these only if you want to skip the import phase and do it all at once</b>||
+   | -f scan.xml | <b>Import and process Nmap/Nessus xml before scan</b><ul><li>Adds all IP addresses from this file to hosts table and marks them all in scope to be scanned.<br>Adds all ports and service types to services table.</li></ul> |
+   | -S scope.txt | <b>Import and process scope file before scan</b><ul><li>Show file differences that haven't been staged.</li></ul> |
+   | -D subdomains.txt | <b>Import and process (sub)domains file before scan </b><ul><li>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>| 
+   | -d domain1,domain2,etc| <b>Find Subdomains and scan in scope hosts</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>|
+ 
+    Scan imported hosts/subdomains
     ```    
+    Scan all in scope hosts:    celerystalk scan    
+    Scan subset hosts           celerystalk scan -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -t 10.0.0.100-200
+                                celerystalk scan -t 10.0.0.0/24
+                                celerystalk scan -t sub.domain.com
+    Specify workspace:          celerystalk scan -f <file> -o /assessments -w test
+    Simulation mode:            celerystalk scan -s
+    ```
+    
+    Import and Scan
+    ```
     Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
     Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
     Scan all in scope vhosts:   celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
