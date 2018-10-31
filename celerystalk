@@ -34,52 +34,66 @@ Options:
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
 
 Examples:
+  Import
+    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
+    Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/
+    Import list of Domains:     celerystalk import -D <file>
+    Import list of IPs/Ranges:  celerystalk import -S <file>
+    Specify workspace:          celerystalk import -f <file> -o /assessments -w test
+    Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
 
-    Start from Nmap XML file:
-                ./celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:
-                ./celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Specify a workspace (Uses [Default] workspace if not specified):
-                ./celerystalk scan -f <file> -o /pentest -w test
-    Find in scope vhosts using subdomain recon tools and scan any subodmain that is resolves ton an IP in scan file:
-                ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Scan subset hosts in Nmap/Nessus XML:
-                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
-                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
-                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
-    Simulation mode:
-                ./celerystalk scan -f <file> -o /pentest -s
-    Query tasks:
-                ./celerystalk query [-w workspace]
-    Create a report for all scanned hosts in a workspace:
-                ./celerystalk report [-w workspace]
-    Cancel/Pause/Resume tasks 5, 6, and 10-20 in the Default workspace:
-                ./celerystalk <verb> 5,6,10-20
-    Cancel/Pause/Resume all tasks in the Default workspace:
-                ./celerystalk <verb> all
-    Cancel/Pause/Resume all tasks in the test workspace:
-                ./celerystalk <verb> all -w test
-    Cancel/Pause/Resume all tasks related to 10.0.0.1 in the Default workspace:
-                ./celerystalk <verb> 10.0.0.1
-    Cancel/Pause/Resume all tasks related to 10.0.0.0/24 in the Default workspace:
-                ./celerystalk <verb> 10.0.0.0/24
-    List all current workspaces in the database:
-                ./celerystalk db workspaces
-    List all hosts in the Default workspace
-                ./celerystalk db hosts [-w workspace]
-    List all services in the Default workspace
-                ./celerystalk db services
-    List all paths in the Default workspace
-                ./celerystalk db paths
-    Save hosts,services, and paths as CSV files in the output directory associated with a workspace
-                ./celerystalk db export
-    Shutdown celery processes:
-                ./celerystalk shutdown
+  Subdomain Recon
+    Find subdomains:            celerystalk find_subdomains -d domain1.com,domain2.com
+
+  Scan
+    Scan all in scope hosts:    celerystalk scan
+    Scan subset of DB hosts:    celerystalk scan -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -t 10.0.0.100-200
+                                celerystalk scan -t 10.0.0.0/24
+                                celerystalk scan -t sub.domain.com
+    Specify workspace:          celerystalk scan -w test
+    Simulation mode:            celerystalk scan -s
+
+  Import and Scan
+    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
+    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
+    Scan all in scope vhosts:   celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
+    Specify workspace:          celerystalk scan -f <file> -o /pentest -w test
+    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
+                                celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
+
+  Rescan
+   Rescan all hosts:            celerystalk rescan
+   Rescan some hosts            celerystalk rescan-t 1.2.3.4,sub.domain.com
+   Specify workspace:           celerystalk rescan -w test
+   Simulation mode:             celerystalk rescan -s
+
+  Query Mode
+    All tasks:                  celerystalk query [-w workspace]
+    Update status every 2s:     celerystalk query [-w workspace] watch
+    Show only 5 tasks per mode: celerystalk query [-w workspace] brief
+    Show stats only             celerystalk query [-w workspace] summary
+    Show stats every 2s:        celerystalk query [-w workspace] summary watch
+
+ Job Control (cancel/pause/resume)
+    Specific tasks:             celerystalk <verb> 5,6,10-20
+    All tasks:                  celerystalk <verb> all
+    Tasks in a diff workspace:  celerystalk <verb> all -w test
+
+  Access the DB
+    Show workspaces:            celeryststalk db workspaces
+    Show services:              celeryststalk db services [-w workspace]
+    Show hosts:                 celeryststalk db hosts [-w workspace]
+    Show paths:                 celeryststalk db paths [-w workspace]
+
+  Export DB
+    Export default DB:          celerystalk db export
+    Export a non-defualt DB:    celerystalk db export -w test
+
 """
 
-# Not ready yet (still in dev):
-# celerystalk scan -f <nmap_file> -o <output_dir> [-w <workspace>] [-t <targets>] [-d <domains>] [-b <bb_scope_file>] [-s]
-# -b --bb_scope_file  Bug Bounty mode. Reads scope file to determine scope, not an initial nmap/nessus file.
 
 from docopt import docopt
 import os
@@ -100,7 +114,7 @@ from prettytable import PrettyTable
 import csv
 
 
-build=str(110)
+build=str(111)
 
 def print_banner():
 
@@ -399,7 +413,7 @@ def main(arguments):
 
 if __name__ == "__main__":
     arguments = docopt(__doc__, version='Build '+ build)
-    print(arguments)
+    #print(arguments)
     print_banner()
     if arguments["help"]:
        print(__doc__)
