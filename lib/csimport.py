@@ -12,7 +12,7 @@ def import_scope(scope_file,workspace):
     with open(scope_file) as sf:
         for network in sf.readlines():
             if "-" in str(network):
-                print("range found")
+                #print("range found")
                 iprange = network.split("-")
                 # Convert the first part of the range to an IPAddress object
                 rangestart = (IPAddress(iprange[0]))
