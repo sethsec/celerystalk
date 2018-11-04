@@ -25,19 +25,17 @@ from libnmap.process import NmapProcess
 app = Celery('tasks', broker='redis://localhost:6379', backend='db+sqlite:///results.sqlite')
 #app.config_from_object({'task_always_eager': True})
 
-# @app.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(60.0, send_new_dirs_to_celery.s())
-
-
 
 @app.task
 def run_cmd(command_name, populated_command,celery_path,task_id,path=None,process_domain_tuple=None):
     """
-    :param populated_command: the command celery worker will run
-    :param output_base_dir: passed so we can record the job in the cmdExecutionAudit.log
-    :param workspace: the user specified workspace name. Default: default
-    :param ip: The IP is passed so that we can write it to the database
+
+    :param command_name:
+    :param populated_command:
+    :param celery_path:
+    :param task_id:
+    :param path:
+    :param process_domain_tuple:
     :return:
     """
 
@@ -269,6 +267,18 @@ def cel_create_task(*args,**kwargs):
 @app.task()
 def post_process_domains_bb(vhosts, command_name, populated_command, output_base_dir, workspace, simulation,
                          celery_path,out_of_scope_hosts):
+    """
+
+    :param vhosts:
+    :param command_name:
+    :param populated_command:
+    :param output_base_dir:
+    :param workspace:
+    :param simulation:
+    :param celery_path:
+    :param out_of_scope_hosts:
+    :return:
+    """
     config, supported_services = config_parser.read_config_ini()
     vhosts = vhosts.splitlines()
     # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
@@ -354,13 +364,15 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
 @app.task()
 def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery_path, task_id,workspace):
     """
-    if user chooses to start from an nmap scan, run the scan and then return an nmap_report object
-    :param hosts:
-    :param output_dir:
+    :param cmd_name:
+    :param populated_command:
+    :param host:
+    :param config_nmap_options:
+    :param celery_path:
+    :param task_id:
+    :param workspace:
     :return:
     """
-
-
     # Without the sleep, some jobs were showing as submitted even though
     # they were started. Not sure why.
     #time.sleep(3)

@@ -55,6 +55,24 @@ def create_workspace_table():
         print(e)
 
 
+def create_current_workspace_table():
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+
+    sql_create_current_workspace_table = """ CREATE TABLE IF NOT EXISTS current_workspace (
+                                        current_db text PRIMARY KEY                                        
+                                    ); """
+
+    try:
+        CUR.execute(sql_create_current_workspace_table)
+        CONNECTION.commit()
+    except Error as e:
+        print(e)
+
+
 def create_path_table():
     sql_create_paths_table = """ CREATE TABLE IF NOT EXISTS paths (
                                         id integer PRIMARY KEY,
@@ -137,6 +155,34 @@ def get_all_workspaces():
 def update_workspace_output_dir(output_dir,workspace):
     CUR.execute("UPDATE workspace SET output_dir=? WHERE name=?", (output_dir,workspace))
     CONNECTION.commit()
+
+#############################
+# Table: Current Workspace
+#############################
+
+def set_initial_current_workspace(db_workspace):
+    """
+
+    :param workspace:
+    :return:
+    """
+    sql_create_current_workspace = ''' INSERT OR IGNORE INTO current_workspace(current_db)
+              VALUES(?) '''
+    print(db_workspace)
+    CUR.execute(sql_create_current_workspace,db_workspace)
+    CONNECTION.commit()
+
+def get_current_workspace():
+    CUR.execute("SELECT current_db FROM current_workspace")
+    current_workspace = CUR.fetchall()
+    CONNECTION.commit()
+    return current_workspace
+
+def update_current_workspace(workspace):
+    CUR.execute("UPDATE current_workspace SET current_db=?", (workspace,))
+    CONNECTION.commit()
+
+
 
 
 #############################

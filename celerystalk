@@ -2,6 +2,8 @@
 
 """
 Usage:
+    celerystalk workspace create -o <output_dir> [-w workspace_name]
+    celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-w <workspace>] [-o <output_dir>] [-u <url>]
     celerystalk find_subdomains -d <domains> [-w <workspace>] [-o <output_dir>] [-s]
     celerystalk scan [-t <targets>] [-w <workspace>] [-s]
@@ -29,11 +31,17 @@ Options:
     -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
     -u <url>            URL to parse and scan with all configured tools
-    -w <workspace>      Workspace [default: Default]
+    -w <workspace>      Workspace
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
 
 Examples:
+
+  Workspace
+    Create default workspace    celerystalk workspace create -o /assessments/client
+    Create named workspace      celerystalk workspace create -o /assessments/client -w client
+    Switch to another worksapce celerystalk workspace client
+
   Import
     Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
     Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/
@@ -110,6 +118,7 @@ import lib.query
 import lib.csimport
 import lib.config_parser
 from lib import db
+import lib.workspace
 from prettytable import PrettyTable
 import csv
 
@@ -125,24 +134,66 @@ def print_banner():
 
 
 
-
-
 def main(arguments):
-    if arguments["-w"]:
-        workspace = arguments["-w"]
-    else:
-        workspace = 'Default'
-
-
 
     db.create_task_table()
     db.create_path_table()
     db.create_services_table()
     db.create_vhosts_table()
     db.create_workspace_table()
+    db.create_current_workspace_table()
+
+    ####################################
+    # Workspace Command: allows users to create workspaces or set/change the current workspace
+    ####################################
+
+    if arguments["workspace"]:
+        if arguments["create"]:
+            if arguments["-w"]:
+                workspace = arguments["-w"]
+            else:
+                workspace = 'Default'
+            db_workspace = (workspace,)
+            output_dir,workspace = lib.workspace.create_workspace(workspace, arguments)
+            current_workspace = lib.db.get_current_workspace()
+            if not current_workspace:
+                db_workspace = (workspace,)
+                lib.db.set_initial_current_workspace(db_workspace)
+            else:
+                lib.db.update_current_workspace(workspace)
+        elif arguments["<workspace_name>"]:
+            if arguments["<workspace_name>"]:
+                workspace = arguments["<workspace_name>"]
+            else:
+                workspace = 'Default'
+            db_workspace = (workspace,)
+            current_workspace = lib.db.get_current_workspace()
+            if not current_workspace:
+                db_workspace = (workspace,)
+                lib.db.set_initial_current_workspace(db_workspace)
+            else:
+                lib.db.update_current_workspace(workspace)
+        else:
+            current_workspace = lib.db.get_current_workspace()[0][0]
+            print("[+} Current workspace: " + current_workspace + "\n")
+
+
+
+
+
+
+    ####################################
+    # Query Command: allows users to view the status of ongoing async scan
+    ####################################
+
 
     # Query - Inform user about job status
     if arguments["query"]:
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         try:
             if arguments["watch"]:
                 if arguments["summary"]:
@@ -161,7 +212,16 @@ def main(arguments):
         except EnvironmentError as e:
             print(e)
 
+    ####################################
+    # Cancel command
+    ####################################
+
     if arguments["cancel"]:
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         paused_tasks = db.get_paused_tasks(workspace)
         running_tasks = db.get_running_tasks(workspace)
         pending_tasks = db.get_pending_tasks(workspace)
@@ -175,7 +235,15 @@ def main(arguments):
             lib.cancel.cancel_tasks(arguments["<task_ids>"], workspace)
         exit()
 
+    ####################################
+    # Pause Command
+    ####################################
     if arguments["pause"]:
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         if arguments["all"]:
             num_paused = lib.pause.pause_running_tasks("all",workspace)
             sleep(3)
@@ -191,7 +259,16 @@ def main(arguments):
             print("[+] There were no tasks to pause.\n")
         exit()
 
+    ####################################
+    # Resume command
+    ####################################
+
     if arguments["resume"]:
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         if arguments["all"]:
             num_resumed = lib.resume.resume_paused_tasks("all",workspace)
         elif arguments["<task_ids>"]:
@@ -204,6 +281,9 @@ def main(arguments):
             print("[+] There were no tasks to resume.\n")
         exit()
 
+    ####################################
+    # Shutdown Command
+    ####################################
 
     if arguments["shutdown"]:
         lib.utils.shutdown_background_jobs()
@@ -211,9 +291,14 @@ def main(arguments):
 
 
     ####################################
-    # Run Report
+    # Report Command: Run Report
     ####################################
     if arguments["report"]:
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             lib.report.report(workspace, target_list)
@@ -221,12 +306,15 @@ def main(arguments):
             lib.report.report(workspace)
         exit()
 
-
-
     ####################################
-    # Dump data from DB
+    # DB Command: Dump data from DB
     ####################################
     if arguments["db"]:
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         if arguments["workspaces"]:
 
             columns = ["Workspace", "Output Directory"]
@@ -301,28 +389,41 @@ def main(arguments):
                 print("[+] Saved all paths in the [{0}] workspace to {1}.\n".format(workspace,paths_output_file))
 
     ####################################
-    # Import Stuff
+    # Import Command: Import Stuff
     ####################################
 
     if arguments["import"]:
-        output_dir = lib.utils.create_workspace(workspace, arguments)
+        if arguments["-w"]:
+            output_dir,workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         lib.csimport.importcommand(workspace, output_dir, arguments)
 
     ####################################
-    # Find subdomains
+    # Find_subdomains Command
     ####################################
     if arguments["find_subdomains"]:
         lib.utils.start_services()
-        output_dir = lib.utils.create_workspace(workspace, arguments)
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
         lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode="VAPT")
 
 
 
     ####################################
-    # ReScan
+    # ReScan Command
     ####################################
     if arguments["rescan"]:
         #print(arguments["scan"])
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
 
         arguments["scan"] = True
         all_submitted_vhosts = lib.db.get_inscope_submitted_vhosts(workspace)
@@ -340,13 +441,17 @@ def main(arguments):
 
 
     ####################################
-    # Scan
+    # Scan Command
     ####################################
 
     if arguments["scan"]:
         lib.utils.start_services()
         celery_path = sys.path[0]
-        output_dir = lib.utils.create_workspace(workspace, arguments)
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            workspace = lib.db.get_current_workspace()[0][0]
+            output_dir = lib.db.get_output_dir_for_workspace(workspace)
 
 
         ####################################
