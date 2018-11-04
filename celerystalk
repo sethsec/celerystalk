@@ -189,7 +189,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -221,7 +221,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -247,7 +247,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -276,7 +276,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -310,7 +310,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -330,7 +330,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -418,7 +418,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -434,7 +434,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -452,7 +452,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
@@ -484,7 +484,7 @@ def main(arguments):
         else:
             try:
                 workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
                 exit()
