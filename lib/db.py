@@ -168,7 +168,6 @@ def set_initial_current_workspace(db_workspace):
     """
     sql_create_current_workspace = ''' INSERT OR IGNORE INTO current_workspace(current_db)
               VALUES(?) '''
-    print(db_workspace)
     CUR.execute(sql_create_current_workspace,db_workspace)
     CONNECTION.commit()
 

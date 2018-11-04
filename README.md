@@ -42,7 +42,8 @@ Under the hood:
 
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
-# ./celerystalk import -f tenten.xml -o /htb                        # Import scan 
+# ./celerystalk create workspace -o /htb                            # Create default workspace and set output dir
+# ./celerystalk import -f tenten.xml                                # Import scan 
 # ./celerystalk db services                                         # If you want to see what services were loaded
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Watch scans as move from pending > running > complete
@@ -55,7 +56,8 @@ Under the hood:
 **[URL Mode]** - How to scan a URL (scans the specified path, not the root).  
 
 ```
-# ./celerystalk scan -u http://10.10.10.10/secret_folder/ -o /assessments/client    # Run all enabled commands
+# ./celerystalk create workspace -o /assessments/client                             # Create default workspace and set output dir
+# ./celerystalk scan -u http://10.10.10.10/secret_folder/                           # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
 # ./celerystalk report                                                              # Generate report
 # firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
@@ -65,7 +67,8 @@ Under the hood:
 
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
-# ./celerystalk import -f client.xml -o /assessments/client -S scope.txt            # Import scan and scope files
+# ./celerystalk create workspace -o /assessments/client                             # Create default workspace and set output dir
+# ./celerystalk import -f client.xml -S scope.txt                                   # Import scan and scope files
 # ./celerystalk find_subdomains -d client.com,client.net                            # Find subdomains and determine if in scope
 # ./celerystalk scan                                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
@@ -122,6 +125,22 @@ Under the hood:
       nmap -iL target_list.txt -Pn -sV -oX filename.xml
      ```
    * Nessus: Run nessus against your target(s) and export results as a .nessus file
+
+1. **Create worksapce:**
+
+    | Option | Description |
+    | --- | --- |
+    | no options | Prints current workspace |
+    | create | Creates new workspace |
+    | -w | Define new workspace name |
+    | -o | Define output directory assigned to workspace |   
+
+
+  ```
+    Create default workspace    ./celerystalk workspace create -o /assessments/client
+    Create named workspace      ./celerystalk workspace create -o /assessments/client -w client
+    Switch to another worksapce ./celerystalk workspace client
+  ```
     
 1. **Import Data:** Import data into celerystalk
 
@@ -130,14 +149,14 @@ Under the hood:
    | -f scan.xml | <b>Nmap/Nessus xml</b><br><ul><li>Adds all IP addresses from this file to hosts table and marks them all in scope to be scanned.</li><li>Adds all ports and service types to services table.</li></ul> |
    | -S scope.txt | <b>Scope file</b><br><ul><li>Show file differences that haven't been staged </li></ul>|
    | -D subdomains.txt | <b>(sub)Domains file</b><br><ul><li>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>|
-   | -w workspace | Specify a non-default workspace | 
+      
     
     ```
-    Import Nmap XML file:       ./celerystalk import -f /assessments/nmap.xml -o /assessments/
-    Import Nessus file:         ./celerystalk import -f /assessments/scan.nessus -o /assessments/
+    Import Nmap XML file:       ./celerystalk import -f /assessments/nmap.xml 
+    Import Nessus file:         ./celerystalk import -f /assessments/scan.nessus 
     Import list of Domains:     ./celerystalk import -D <file>
     Import list of IPs/Ranges:  ./celerystalk import -S <file>
-    Specify workspace:          ./celerystalk import -f <file> -o /assessments -w test    
+    Specify workspace:          ./celerystalk import -f <file>     
     Import multiple files:      ./celerystalk import -f nmap.xml -S scope.txt -D domains.txt
     ```
     
@@ -146,8 +165,6 @@ Under the hood:
    | Option | Description |
    | --- | --- |
    | -d domain1,domain2,etc| <b>Run Amass, Sublist3r, etc. and store domains in DB</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>
-   | -w workspace | Specify a non-default workspace | 
-
 
     ```
     Find subdomains:       celerystalk find_subdomains -d domain1.com,domain2.com
@@ -165,7 +182,6 @@ Under the hood:
    | -S scope.txt | <b>Import and process scope file before scan</b><ul><li>Show file differences that haven't been staged.</li></ul> |
    | -D subdomains.txt | <b>Import and process (sub)domains file before scan </b><ul><li>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>| 
    | -d domain1,domain2,etc| <b>Find Subdomains and scan in scope hosts</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>|
-   | -w workspace | Specify a non-default workspace | 
 
  
     Scan imported hosts/subdomains
@@ -175,7 +191,6 @@ Under the hood:
                                 ./celerystalk scan -t 10.0.0.100-200
                                 ./celerystalk scan -t 10.0.0.0/24
                                 ./celerystalk scan -t sub.domain.com
-    Specify workspace:          ./celerystalk scan -w test
     Simulation mode:            ./celerystalk scan -s
     ```
     
@@ -184,10 +199,9 @@ Under the hood:
     Start from Nmap XML file:   ./celerystalk scan -f /pentest/nmap.xml -o /pentest
     Start from Nessus file:     ./celerystalk scan -f /pentest/scan.nessus -o /pentest
     Scan all in scope vhosts:   ./celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Specify workspace:          ./celerystalk scan -f <file> -o /pentest -w test    
-    Scan subset hosts in XML:   ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.1,10.0.0.3
-                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.100-200
-                                ./celerystalk scan -f <file> -o /pentest -w test -t 10.0.0.0/24
+    Scan subset hosts in XML:   ./celerystalk scan -f <file> -o /pentest -t 10.0.0.1,10.0.0.3
+                                ./celerystalk scan -f <file> -o /pentest -t 10.0.0.100-200
+                                ./celerystalk scan -f <file> -o /pentest -t 10.0.0.0/24
     Simulation mode:            ./celerystalk scan -f <file> -o /pentest -s
     ```   
 
@@ -197,13 +211,10 @@ Under the hood:
    | --- | --- |
    | no option| For each in scope host in the DB, celerystalk will ask if if you want to rescan it| 
    | -t ip,vhost,cidr | Scan a subset of the in scope IPs and/or subdomains. |
-   | -w workspace | Specify a non-default workspace | 
-
    
    ```
    Rescan all hosts:           ./celerystalk rescan
    Rescan some hosts           ./celerystalk rescan-t 1.2.3.4,sub.domain.com  
-   Specify workspace:          ./celerystalk rescan -w test
    Simulation mode:            ./celerystalk rescan -s   
    ```  
 
@@ -212,17 +223,16 @@ Under the hood:
     | Option | Description |
    | --- | --- |
    | no options | Shows all tasks in the defualt workspace |
-   | -w workspace | Specify a non-default workspace | 
    | watch | Sends command to the unix watch command which will let you get an updated status every 2 seconds|
    | brief | Limit of 5 results per status (pending/running/completed/cancelled/paused) |
    | summary | Shows only a banner with numbers and not the tasks themselves |  
    
     ```
-    Query Tasks:                ./celerystalk query [-w workspace]
-                                ./celerystalk query [-w workspace] watch                               
-                                ./celerystalk query [-w workspace] brief
-                                ./celerystalk query [-w workspace] summary                                
-                                ./celerystalk query [-w workspace] summary watch
+    Query Tasks:                ./celerystalk query 
+                                ./celerystalk query watch                               
+                                ./celerystalk query brief
+                                ./celerystalk query summary                                
+                                ./celerystalk query summary watch
     ```
 
 1. **Cancel/Pause/Resume Tasks:** Cancel/Pause/Resume any task(s) that are currently running or in the queue.
@@ -232,16 +242,15 @@ Under the hood:
     | cancel | <ul><li>Canceling a running task will send a **kill -TERM**</li><li>Canceling a queued task* will make celery ignore it (uses celery's revoke).</li><li>Canceling all tasks* will kill running tasks and revoke all queued tasks.</li></ul>
     | pause | <ul><li>Pausing a single task uses **kill -STOP** to suspend the process.</li><li>Pausing all tasks* attemps to *kill -STOP* all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.</li></ul>
     | resume | <ul><li>Resuming tasks* sends a **kill -CONT** which allows the process to start up again where it left off.</li></ul>|
-    | -w | <ul><li>Specify a non-default workspace </li></ul>|    
 
     ```
-    Cancel/Pause/Resume Tasks:  ./celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20
-                                ./celerystalk <verb> all                #Cancel/Pause/Resume all tasks from default workspaces
-                                ./celerystalk <verb> all -w test        #Cancel/Pause/Resume all tasks in the test workspace
+    Cancel/Pause/Resume Tasks:  ./celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20 from current workspace
+                                ./celerystalk <verb> all                #Cancel/Pause/Resume all tasks from current workspaces
     ```
 1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file. Run this as often as you like. Each time you run the report it overwrites the previous report.  
     ```
-    Create Report:              ./celerystalk report [-w workspace]     #Create a report for all scanneed hosts in a workspace
+    Create Report:              ./celerystalk report                    #Create a report for all scanneed hosts in current workspace
+
     ```
    
     Screenshot:
@@ -270,11 +279,11 @@ Under the hood:
     | Option | Description |
     | --- | --- |
     | no options | Export the services, hosts, and paths table from the default database |
-   | -w workspace | Specify a non-default workspace | 
+    | -w workspace | Specify a non-default workspace | 
 
   ```
-  Export default DB:         ./celerystalk db export
-  Export a non-defualt DB:   ./celerystalk db export -w test
+  Export current DB:        ./celerystalk db export
+  Export another DB:        ./celerystalk db export -w test
   ```
 
 
