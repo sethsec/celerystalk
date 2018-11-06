@@ -42,7 +42,7 @@ Under the hood:
 
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
-# ./celerystalk create workspace -o /htb                            # Create default workspace and set output dir
+# ./celerystalk workspace create -o /htb                            # Create default workspace and set output dir
 # ./celerystalk import -f tenten.xml                                # Import scan 
 # ./celerystalk db services                                         # If you want to see what services were loaded
 # ./celerystalk scan                                                # Run all enabled commands
@@ -56,7 +56,7 @@ Under the hood:
 **[URL Mode]** - How to scan a URL (scans the specified path, not the root).  
 
 ```
-# ./celerystalk create workspace -o /assessments/client                             # Create default workspace and set output dir
+# ./celerystalk workspace create -o /assessments/client                             # Create default workspace and set output dir
 # ./celerystalk scan -u http://10.10.10.10/secret_folder/                           # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
 # ./celerystalk report                                                              # Generate report
@@ -67,7 +67,7 @@ Under the hood:
 
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
-# ./celerystalk create workspace -o /assessments/client                             # Create default workspace and set output dir
+# ./celerystalk workspace create -o /assessments/client                             # Create default workspace and set output dir
 # ./celerystalk import -f client.xml -S scope.txt                                   # Import scan and scope files
 # ./celerystalk find_subdomains -d client.com,client.net                            # Find subdomains and determine if in scope
 # ./celerystalk scan                                                                # Run all enabled commands
