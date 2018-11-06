@@ -52,6 +52,7 @@ def create_workspace(workspace,arguments):
             db_workspace = (workspace, output_dir)  # and create the workspace
             # This will create a workspace, only if one does not exist with that name.
             lib.db.create_workspace(db_workspace)
-            lib.db.set_initial_current_workspace(workspace)
+            db_workspace = (workspace,)
+            lib.db.set_initial_current_workspace(db_workspace)
 
     return output_dir,workspace
