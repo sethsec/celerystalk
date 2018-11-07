@@ -88,7 +88,7 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
 @app.task
 def post_process(*args):
     command_name, populated_command,output_base_dir, workspace, ip, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
-
+    screenshot_name = ""
     urls_to_screenshot = []
     if "gobuster" in populated_command:
         screenshot_name = "gobuster"
@@ -138,6 +138,7 @@ def post_process(*args):
         except Exception, e:
             if not simulation:
                 print("[!] Could not open {0}".format(post_gobuster_filename))
+
 
     if "photon" in populated_command:
         screenshot_name = "photon"
