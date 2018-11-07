@@ -114,7 +114,7 @@ import lib.report
 import lib.query
 import lib.csimport
 import lib.config_parser
-import lib.interactive
+#import lib.interactive
 from lib import db
 import lib.workspace
 from prettytable import PrettyTable
