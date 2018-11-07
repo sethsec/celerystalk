@@ -17,9 +17,10 @@ Usage:
     celerystalk pause  ([all]|[<task_ids>])
     celerystalk resume ([all]|[<task_ids>])
     celerystalk db workspaces
-    celerystalk db ([services] | [hosts] | [paths])
+    celerystalk db ([services] | [hosts] | [vhosts] | [paths])
     celerystalk db export
     celerystalk shutdown
+    celerystalk interactive
     celerystalk (help | -h | --help)
 
 Options:
@@ -90,6 +91,7 @@ Examples:
     Show workspaces:            celeryststalk db workspaces
     Show services:              celeryststalk db services
     Show hosts:                 celeryststalk db hosts
+    Show vhosts only            celeryststalk db vhosts
     Show paths:                 celeryststalk db paths
 
   Export DB
@@ -112,13 +114,14 @@ import lib.report
 import lib.query
 import lib.csimport
 import lib.config_parser
+import lib.interactive
 from lib import db
 import lib.workspace
 from prettytable import PrettyTable
 import csv
 
 
-build=str(112)
+build=str(113)
 
 def print_banner():
 
@@ -137,6 +140,13 @@ def main(arguments):
     db.create_vhosts_table()
     db.create_workspace_table()
     db.create_current_workspace_table()
+
+    if arguments["interactive"]:
+        prompt = lib.interactive.MyPrompt()
+        prompt.prompt = '[celerystalk] '
+        prompt.cmdloop('starting...')
+
+
 
     ####################################
     # Workspace Command: allows users to create workspaces or set/change the current workspace
@@ -196,9 +206,9 @@ def main(arguments):
         try:
             if arguments["watch"]:
                 if arguments["summary"]:
-                    subprocess.call(["watch", "./celerystalk", "query", "summary","-w",workspace])
+                    subprocess.call(["watch", "./celerystalk", "query", "summary"])
                 else:
-                    subprocess.call(["watch", "./celerystalk", "query", "brief","-w",workspace])
+                    subprocess.call(["watch", "./celerystalk", "query", "brief"])
             else:
                 if arguments["summary"]:
                     lib.query.query_sqlite(workspace,summary=arguments["summary"])
@@ -356,6 +366,18 @@ def main(arguments):
                     hosts_table.add_row(row)
                 print(hosts_table)
                 print("\n\n")
+            elif arguments["vhosts"]:
+                print("[+] Showing vhosts for the [{0}] workspace\n".format(workspace))
+                columns = ["IP","Vhost","In Scope","Submitted"]
+                host_rows = lib.db.get_vhosts_table(workspace)
+                hosts_table = PrettyTable(columns)
+                hosts_table.align[columns[0]] = "l"
+                hosts_table.align[columns[1]] = "l"
+                for row in host_rows:
+                    if row[0] != row[1]:
+                        hosts_table.add_row(row)
+                print(hosts_table)
+                print("\n\n")
             elif arguments["services"]:
                 print("[+] Showing services for the [{0}] workspace\n".format(workspace))
                 columns = ["IP", "Port", "Protocol","Service"]
@@ -382,6 +404,7 @@ def main(arguments):
                 print("\n\n")
             elif arguments["export"]:
                 output_dir = db.get_output_dir_for_workspace(workspace)[0][0]
+                #hosts
                 host_rows = lib.db.get_vhosts_table(workspace)
                 hosts_filename = workspace + "_hosts.csv"
                 hosts_output_file = os.path.join(output_dir,hosts_filename)
@@ -389,8 +412,9 @@ def main(arguments):
                     writer = csv.writer(f)
                     writer.writerow(["IP","vhost","in_scope"])
                     writer.writerows(host_rows)
-                print("[+] Saved all hosts in the [{0}] workspace to {1}".format(workspace,hosts_output_file))
+                print("[+] Saved all hosts in the [{0}] workspace to {1}".format(workspace, hosts_output_file))
 
+                # services
                 services_rows = lib.db.get_all_services(workspace)
                 services_filename = workspace + "_services.csv"
                 services_output_file = os.path.join(output_dir, services_filename)
@@ -399,6 +423,8 @@ def main(arguments):
                     writer.writerow(["IP", "Port", "Protocol","Service"])
                     writer.writerows(services_rows)
                 print("[+] Saved all ports in the [{0}] workspace to {1}".format(workspace,services_output_file))
+
+                # paths
                 paths_rows = lib.db.get_all_paths(workspace)
                 paths_filename = workspace + "_paths.csv"
                 paths_output_file = os.path.join(output_dir, paths_filename)
@@ -440,7 +466,8 @@ def main(arguments):
                 exit()
         lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode="VAPT")
 
-
+        print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
+        print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
 
     ####################################
     # ReScan Command
@@ -471,6 +498,8 @@ def main(arguments):
                 ip = db.get_vhost_ip(vhost,workspace)[0][0]
                 db.update_vhosts_submitted(ip, vhost, workspace, 0)
 
+        print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
+        print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
 
     ####################################
     # Scan Command
