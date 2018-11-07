@@ -4,22 +4,10 @@ celerystalk helps you automate your network scanning/enumeration process with as
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want
 * **Service Aware** - Uses nmap/nessus service names rather than port numbers to decide which tools to run 
-* **Consistency** - Scan each service the same way so you don't have to keep track of what you ran against each host 
-* **Scalability** - Designed for scanning multiple hosts, but works well for scanning one host at a time
+* **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
-* **Workspaces** - Supports multiple workspaces, inspired by Metasploit workspaces
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
-* **Easy to use** - Uses a command based interface inspired by CrackMapExec 
-* **Measure twice, cut once** - A simulation mode shows you which tools will run without running them
-* **Flexible** - Target only a subset of the hosts scanned in an previous Nmap/Nessus file
-* **Audit Log** - Every executed command is logged in a file which contains start and end times, and the duration 
-
-Under the hood:
-* **Celery** - [Celery](http://www.celeryproject.org/) is used to execute your commands asynchronously 
-* **Redis** - Celery submits tasks to, and pulls tasks from, a local instance of Redis (binds to localhost)
-* **Selenium** is used with geckodriver to take *screenshots of every url identified* using gobuster and Photon (spider)
-* **SQLite** is used to persist data and manage workspaces
-     
+* **Screenshots** Automatically Takes *screenshots of every url identified* using gobuster and Photon (spider)
 
 ## Install/Setup
 
@@ -33,12 +21,12 @@ Under the hood:
 # cd ..
 # ./celerystalk -h
 ```
-**At this time you must install and run celerystalk as root** - Sudo won't work either - any command that requires root that is kicked off asynchronously after the sudo grace period ends will fail to run.  
+**You must install and run celerystalk as root**   
 
 
 ## Using celerystalk - The basics
 
-**[CTF/HackTheBox mode]** - How to scan one host by IP only
+**[CTF/HackTheBox mode]** - Example showing how you can scan a host by IP
 
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
@@ -51,32 +39,28 @@ Under the hood:
 # firefox /htb/celerystalkReports/Workspace-Report[Default.html] &  # View report 
 ```
 
-[![asciicast](https://asciinema.org/a/Tg0FkxF7rXksYniwB5cbmk1Qg.png)](https://asciinema.org/a/Tg0FkxF7rXksYniwB5cbmk1Qg)
-
-**[URL Mode]** - How to scan a URL (scans the specified path, not the root).  
+**[Vulnerability Assessment Mode]** - Example showing how to scan a list of in-scope hosts/networks and any subdomains that resolve to any of the in-scope IPs
 
 ```
-# ./celerystalk workspace create -o /assessments/client                             # Create default workspace and set output dir
-# ./celerystalk scan -u http://10.10.10.10/secret_folder/                           # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
-# ./celerystalk report                                                              # Generate report
-# firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
+# nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
+# ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
+# ./celerystalk import -f client.xml -S scope.txt                   # Import scan and scope files
+# ./celerystalk find_subdomains -d client.com,client.net            # Find subdomains and determine if in scope
+# ./celerystalk scan                                                # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk report                                              # Generate report
+# firefox <path>/celerystalkReports/Workspace-Report[Default].html &# View report 
 ```
 
-**[Vulnerability Assessment Mode]** - How to scan a list of in-scope hosts/networks and any subdomains that resolve to any of the in-scope IPs
+**[URL Mode]** - Example showing how to scan a a URL without needed to import an nmap/nessus xml (scans the specified path, not the root).  
 
 ```
-# nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml                       # Run nmap
-# ./celerystalk workspace create -o /assessments/client                             # Create default workspace and set output dir
-# ./celerystalk import -f client.xml -S scope.txt                                   # Import scan and scope files
-# ./celerystalk find_subdomains -d client.com,client.net                            # Find subdomains and determine if in scope
-# ./celerystalk scan                                                                # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                                           # Wait for scans to finish
-# ./celerystalk report                                                              # Generate report
-# firefox /assessments/client/celerystalkReports/Workspace-Report[Default].html &   # View report 
+# ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
+# ./celerystalk scan -u http://10.10.10.10/secret_folder/           # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk report                                              # Generate report
+# firefox <path>/celerystalkReports/Workspace-Report[Default].html &# View report 
 ```
-[![asciicast](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z.png)](https://asciinema.org/a/1Ucw8RKjwmWMaBAovXa772c4z)
-
 
 ## Using celerystalk - Some more detail
 
@@ -134,7 +118,6 @@ Under the hood:
     | create | Creates new workspace |
     | -w | Define new workspace name |
     | -o | Define output directory assigned to workspace |   
-
 
   ```
     Create default workspace    ./celerystalk workspace create -o /assessments/client
