@@ -5,14 +5,16 @@ celerystalk helps you automate your network scanning/enumeration process with as
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want
 * **Service Aware** - Uses nmap/nessus service names rather than port numbers to decide which tools to run 
 * **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
-* **VirtualHosts** - Supports subdomain recon and virtualhost scanning using the -d flag
+* **VirtualHosts** - Supports subdomain recon and virtualhost scanning
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
-* **Screenshots** Automatically Takes *screenshots of every url identified* using gobuster and Photon (spider)
+* **Screenshots** Automatically takes *screenshots of every url identified* via brute force (gobuster) and spidering (Photon)
 
 ## Install/Setup
 
-* **Supported Operating Systems:** Kali (Setup script supports ubuntu, but for now you're on your own for installing tools like gobuster, nikto, etc...)
+* **Supported Operating Systems:** Kali 
 * **Supported Python Version:** 2.x
+
+**You must install and run celerystalk as root**   
 
 ```
 # git clone https://github.com/sethsec/celerystalk.git
@@ -26,7 +28,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 
 ## Using celerystalk - The basics
 
-**[CTF/HackTheBox mode]** - Example showing how you can scan a host by IP
+**[CTF/HackTheBox mode]** - How to scan a host by IP
 
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
@@ -39,7 +41,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 # firefox /htb/celerystalkReports/Workspace-Report[Default.html] &  # View report 
 ```
 
-**[Vulnerability Assessment Mode]** - Example showing how to scan a list of in-scope hosts/networks and any subdomains that resolve to any of the in-scope IPs
+**[Vulnerability Assessment Mode]** - How to scan a list of in-scope hosts/networks and any subdomains that resolve to any of the in-scope IPs
 
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
@@ -52,7 +54,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 # firefox <path>/celerystalkReports/Workspace-Report[Default].html &# View report 
 ```
 
-**[URL Mode]** - Example showing how to scan a a URL without needed to import an nmap/nessus xml (scans the specified path, not the root).  
+**[URL Mode]** - How to scan a a URL (Use this mode to scan sub-directories found during first wave of scans).  
 
 ```
 # ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
@@ -119,11 +121,11 @@ celerystalk helps you automate your network scanning/enumeration process with as
     | -w | Define new workspace name |
     | -o | Define output directory assigned to workspace |   
 
-  ```
-    Create default workspace    ./celerystalk workspace create -o /assessments/client
-    Create named workspace      ./celerystalk workspace create -o /assessments/client -w client
-    Switch to another worksapce ./celerystalk workspace client
-  ```
+    ```
+      Create default workspace    ./celerystalk workspace create -o /assessments/client
+      Create named workspace      ./celerystalk workspace create -o /assessments/client -w client
+      Switch to another worksapce ./celerystalk workspace client
+    ```
     
 1. **Import Data:** Import data into celerystalk
 
