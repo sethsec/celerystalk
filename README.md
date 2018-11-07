@@ -266,14 +266,14 @@ celerystalk helps you automate your network scanning/enumeration process with as
     | no options | Export the services, hosts, and paths table from the default database |
     | -w workspace | Specify a non-default workspace | 
 
-  ```
-  Export current DB:        ./celerystalk db export
-  Export another DB:        ./celerystalk db export -w test
-  ```
+    ```
+    Export current DB:        ./celerystalk db export
+    Export another DB:        ./celerystalk db export -w test
+    ```
 
 
 ## Usage
-"""
+```
 Usage:
     celerystalk workspace create -o <output_dir> [-w workspace_name]
     celerystalk workspace [<workspace_name>]
@@ -370,7 +370,7 @@ Examples:
   Export DB
     Export current DB:          celerystalk db export
 
-"""
+```
 
 ## Credit
 This project was inspired by many great tools:  
