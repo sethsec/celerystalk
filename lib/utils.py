@@ -1,4 +1,3 @@
-import os
 from subprocess import Popen
 
 from libnmap.parser import NmapParser
@@ -12,20 +11,34 @@ from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import WebDriverException
 from pyvirtualdisplay import Display
 import os
+import re
 import time
+from timeit import default_timer as timer
+import lib.db
 
 
-def take_screenshot(urls_to_screenshot):
+def take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
+    path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(lib.scan.__file__)), ".."))
+    audit_log = path + "/log/cmdExecutionAudit.log"
+    f = open(audit_log, 'a')
+    start_time = time.time()
+    start_time_int = int(start_time)
+    start_ctime = time.ctime(start_time)
+    start = timer()
 
     display = Display(visible=0, size=(800, 600))
     display.start()
     options = Options()
     options.add_argument("--headless")
 
+    driver = webdriver.Firefox(firefox_options=options)
+    pid = driver.service.process.pid
+    print(pid)
+    db.update_task_status_started("STARTED", task_id, pid, start_time_int)
 
     for url,output in urls_to_screenshot:
         try:
-            driver = webdriver.Firefox(firefox_options=options)
+            #driver = webdriver.Firefox(firefox_options=options)
             # capture the screen
             driver.get(url)
             print("Taking screenshot of [{0}]".format(url))
@@ -36,9 +49,19 @@ def take_screenshot(urls_to_screenshot):
         except Exception, e:
             print('exception: {0}'.format(e))
             #print(type(e).__name__)
-        finally:
-            driver.quit()
+        # finally:
+        #     driver.quit()
+    driver.quit()
     display.stop()
+    end = timer()
+    end_ctime = time.ctime(end)
+    run_time = end - start
+    db.update_task_status_completed("COMPLETED", task_id, run_time)
+    # f.write("\n[-] CMD COMPLETED in " + str(run_time) + " - " + populated_command + "\n")
+    f.write("\n" + str(start_ctime) + "\t" + str(end_ctime) + "\t" + str(
+        "{:.2f}".format(run_time)) + "\t" + command_name + "\t" + populated_command)
+    f.close()
+
 
 def task_splitter(id):
     task_list=[]
@@ -68,9 +91,9 @@ def task_splitter(id):
 
 
 def create_dir_structure(ip, host_dir):
-    print("\n[+]" + "*" * 30)
-    print("[+] IP address: " + ip)
-    print("[+]" + "*" * 30 )
+    #print("\n[+]" + "*" * 30)
+    #print("[+] Target: " + ip)
+    #print("[+]" + "*" * 30 )
 
     try:
         os.stat(host_dir)
@@ -78,7 +101,7 @@ def create_dir_structure(ip, host_dir):
         os.mkdir(host_dir)
     #This is the subdirectory that will contain all of the tool output.
     host_data_dir = host_dir + "/celerystalkOutput"
-    print("[+] Creating scans directory at: %s" % host_data_dir)
+    #print("[+] Creating scans directory at: %s" % host_data_dir)
     try:
         os.stat(host_data_dir)
     except:
@@ -152,10 +175,10 @@ def nmap_follow_up_scan(hosts, port):
 
 def start_services():
     # maybe this first part should be somwhere else.   But for now, in order to run, celery worker and celery flower need to be started.
-    print("[+] Starting celery Worker")
+    #print("[+] Starting celery worker")
     start_celery_worker()
     start_redis()
-    print("[+] Reading config file")
+    #print("[+] Reading config file")
 
 
 def start_celery_worker():
@@ -188,6 +211,10 @@ def shutdown_background_jobs():
 def target_splitter(target_networks):
     scope_list = []
     for network in target_networks.split(","):
+                # check to see if a subdomain/vhost was specified (if it has a letter, its not an IP address)
+                if re.search('[a-zA-Z]', network):
+                    scope_list.append(network)
+                    break
                 # Simple check to see if there is a range included.
                 if "-" in str(network):
                     #print("range found")
@@ -245,7 +272,7 @@ def domain_scope_checker(domain,workspace):
     except:
         #If the domain does not resolve, skip it!
         return 0,""
-    unique_db_hosts = db.get_unique_hosts(workspace)
+    unique_db_hosts = db.get_unique_inscope_ips(workspace)
     in_scope = "False"
     for domain_tuple in domain_tuples:
         ip = str(domain_tuple[1])
@@ -263,3 +290,10 @@ def domain_scope_checker(domain,workspace):
 def create_task(command_name, populated_command, ip, output_dir, workspace, task_id):
     db_task = (task_id, 1, command_name, populated_command, ip, output_dir, 'SUBMITTED', workspace)
     db.create_task(db_task)
+
+
+
+
+
+
+

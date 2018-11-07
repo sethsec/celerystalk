@@ -3,6 +3,8 @@ from celery import Celery
 from celery import chain
 import time
 from timeit import default_timer as timer
+
+import lib.csimport
 from lib import db
 from lib import utils
 from lib import config_parser
@@ -23,19 +25,17 @@ from libnmap.process import NmapProcess
 app = Celery('tasks', broker='redis://localhost:6379', backend='db+sqlite:///results.sqlite')
 #app.config_from_object({'task_always_eager': True})
 
-# @app.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(60.0, send_new_dirs_to_celery.s())
-
-
 
 @app.task
 def run_cmd(command_name, populated_command,celery_path,task_id,path=None,process_domain_tuple=None):
     """
-    :param populated_command: the command celery worker will run
-    :param output_base_dir: passed so we can record the job in the cmdExecutionAudit.log
-    :param workspace: the user specified workspace name. Default: default
-    :param ip: The IP is passed so that we can write it to the database
+
+    :param command_name:
+    :param populated_command:
+    :param celery_path:
+    :param task_id:
+    :param path:
+    :param process_domain_tuple:
     :return:
     """
 
@@ -78,7 +78,7 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
     f.close()
 
     if process_domain_tuple:
-        lib.scan.post_process_domains(out,process_domain_tuple)
+        lib.scan.determine_if_domains_are_in_scope(out,process_domain_tuple)
 
     return out
 
@@ -88,9 +88,11 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
 @app.task
 def post_process(*args):
     command_name, populated_command,output_base_dir, workspace, ip, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
-
+    screenshot_name = ""
     urls_to_screenshot = []
     if "gobuster" in populated_command:
+        screenshot_name = "gobuster"
+
         scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",ip + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
 
@@ -100,6 +102,7 @@ def post_process(*args):
             os.makedirs(scan_output_base_file_dir)
 
         post_gobuster_filename = populated_command.split(">")[1].split("&")[0].strip()
+
         print("Post gobuster filename" + post_gobuster_filename + "\n")
         populated_command_list = populated_command.split(" ")
 
@@ -111,28 +114,35 @@ def post_process(*args):
                     #print("Scanned_url: " + scanned_url)
             index = index + 1
 
-        with open(post_gobuster_filename,'r') as gobuster_file:
-            lines = gobuster_file.read().splitlines()
-            print(lines)
-            if len(lines) > 300:
-                #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                exit()
+        try:
+            with open(post_gobuster_filename,'r') as gobuster_file:
+                lines = gobuster_file.read().splitlines()
+                print(lines)
+                if len(lines) > 300:
+                    #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
+                    exit()
 
-        for url in lines:
-            #url = url.split("?")[0].replace("//","/")
-            if url.startswith("http"):
-                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                    .replace("/", "_") \
-                    .replace("\\", "") \
-                    .replace(":", "_") + ".png"
-                url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                db.insert_new_path(db_path)
-                print("Found Url: " + str(url))
-                urls_to_screenshot.append((url,url_screenshot_filename))
-                #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+            for url in lines:
+                #url = url.split("?")[0].replace("//","/")
+                if url.startswith("http"):
+                    url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                        .replace("/", "_") \
+                        .replace("\\", "") \
+                        .replace(":", "_") + ".png"
+                    url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                    db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                    db.insert_new_path(db_path)
+                    print("Found Url: " + str(url))
+                    urls_to_screenshot.append((url,url_screenshot_filename))
+                    #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+        except Exception, e:
+            if not simulation:
+                print("[!] Could not open {0}".format(post_gobuster_filename))
+
 
     if "photon" in populated_command:
+        screenshot_name = "photon"
+
         scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", ip + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
 
@@ -141,7 +151,11 @@ def post_process(*args):
         except:
             os.makedirs(scan_output_base_file_dir)
 
-        post_photon_filename = populated_command.split(">")[1].lstrip()
+        #post_photon_filename = populated_command.split(">")[1].lstrip()
+        post_photon_filename = lib.db.get_output_file_for_command(workspace,populated_command)[0][0]
+        print(post_photon_filename)
+
+
         print("Post photon filename" + post_photon_filename + "\n")
         populated_command_list = populated_command.split(" ")
 
@@ -153,30 +167,40 @@ def post_process(*args):
                     #print("Scanned_url: " + scanned_url)
             index = index + 1
 
-        with open(post_photon_filename,'r') as photon_file:
-            lines = photon_file.read().splitlines()
-            print(lines)
-            if len(lines) > 300:
-                #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                lines = lines[:300]
+        try:
+            with open(post_photon_filename,'r') as photon_file:
+                lines = photon_file.read().splitlines()
+                print(lines)
+                if len(lines) > 300:
+                    #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
+                    lines = lines[:300]
 
-        for url in lines:
-            #url = url.split("?")[0].replace("//","/")
-            if url.startswith("http"):
-                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                    .replace("/", "_") \
-                    .replace("\\", "") \
-                    .replace(":", "_") + ".png"
-                url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                db.insert_new_path(db_path)
-                print("Found Url: " + str(url))
-                urls_to_screenshot.append((str(url), url_screenshot_filename))
+            for url in lines:
+                #url = url.split("?")[0].replace("//","/")
+                if url.startswith("http"):
+                    url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                        .replace("/", "_") \
+                        .replace("\\", "") \
+                        .replace(":", "_") + ".png"
+                    url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                    db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                    db.insert_new_path(db_path)
+                    print("Found Url: " + str(url))
+                    urls_to_screenshot.append((str(url), url_screenshot_filename))
 
-                #result = lib.utils.take_screenshot(url,url_screenshot_filename)
-                #print(result)
+                    #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+                    #print(result)
+        except Exception, e:
+            if not simulation:
+                print ("[!] Could not open {0}".format(post_photon_filename))
 
-    lib.utils.take_screenshot(urls_to_screenshot)
+    if not simulation:
+        if len(urls_to_screenshot) > 0:
+            task_id = uuid()
+            populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, ip, scan_output_base_file_dir)
+            command_name = "Screenshots"
+            utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
+            cel_take_screenshot.delay(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
 
     #task_id = uuid()
     #cmd_name = "Screenshot"
@@ -244,96 +268,21 @@ def cel_create_task(*args,**kwargs):
     db.create_task(db_task)
     #return populated_command
 
-
-@app.task()
-def post_process_domains(vhosts,command_name,populated_command,output_base_dir,workspace,domain,simulation,celery_path,scan_mode):
-    config,supported_services = config_parser.read_config_ini()
-    vhosts = vhosts.splitlines()
-    # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
-    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
-    for vhost in vhosts:
-        #print("raw:\t" + vhost)
-        vhost = ansi_escape.sub('', vhost)
-        #print("escaped:\t" + vhost)
-        if re.match(r'\w', vhost):
-            in_scope,ip = utils.domain_scope_checker(vhost,workspace)
-            if in_scope == 1:
-                print("Found subdomain (in scope):\t" + vhost)
-                db_vhost = (ip,vhost,1, 0,workspace)
-                db.create_vhost(db_vhost)
-            else:
-                print("Found subdomain (out of scope):\t" + vhost)
-                db_vhost = (ip, vhost, 0, 0, workspace)
-                db.create_vhost(db_vhost)
-
-        # elif scan_mode == "BB":
-        #
-        #     cmd_name, cmd = config['nmap-bug-bounty_mode']
-        #
-        #     utils.
-        #
-        #     db_vhost = ("", vhost, 1, 0, workspace)
-        #     db.create_vhost(db_vhost)
-
-
-    #pull all in scope vhosts that have not been submitted
-    inscope_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
-    for scannable_vhost in inscope_vhosts:
-        scannable_vhost = scannable_vhost[0]
-        ip = db.get_vhost_ip(scannable_vhost,workspace)
-        ip = ip[0][0]
-        db_scanned_services = db.get_all_services_for_ip(ip, workspace)
-        for (id,ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace) in db_scanned_services:
-        #run chain on each one and then update db as submitted
-            scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" +  str(scanned_service_port) + "_" + scanned_service_protocol + "_"
-            host_dir = output_base_dir + "/" + ip
-
-            #TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
-            for section in config.sections():
-                if (section == "http") or (section == "https"):
-                    if section == scanned_service_name:
-                        for (cmd_name, cmd) in config.items(section):
-                            outfile = scan_output_base_file_name + cmd_name
-                            populated_command = cmd.replace("[TARGET]", scannable_vhost).replace("[PORT]",
-                                str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]", "")
-                            if simulation:
-                                # debug - sends jobs to celery, but with a # in front of every one.
-                                populated_command = "#" + populated_command
-
-                            # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
-                            # that allows me to pass it to all of the tasks in the chain.
-
-                            task_id = uuid()
-                            utils.create_task(cmd_name,populated_command, scannable_vhost, outfile + ".txt", workspace, task_id)
-                            result = chain(
-                                # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                                # in celery the same way a task does, for instance, you can't find it in flower
-                                #cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt", workspace, task_id)),
-
-                                # run the command. run_task takes care of marking the task as started and then completed.
-                                # The si tells run_cmd to ignore the data returned from a previous task
-                                run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-
-                                # right now, every executed command gets sent to a generic post_process task that can do
-                                # additinoal stuff based on the command that just ran.
-                                post_process.si(cmd_name, populated_command, output_base_dir, workspace, scannable_vhost, host_dir,
-                                                      simulation,
-                                                      scanned_service_port, scanned_service_name,
-                                                      scanned_service_protocol,celery_path),
-                            )()  # .apply_async()
-
-                            #task_id_list.append(result.task_id)
-                            host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
-                            f = open(host_audit_log, 'a')
-                            f.write(populated_command + "\n\n")
-                            f.close()
-
-        db.update_vhosts_submitted(ip,scannable_vhost,workspace,1)
-
-
 @app.task()
 def post_process_domains_bb(vhosts, command_name, populated_command, output_base_dir, workspace, simulation,
                          celery_path,out_of_scope_hosts):
+    """
+
+    :param vhosts:
+    :param command_name:
+    :param populated_command:
+    :param output_base_dir:
+    :param workspace:
+    :param simulation:
+    :param celery_path:
+    :param out_of_scope_hosts:
+    :return:
+    """
     config, supported_services = config_parser.read_config_ini()
     vhosts = vhosts.splitlines()
     # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
@@ -419,13 +368,15 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
 @app.task()
 def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery_path, task_id,workspace):
     """
-    if user chooses to start from an nmap scan, run the scan and then return an nmap_report object
-    :param hosts:
-    :param output_dir:
+    :param cmd_name:
+    :param populated_command:
+    :param host:
+    :param config_nmap_options:
+    :param celery_path:
+    :param task_id:
+    :param workspace:
     :return:
     """
-
-
     # Without the sleep, some jobs were showing as submitted even though
     # they were started. Not sure why.
     #time.sleep(3)
@@ -463,15 +414,19 @@ def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery
     #     db.update_task_status_error("FAILED", task_id, run_time)
 
     f.close()
-    lib.scan.process_nmap_data2(nmap_report, workspace)
+    lib.csimport.process_nmap_data2(nmap_report, workspace)
     return nmap_report
 
 @app.task()
 def cel_scan_process_nmap_data(nmap_report,workspace):
-    lib.scan.process_nmap_data2(nmap_report,workspace)
+    lib.csimport.process_nmap_data2(nmap_report, workspace)
 
 @app.task()
 def cel_process_db_services(output_base_dir, simulation, workspace):
     lib.scan.process_db_services(output_base_dir, simulation, workspace)
 
 
+@app.task()
+def cel_take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
+    #print("cel_take_screenshot")
+    lib.utils.take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)

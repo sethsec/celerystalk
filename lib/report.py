@@ -1,9 +1,9 @@
 import os
-import glob
 import bleach
 from bleach.sanitizer import Cleaner
 import lib.db
 import urllib
+
 
 def paths_report(host):
     all_paths = lib.db.get_all_paths_for_host(host)
@@ -25,15 +25,13 @@ def paths_report(host):
     return html_code
 
 
-
-
 def report(workspace,target_list=None):
 
     cleaner = Cleaner()
     report_count = 0
     host_report_file_names = []
     if target_list:
-        #for loop around targets in scope or somethign...
+        #TODO for loop around targets in scope or somethign...
         a=""
     else:
         #unique_hosts = lib.db.get_unique_hosts_in_workspace(workspace)
@@ -45,27 +43,30 @@ def report(workspace,target_list=None):
 
     print("\n[+] Generating a report for the [" + workspace + "] workspace (" + str(len(unique_ips)) +") unique IP(s) and (" + str(len(unique_vhosts)) + ") unique vhosts(s)\n")
 
-
-
     # HTML Report
+    output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+    workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
+    try:
+        os.stat(workspace_report_directory)
+    except:
+        os.mkdir(workspace_report_directory)
+
     for ip in unique_ips:
         ip = ip[0]
         unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
+
         #unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
         for vhost in unique_vhosts_for_ip:
             vhost = vhost[0]
             #ip = lib.db.get_vhost_ip(host,workspace)
             #vhost_src_directory = os.path.join(output_dir,str(ip),"celerystalkOutput")
             #print(host_src_directory)
-            output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
-            workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
+            #output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+            #workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
             #report_count = report_count +  1
             #These lines create a host specific report file
 
-            try:
-                os.stat(workspace_report_directory)
-            except:
-                os.mkdir(workspace_report_directory)
+
             host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
             host_report_file_names.append([vhost,host_report_file_name])
             host_report_file = open(host_report_file_name, 'w')
@@ -73,11 +74,10 @@ def report(workspace,target_list=None):
             host_report_file.close()
             print("[+] Report file (single host): {0}".format(host_report_file_name))
 
-    combined_report_file_name = os.path.join(workspace_report_directory,'Workspace-Report[' + workspace + '].html')
+
+    combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
     combined_report_file = open(combined_report_file_name, 'w')
     combined_report_file.write(populate_report_head())
-
-
 
     # Create sidebar navigation
     for host,report in sorted(host_report_file_names):
@@ -95,7 +95,7 @@ def report(workspace,target_list=None):
 
 
     #Text Report
-    combined_report_file_name_txt = os.path.join(workspace_report_directory,'Workspace-Report[' + workspace + '].txt')
+    combined_report_file_name_txt = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].txt')
     combined_report_file_txt = open(combined_report_file_name_txt, 'w')
 
     # Create the rest of the report
@@ -155,10 +155,8 @@ def report(workspace,target_list=None):
     print("\n[+] Report file (All workspace hosts): {0} (has screenshots!!!)".format(combined_report_file_name))
     print("[+] Report file (All workspace hosts): {0}\n".format(combined_report_file_name_txt))
     print("\n[+] For quick access, open with local firefox (works over ssh with x forwarding):\n")
-    print("\tfirefox " + combined_report_file_name + " &\n")
+    print("firefox " + combined_report_file_name + " &\n")
     print("[+] Or you can copy the celerystalkReports folder, which contains everything you need to view the report\n")
-
-
 
 
 def populate_report_head():
@@ -236,9 +234,6 @@ body {
     
 }
 
-
-
-
 </style>
 </head>
 <body>
@@ -246,9 +241,6 @@ body {
 <div class="sidenav">
 <a href="#top">Top</a>\n""")
     return web_head
-
-
-
 
 
 def populate_report_data(report_file,vhost,workspace):
@@ -259,44 +251,54 @@ def populate_report_data(report_file,vhost,workspace):
     :param workspace:
     :return:
     """
-    reportable_tasks = lib.db.get_report_info_for_ip(workspace,vhost)
 
+    reportable_output_files_for_vhost = lib.db.get_reportable_output_files_for_vhost(workspace,vhost)
+    for vhost_output_file in reportable_output_files_for_vhost:
+        vhost_output_file = vhost_output_file[0]
+        normalized_output_file = os.path.normpath(vhost_output_file)
+        tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
+        for command_name,command,status,start_time,run_time in tasks_for_output_file:
+            #Don't print header info for simulation jobs
+            if not command.startswith('#'):
+                try:
+                    if os.stat(normalized_output_file).st_size == 0:
+                        report_file.write('\n')
+                        report_file.write('-' * 50 + '\n')
+                        report_file.write("Command Name:\t" + command_name + " (No data produced)\n")
 
-    # try:
-    #     #Start off the report with the scan summary log that prings which services were detected
-    #     summary_file_name = glob.glob(os.path.join(host_output_directory, "*ScanSummary.log"))[0]
-    #     with open(summary_file_name, "r") as summary_file:
-    #         report_file.write('-' * 80 + '\n')
-    #         report_file.write(summary_file_name + '\n')
-    #         report_file.write('-' * 80 + '\n')
-    #         report_file.write('\n')
-    #         for line in summary_file:
-    #             report_file.write(line)
-    # except:
-    #     pass
+                        # report_file.write("{0} did not produce any data\n".format(command_name))
+                        report_file.write('-' * 50)
+                    else:
+                        report_file.write('\n\n')
+                        report_file.write('-' * 50 + '\n')
+                        report_file.write("Command Name:\t" + command_name + '\n')
+                        report_file.write("Start Time:\t" + start_time + '\n')
+                        if status == "COMPLETED":
+                            report_file.write("Run Time:\t" + run_time + '\n')
+                        report_file.write("Command:\t" + command + '\n')
+                        report_file.write("Output File:\t" + normalized_output_file + '\n')
+                        report_file.write("Status:\t\t" + status + '\n')
+                        report_file.write('-' * 50 + '\n\n')
+                except OSError, e:
+                    report_file.write('\n')
+                    report_file.write('-' * 50 + '\n')
+                    report_file.write("Command Name:\t" + command_name+ '\n')
+                    report_file.write("Command:\t" + command + '\n')
+                    report_file.write("\nNo such file or directory: " + normalized_output_file + "\n")
+                    # report_file.write("{0} did not produce any data\n".format(command_name))
+                    report_file.write('-' * 50)
 
-    for output_file,command_name,command,status,start_time,run_time in reportable_tasks:
-        output_file = os.path.normpath(output_file)
-        report_file.write('\n\n')
-        report_file.write('-' * 50 + '\n')
-        report_file.write("Command Name:\t" + command_name + '\n')
-        report_file.write("Start Time:\t" + start_time + '\n')
-        if status == "COMPLETED":
-            report_file.write("Run Time:\t" + run_time + '\n')
-        report_file.write("Command:\t" + command + '\n')
-        report_file.write("Output File:\t" + output_file + '\n')
-        report_file.write("Status:\t\t" + status + '\n')
-        report_file.write('-' * 50 + '\n\n')
 
         linecount = 0
-
         try:
-            with open(output_file, "r") as scan_file:
+            with open(normalized_output_file, "r") as scan_file:
                 for line in scan_file:
                     if linecount < 300:
                         report_file.write(line)
                     linecount = linecount + 1
                 if linecount > 300:
-                    report_file.write("\nSnip... Only displaying first 300 of the total " + str(linecount) + " lines...\n")
-        except:
-            report_file.write("[!] Error opening file: " + output_file + "\n[!] This is normal if you executed a simulation, otherwise, please file an issue")
+                    report_file.write("\nSnip... Only displaying first 300 of the total " + str(
+                        linecount) + " lines...\n")
+        except IOError, e:
+            #dont tell the user at the concole that file didnt exist.
+            pass

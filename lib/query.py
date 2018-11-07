@@ -1,10 +1,9 @@
-import simplejson
-import requests
 import time
 import db
 import subprocess
 import os
-import sys
+
+
 def get_terminal_width():
     """
     From: https://gist.githubusercontent.com/Steelsouls/9626112/raw/e99b6a741fa22c20c3699140d352de5a46db4ad2/terminal_width.py
