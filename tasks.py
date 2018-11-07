@@ -91,6 +91,7 @@ def post_process(*args):
 
     urls_to_screenshot = []
     if "gobuster" in populated_command:
+        screenshot_name = "gobuster"
 
         scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",ip + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
@@ -139,6 +140,8 @@ def post_process(*args):
                 print("[!] Could not open {0}".format(post_gobuster_filename))
 
     if "photon" in populated_command:
+        screenshot_name = "photon"
+
         scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", ip + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
 
@@ -193,7 +196,7 @@ def post_process(*args):
     if not simulation:
         if len(urls_to_screenshot) > 0:
             task_id = uuid()
-            populated_command = "firefox-esr screenshots | {0} | {1}".format(ip, scan_output_base_file_dir)
+            populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, ip, scan_output_base_file_dir)
             command_name = "Screenshots"
             utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
             cel_take_screenshot.delay(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
