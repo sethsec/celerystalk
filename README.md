@@ -47,7 +47,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
 # ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
 # ./celerystalk import -f client.xml -S scope.txt                   # Import scan and scope files
-# ./celerystalk find_subdomains -d client.com,client.net            # Find subdomains and determine if in scope
+# ./celerystalk subdomains -d client.com,client.net            # Find subdomains and determine if in scope
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
@@ -152,7 +152,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
    | -d domain1,domain2,etc| <b>Run Amass, Sublist3r, etc. and store domains in DB</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>
 
     ```
-    Find subdomains:       celerystalk find_subdomains -d domain1.com,domain2.com
+    Find subdomains:       celerystalk subdomains -d domain1.com,domain2.com
     ```
 
 1. **Launch Scan:** I recommend using the import command first and running scan with no options, however you do have the option to do it all at once (import and scan) by using the flags below. celerystalk will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
@@ -278,8 +278,8 @@ Usage:
     celerystalk workspace create -o <output_dir> [-w workspace_name]
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
-    celerystalk find_subdomains -d <domains> [-s]
-    celerystalk scan -f <nmap_file> [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
+    celerystalk subdomains -d <domains> [-s]
+    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
     celerystalk rescan [-t <targets>] [-s]
     celerystalk query ([full] | [summary] | [brief]) [watch]
@@ -322,7 +322,7 @@ Examples:
     Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
 
   Subdomain Recon
-    Find subdomains:            celerystalk find_subdomains -d domain1.com,domain2.com
+    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
 
   Scan
     Scan all in scope hosts:    celerystalk scan

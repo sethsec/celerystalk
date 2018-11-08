@@ -5,7 +5,7 @@ Usage:
     celerystalk workspace create -o <output_dir> [-w workspace_name]
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
-    celerystalk find_subdomains -d <domains> [-s]
+    celerystalk subdomains -d <domains> [-s]
     celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
     celerystalk rescan [-t <targets>] [-s]
@@ -49,7 +49,7 @@ Examples:
     Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
 
   Subdomain Recon
-    Find subdomains:            celerystalk find_subdomains -d domain1.com,domain2.com
+    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
 
   Scan
     Scan all in scope hosts:    celerystalk scan
@@ -509,9 +509,9 @@ def main(arguments):
         lib.csimport.importcommand(workspace, output_dir, arguments)
 
     ####################################
-    # Find_subdomains Command
+    # subdomains Command
     ####################################
-    if arguments["find_subdomains"]:
+    if arguments["subdomains"]:
         lib.utils.start_services()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
@@ -640,7 +640,7 @@ def main(arguments):
         #     for domain in in_scope_domains:
         #         print("domain pulled from in scope domains")
         #         print(domain)
-        #         lib.scan.find_subdomains(domain, arguments["--simulation"], workspace, output_dir,
+        #         lib.scan.subdomains(domain, arguments["--simulation"], workspace, output_dir,
         #                                  scan_mode,out_of_scope_hosts)
         #     #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 
