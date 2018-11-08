@@ -123,7 +123,7 @@ from prettytable import PrettyTable
 import csv
 
 
-build=str(114)
+build=str(115)
 
 def print_banner():
 
@@ -179,9 +179,42 @@ def main(arguments):
                 db_workspace = (workspace,)
                 lib.db.set_initial_current_workspace(db_workspace)
             else:
-                lib.db.update_current_workspace(workspace)
+                #if the workspace set is not the current workspace, figure out if it exists or if it is new
+                all_workspaces = lib.db.get_all_workspaces()
+                workspace_exists = "False"
+                for db_workspace_name in all_workspaces:
+                    db_workspace_name=db_workspace_name[0]
+                    if db_workspace_name == workspace:
+                        workspace_exists = "True"
+                        lib.db.update_current_workspace(workspace)
+
+
+                if workspace_exists == "False":
+                    # if the new workspace doesnt exists, tell the user they need to create it first
+                    print("[!] There is no workspace with that name. Here are the known workspaces:\n")
+                    columns = ["Workspace", "Output Directory"]
+                    workspace_rows = lib.db.get_all_workspaces()
+                    workspaces_table = PrettyTable(columns)
+                    workspaces_table.align[columns[1]] = "l"
+                    for row in workspace_rows:
+                        workspaces_table.add_row(row)
+                    print(workspaces_table)
+                    print("\n")
+
+                    print("[+] If you'd like to create a new workspace:\n\n")
+                    print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                    print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                    exit()
         else:
             current_workspace = lib.db.get_current_workspace()[0][0]
+            columns = ["Workspace", "Output Directory"]
+            workspace_rows = lib.db.get_all_workspaces()
+            workspaces_table = PrettyTable(columns)
+            workspaces_table.align[columns[1]] = "l"
+            for row in workspace_rows:
+                workspaces_table.add_row(row)
+            print(workspaces_table)
+            print("\n")
             print("[+} Current workspace: " + current_workspace + "\n")
 
 
@@ -364,6 +397,7 @@ def main(arguments):
             columns = ["Workspace", "Output Directory"]
             workspace_rows = lib.db.get_all_workspaces()
             workspaces_table = PrettyTable(columns)
+            workspaces_table.align[columns[1]] = "l"
             for row in workspace_rows:
                 workspaces_table.add_row(row)
             print(workspaces_table)
