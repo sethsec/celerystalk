@@ -279,9 +279,8 @@ Usage:
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
     celerystalk find_subdomains -d <domains> [-s]
-    celerystalk scan [-t <targets>] [-s]
-    celerystalk scan -u <url> [-s]
     celerystalk scan -f <nmap_file> [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
+    celerystalk scan -u <url> [-s]
     celerystalk rescan [-t <targets>] [-s]
     celerystalk query ([full] | [summary] | [brief]) [watch]
     celerystalk query [watch] ([full] | [summary] | [brief])
@@ -289,8 +288,7 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>])
     celerystalk pause  ([all]|[<task_ids>])
     celerystalk resume ([all]|[<task_ids>])
-    celerystalk db workspaces
-    celerystalk db ([services] | [hosts] | [vhosts] | [paths])
+    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths])
     celerystalk db export
     celerystalk shutdown
     celerystalk interactive
@@ -314,11 +312,11 @@ Examples:
   Workspace
     Create default workspace    celerystalk workspace create -o /assessments/client
     Create named workspace      celerystalk workspace create -o /assessments/client -w client
-    Switch to another worksapce celerystalk workspace client
+    Switch to another worksapce celerystalk workspace client2
 
   Import
-    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
-    Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/
+    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml
+    Import Nessus file:         celerystalk import -f /assessments/scan.nessus
     Import list of Domains:     celerystalk import -D <file>
     Import list of IPs/Ranges:  celerystalk import -S <file>
     Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
@@ -335,14 +333,13 @@ Examples:
     Simulation mode:            celerystalk scan -s
 
   Import and Scan
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Scan all in scope vhosts:   celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Specify workspace:          celerystalk scan -f <file> -o /pentest
-    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -o /pentest -t 10.0.0.100-200
-                                celerystalk scan -f <file> -o /pentest -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
+    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml
+    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus
+    Scan subset hosts in XML:   celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -f <file> -t 10.0.0.100-200
+                                celerystalk scan -f <file> -t 10.0.0.0/24
+                                celerystalk scan -f <file> -t sub.domain.com
+    Simulation mode:            celerystalk scan -f <file> -s
 
   Rescan
    Rescan all hosts:            celerystalk rescan
@@ -357,8 +354,13 @@ Examples:
     Show stats every 2s:        celerystalk query summary watch
 
  Job Control (cancel/pause/resume)
-    Specific tasks:             celerystalk <verb> 5,6,10-20
-    All tasks current worspace: celerystalk <verb> all
+    Specific tasks:             celerystalk cancel 5,6,10-20
+                                celerystalk pause 5,6,10-20
+                                celerystalk resume 5,6,10-20
+
+    All tasks current worspace: celerystalk cancel all
+                                celerystalk pause all
+                                celerystalk resume all
 
   Access the DB
     Show workspaces:            celeryststalk db workspaces
