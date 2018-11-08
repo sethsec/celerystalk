@@ -460,14 +460,10 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
     print("\n\n[+] Summary:\tSubmitted {0} tasks to the [{1}] workspace.".format(total_tasks_num,workspace))
     print("[+]\t\tThere might be additional tasks added to the queue during post processing\n[+]")
     print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
-    if workspace == "Default":
-        print("[+]\t\tcelerystalk query [watch]")
-        print("[+]\t\tcelerystalk query brief [watch]")
-        print("[+]\t\tcelerystalk query summary [watch]\n")
-    else:
-        print("[+]\t\tcelerystalk query -w {0} [watch]".format(workspace))
-        print("[+]\t\tcelerystalk query -w {0} brief [watch]".format(workspace))
-        print("[+]\t\tcelerystalk query -w {0} summary [watch]\n".format(workspace))
+    print("[+]\t\tcelerystalk query [watch]")
+    print("[+]\t\tcelerystalk query brief [watch]")
+    print("[+]\t\tcelerystalk query summary [watch]\n")
+
 
 
 def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_service_port, scan_output_base_file_name, config, simulation, output_base_dir, host_dir, workspace, task_id_list,ip,scanned_service_protocol):
@@ -529,6 +525,8 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
 
 
 def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mode=None,out_of_scope_hosts=None):
+    task_id_list = []
+    total_tasks_num = 0
     config, supported_services = config_parser.read_config_ini()
     celery_path = sys.path[0]
     for domain in domains.split(","):
@@ -539,7 +537,7 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mod
                     populated_command = cmd.replace("[DOMAIN]", domain).replace("[OUTPUT]", outfile)
                     if simulation:
                         populated_command = "#" + populated_command
-                    print(populated_command)
+                    #print(populated_command)
 
                     # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
                     # that allows me to pass it to all of the tasks in the chain.
@@ -560,6 +558,7 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mod
                             # additinoal stuff based on the command that just ran.
                             #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,scan_mode),
                         )()  # .apply_async()
+                        task_id_list.append(result.task_id)
                     else:
                         result = chain(
                             #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
@@ -567,6 +566,15 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mod
                             tasks.post_process_domains_bb.s(cmd_name, populated_command, output_base_dir, workspace,
                                                          domain, simulation, celery_path,out_of_scope_hosts),
                         )()
+                        task_id_list.append(result.task_id)
+
+    total_tasks_num = total_tasks_num + len(task_id_list)
+    print("\n\n[+] Summary:\tSubmitted {0} tasks to the [{1}] workspace.".format(total_tasks_num, workspace))
+    print("[+]\t\tThere might be additional tasks added to the queue during post processing\n[+]")
+    print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
+    print("[+]\t\tcelerystalk query [watch]")
+    print("[+]\t\tcelerystalk query brief [watch]")
+    print("[+]\t\tcelerystalk query summary [watch]\n")
 
 
 def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
