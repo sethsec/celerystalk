@@ -6,7 +6,7 @@ Usage:
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
     celerystalk find_subdomains -d <domains> [-s]
-    celerystalk scan -f <nmap_file> [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
+    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
     celerystalk rescan [-t <targets>] [-s]
     celerystalk query ([full] | [summary] | [brief]) [watch]
