@@ -5,10 +5,9 @@ Usage:
     celerystalk workspace create -o <output_dir> [-w workspace_name]
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
-    celerystalk find_subdomains -d <domains> [-s]
-    celerystalk scan [-t <targets>] [-s]
+    celerystalk subdomains -d <domains> [-s]
+    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
-    celerystalk scan -f <nmap_file> [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk rescan [-t <targets>] [-s]
     celerystalk query ([full] | [summary] | [brief]) [watch]
     celerystalk query [watch] ([full] | [summary] | [brief])
@@ -16,8 +15,7 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>])
     celerystalk pause  ([all]|[<task_ids>])
     celerystalk resume ([all]|[<task_ids>])
-    celerystalk db workspaces
-    celerystalk db ([services] | [hosts] | [vhosts] | [paths])
+    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths])
     celerystalk db export
     celerystalk shutdown
     celerystalk interactive
@@ -41,17 +39,17 @@ Examples:
   Workspace
     Create default workspace    celerystalk workspace create -o /assessments/client
     Create named workspace      celerystalk workspace create -o /assessments/client -w client
-    Switch to another worksapce celerystalk workspace client
+    Switch to another worksapce celerystalk workspace client2
 
   Import
-    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
-    Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/
+    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml
+    Import Nessus file:         celerystalk import -f /assessments/scan.nessus
     Import list of Domains:     celerystalk import -D <file>
     Import list of IPs/Ranges:  celerystalk import -S <file>
     Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
 
   Subdomain Recon
-    Find subdomains:            celerystalk find_subdomains -d domain1.com,domain2.com
+    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
 
   Scan
     Scan all in scope hosts:    celerystalk scan
@@ -62,14 +60,13 @@ Examples:
     Simulation mode:            celerystalk scan -s
 
   Import and Scan
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Scan all in scope vhosts:   celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Specify workspace:          celerystalk scan -f <file> -o /pentest
-    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -o /pentest -t 10.0.0.100-200
-                                celerystalk scan -f <file> -o /pentest -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
+    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml
+    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus
+    Scan subset hosts in XML:   celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -f <file> -t 10.0.0.100-200
+                                celerystalk scan -f <file> -t 10.0.0.0/24
+                                celerystalk scan -f <file> -t sub.domain.com
+    Simulation mode:            celerystalk scan -f <file> -s
 
   Rescan
    Rescan all hosts:            celerystalk rescan
@@ -84,8 +81,13 @@ Examples:
     Show stats every 2s:        celerystalk query summary watch
 
  Job Control (cancel/pause/resume)
-    Specific tasks:             celerystalk <verb> 5,6,10-20
-    All tasks current worspace: celerystalk <verb> all
+    Specific tasks:             celerystalk cancel 5,6,10-20
+                                celerystalk pause 5,6,10-20
+                                celerystalk resume 5,6,10-20
+
+    All tasks current worspace: celerystalk cancel all
+                                celerystalk pause all
+                                celerystalk resume all
 
   Access the DB
     Show workspaces:            celeryststalk db workspaces
@@ -121,7 +123,7 @@ from prettytable import PrettyTable
 import csv
 
 
-build=str(114)
+build=str(116)
 
 def print_banner():
 
@@ -177,10 +179,51 @@ def main(arguments):
                 db_workspace = (workspace,)
                 lib.db.set_initial_current_workspace(db_workspace)
             else:
-                lib.db.update_current_workspace(workspace)
+                #if the workspace set is not the current workspace, figure out if it exists or if it is new
+                all_workspaces = lib.db.get_all_workspaces()
+                workspace_exists = "False"
+                for db_workspace_name in all_workspaces:
+                    db_workspace_name=db_workspace_name[0]
+                    if db_workspace_name == workspace:
+                        workspace_exists = "True"
+                        lib.db.update_current_workspace(workspace)
+
+
+                if workspace_exists == "False":
+                    # if the new workspace doesnt exists, tell the user they need to create it first
+                    print("[!] There is no workspace with that name. Here are the known workspaces:\n")
+                    columns = ["Workspace", "Output Directory"]
+                    workspace_rows = lib.db.get_all_workspaces()
+                    workspaces_table = PrettyTable(columns)
+                    workspaces_table.align[columns[1]] = "l"
+                    for row in workspace_rows:
+                        workspaces_table.add_row(row)
+                    print(workspaces_table)
+                    print("\n")
+
+                    print("[+] If you'd like to create a new workspace:\n\n")
+                    print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                    print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                    exit()
         else:
-            current_workspace = lib.db.get_current_workspace()[0][0]
-            print("[+} Current workspace: " + current_workspace + "\n")
+            try:
+                workspace = lib.db.get_current_workspace()[0][0]
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+            except:
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                exit()
+            
+            columns = ["Workspace", "Output Directory"]
+            workspace_rows = lib.db.get_all_workspaces()
+            workspaces_table = PrettyTable(columns)
+            workspaces_table.align[columns[1]] = "l"
+            for row in workspace_rows:
+                workspaces_table.add_row(row)
+            print(workspaces_table)
+            print("\n")
+            print("[+} Current workspace: " + workspace + "\n")
 
 
 
@@ -201,7 +244,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
         try:
             if arguments["watch"]:
@@ -233,7 +278,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
         paused_tasks = db.get_paused_tasks(workspace)
         running_tasks = db.get_running_tasks(workspace)
@@ -259,7 +306,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
         if arguments["all"]:
             num_paused = lib.pause.pause_running_tasks("all",workspace)
@@ -288,7 +337,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
         if arguments["all"]:
             num_resumed = lib.resume.resume_paused_tasks("all",workspace)
@@ -322,7 +373,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
@@ -342,7 +395,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
 
         if arguments["workspaces"]:
@@ -350,6 +405,7 @@ def main(arguments):
             columns = ["Workspace", "Output Directory"]
             workspace_rows = lib.db.get_all_workspaces()
             workspaces_table = PrettyTable(columns)
+            workspaces_table.align[columns[1]] = "l"
             for row in workspace_rows:
                 workspaces_table.add_row(row)
             print(workspaces_table)
@@ -446,14 +502,16 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
         lib.csimport.importcommand(workspace, output_dir, arguments)
 
     ####################################
-    # Find_subdomains Command
+    # subdomains Command
     ####################################
-    if arguments["find_subdomains"]:
+    if arguments["subdomains"]:
         lib.utils.start_services()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
@@ -462,7 +520,10 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                exit()
                 exit()
         lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode="VAPT")
 
@@ -481,7 +542,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
 
         arguments["scan"] = True
@@ -515,7 +578,9 @@ def main(arguments):
                 workspace = lib.db.get_current_workspace()[0][0]
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
-                print("[!] Looks like are no workspaces. Create one with: \n\n./celerystalk workspace create -o [output_dir] and then run your command again.\n")
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir                     #Default workspace")
+                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
 
 
@@ -575,7 +640,7 @@ def main(arguments):
         #     for domain in in_scope_domains:
         #         print("domain pulled from in scope domains")
         #         print(domain)
-        #         lib.scan.find_subdomains(domain, arguments["--simulation"], workspace, output_dir,
+        #         lib.scan.subdomains(domain, arguments["--simulation"], workspace, output_dir,
         #                                  scan_mode,out_of_scope_hosts)
         #     #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
 

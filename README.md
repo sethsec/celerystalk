@@ -47,7 +47,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
 # ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
 # ./celerystalk import -f client.xml -S scope.txt                   # Import scan and scope files
-# ./celerystalk find_subdomains -d client.com,client.net            # Find subdomains and determine if in scope
+# ./celerystalk subdomains -d client.com,client.net            # Find subdomains and determine if in scope
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
@@ -152,7 +152,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
    | -d domain1,domain2,etc| <b>Run Amass, Sublist3r, etc. and store domains in DB</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>
 
     ```
-    Find subdomains:       celerystalk find_subdomains -d domain1.com,domain2.com
+    Find subdomains:       celerystalk subdomains -d domain1.com,domain2.com
     ```
 
 1. **Launch Scan:** I recommend using the import command first and running scan with no options, however you do have the option to do it all at once (import and scan) by using the flags below. celerystalk will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
@@ -278,10 +278,9 @@ Usage:
     celerystalk workspace create -o <output_dir> [-w workspace_name]
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
-    celerystalk find_subdomains -d <domains> [-s]
-    celerystalk scan [-t <targets>] [-s]
+    celerystalk subdomains -d <domains> [-s]
+    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
-    celerystalk scan -f <nmap_file> [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk rescan [-t <targets>] [-s]
     celerystalk query ([full] | [summary] | [brief]) [watch]
     celerystalk query [watch] ([full] | [summary] | [brief])
@@ -289,8 +288,7 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>])
     celerystalk pause  ([all]|[<task_ids>])
     celerystalk resume ([all]|[<task_ids>])
-    celerystalk db workspaces
-    celerystalk db ([services] | [hosts] | [vhosts] | [paths])
+    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths])
     celerystalk db export
     celerystalk shutdown
     celerystalk interactive
@@ -314,17 +312,17 @@ Examples:
   Workspace
     Create default workspace    celerystalk workspace create -o /assessments/client
     Create named workspace      celerystalk workspace create -o /assessments/client -w client
-    Switch to another worksapce celerystalk workspace client
+    Switch to another worksapce celerystalk workspace client2
 
   Import
-    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml -o /assessments/
-    Import Nessus file:         celerystalk import -f /assessments/scan.nessus -o /assessments/
+    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml
+    Import Nessus file:         celerystalk import -f /assessments/scan.nessus
     Import list of Domains:     celerystalk import -D <file>
     Import list of IPs/Ranges:  celerystalk import -S <file>
     Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
 
   Subdomain Recon
-    Find subdomains:            celerystalk find_subdomains -d domain1.com,domain2.com
+    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
 
   Scan
     Scan all in scope hosts:    celerystalk scan
@@ -335,14 +333,13 @@ Examples:
     Simulation mode:            celerystalk scan -s
 
   Import and Scan
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml -o /pentest
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus -o /pentest
-    Scan all in scope vhosts:   celerystalk scan -f <file> -o /pentest -d domain1.com,domain2.com
-    Specify workspace:          celerystalk scan -f <file> -o /pentest
-    Scan subset hosts in XML:   celerystalk scan -f <file> -o /pentest -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -o /pentest -t 10.0.0.100-200
-                                celerystalk scan -f <file> -o /pentest -t 10.0.0.0/24
-    Simulation mode:            celerystalk scan -f <file> -o /pentest -s
+    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml
+    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus
+    Scan subset hosts in XML:   celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
+                                celerystalk scan -f <file> -t 10.0.0.100-200
+                                celerystalk scan -f <file> -t 10.0.0.0/24
+                                celerystalk scan -f <file> -t sub.domain.com
+    Simulation mode:            celerystalk scan -f <file> -s
 
   Rescan
    Rescan all hosts:            celerystalk rescan
@@ -357,8 +354,13 @@ Examples:
     Show stats every 2s:        celerystalk query summary watch
 
  Job Control (cancel/pause/resume)
-    Specific tasks:             celerystalk <verb> 5,6,10-20
-    All tasks current worspace: celerystalk <verb> all
+    Specific tasks:             celerystalk cancel 5,6,10-20
+                                celerystalk pause 5,6,10-20
+                                celerystalk resume 5,6,10-20
+
+    All tasks current worspace: celerystalk cancel all
+                                celerystalk pause all
+                                celerystalk resume all
 
   Access the DB
     Show workspaces:            celeryststalk db workspaces
