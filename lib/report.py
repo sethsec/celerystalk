@@ -3,7 +3,7 @@ import bleach
 from bleach.sanitizer import Cleaner
 import lib.db
 import urllib
-
+import time
 
 def paths_report(host):
     all_paths = lib.db.get_all_paths_for_host(host)
@@ -58,14 +58,6 @@ def report(workspace,target_list=None):
         #unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
         for vhost in unique_vhosts_for_ip:
             vhost = vhost[0]
-            #ip = lib.db.get_vhost_ip(host,workspace)
-            #vhost_src_directory = os.path.join(output_dir,str(ip),"celerystalkOutput")
-            #print(host_src_directory)
-            #output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
-            #workspace_report_directory = os.path.join(output_dir, "celerystalkReports")
-            #report_count = report_count +  1
-            #These lines create a host specific report file
-
 
             host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
             host_report_file_names.append([vhost,host_report_file_name])
@@ -73,7 +65,6 @@ def report(workspace,target_list=None):
             populate_report_data(host_report_file,vhost,workspace)
             host_report_file.close()
             print("[+] Report file (single host): {0}".format(host_report_file_name))
-
 
     combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
     combined_report_file = open(combined_report_file_name, 'w')
@@ -100,7 +91,6 @@ def report(workspace,target_list=None):
 
     # Create the rest of the report
     for host,report in sorted(host_report_file_names):
-        #host = report.split("/celerystalkOutput")[0].split("/")[2]
         ip = lib.db.get_vhost_ip(host,workspace)
         ip = ip[0][0]
         services = lib.db.get_all_services_for_ip(ip,workspace)
@@ -121,33 +111,67 @@ def report(workspace,target_list=None):
         combined_report_file_txt.write('  ' + "Host Report:" + report + '\n')
         combined_report_file_txt.write('\n' + '*' * 80 + '\n\n')
 
-        with open(report, 'r') as host_report_file:
-            screenshot_html = paths_report(host)
-            combined_report_file.write(screenshot_html)
+        # with open(report, 'r') as host_report_file:
+        #     #Generate html that has each path with a screenshot per line
+        #     screenshot_html = paths_report(host)
+        #     combined_report_file.write(screenshot_html)
+        #
+        #     combined_report_file.write('<pre>\n')
+        #
+        #
+        #     for line in host_report_file:
+        #         #HTML report
+        #         line = unicode(line, errors='ignore')
+        #         try:
+        #             sanitized = bleach.clean(line)
+        #         except:
+        #             print("[!] Could not output santize the following line (Not including it in report to be safe):")
+        #             print("     " + line)
+        #             sanitized = ""
+        #
+        #         combined_report_file.write(sanitized)
+        #         #txt Report
+        #         combined_report_file_txt.write(line)
+        #     combined_report_file.write('</pre>\n')
 
-            combined_report_file.write('<pre>\n')
-            for line in host_report_file:
-                #HTML report
-                line = unicode(line, errors='ignore')
-                try:
-                    sanitized = bleach.clean(line)
-                except:
-                    print("[!] Could not output santize the following line (Not including it in report to be safe):")
-                    print("     " + line)
-                    sanitized = ""
+    for ip in unique_ips:
+        ip = ip[0]
+        unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
 
-                combined_report_file.write(sanitized)
-                #txt Report
-                combined_report_file_txt.write(line)
-            combined_report_file.write('</pre>\n')
-
+        # unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
+        report_string = ""
+        for vhost in unique_vhosts_for_ip:
+            vhost = vhost[0]
+            report_host_string = populate_report_data_html(vhost, workspace)
+            report_string = report_string + report_host_string
+        combined_report_file.write('</pre>\n')
+        combined_report_file.write(report_string)
 
 
         combined_report_file.write("\n\n")
         combined_report_file_txt.write("\n\n")
 
 
-    combined_report_file.write('</pre>\n')
+    report_footer = """
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+"""
+
+    combined_report_file.write(report_footer)
     combined_report_file.close()
     combined_report_file_txt.close()
 
@@ -231,12 +255,34 @@ body {
     visibility:visible;
     top:0; left:280px; 
     z-index:1;
-    
+}
+.collapsible {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    padding: 6px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.active, .collapsible:hover {
+    background-color: #555;
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;    
 }
 
 </style>
 </head>
 <body>
+
 
 <div class="sidenav">
 <a href="#top">Top</a>\n""")
@@ -289,6 +335,7 @@ def populate_report_data(report_file,vhost,workspace):
                     report_file.write('-' * 50)
 
 
+
         linecount = 0
         try:
             with open(normalized_output_file, "r") as scan_file:
@@ -302,3 +349,75 @@ def populate_report_data(report_file,vhost,workspace):
         except IOError, e:
             #dont tell the user at the concole that file didnt exist.
             pass
+
+
+def populate_report_data_html(vhost,workspace):
+    """
+
+    :param report_file:
+    :param vhost:
+    :param workspace:
+    :return:
+    """
+    report_host_html_string = ""
+    reportable_output_files_for_vhost = lib.db.get_reportable_output_files_for_vhost(workspace,vhost)
+    for vhost_output_file in reportable_output_files_for_vhost:
+        vhost_output_file = vhost_output_file[0]
+        normalized_output_file = os.path.normpath(vhost_output_file)
+        tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
+        for command_name,command,status,start_time,run_time in tasks_for_output_file:
+            #print(start_time)
+            #print(type(start_time))
+            start_time = time.strftime("%m/%d/%Y %H:%M:%S",time.localtime(float(start_time)))
+            run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
+            #Don't print header info for simulation jobs
+            if not command.startswith('#'):
+                report_host_html_string = report_host_html_string + "</pre>\n"
+                report_host_html_string = report_host_html_string + '''<button class="collapsible">''' + command_name + '''</button>\n'''
+                report_host_html_string = report_host_html_string + '''<div class="content">'''
+                report_host_html_string = report_host_html_string + '''<table>'''
+                try:
+                    report_host_html_string = report_host_html_string +  "<tr><td>Start Time:</td><td>" + start_time + '</td></tr>\n'
+                    if status == "COMPLETED":
+                        report_host_html_string = report_host_html_string +  "<tr><td>Run Time:</td><td>" + run_time + '</td></tr>\n'
+                    report_host_html_string = report_host_html_string +  "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
+                    report_host_html_string = report_host_html_string +  "<tr><td>Output File:</td><td>" + normalized_output_file + '</td></tr>\n'
+                    if os.stat(normalized_output_file).st_size == 0:
+                        report_host_html_string = report_host_html_string +  "<tr><td>Status:</td><td>" + status + ' [No Output Data]</td></tr>\n'
+                    else:
+                        report_host_html_string = report_host_html_string + "<tr><td>Status:</td><td>" + status + '</td></tr>\n'
+                except OSError, e:
+                    report_host_html_string = report_host_html_string +  "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
+                    report_host_html_string = report_host_html_string +  "\nError: No such file or directory: " + normalized_output_file + "</td></tr>\n"
+                    # report_host_html_string = report_host_html_string +  "{0} did not produce any data\n".format(command_name))
+                report_host_html_string = report_host_html_string +  "</table></div>\n"
+
+
+        #This is the part that reads the contents of each output file
+        linecount = 0
+        try:
+            report_host_html_string = report_host_html_string + "<pre>\n"
+            with open(normalized_output_file, "r") as scan_file:
+                for line in scan_file:
+                    line = unicode(line, errors='ignore')
+                    try:
+                        sanitized = bleach.clean(line)
+                    except:
+                        print(
+                            "[!] Could not output santize the following line (Not including it in report to be safe):")
+                        print("     " + line)
+                        sanitized = ""
+                    if linecount < 300:
+                        report_host_html_string = report_host_html_string + sanitized
+                    linecount = linecount + 1
+                if linecount > 300:
+                    report_host_html_string = report_host_html_string +  "\nSnip... Only displaying first 300 of the total " + str(
+                        linecount) + " lines...\n"
+        except IOError, e:
+            #dont tell the user at the concole that file didnt exist.
+            pass
+        finally:
+            report_host_html_string = report_host_html_string + "</pre>\n"
+    return report_host_html_string
+
+
