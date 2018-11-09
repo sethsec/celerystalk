@@ -16,12 +16,12 @@ def paths_report(host):
             url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
             html_code = html_code + """\n<div id="linkwrap">\n"""
             html_code = html_code + """<a class="link" href="#">[Screenshot]<span><img src="{1}" alt="image"/></span></a>  <a href="{0}">{0}</a><br>\n""".format(path,url_screenshot_filename_relative)
-            html_code = html_code + "</div>\n"
+            html_code = html_code + "\n</div>\n"
         except:
             #print("Could not find screenshot for " + path)
             html_code = html_code + """\n<div id="linkwrap">\n"""
             html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
-            html_code = html_code + "</div>\n"
+            html_code = html_code + "\n</div>\n"
     return html_code
 
 
@@ -96,13 +96,13 @@ def report(workspace,target_list=None):
     unique_command_names = lib.db.get_unique_command_names(workspace)
     filter_html_body = '''<div id="myBtnContainer">\n'''
     filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('all')"> Show all</button>\n'''
-    filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('services')"> Services</button>\n'''
-    filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('paths')"> Paths</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('paths')"> Paths</button>\n'''
 
     for command_name in unique_command_names:
         command_name = command_name[0]
         filter_html_body = filter_html_body + "<button class=\"btn\" onclick=\"filterSelection(\'{0}\')\"> {0}</button>\n".format(command_name)
-    filter_html_body = filter_html_body + "</div>"
+    filter_html_body = filter_html_body + "\n</div>"
 
     combined_report_file.write(filter_html_body)
     # Create the rest of the report
@@ -124,19 +124,19 @@ def report(workspace,target_list=None):
         #TODO: print services for each host - but onlyh for hte ip??
         services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th></tr>"
         for id,ip,port,proto,service,workspace in services:
-            services_table_html = services_table_html + "<tr><td>{0}</td><td>{1}</td><td>{2}</td>".format(port,proto,service)
-        services_table_html = services_table_html + "</table><br>"
+            services_table_html = services_table_html + "<tr>\n<td>{0}</td>\n<td>{1}</td>\n<td>{2}</td>\n</tr>\n".format(port,proto,service)
+        services_table_html = services_table_html + "</table>\n<br>\n"
 
-        combined_report_file.write('''<div class="filterDiv services">\n''')
+        combined_report_file.write('''\n<div class="filterDiv services">\n''')
         combined_report_file.write(services_table_html)
-        combined_report_file.write("</div>")
+        combined_report_file.write("\n</div>")
 
 
         screenshot_html = paths_report(vhost)
 
-        combined_report_file.write('''<div class="filterDiv paths">\n''')
-        combined_report_file.write(screenshot_html + "<br>")
-        combined_report_file.write("</div>")
+        combined_report_file.write('''\n\n<div class="filterDiv paths">\n''')
+        combined_report_file.write(screenshot_html + "\n<br>")
+        combined_report_file.write("\n</div>\n")
 
         #Generate the html code for all of that command output and headers
         report_host_string = populate_report_data_html(vhost, workspace)
@@ -296,6 +296,9 @@ table {
 th, td {
     text-align: left;
     padding: 8px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    padding: 5px;
 }
 
 tr:nth-child(even){background-color: #f2f2f2}
@@ -303,6 +306,8 @@ tr:nth-child(even){background-color: #f2f2f2}
 th {
     background-color: #777;
     color: white;
+    padding: 4px;
+
 }
 
 .sidenav {
@@ -411,6 +416,10 @@ th {
   border: none;
   outline: none;
   background-color: #f1f1f1;
+  border-radius: 12px;
+  padding: 8px;
+  font-size: 14px;
+
 }
 
 .btn:hover {
@@ -537,13 +546,13 @@ def populate_report_data_html(vhost,workspace):
                     report_host_html_string = report_host_html_string +  "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
                     report_host_html_string = report_host_html_string +  "\nError!: No such file or directory: " + normalized_output_file + "</td></tr>\n"
                     # report_host_html_string = report_host_html_string +  "{0} did not produce any data\n".format(command_name))
-                report_host_html_string = report_host_html_string +  "</table></div>\n"
+                report_host_html_string = report_host_html_string +  "</table>\n</div>\n"
 
 
         #This is the part that reads the contents of each output file
         linecount = 0
+        report_host_html_string = report_host_html_string + "        <pre>\n"
         try:
-            report_host_html_string = report_host_html_string + "<pre>\n"
             with open(normalized_output_file, "r") as scan_file:
                 for line in scan_file:
                     line = unicode(line, errors='ignore')
@@ -563,8 +572,8 @@ def populate_report_data_html(vhost,workspace):
         except IOError, e:
             #dont tell the user at the concole that file didnt exist.
             pass
-        finally:
-            report_host_html_string = report_host_html_string + "</pre></div>\n"
+
+        report_host_html_string = report_host_html_string + "        </pre>\n</div>\n"
     return report_host_html_string
 
 
