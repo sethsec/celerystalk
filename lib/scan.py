@@ -95,9 +95,11 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir):
 
 
     for (cmd_name, cmd) in config.items("nmap-commands"):
+
         if cmd_name == "udp_scan":
             outfile = scan_output_base_host_filename + "_" + cmd_name
             populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
+
 
             if simulation:
                 populated_command = "#" + populated_command
@@ -110,7 +112,7 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir):
             populated_command_list.append((cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id,scanned_service_port, scanned_service_name,scanned_service_protocol))
 
     if not simulation:
-        db.update_vhosts_submitted(vhost_ip, vhost, workspace, 1)
+        db.update_vhosts_submitted(vhost_ip[0], vhost, workspace, 1)
 
     ###################################
     # Time to parse the services from the DB
@@ -257,7 +259,7 @@ def process_url(url, workspace, output_dir, arguments):
     summary_file_name = host_data_dir + "ScanSummary.log"
     summary_file = open(summary_file_name, 'a')
 
-    db_vhost = (ip, vhost, 1, 1, workspace)  # in this mode all vhosts are in scope
+    db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
     # print(db_vhost)
     #create it if it doesnt exist (if it does, doing this doesnt change anything)
     db.create_vhost(db_vhost)
@@ -591,11 +593,11 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
             in_scope,ip = utils.domain_scope_checker(vhost,workspace)
             if in_scope == 1:
                 print("Found subdomain (in scope):\t" + vhost)
-                db_vhost = (ip,vhost,1, 0,workspace)
+                db_vhost = (ip,vhost,1,0,0,workspace)
                 db.create_vhost(db_vhost)
             else:
                 print("Found subdomain (out of scope):\t" + vhost)
-                db_vhost = (ip, vhost, 0, 0, workspace)
+                db_vhost = (ip, vhost, 0,0,0, workspace)
                 db.create_vhost(db_vhost)
 
 

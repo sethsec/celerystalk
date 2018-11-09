@@ -114,7 +114,8 @@ def create_vhosts_table():
                                         id INTEGER PRIMARY KEY,
                                         ip text,
                                         vhost text NOT NULL UNIQUE,
-                                        in_scope int NOT NULL,
+                                        in_scope int,
+                                        explicit_out_scope int,
                                         submitted int NOT NULL,                                                                                
                                         workspace text
                                     ); """
@@ -414,8 +415,8 @@ def create_vhost(db_vhost):
     :param workspace:
     :return:
     """
-    sql = ''' INSERT OR IGNORE INTO vhosts(ip,vhost,in_scope,submitted,workspace)
-              VALUES(?,?,?,?,?) '''
+    sql = ''' INSERT OR IGNORE INTO vhosts(ip,vhost,in_scope,explicit_out_scope,submitted,workspace)
+              VALUES(?,?,?,?,?,?) '''
     CUR.execute(sql, db_vhost)
     CONNECTION.commit()
 
@@ -474,6 +475,13 @@ def get_unique_out_of_scope_ips(workspace):
     CONNECTION.commit()
     return host_rows
 
+def get_unique_explicit_out_of_scope_vhosts(workspace):
+    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_of_scope=?", (workspace,1))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+
 def get_inscope_unsubmitted_vhosts(workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE in_scope=? AND submitted=? AND workspace=?", (1,0,workspace))
     scannable_vhosts = CUR.fetchall()
@@ -513,7 +521,9 @@ def update_vhosts_in_scope(ip,vhost,workspace,in_scope):
     CUR.execute("UPDATE vhosts SET in_scope=? WHERE ip=? AND vhost=? AND workspace=?", (in_scope,ip,vhost,workspace))
     CONNECTION.commit()
 
-
+def update_vhosts_explicit_out_of_scope(ip,vhost,workspace,explicit_out_of_scope):
+    CUR.execute("UPDATE vhosts SET explicit_out_of_scope=? AND vhost=? AND workspace=?", (explicit_out_of_scope,vhost,workspace))
+    CONNECTION.commit()
 
 #############################
 # Table: Paths

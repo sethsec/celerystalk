@@ -296,16 +296,16 @@ def post_process_domains_bb(vhosts, command_name, populated_command, output_base
                 ip = socket.gethostbyname(vhost)
                 if vhost not in out_of_scope_hosts:
                     print("Found subdomain (in scope):\t" + vhost)
-                    db_vhost = (ip, vhost, 1, 0, workspace)
+                    db_vhost = (ip, vhost, 1,0,0, workspace)
                     db.create_vhost(db_vhost)
                 else:
                     print("Found subdomain (out of scope):\t" + vhost)
-                    db_vhost = (ip, vhost, 0, 0, workspace)
+                    db_vhost = (ip, vhost, 0,0,0, workspace)
                     db.create_vhost(db_vhost)
             except:
-                print("1There was an issue running the nmap scan against {0}.").format(vhost)
+                print("There was an issue running the nmap scan against {0}.").format(vhost)
                 ip = ""
-                db_vhost = (ip, vhost, 0, 0, workspace)  # not in scope if no IP
+                db_vhost = (ip, vhost,0,0,0,workspace)  # not in scope if no IP
                 print(db_vhost)
                 db.create_vhost(db_vhost)
 
