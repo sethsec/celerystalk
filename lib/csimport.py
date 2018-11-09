@@ -28,7 +28,7 @@ def import_scope(scope_file,workspace):
                     #scopeList.append(netRange)
                     for ip in netRange:
                         ip = str(ip)
-                        db_vhost = (ip, ip, 1, 0, workspace) # add it to the vhosts db and mark as in scope
+                        db_vhost = (ip, ip, 1,0,0, workspace) # add it to the vhosts db and mark as in scope
                         lib.db.create_vhost(db_vhost)
                 else:
                     try:
@@ -39,7 +39,7 @@ def import_scope(scope_file,workspace):
                         netRange = IPAddress(startpart + "." + rangeend)
                         for ip in netRange:
                             ip = str(ip)
-                            db_vhost = (ip, ip, 1, 0, workspace)  # add it to the vhosts db and mark as in scope
+                            db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
                             lib.db.create_vhost(db_vhost)
                     except Exception, e:
                         # Putting this try/except here because i have a feeling that at some point we will see
@@ -53,7 +53,7 @@ def import_scope(scope_file,workspace):
                 net = IPNetwork(network)
                 for ip in net:
                     ip = str(ip)
-                    db_vhost = (ip, ip, 1, 0, workspace)  # add it to the vhosts db and mark as in scope
+                    db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
                     lib.db.create_vhost(db_vhost)
                 #scopeList.append(net)
 
@@ -71,11 +71,11 @@ def import_vhosts(subdomains_file,workspace):
                 in_scope,ip = lib.utils.domain_scope_checker(vhost,workspace)
                 if in_scope == 1:
                     print("[+] Found subdomain (in scope):\t\t\t" + vhost)
-                    db_vhost = (ip,vhost,1, 0,workspace)
+                    db_vhost = (ip,vhost,1,0,0,workspace)
                     lib.db.create_vhost(db_vhost)
                 else:
                     print("[+] Found subdomain (out of scope):\t\t" + vhost)
-                    db_vhost = (ip, vhost, 0, 0, workspace)
+                    db_vhost = (ip, vhost, 0,0,0, workspace)
                     lib.db.create_vhost(db_vhost)
 
 
@@ -114,7 +114,7 @@ def import_url(url,workspace,output_base_dir):
         if (answer == "Y") or (answer == "y") or (answer == ""):
             in_scope = 1
     if in_scope == 1:
-        db_vhost = (ip, vhost, 1, 0, workspace)  # add it to the vhosts db and mark as in scope
+        db_vhost = (ip, vhost, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
         lib.db.create_vhost(db_vhost)
         #lib.db.create_service(db_service)
 
@@ -134,7 +134,7 @@ def import_url(url,workspace,output_base_dir):
         summary_file_name = host_data_dir + "ScanSummary.log"
         summary_file = open(summary_file_name, 'a')
 
-        db_vhost = (ip, vhost, 1, 1, workspace)  # in this mode all vhosts are in scope
+        db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
         # print(db_vhost)
         db.create_vhost(db_vhost)
 
@@ -197,7 +197,7 @@ def process_nessus_data(nessus_report,workspace,target=None):
             #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
         else: #if this ip was not already in the db, create a new host and mark it as in scope
             print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
-            db_vhost = (ip, ip, 1, 0, workspace)
+            db_vhost = (ip, ip, 1,0,0, workspace)
             db.create_vhost(db_vhost)
 
         # Step 1: pull all report items in the port scanner family to get every port. The services names are IANA
@@ -259,7 +259,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
             #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
         else: #if this ip was not already in the db, create a new host and mark it as in scope
             print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
-            db_vhost = (ip, ip, 1, 0, workspace)
+            db_vhost = (ip, ip, 1,0,0, workspace)
             db.create_vhost(db_vhost)
 
         for scanned_service_item in scanned_host.services:
