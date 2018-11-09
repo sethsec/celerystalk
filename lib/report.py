@@ -407,7 +407,7 @@ th {
 }
 
 .container {
-  margin-top: 20px;
+  margin-top: 10px;
   
 }
 
@@ -551,7 +551,7 @@ def populate_report_data_html(vhost,workspace):
 
         #This is the part that reads the contents of each output file
         linecount = 0
-        report_host_html_string = report_host_html_string + "        <pre>\n"
+        report_host_html_string = report_host_html_string + "        <pre>"
         try:
             with open(normalized_output_file, "r") as scan_file:
                 for line in scan_file:
