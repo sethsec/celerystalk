@@ -29,6 +29,7 @@ def report(workspace,target_list=None):
 
     cleaner = Cleaner()
     report_count = 0
+
     host_report_file_names = []
     if target_list:
         #TODO for loop around targets in scope or somethign...
@@ -51,6 +52,11 @@ def report(workspace,target_list=None):
     except:
         os.mkdir(workspace_report_directory)
 
+    combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
+    combined_report_file = open(combined_report_file_name, 'w')
+    combined_report_file.write(populate_report_head())
+
+
     for ip in unique_ips:
         ip = ip[0]
         unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
@@ -66,15 +72,14 @@ def report(workspace,target_list=None):
             host_report_file.close()
             print("[+] Report file (single host): {0}".format(host_report_file_name))
 
-    combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
-    combined_report_file = open(combined_report_file_name, 'w')
-    combined_report_file.write(populate_report_head())
+
 
     # Create sidebar navigation
-    for host,report in sorted(host_report_file_names):
+    for vhost,report in sorted(host_report_file_names):
         #TODO: This is static and will be buggy. I think i need to use a regex here to get the hostname which is in between /hostname/celerystalkoutput
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
-        combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(host))
+        combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
+
 
 
     #HTML Report header
@@ -90,26 +95,42 @@ def report(workspace,target_list=None):
     combined_report_file_txt = open(combined_report_file_name_txt, 'w')
 
     # Create the rest of the report
-    for host,report in sorted(host_report_file_names):
-        ip = lib.db.get_vhost_ip(host,workspace)
+    for vhost,report in sorted(host_report_file_names):
+        report_string = ""
+        ip = lib.db.get_vhost_ip(vhost,workspace)
         ip = ip[0][0]
         services = lib.db.get_all_services_for_ip(ip,workspace)
-
-        #These lines write to the parent report file (1 report for however many hosts)
-        combined_report_file.write("""<a name="{0}"></a><br>\n""".format(host))
-        combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(host))
-        #TODO: print services for each host - but onlyh for hte ip??
-        services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th></tr>"
-        for id,ip,port,proto,service,workspace in services:
-            services_table_html = services_table_html + "<tr><td>{0}</td><td>{1}</td><td>{2}</td>".format(port,proto,service)
-        services_table_html = services_table_html + "</table>"
-        combined_report_file.write(services_table_html)
 
         #Text report
         #These lines write to the parent report file (1 report for however many hosts)
         combined_report_file_txt.write('*' * 80 + '\n\n')
         combined_report_file_txt.write('  ' + "Host Report:" + report + '\n')
         combined_report_file_txt.write('\n' + '*' * 80 + '\n\n')
+
+        #These lines write to the parent report file (1 report for however many hosts)
+        combined_report_file.write("""<a name="{0}"></a><br>\n""".format(vhost))
+        combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
+        #TODO: print services for each host - but onlyh for hte ip??
+        services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th></tr>"
+        for id,ip,port,proto,service,workspace in services:
+            services_table_html = services_table_html + "<tr><td>{0}</td><td>{1}</td><td>{2}</td>".format(port,proto,service)
+        services_table_html = services_table_html + "</table><br>"
+        combined_report_file.write(services_table_html)
+
+        screenshot_html = paths_report(vhost)
+        combined_report_file.write(screenshot_html + "<br>")
+
+        #Generate the html code for all of that command output and headers
+        report_host_string = populate_report_data_html(vhost, workspace)
+        report_string = report_string + report_host_string
+        #combined_report_file.write('</pre>\n')
+        combined_report_file.write(report_string)
+
+
+    combined_report_file.write("\n\n")
+    combined_report_file_txt.write("\n\n")
+
+
 
         # with open(report, 'r') as host_report_file:
         #     #Generate html that has each path with a screenshot per line
@@ -134,22 +155,30 @@ def report(workspace,target_list=None):
         #         combined_report_file_txt.write(line)
         #     combined_report_file.write('</pre>\n')
 
-    for ip in unique_ips:
-        ip = ip[0]
-        unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
-
-        # unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
-        report_string = ""
-        for vhost in unique_vhosts_for_ip:
-            vhost = vhost[0]
-            report_host_string = populate_report_data_html(vhost, workspace)
-            report_string = report_string + report_host_string
-        combined_report_file.write('</pre>\n')
-        combined_report_file.write(report_string)
-
-
-        combined_report_file.write("\n\n")
-        combined_report_file_txt.write("\n\n")
+    # for ip in unique_ips:
+    #     ip = ip[0]
+    #     services = lib.db.get_all_services_for_ip(ip, workspace)
+    #
+    #     unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
+    #
+    #     # unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
+    #
+    #     for vhost in unique_vhosts_for_ip:
+    #         vhost = vhost[0]
+    #
+    #         #Generate html that has each path with a screenshot per line
+    #         screenshot_html = paths_report(vhost)
+    #         combined_report_file.write(screenshot_html)
+    #
+    #         #Generate the html code for all of that command output and headers
+    #         report_host_string = populate_report_data_html(vhost, workspace)
+    #         report_string = report_string + report_host_string
+    #     combined_report_file.write('</pre>\n')
+    #     combined_report_file.write(report_string)
+    #
+    #
+    #     combined_report_file.write("\n\n")
+    #     combined_report_file_txt.write("\n\n")
 
 
     report_footer = """
@@ -193,6 +222,21 @@ def populate_report_head():
 body {
     font-family: "Lato", sans-serif;
     font-size: 16px;
+}
+
+table {
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #777;
+    color: white;
 }
 
 .sidenav {
@@ -260,12 +304,14 @@ body {
     background-color: #777;
     color: white;
     cursor: pointer;
-    padding: 6px;
-    width: 100%;
+    padding: 4px;
+    width: 90%;
     border: none;
+    border-radius: 12px;
     text-align: left;
+    text-indent: 5px;    
     outline: none;
-    font-size: 15px;
+    font-size: 12px;
 }
 
 .active, .collapsible:hover {
@@ -366,10 +412,12 @@ def populate_report_data_html(vhost,workspace):
         normalized_output_file = os.path.normpath(vhost_output_file)
         tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
         for command_name,command,status,start_time,run_time in tasks_for_output_file:
-            #print(start_time)
+            #print(run_time)
             #print(type(start_time))
             start_time = time.strftime("%m/%d/%Y %H:%M:%S",time.localtime(float(start_time)))
-            run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
+            if run_time:
+                run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
+
             #Don't print header info for simulation jobs
             if not command.startswith('#'):
                 report_host_html_string = report_host_html_string + "</pre>\n"
