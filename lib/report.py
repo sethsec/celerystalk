@@ -93,7 +93,18 @@ def report(workspace,target_list=None):
     #Text Report
     combined_report_file_name_txt = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].txt')
     combined_report_file_txt = open(combined_report_file_name_txt, 'w')
+    unique_command_names = lib.db.get_unique_command_names(workspace)
+    filter_html_body = '''<div id="myBtnContainer">\n'''
+    filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('all')"> Show all</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('services')"> Services</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('paths')"> Paths</button>\n'''
 
+    for command_name in unique_command_names:
+        command_name = command_name[0]
+        filter_html_body = filter_html_body + "<button class=\"btn\" onclick=\"filterSelection(\'{0}\')\"> {0}</button>\n".format(command_name)
+    filter_html_body = filter_html_body + "</div>"
+
+    combined_report_file.write(filter_html_body)
     # Create the rest of the report
     for vhost,report in sorted(host_report_file_names):
         report_string = ""
@@ -115,10 +126,17 @@ def report(workspace,target_list=None):
         for id,ip,port,proto,service,workspace in services:
             services_table_html = services_table_html + "<tr><td>{0}</td><td>{1}</td><td>{2}</td>".format(port,proto,service)
         services_table_html = services_table_html + "</table><br>"
+
+        combined_report_file.write('''<div class="filterDiv services">\n''')
         combined_report_file.write(services_table_html)
+        combined_report_file.write("</div>")
+
 
         screenshot_html = paths_report(vhost)
+
+        combined_report_file.write('''<div class="filterDiv paths">\n''')
         combined_report_file.write(screenshot_html + "<br>")
+        combined_report_file.write("</div>")
 
         #Generate the html code for all of that command output and headers
         report_host_string = populate_report_data_html(vhost, workspace)
@@ -198,6 +216,54 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 </script>
+
+<script>
+filterSelection("all")
+function filterSelection(c) {
+  var x, i;
+  x = document.getElementsByClassName("filterDiv");
+  if (c == "all") c = "";
+  for (i = 0; i < x.length; i++) {
+    w3RemoveClass(x[i], "show");
+    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+  }
+}
+
+function w3AddClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+  }
+}
+
+function w3RemoveClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    while (arr1.indexOf(arr2[i]) > -1) {
+      arr1.splice(arr1.indexOf(arr2[i]), 1);     
+    }
+  }
+  element.className = arr1.join(" ");
+}
+
+// Add active class to the current button (highlight it)
+var btnContainer = document.getElementById("myBtnContainer");
+var btns = btnContainer.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function(){
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+</script>
+
+
+
 """
 
     combined_report_file.write(report_footer)
@@ -325,6 +391,37 @@ th {
     background-color: #f1f1f1;    
 }
 
+
+.filterDiv {
+  margin: 2px;
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+.container {
+  margin-top: 20px;
+  
+}
+
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  background-color: #f1f1f1;
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+
 </style>
 </head>
 <body>
@@ -420,7 +517,9 @@ def populate_report_data_html(vhost,workspace):
 
             #Don't print header info for simulation jobs
             if not command.startswith('#'):
-                report_host_html_string = report_host_html_string + "</pre>\n"
+                #report_host_html_string = report_host_html_string + "</pre>\n"
+                report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
+
                 report_host_html_string = report_host_html_string + '''<button class="collapsible">''' + command_name + '''</button>\n'''
                 report_host_html_string = report_host_html_string + '''<div class="content">'''
                 report_host_html_string = report_host_html_string + '''<table>'''
@@ -436,7 +535,7 @@ def populate_report_data_html(vhost,workspace):
                         report_host_html_string = report_host_html_string + "<tr><td>Status:</td><td>" + status + '</td></tr>\n'
                 except OSError, e:
                     report_host_html_string = report_host_html_string +  "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
-                    report_host_html_string = report_host_html_string +  "\nError: No such file or directory: " + normalized_output_file + "</td></tr>\n"
+                    report_host_html_string = report_host_html_string +  "\nError!: No such file or directory: " + normalized_output_file + "</td></tr>\n"
                     # report_host_html_string = report_host_html_string +  "{0} did not produce any data\n".format(command_name))
                 report_host_html_string = report_host_html_string +  "</table></div>\n"
 
@@ -465,7 +564,7 @@ def populate_report_data_html(vhost,workspace):
             #dont tell the user at the concole that file didnt exist.
             pass
         finally:
-            report_host_html_string = report_host_html_string + "</pre>\n"
+            report_host_html_string = report_host_html_string + "</pre></div>\n"
     return report_host_html_string
 
 
