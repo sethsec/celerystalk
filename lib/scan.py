@@ -124,8 +124,7 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir):
     db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
 
     for db_service in db_services:
-        (id, ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
-         workspace) = db_service
+        (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info,workspace) = db_service  #ip,port,proto,service,product,version,extra_info
 
         scan_output_base_file_name = host_data_dir + vhost + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol + "_"
@@ -424,7 +423,7 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
             db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
 
             for db_service in db_services:
-                (id,ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace) = db_service
+                (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info,workspace) = db_service
 
                 scan_output_base_file_name = host_data_dir + vhost + "_" + str(scanned_service_port) + "_" + scanned_service_protocol + "_"
 
@@ -631,7 +630,7 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
     ip = db.get_vhost_ip(scannable_vhost, workspace)
     ip = ip[0][0]
     db_scanned_services = db.get_all_services_for_ip(ip, workspace)
-    for (id,ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace) in db_scanned_services:
+    for (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info,workspace) in db_scanned_services:
     #run chain on each one and then update db as submitted
         scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" +  str(scanned_service_port) + "_" + scanned_service_protocol + "_"
         host_dir = output_base_dir + "/" + ip
