@@ -122,9 +122,10 @@ def report(workspace,target_list=None):
         combined_report_file.write("""<a name="{0}"></a><br>\n""".format(vhost))
         combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
         #TODO: print services for each host - but onlyh for hte ip??
-        services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th></tr>"
-        for id,ip,port,proto,service,workspace in services:
-            services_table_html = services_table_html + "<tr>\n<td>{0}</td>\n<td>{1}</td>\n<td>{2}</td>\n</tr>\n".format(port,proto,service)
+        services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr>"
+
+        for ip,port,proto,service,product,version,extra_info in services:
+            services_table_html = services_table_html + "<tr>\n<td>{0}</td>\n<td>{1}</td>\n<td>{2}</td>\n\n<td>{3}</td>\n<td>{4}</td>\n<td>{5}</td></tr>\n".format(port,proto,service,product,version,extra_info)
         services_table_html = services_table_html + "</table>\n<br>\n"
 
         combined_report_file.write('''\n<div class="filterDiv services">\n''')
@@ -551,7 +552,9 @@ def populate_report_data_html(vhost,workspace):
 
         #This is the part that reads the contents of each output file
         linecount = 0
-        report_host_html_string = report_host_html_string + "        <pre>"
+        #report_host_html_string = report_host_html_string + "        <pre>"
+        report_host_html_string = report_host_html_string + "        <div>"
+
         try:
             with open(normalized_output_file, "r") as scan_file:
                 for line in scan_file:
@@ -564,7 +567,7 @@ def populate_report_data_html(vhost,workspace):
                         print("     " + line)
                         sanitized = ""
                     if linecount < 300:
-                        report_host_html_string = report_host_html_string + sanitized
+                        report_host_html_string = report_host_html_string + sanitized + "<br />"
                     linecount = linecount + 1
                 if linecount > 300:
                     report_host_html_string = report_host_html_string +  "\nSnip... Only displaying first 300 of the total " + str(
@@ -573,7 +576,9 @@ def populate_report_data_html(vhost,workspace):
             #dont tell the user at the concole that file didnt exist.
             pass
 
-        report_host_html_string = report_host_html_string + "        </pre>\n</div>\n"
+        #report_host_html_string = report_host_html_string + "        </pre>\n</div>\n"
+        report_host_html_string = report_host_html_string + "        </div>\n</div>\n"
+
     return report_host_html_string
 
 

@@ -4,7 +4,7 @@
 Usage:
     celerystalk workspace create -o <output_dir> [-w workspace_name]
     celerystalk workspace [<workspace_name>]
-    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
+    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-O outOfScope.txt][-u <url>]
     celerystalk subdomains -d <domains> [-s]
     celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
@@ -26,7 +26,8 @@ Options:
     -v --version        Show version
     -f <nmap_file>      Nmap xml import file
     -o <output_dir>     Output directory
-    -S <scope_file>      Scope import file
+    -S <scope_file>     Scope import file
+    -O <outscope_file>  Out of scope hosts file
     -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
     -u <url>            URL to parse and scan with all configured tools
@@ -46,6 +47,8 @@ Examples:
     Import Nessus file:         celerystalk import -f /assessments/scan.nessus
     Import list of Domains:     celerystalk import -D <file>
     Import list of IPs/Ranges:  celerystalk import -S <file>
+    Specify out of scope hosts: celerystalk import -O <file>
+
     Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
 
   Subdomain Recon
@@ -123,7 +126,7 @@ from prettytable import PrettyTable
 import csv
 
 
-build=str(120)
+build=str(121)
 
 def print_banner():
 
@@ -413,7 +416,7 @@ def main(arguments):
         else:
             if arguments["hosts"]:
                 print("[+] Showing hosts for the [{0}] workspace\n".format(workspace))
-                columns = ["IP","Vhost","In Scope","Submitted"]
+                columns = ["IP","Vhost","In Scope","Explicit Out of Scope","Submitted"]
                 host_rows = lib.db.get_vhosts_table(workspace)
                 hosts_table = PrettyTable(columns)
                 hosts_table.align[columns[0]] = "l"
@@ -424,7 +427,7 @@ def main(arguments):
                 print("\n\n")
             elif arguments["vhosts"]:
                 print("[+] Showing vhosts for the [{0}] workspace\n".format(workspace))
-                columns = ["IP","Vhost","In Scope","Submitted"]
+                columns = ["IP","Vhost","In Scope","Explicit Out of Scope","Submitted"]
                 host_rows = lib.db.get_vhosts_table(workspace)
                 hosts_table = PrettyTable(columns)
                 hosts_table.align[columns[0]] = "l"
@@ -436,14 +439,14 @@ def main(arguments):
                 print("\n\n")
             elif arguments["services"]:
                 print("[+] Showing services for the [{0}] workspace\n".format(workspace))
-                columns = ["IP", "Port", "Protocol","Service"]
+                columns = ["IP", "Port", "Protocol","Service","Product","Version","Extra Info"]
                 services_rows = lib.db.get_all_services(workspace)
                 services_table = PrettyTable(columns)
                 services_table.align[columns[0]] = "l"
                 services_table.align[columns[1]] = "l"
                 services_table.align[columns[3]] = "l"
                 for row in services_rows:
-                    services_table.add_row(row[1:5])
+                    services_table.add_row(row[0:7])
                 print(services_table)
                 print("\n\n")
             elif arguments["paths"]:
@@ -466,7 +469,7 @@ def main(arguments):
                 hosts_output_file = os.path.join(output_dir,hosts_filename)
                 with open(hosts_output_file, 'wb') as f:
                     writer = csv.writer(f)
-                    writer.writerow(["IP","vhost","in_scope"])
+                    writer.writerow(["IP","vhost","in_scope","explicit_out_of_scope","submitted"])
                     writer.writerows(host_rows)
                 print("[+] Saved all hosts in the [{0}] workspace to {1}".format(workspace, hosts_output_file))
 
@@ -476,7 +479,7 @@ def main(arguments):
                 services_output_file = os.path.join(output_dir, services_filename)
                 with open(services_output_file, 'wb') as f:
                     writer = csv.writer(f)
-                    writer.writerow(["IP", "Port", "Protocol","Service"])
+                    writer.writerow(["IP", "Port", "Protocol","Service","Product","Version","Extra Info"])
                     writer.writerows(services_rows)
                 print("[+] Saved all ports in the [{0}] workspace to {1}".format(workspace,services_output_file))
 

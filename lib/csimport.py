@@ -7,6 +7,29 @@ import lib.utils
 from lib import db
 import urlparse
 
+def import_out_of_scope(out_of_scope_file,workspace):
+    with open(out_of_scope_file) as osf:
+        for vhost in osf.readlines():
+            vhost = vhost.rstrip()
+            # print(vhost)
+            # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
+            ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+            vhost = ansi_escape.sub('', vhost)
+            # print("escaped:\t" + vhost)
+            if re.match(r'\w', vhost):
+                #scope, ip = lib.utils.domain_scope_checker(vhost, workspace)
+                is_vhost_in_db = lib.db.is_vhost_in_db(vhost,workspace)
+                in_scope, ip = lib.utils.domain_scope_checker(vhost, workspace)
+                if is_vhost_in_db:
+                    lib.db.update_vhosts_explicit_out_of_scope(vhost,workspace,1)
+                else:
+                    print("[+] Adding vhost to list of explicitly out of scope vhosts:\t" + vhost)
+                    db_vhost = (ip, vhost, 0, 1, 0, workspace)
+                    lib.db.create_vhost(db_vhost)
+                    print("[+] Adding IP to list of explicitly out of scope vhosts:\t{0} ({1})".format(ip,vhost))
+                    db_vhost = (ip, ip, 0, 1, 0, workspace)
+                    lib.db.create_vhost(db_vhost)
+
 
 def import_scope(scope_file,workspace):
     with open(scope_file) as sf:
@@ -28,8 +51,10 @@ def import_scope(scope_file,workspace):
                     #scopeList.append(netRange)
                     for ip in netRange:
                         ip = str(ip)
-                        db_vhost = (ip, ip, 1,0,0, workspace) # add it to the vhosts db and mark as in scope
-                        lib.db.create_vhost(db_vhost)
+                        vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+                        if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+                            db_vhost = (ip, ip, 1,0,0, workspace) # add it to the vhosts db and mark as in scope
+                            lib.db.create_vhost(db_vhost)
                 else:
                     try:
                         # If there is no period, that means we just have the last octet for the second half.
@@ -39,8 +64,10 @@ def import_scope(scope_file,workspace):
                         netRange = IPAddress(startpart + "." + rangeend)
                         for ip in netRange:
                             ip = str(ip)
-                            db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
-                            lib.db.create_vhost(db_vhost)
+                            vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+                            if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+                                db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
+                                lib.db.create_vhost(db_vhost)
                     except Exception, e:
                         # Putting this try/except here because i have a feeling that at some point we will see
                         # something like 192.168.0.0-192.168.200.255 or something like that.  Not handling that
@@ -53,8 +80,10 @@ def import_scope(scope_file,workspace):
                 net = IPNetwork(network)
                 for ip in net:
                     ip = str(ip)
-                    db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
-                    lib.db.create_vhost(db_vhost)
+                    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+                    if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+                        db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
+                        lib.db.create_vhost(db_vhost)
                 #scopeList.append(net)
 
 
@@ -68,15 +97,18 @@ def import_vhosts(subdomains_file,workspace):
             vhost = ansi_escape.sub('', vhost)
             #print("escaped:\t" + vhost)
             if re.match(r'\w', vhost):
-                in_scope,ip = lib.utils.domain_scope_checker(vhost,workspace)
-                if in_scope == 1:
-                    print("[+] Found subdomain (in scope):\t\t\t" + vhost)
-                    db_vhost = (ip,vhost,1,0,0,workspace)
-                    lib.db.create_vhost(db_vhost)
-                else:
-                    print("[+] Found subdomain (out of scope):\t\t" + vhost)
-                    db_vhost = (ip, vhost, 0,0,0, workspace)
-                    lib.db.create_vhost(db_vhost)
+                vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost,workspace)
+                in_scope, ip = lib.utils.domain_scope_checker(vhost, workspace)
+                if not vhost_explicitly_out_of_scope:
+                    if in_scope == 1:
+                        print("[+] Found subdomain (in scope):\t\t\t" + vhost)
+                        db_vhost = (ip,vhost,1,0,0,workspace)
+                        lib.db.create_vhost(db_vhost)
+                    else:
+                        print("[+] Found subdomain (out of scope):\t\t" + vhost)
+                        db_vhost = (ip, vhost, 0,0,0, workspace)
+                        lib.db.create_vhost(db_vhost)
+
 
 
 def import_url(url,workspace,output_base_dir):
@@ -106,80 +138,91 @@ def import_url(url,workspace,output_base_dir):
 
     in_scope, ip = lib.utils.domain_scope_checker(vhost, workspace)
     proto = "tcp"
+    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+    if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+        if in_scope == 0:
+            answer = raw_input(
+                "[+] {0} is not in scope. Would you like to to add {1}/{0} to the list of in scope hosts?".format(vhost,
+                                                                                                                  ip))
+            if (answer == "Y") or (answer == "y") or (answer == ""):
+                in_scope = 1
+        if in_scope == 1:
+            db_vhost = (ip, vhost, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
+            lib.db.create_vhost(db_vhost)
+            #lib.db.create_service(db_service)
 
-    if in_scope == 0:
-        answer = raw_input(
-            "[+] {0} is not in scope. Would you like to to add {1}/{0} to the list of in scope hosts?".format(vhost,
-                                                                                                              ip))
-        if (answer == "Y") or (answer == "y") or (answer == ""):
-            in_scope = 1
-    if in_scope == 1:
-        db_vhost = (ip, vhost, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
-        lib.db.create_vhost(db_vhost)
-        #lib.db.create_service(db_service)
+            if ip == vhost:
+                scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
+                    port) + "_" + proto + "_"
+            else:
+                scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
+                    port) + "_" + proto + "_"
 
-        if ip == vhost:
-            scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
-                port) + "_" + proto + "_"
-        else:
-            scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
-                port) + "_" + proto + "_"
+            host_dir = output_base_dir + "/" + ip
+            host_data_dir = host_dir + "/celerystalkOutput/"
+            # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
+            lib.utils.create_dir_structure(ip, host_dir)
+            # Next two lines create the file that will contain each command that was executed. This is not the audit log,
+            # but a log of commands that can easily be copy/pasted if you need to run them again.
+            summary_file_name = host_data_dir + "ScanSummary.log"
+            summary_file = open(summary_file_name, 'a')
 
-        host_dir = output_base_dir + "/" + ip
-        host_data_dir = host_dir + "/celerystalkOutput/"
-        # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
-        lib.utils.create_dir_structure(ip, host_dir)
-        # Next two lines create the file that will contain each command that was executed. This is not the audit log,
-        # but a log of commands that can easily be copy/pasted if you need to run them again.
-        summary_file_name = host_data_dir + "ScanSummary.log"
-        summary_file = open(summary_file_name, 'a')
+            db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
+            # print(db_vhost)
+            db.create_vhost(db_vhost)
 
-        db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
-        # print(db_vhost)
-        db.create_vhost(db_vhost)
+            # Insert port/service combo into services table if it doesnt exist
+            db_service = db.get_service(ip, port, proto, workspace)
+            if not db_service:
+                db_string = (ip, port, proto, scheme,'','','',workspace)
+                db.create_service(db_string)
 
-        # Insert port/service combo into services table if it doesnt exist
-        db_service = db.get_service(ip, port, proto, workspace)
-        if not db_service:
-            db_string = (ip, port, proto, scheme, workspace)
-            db.create_service(db_string)
+            # Insert url into paths table and take screenshot
+            db_path = db.get_path(path, workspace)
+            if not db_path:
+                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                    .replace("/", "_") \
+                    .replace("\\", "") \
+                    .replace(":", "_") + ".png"
+                url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
+                db.insert_new_path(db_path)
+                # print("Found Url: " + str(url))
+                #urls_to_screenshot.append((url, url_screenshot_filename))
 
-        # Insert url into paths table and take screenshot
-        db_path = db.get_path(path, workspace)
-        if not db_path:
-            url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                .replace("/", "_") \
-                .replace("\\", "") \
-                .replace(":", "_") + ".png"
-            url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                #lib.utils.take_screenshot(urls_to_screenshot)
+                # print(result)
+
+
             db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
-            db.insert_new_path(db_path)
-            # print("Found Url: " + str(url))
-            #urls_to_screenshot.append((url, url_screenshot_filename))
-
-            #lib.utils.take_screenshot(urls_to_screenshot)
-            # print(result)
-
-
-        db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
-        lib.db.insert_new_path(db_path)
-
+            lib.db.insert_new_path(db_path)
+    else:
+        print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
 
 def update_inscope_vhosts(workspace):
     vhosts = lib.db.get_unique_out_of_scope_vhosts(workspace)
     #print(vhosts)
     for vhost in vhosts:
+        #TODO: check to see if host is excplictly out of scope and if so don't add it in scope!!
         vhost = vhost[0].rstrip()
-        #print(vhost)
         # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
         ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
         vhost = ansi_escape.sub('', vhost)
-        #print("escaped:\t" + vhost)
-        if re.match(r'\w', vhost):
-            in_scope,ip = lib.utils.domain_scope_checker(vhost,workspace)
-            if in_scope == 1:
-                print("[+] Domain is now in scope:\t" + vhost)
-                lib.db.update_vhosts_in_scope(ip,vhost,workspace,1)
+
+        #this check is to prevent a host from being marked in scope if it iss explicltly marked out of scope.
+        vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+        if not vhost_explicitly_out_of_scope:
+            if re.match(r'\w', vhost):
+                in_scope,ip = lib.utils.domain_scope_checker(vhost,workspace)
+                if in_scope == 1:
+                    print("[+] Domain is now in scope:\t" + vhost)
+                    lib.db.update_vhosts_in_scope(ip,vhost,workspace,1)
+        else:
+            print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
+
+
+
+
 
 
 def process_nessus_data(nessus_report,workspace,target=None):
@@ -187,15 +230,21 @@ def process_nessus_data(nessus_report,workspace,target=None):
         #print scanned_host.address
         ip = scanned_host.address
 
-        unique_db_ips = lib.db.is_vhost_ip_in_db(ip,workspace) #Returns data if IP is in database
+        unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
         if unique_db_ips: #If this IP was in the db...
-            if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
-                print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
-                lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
-            # else:
-            #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
+            vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+            if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+                if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
+                    print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
+                    lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
+                # else:
+                #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
+            else:
+                print("[!] {0} is explicitly marked as out of scope. Skipping...".format(ip))
+
         else: #if this ip was not already in the db, create a new host and mark it as in scope
+            #note to self: i dont need to check to see if it is explicitly out of scope beccause i already know its not in db at all...
             print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
             db_vhost = (ip, ip, 1,0,0, workspace)
             db.create_vhost(db_vhost)
@@ -211,7 +260,7 @@ def process_nessus_data(nessus_report,workspace,target=None):
                     db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
 
                     if not db_service:
-                        db_string = (ip,scanned_service_port,scanned_service_protocol,scanned_service_name,workspace)
+                        db_string = (ip,scanned_service_port,scanned_service_protocol,scanned_service_name,'','','',workspace)
                         db.create_service(db_string)
 
         # Step 2: Cycle through the service detection items and update the services where we have a better idea of
@@ -223,7 +272,7 @@ def process_nessus_data(nessus_report,workspace,target=None):
                 scanned_service_name = report_item.service
                 db_service = db.get_service(ip,scanned_service_port,scanned_service_protocol,workspace)
                 if not db_service:
-                    db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace)
+                    db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,'','','', workspace)
                     db.create_service(db_string)
                     #print("new service2: " + ip,scanned_service_port,scanned_service_name)
                 else:
@@ -248,16 +297,22 @@ def process_nessus_data(nessus_report,workspace,target=None):
 def process_nmap_data(nmap_report,workspace, target=None):
     for scanned_host in nmap_report.hosts:
         ip=scanned_host.id
-        unique_db_ips = lib.db.is_vhost_ip_in_db(ip,workspace) #Returns data if IP is in database
+        unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
 
         if unique_db_ips: #If this IP was in the db...
-            #if not lib.db.get_in_scope_ip(ip,workspace):    # but if it is not in scope...
-                print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
-                lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
-            # else:
-            #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
+            vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+            if not vhost_explicitly_out_of_scope: #and if the vhost is not explicitly out of scope
+                if not lib.db.get_in_scope_ip(ip,workspace):  # and if it is not in scope...
+                    print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
+                    lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)  # update the host to add it to scope, if it was already in scope, do nothing
+                # else:
+                #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
+            else:
+                print("[!] {0} is explicitly marked as out of scope. Skipping...".format(ip))
+
         else: #if this ip was not already in the db, create a new host and mark it as in scope
+            #note to self: i dont need to check to see if it is out of scope beccause i already know its not in db at all...
             print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
             db_vhost = (ip, ip, 1,0,0, workspace)
             db.create_vhost(db_vhost)
@@ -270,13 +325,6 @@ def process_nmap_data(nmap_report,workspace, target=None):
 
                 if scanned_service_item.tunnel == 'ssl':
                     scanned_service_name = 'https'
-                db_service = db.get_service(ip, scanned_service_port, scanned_service_protocol, workspace)
-                if not db_service:
-                    db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace)
-                    db.create_service(db_string)
-                else:
-                    db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
-                                      workspace)
 
                 #Not using this yet, but I'd like to do send this to searchsploit
                 try:
@@ -293,12 +341,22 @@ def process_nmap_data(nmap_report,workspace, target=None):
                     scanned_service_extrainfo = ''
                 #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
 
+                db_service = db.get_service(ip, scanned_service_port, scanned_service_protocol, workspace)
+                if not db_service:
+                    db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, scanned_service_product, scanned_service_version, scanned_service_extrainfo, workspace)
+                    db.create_service(db_string)
+                else:
+                    db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
+                                      workspace)
 
 def importcommand(workspace, output_dir, arguments):
     celery_path = sys.path[0]
 
     #lib.utils.start_services()
     in_scope_hosts_before = lib.db.get_unique_inscope_vhosts(workspace)
+
+    if arguments["-O"]:
+        lib.csimport.import_out_of_scope(arguments["-O"],workspace)
 
     if arguments["-S"]:
         lib.csimport.import_scope(arguments["-S"],workspace)

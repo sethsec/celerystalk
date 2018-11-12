@@ -96,7 +96,10 @@ def create_services_table():
                                         ip text NOT NULL,
                                         port int NOT NULL,
                                         proto text NOT NULL,
-                                        service text,                                        
+                                        service text,
+                                        product text,
+                                        version text,
+                                        extra_info text,                                        
                                         workspace text
                                     ); """
     CUR.execute(sql_create_services_table)
@@ -371,8 +374,8 @@ def create_service(db_service):
     :param workspace:
     :return:
     """
-    sql = ''' INSERT INTO services(ip,port,proto,service,workspace)
-              VALUES(?,?,?,?,?) '''
+    sql = ''' INSERT INTO services(ip,port,proto,service,product,version,extra_info,workspace)
+              VALUES(?,?,?,?,?,?,?,?) '''
     CUR.execute(sql, db_service)
     CONNECTION.commit()
 
@@ -383,13 +386,13 @@ def get_service(ip,port,protocol,workspace):
     return service_row
 
 def get_all_services(workspace):
-    CUR.execute("SELECT * FROM services WHERE workspace=? ORDER BY ip,port", (workspace,))
+    CUR.execute("SELECT ip,port,proto,service,product,version,extra_info FROM services WHERE workspace=? ORDER BY ip,port", (workspace,))
     service_rows = CUR.fetchall()
     CONNECTION.commit()
     return service_rows
 
 def get_all_services_for_ip(ip,workspace):
-    CUR.execute("SELECT * FROM services WHERE ip=? AND workspace=?", (ip,workspace))
+    CUR.execute("SELECT ip,port,proto,service,product,version,extra_info FROM services WHERE ip=? AND workspace=?", (ip,workspace))
     service_rows = CUR.fetchall()
     CONNECTION.commit()
     return service_rows
@@ -427,8 +430,8 @@ def get_host_by_ip(ip,workspace):
     CONNECTION.commit()
     return vhost_rows
 
-def is_vhost_ip_in_db(ip,workspace):
-    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=?", (ip,workspace))
+def is_vhost_in_db(vhost,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=?", (vhost,workspace))
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
@@ -476,7 +479,13 @@ def get_unique_out_of_scope_ips(workspace):
     return host_rows
 
 def get_unique_explicit_out_of_scope_vhosts(workspace):
-    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_of_scope=?", (workspace,1))
+    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_scope=?", (workspace,1))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def is_vhost_explicitly_out_of_scope(vhost,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=? AND explicit_out_scope=?", (vhost,workspace,1))
     host_rows = CUR.fetchall()
     CONNECTION.commit()
     return host_rows
@@ -508,7 +517,7 @@ def get_vhost_ip(scannable_vhost,workspace):
     return ip
 
 def get_vhosts_table(workspace):
-    CUR.execute("SELECT ip,vhost,in_scope,submitted FROM vhosts WHERE workspace=? ORDER BY in_scope DESC, ip,vhost", (workspace,))
+    CUR.execute("SELECT ip,vhost,in_scope,explicit_out_scope,submitted FROM vhosts WHERE workspace=? ORDER BY explicit_out_scope ASC, in_scope DESC,ip,vhost", (workspace,))
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
@@ -521,8 +530,8 @@ def update_vhosts_in_scope(ip,vhost,workspace,in_scope):
     CUR.execute("UPDATE vhosts SET in_scope=? WHERE ip=? AND vhost=? AND workspace=?", (in_scope,ip,vhost,workspace))
     CONNECTION.commit()
 
-def update_vhosts_explicit_out_of_scope(ip,vhost,workspace,explicit_out_of_scope):
-    CUR.execute("UPDATE vhosts SET explicit_out_of_scope=? AND vhost=? AND workspace=?", (explicit_out_of_scope,vhost,workspace))
+def update_vhosts_explicit_out_of_scope(vhost,workspace,explicit_out_scope):
+    CUR.execute("UPDATE vhosts SET explicit_out_scope=? WHERE vhost=? AND workspace=?", (explicit_out_scope,vhost,workspace))
     CONNECTION.commit()
 
 #############################

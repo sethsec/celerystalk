@@ -28,25 +28,29 @@ def process_db_vhosts(workspace, simulation, target_list=None):
         for vhost in target_list:
             for unscanned_vhost in unique_unscanned_vhosts_list:
                 if str(vhost) == str(unscanned_vhost):
-                    try:
-                        IPAddress(vhost)
-                        command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
-                    except:
-                        command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation,output_base_dir)
-                    if len(command_list) > 0:
-                        print("Submitted [{1}] tasks for {0}".format(unscanned_vhost, len(command_list)))
-                    all_commands = all_commands + command_list
+                    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+                    if not vhost_explicitly_out_of_scope:
+                        try:
+                            IPAddress(vhost)
+                            command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                        except:
+                            command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation,output_base_dir)
+                        if len(command_list) > 0:
+                            print("Submitted [{1}] tasks for {0}".format(unscanned_vhost, len(command_list)))
+                        all_commands = all_commands + command_list
     else:
         for vhost in unique_unscanned_vhosts_list:
             #print(vhost)
-            try:
-                IPAddress(vhost)
-                command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
-            except:
-                command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir)
-            if len(command_list) > 0:
-                print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
-            all_commands = all_commands + command_list
+            vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+            if not vhost_explicitly_out_of_scope:
+                try:
+                    IPAddress(vhost)
+                    command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                except:
+                    command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir)
+                if len(command_list) > 0:
+                    print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
+                all_commands = all_commands + command_list
 
     shuffle(all_commands)
     for populated_command_tuple in all_commands:
@@ -242,105 +246,108 @@ def process_url(url, workspace, output_dir, arguments):
         except:
             print("Error getting IP")
     proto = "tcp"
+    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+    if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+        if ip == vhost:
+            scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
+                port) + "_" + proto + "_"
+        else:
+            scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
+                port) + "_" + proto + "_"
 
-    if ip == vhost:
-        scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
-            port) + "_" + proto + "_"
+        host_dir = output_dir + "/" + ip
+        host_data_dir = host_dir + "/celerystalkOutput/"
+        # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
+        utils.create_dir_structure(ip, host_dir)
+        # Next two lines create the file that will contain each command that was executed. This is not the audit log,
+        # but a log of commands that can easily be copy/pasted if you need to run them again.
+        summary_file_name = host_data_dir + "ScanSummary.log"
+        summary_file = open(summary_file_name, 'a')
+
+        db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
+        # print(db_vhost)
+        #create it if it doesnt exist (if it does, doing this doesnt change anything)
+        db.create_vhost(db_vhost)
+        # mark this host as in scope now
+        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+
+        #only mark it as submitted if it is not in scope.
+        if not simulation:
+            lib.db.update_vhosts_submitted(ip, vhost, workspace, 1)
+
+        # Insert port/service combo into services table if it doesnt exist
+        db_service = db.get_service(ip, port, proto, workspace)
+        if not db_service:
+            db_string = (ip, port, proto, scheme,'','','',workspace)
+            db.create_service(db_string)
+
+        #mark this host as in scope now
+        if not simulation:
+            db.update_vhosts_submitted(vhost, vhost, workspace, 1)
+    # I might want to keep this, but i think it is redundant if we have gobuster and photon screenshots...
+        # Insert url into paths table and take screenshot
+        # db_path = db.get_path(path, workspace)
+        # if not db_path:
+        #     url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+        #         .replace("/", "_") \
+        #         .replace("\\", "") \
+        #         .replace(":", "_") + ".png"
+        #     url_screenshot_filename = url_screenshot_filename.replace("__", "")
+        #     db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
+        #     db.insert_new_path(db_path)
+        #     # print("Found Url: " + str(url))
+        #     urls_to_screenshot.append((url, url_screenshot_filename))
+        #     if not simulation:
+        #         task_id = uuid()
+        #         command_name = "Screenshots"
+        #         populated_command = "firefox-esr URL mode screenshot | {0} | {1}".format(vhost,scan_output_base_file_dir)
+        #         utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
+        #         result = tasks.cel_take_screenshot.delay(urls_to_screenshot,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
+        #     # print(result)
+
+        # TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
+        for section in config.sections():
+            if (section == "http") or (section == "https"):
+                if section == scheme:
+                    for (cmd_name, cmd) in config.items(section):
+                        outfile = scan_output_base_file_dir + cmd_name
+                        populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]",
+                                                                                    str(port)).replace("[OUTPUT]",
+                                                                                                       outfile).replace(
+                            "[PATH]", path)
+                        if simulation:
+                            # debug - sends jobs to celery, but with a # in front of every one.
+                            populated_command = "#" + populated_command
+
+                        # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
+                        # that allows me to pass it to all of the tasks in the chain.
+
+                        task_id = uuid()
+                        utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
+                        result = chain(
+                            # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+                            # in celery the same way a task does, for instance, you can't find it in flower
+                            # tasks.cel_create_task.subtask(args=(cmd_name,populated_command, vhost, outfile + ".txt", workspace, task_id)),
+
+                            # run the command. run_task takes care of marking the task as started and then completed.
+                            # The si tells run_cmd to ignore the data returned from a previous task
+                            tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+
+                            # right now, every executed command gets sent to a generic post_process task that can do
+                            # additinoal stuff based on the command that just ran.
+                            tasks.post_process.si(cmd_name, populated_command, output_dir, workspace, vhost,
+                                                  host_dir,
+                                                  simulation, port, scheme, proto, celery_path),
+                        )()  # .apply_async()
+
+                        task_id_list.append(result.task_id)
+                        host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
+                        f = open(host_audit_log, 'a')
+                        f.write(populated_command + "\n\n")
+                        f.close()
+        print("[+] Submitted {0} tasks to queue.\n".format(len(task_id_list)))
     else:
-        scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
-            port) + "_" + proto + "_"
-
-    host_dir = output_dir + "/" + ip
-    host_data_dir = host_dir + "/celerystalkOutput/"
-    # Creates something like /pentest/10.0.0.1, /pentest/10.0.0.2, etc.
-    utils.create_dir_structure(ip, host_dir)
-    # Next two lines create the file that will contain each command that was executed. This is not the audit log,
-    # but a log of commands that can easily be copy/pasted if you need to run them again.
-    summary_file_name = host_data_dir + "ScanSummary.log"
-    summary_file = open(summary_file_name, 'a')
-
-    db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
-    # print(db_vhost)
-    #create it if it doesnt exist (if it does, doing this doesnt change anything)
-    db.create_vhost(db_vhost)
-    # mark this host as in scope now
-    lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
-
-    #only mark it as submitted if it is not in scope.
-    if not simulation:
-        lib.db.update_vhosts_submitted(ip, vhost, workspace, 1)
-
-    # Insert port/service combo into services table if it doesnt exist
-    db_service = db.get_service(ip, port, proto, workspace)
-    if not db_service:
-        db_string = (ip, port, proto, scheme, workspace)
-        db.create_service(db_string)
-
-    #mark this host as in scope now
-    if not simulation:
-        db.update_vhosts_submitted(vhost, vhost, workspace, 1)
-# I might want to keep this, but i think it is redundant if we have gobuster and photon screenshots...
-    # Insert url into paths table and take screenshot
-    # db_path = db.get_path(path, workspace)
-    # if not db_path:
-    #     url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-    #         .replace("/", "_") \
-    #         .replace("\\", "") \
-    #         .replace(":", "_") + ".png"
-    #     url_screenshot_filename = url_screenshot_filename.replace("__", "")
-    #     db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
-    #     db.insert_new_path(db_path)
-    #     # print("Found Url: " + str(url))
-    #     urls_to_screenshot.append((url, url_screenshot_filename))
-    #     if not simulation:
-    #         task_id = uuid()
-    #         command_name = "Screenshots"
-    #         populated_command = "firefox-esr URL mode screenshot | {0} | {1}".format(vhost,scan_output_base_file_dir)
-    #         utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
-    #         result = tasks.cel_take_screenshot.delay(urls_to_screenshot,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
-    #     # print(result)
-
-    # TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
-    for section in config.sections():
-        if (section == "http") or (section == "https"):
-            if section == scheme:
-                for (cmd_name, cmd) in config.items(section):
-                    outfile = scan_output_base_file_dir + cmd_name
-                    populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]",
-                                                                                str(port)).replace("[OUTPUT]",
-                                                                                                   outfile).replace(
-                        "[PATH]", path)
-                    if simulation:
-                        # debug - sends jobs to celery, but with a # in front of every one.
-                        populated_command = "#" + populated_command
-
-                    # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
-                    # that allows me to pass it to all of the tasks in the chain.
-
-                    task_id = uuid()
-                    utils.create_task(cmd_name, populated_command, vhost, outfile + ".txt", workspace, task_id)
-                    result = chain(
-                        # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                        # in celery the same way a task does, for instance, you can't find it in flower
-                        # tasks.cel_create_task.subtask(args=(cmd_name,populated_command, vhost, outfile + ".txt", workspace, task_id)),
-
-                        # run the command. run_task takes care of marking the task as started and then completed.
-                        # The si tells run_cmd to ignore the data returned from a previous task
-                        tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-
-                        # right now, every executed command gets sent to a generic post_process task that can do
-                        # additinoal stuff based on the command that just ran.
-                        tasks.post_process.si(cmd_name, populated_command, output_dir, workspace, vhost,
-                                              host_dir,
-                                              simulation, port, scheme, proto, celery_path),
-                    )()  # .apply_async()
-
-                    task_id_list.append(result.task_id)
-                    host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
-                    f = open(host_audit_log, 'a')
-                    f.write(populated_command + "\n\n")
-                    f.close()
-    print("[+] Submitted {0} tasks to queue.\n".format(len(task_id_list)))
+        print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
 
 
 def process_db_services(output_base_dir, simulation, workspace, target=None,host=None):
