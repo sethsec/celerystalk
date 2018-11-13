@@ -26,6 +26,7 @@ def process_db_vhosts(workspace, simulation, target_list=None):
 
     if target_list:
         for vhost in target_list:
+            #TODO: try this: if vhost in unique_unscanned_vhosts_list:
             for unscanned_vhost in unique_unscanned_vhosts_list:
                 if str(vhost) == str(unscanned_vhost):
                     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
@@ -630,7 +631,7 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
     ip = db.get_vhost_ip(scannable_vhost, workspace)
     ip = ip[0][0]
     db_scanned_services = db.get_all_services_for_ip(ip, workspace)
-    for (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info,workspace) in db_scanned_services:
+    for (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info) in db_scanned_services:
     #run chain on each one and then update db as submitted
         scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" +  str(scanned_service_port) + "_" + scanned_service_protocol + "_"
         host_dir = output_base_dir + "/" + ip

@@ -26,9 +26,9 @@ def import_out_of_scope(out_of_scope_file,workspace):
                     print("[+] Adding vhost to list of explicitly out of scope vhosts:\t" + vhost)
                     db_vhost = (ip, vhost, 0, 1, 0, workspace)
                     lib.db.create_vhost(db_vhost)
-                    print("[+] Adding IP to list of explicitly out of scope vhosts:\t{0} ({1})".format(ip,vhost))
-                    db_vhost = (ip, ip, 0, 1, 0, workspace)
-                    lib.db.create_vhost(db_vhost)
+                    #print("[+] Adding IP to list of explicitly out of scope vhosts:\t{0} ({1})".format(ip,vhost))
+                    #db_vhost = (ip, ip, 0, 1, 0, workspace)
+                    #lib.db.create_vhost(db_vhost)
 
 
 def import_scope(scope_file,workspace):
@@ -217,8 +217,8 @@ def update_inscope_vhosts(workspace):
                 if in_scope == 1:
                     print("[+] Domain is now in scope:\t" + vhost)
                     lib.db.update_vhosts_in_scope(ip,vhost,workspace,1)
-        else:
-            print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
+        #else:
+        #    print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
 
 
 
@@ -299,6 +299,12 @@ def process_nmap_data(nmap_report,workspace, target=None):
         ip=scanned_host.id
         unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
+        vhosts = scanned_host.hostnames
+        for vhost in vhosts:
+            vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+            if not vhost_explicitly_out_of_scope:  # if the vhost is not explicitly out of scope, add it to db
+                db_vhost = (ip, vhost, 1,0,0, workspace)
+                lib.db.create_vhost(db_vhost)
 
         if unique_db_ips: #If this IP was in the db...
             vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
