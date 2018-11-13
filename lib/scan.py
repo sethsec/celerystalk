@@ -125,7 +125,7 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir):
     db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
 
     for db_service in db_services:
-        (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info,workspace) = db_service  #ip,port,proto,service,product,version,extra_info
+        (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info) = db_service
 
         scan_output_base_file_name = host_data_dir + vhost + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol + "_"
