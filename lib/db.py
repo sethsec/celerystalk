@@ -334,6 +334,18 @@ def get_unique_command_names(workspace):
     CONNECTION.commit()
     return commands
 
+def get_unique_non_sim_command_names(workspace):
+    CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=? AND command_name NOT LIKE '#%'", (workspace,))
+    commands = CUR.fetchall()
+    CONNECTION.commit()
+    return commands
+
+def get_unique_command_names(workspace):
+    CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=?", (workspace,))
+    commands = CUR.fetchall()
+    CONNECTION.commit()
+    return commands
+
 
 def update_task_status_started(status,task_id,pid,start_time):
     CUR.execute("UPDATE tasks SET status=?,pid=?,start_time=? WHERE task_id=?", (status,pid,start_time,task_id))

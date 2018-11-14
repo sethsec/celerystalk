@@ -126,7 +126,7 @@ from prettytable import PrettyTable
 import csv
 
 
-build=str(122)
+build=str(123)
 
 def print_banner():
 
@@ -552,17 +552,26 @@ def main(arguments):
 
         arguments["scan"] = True
         all_submitted_vhosts = lib.db.get_inscope_submitted_vhosts(workspace)
+        all_submitted_vhosts_list = []
+        [all_submitted_vhosts_list.append(i[0]) for i in all_submitted_vhosts]  # converts list of tuples that contains the IPs, to a list of IPs
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             for target in target_list:
-                if target not in all_submitted_vhosts:
-                    print("[!] [{0}] has never been submitted, so it can't be rescanned.".format(target))
-        for submitted_vhost in all_submitted_vhosts:
-            vhost = submitted_vhost[0]
-            answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
-            if (answer == "Y") or (answer == "y") or (answer == ""):
-                ip = db.get_vhost_ip(vhost,workspace)[0][0]
-                db.update_vhosts_submitted(ip, vhost, workspace, 0)
+                vhost = str(target)
+                if str(vhost) not in all_submitted_vhosts_list:
+                    print("[!] [{0}] has never been submitted, so it can't be rescanned.".format(vhost))
+                else:
+                    answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+                    if (answer == "Y") or (answer == "y") or (answer == ""):
+                        ip = db.get_vhost_ip(vhost, workspace)[0][0]
+                        db.update_vhosts_submitted(ip, vhost, workspace, 0)
+        else:
+            for submitted_vhost in all_submitted_vhosts:
+                vhost = submitted_vhost[0]
+                answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+                if (answer == "Y") or (answer == "y") or (answer == ""):
+                    ip = db.get_vhost_ip(vhost,workspace)[0][0]
+                    db.update_vhosts_submitted(ip, vhost, workspace, 0)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")

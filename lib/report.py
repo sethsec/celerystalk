@@ -52,7 +52,7 @@ def report(workspace,target_list=None):
     except:
         os.mkdir(workspace_report_directory)
 
-    combined_report_file_name = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].html')
+    combined_report_file_name = os.path.join(workspace_report_directory,'index.html')
     combined_report_file = open(combined_report_file_name, 'w')
     combined_report_file.write(populate_report_head())
 
@@ -91,18 +91,20 @@ def report(workspace,target_list=None):
 
 
     #Text Report
-    combined_report_file_name_txt = os.path.join(workspace_report_directory,'Celerystalk-Workspace-Report[' + workspace + '].txt')
+    combined_report_file_name_txt = os.path.join(workspace_report_directory,'report.txt')
     combined_report_file_txt = open(combined_report_file_name_txt, 'w')
-    unique_command_names = lib.db.get_unique_command_names(workspace)
+    unique_non_sim_command_names = lib.db.get_unique_non_sim_command_names(workspace)
+
     filter_html_body = '''<div id="myBtnContainer">\n'''
     filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('all')"> Show all</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
-    filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('paths')"> Paths</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>\n'''
 
-    for command_name in unique_command_names:
+    for command_name in unique_non_sim_command_names:
         command_name = command_name[0]
-        filter_html_body = filter_html_body + "<button class=\"btn\" onclick=\"filterSelection(\'{0}\')\"> {0}</button>\n".format(command_name)
-    filter_html_body = filter_html_body + "\n</div>"
+        if command_name != "Screenshots":
+            filter_html_body = filter_html_body + "<button class=\"btn\" onclick=\"filterSelection(\'{0}\')\"> {0}</button>\n".format(command_name)
+    filter_html_body = filter_html_body + "</div>"
 
     combined_report_file.write(filter_html_body)
     # Create the rest of the report
@@ -135,7 +137,7 @@ def report(workspace,target_list=None):
 
         screenshot_html = paths_report(vhost)
 
-        combined_report_file.write('''\n\n<div class="filterDiv paths">\n''')
+        combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
         combined_report_file.write(screenshot_html + "\n<br>")
         combined_report_file.write("\n</div>\n")
 
@@ -513,72 +515,96 @@ def populate_report_data_html(vhost,workspace):
     :return:
     """
     report_host_html_string = ""
+    command_header_html = ""
+    file_contents_html = ""
+
     reportable_output_files_for_vhost = lib.db.get_reportable_output_files_for_vhost(workspace,vhost)
     for vhost_output_file in reportable_output_files_for_vhost:
         vhost_output_file = vhost_output_file[0]
         normalized_output_file = os.path.normpath(vhost_output_file)
         tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
-        for command_name,command,status,start_time,run_time in tasks_for_output_file:
-            #print(run_time)
-            #print(type(start_time))
-            start_time = time.strftime("%m/%d/%Y %H:%M:%S",time.localtime(float(start_time)))
-            if run_time:
-                run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
-
-            #Don't print header info for simulation jobs
-            if not command.startswith('#'):
-                #report_host_html_string = report_host_html_string + "</pre>\n"
+        if len(tasks_for_output_file) > 1:
+            command_name, command, status, start_time, run_time = tasks_for_output_file[0]
+            if command_name != "Screenshots":
                 report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
+                for command_name,command,status,start_time,run_time in tasks_for_output_file:
+                    start_time = time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(float(start_time)))
+                    if run_time:
+                        run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
+                    # Don't print header info for simulation jobs
+                    if not command.startswith('#'):
+                        command_header_html = get_command_header_and_info(normalized_output_file,command_name,command,status,start_time,run_time)
+                        report_host_html_string = report_host_html_string + command_header_html
+                file_contents_html = convert_file_contents_to_html(normalized_output_file)
+                report_host_html_string = report_host_html_string + file_contents_html
+                report_host_html_string = report_host_html_string + "        </div>\n"
+        elif len(tasks_for_output_file) == 1:
+            command_name, command, status, start_time, run_time = tasks_for_output_file[0]
+            if command_name != "Screenshots":
+                report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
+                start_time = time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(float(start_time)))
+                if run_time:
+                    run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
+                if not command.startswith('#'):
+                    command_header_html = get_command_header_and_info(normalized_output_file,command_name, command, status, start_time,run_time)
+                    file_contents_html = convert_file_contents_to_html(normalized_output_file)
 
-                report_host_html_string = report_host_html_string + '''<button class="collapsible">''' + command_name + '''</button>\n'''
-                report_host_html_string = report_host_html_string + '''<div class="content">'''
-                report_host_html_string = report_host_html_string + '''<table>'''
-                try:
-                    report_host_html_string = report_host_html_string +  "<tr><td>Start Time:</td><td>" + start_time + '</td></tr>\n'
-                    if status == "COMPLETED":
-                        report_host_html_string = report_host_html_string +  "<tr><td>Run Time:</td><td>" + run_time + '</td></tr>\n'
-                    report_host_html_string = report_host_html_string +  "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
-                    report_host_html_string = report_host_html_string +  "<tr><td>Output File:</td><td>" + normalized_output_file + '</td></tr>\n'
-                    if os.stat(normalized_output_file).st_size == 0:
-                        report_host_html_string = report_host_html_string +  "<tr><td>Status:</td><td>" + status + ' [No Output Data]</td></tr>\n'
-                    else:
-                        report_host_html_string = report_host_html_string + "<tr><td>Status:</td><td>" + status + '</td></tr>\n'
-                except OSError, e:
-                    report_host_html_string = report_host_html_string +  "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
-                    report_host_html_string = report_host_html_string +  "\nError!: No such file or directory: " + normalized_output_file + "</td></tr>\n"
-                    # report_host_html_string = report_host_html_string +  "{0} did not produce any data\n".format(command_name))
-                report_host_html_string = report_host_html_string +  "</table>\n</div>\n"
-
-
-        #This is the part that reads the contents of each output file
-        linecount = 0
-        #report_host_html_string = report_host_html_string + "        <pre>"
-        report_host_html_string = report_host_html_string + "        <div>"
-
-        try:
-            with open(normalized_output_file, "r") as scan_file:
-                for line in scan_file:
-                    line = unicode(line, errors='ignore')
-                    try:
-                        sanitized = bleach.clean(line)
-                    except:
-                        print(
-                            "[!] Could not output santize the following line (Not including it in report to be safe):")
-                        print("     " + line)
-                        sanitized = ""
-                    if linecount < 300:
-                        report_host_html_string = report_host_html_string + sanitized + "<br />"
-                    linecount = linecount + 1
-                if linecount > 300:
-                    report_host_html_string = report_host_html_string +  "\nSnip... Only displaying first 300 of the total " + str(
-                        linecount) + " lines...\n"
-        except IOError, e:
-            #dont tell the user at the concole that file didnt exist.
-            pass
-
-        #report_host_html_string = report_host_html_string + "        </pre>\n</div>\n"
-        report_host_html_string = report_host_html_string + "        </div>\n</div>\n"
-
+                    report_host_html_string = report_host_html_string + command_header_html + file_contents_html
+                report_host_html_string = report_host_html_string + "        </div>\n"
     return report_host_html_string
 
+def get_command_header_and_info(normalized_output_file,command_name,command,status,start_time,run_time):
+    command_header_html_string = ""
 
+    command_header_html_string = command_header_html_string + '''<button class="collapsible">''' + command_name + '''</button>\n'''
+    command_header_html_string = command_header_html_string + '''<div class="content">'''
+    command_header_html_string = command_header_html_string + '''<table>'''
+    try:
+        command_header_html_string = command_header_html_string + "<tr><td>Start Time:</td><td>" + start_time + '</td></tr>\n'
+        if status == "COMPLETED":
+            command_header_html_string = command_header_html_string + "<tr><td>Run Time:</td><td>" + run_time + '</td></tr>\n'
+        command_header_html_string = command_header_html_string + "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
+        command_header_html_string = command_header_html_string + "<tr><td>Output File:</td><td>" + normalized_output_file + '</td></tr>\n'
+        if os.stat(normalized_output_file).st_size == 0:
+            command_header_html_string = command_header_html_string + "<tr><td>Status:</td><td>" + status + ' [No Output Data]</td></tr>\n'
+        else:
+            command_header_html_string = command_header_html_string + "<tr><td>Status:</td><td>" + status + '</td></tr>\n'
+    except OSError, e:
+        command_header_html_string = command_header_html_string + "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
+        command_header_html_string = command_header_html_string + "\nError!: No such file or directory: " + normalized_output_file + "</td></tr>\n"
+        # command_header_html_string = command_header_html_string +  "{0} did not produce any data\n".format(command_name))
+    command_header_html_string = command_header_html_string + "</table>\n</div>\n"
+    return command_header_html_string
+
+def convert_file_contents_to_html(normalized_output_file):
+    # This is the part that reads the contents of each output file
+    linecount = 0
+    # file_html_string = file_html_string + "        <pre>"
+    file_html_string = "        <div>"
+
+    try:
+        with open(normalized_output_file, "r") as scan_file:
+            for line in scan_file:
+                line = unicode(line, errors='ignore')
+                try:
+                    sanitized = bleach.clean(line)
+                except:
+                    print(
+                        "[!] Could not output santize the following line (Not including it in report to be safe):")
+                    print("     " + line)
+                    sanitized = ""
+                if linecount < 300:
+                    file_html_string = file_html_string + sanitized + "<br />"
+                linecount = linecount + 1
+            if linecount > 300:
+                file_html_string = file_html_string + "\nSnip... Only displaying first 300 of the total " + str(
+                    linecount) + " lines...\n"
+    except IOError, e:
+        # dont tell the user at the concole that file didnt exist.
+        pass
+    file_html_string = file_html_string + "        </div>"
+    return file_html_string
+
+def command_footer_html(tasks_for_output_file):
+    for task in tasks_for_output_file:
+        print {}

@@ -29,7 +29,7 @@ def process_db_vhosts(workspace, simulation, target_list=None):
             #TODO: try this: if vhost in unique_unscanned_vhosts_list:
             for unscanned_vhost in unique_unscanned_vhosts_list:
                 if str(vhost) == str(unscanned_vhost):
-                    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+                    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(str(vhost), workspace)
                     if not vhost_explicitly_out_of_scope:
                         try:
                             IPAddress(vhost)
