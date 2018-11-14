@@ -69,8 +69,8 @@ fi
 if [ ! -f /opt/amass/amass ]; then
     echo "[+] Downloading OWASP Amass to /opt/amass/amass"
     mkdir -p /opt/amass
-    wget https://github.com/OWASP/Amass/releases/download/v2.4.0/amass_2.4.2_linux_386.zip -O /opt/amass/amass_2.4.2_linux_386.zip
-    unzip /opt/amass/amass_2.4.2_linux_386.zip -d /opt/amass
+    wget https://github.com/OWASP/Amass/archive/2.8.0.zip
+    unzip /opt/amass/2.8.0.zip -d /opt/amass
 fi
 
 if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
@@ -79,6 +79,10 @@ if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
     git clone https://github.com/aboul3la/Sublist3r.git
     cd Sublist3r/
     pip install -r requirements.txt
+else:
+    cd /opt/Sublist3r/
+    git pull
+    pip install -r requirements.txt
 fi
 
 if [ ! -f /opt/Photon/photon.py ]; then
@@ -86,6 +90,10 @@ if [ ! -f /opt/Photon/photon.py ]; then
     cd /opt/
     git clone https://github.com/s0md3v/Photon.git
     cd Photon
+    pip install -r requirements.txt
+else:
+    cd /opt/Photon
+    git pull
     pip install -r requirements.txt
 fi
 
