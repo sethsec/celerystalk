@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    font-family: "Lato", sans-serif;
+    font-size: 16px;
+}
+
+table {
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    padding: 5px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #777;
+    color: white;
+    padding: 4px;
+
+}
+
+.sidenav {
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: #eee;
+    overflow-x: auto;
+    overflow-y: auto
+    padding: 8px 0;
+    display: block;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 12px;
+    color: #2196F3;
+    display: block;
+}
+
+.sidenav a:hover {
+    color: #064579;
+}
+
+.main {
+    margin-left: 170px; /* Same width as the sidebar + left position in px */
+    font-size: 14px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+#linkwrap {
+    position:relative;
+
+}
+.link img { 
+    border:5px solid gray;
+    margin:3px;
+    float:left;
+    width:100%;
+    border-style: outset;
+    border-radius: 25px;
+    display:block;
+    position:relative;    
+}
+.link span { 
+    position:absolute;
+    visibility:hidden;
+    font-size: 16px;
+}
+.link:hover, .link:hover span { 
+    visibility:visible;
+    top:0; left:280px; 
+    z-index:1;
+}
+.collapsible {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    padding: 4px;
+    width: 90%;
+    border: none;
+    border-radius: 12px;
+    text-align: left;
+    text-indent: 5px;    
+    outline: none;
+    font-size: 12px;
+}
+
+.active, .collapsible:hover {
+    background-color: #555;
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;    
+}
+
+
+.filterDiv {
+  margin: 2px;
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+.container {
+  margin-top: 10px;
+  
+}
+
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  background-color: #f1f1f1;
+  border-radius: 12px;
+  padding: 8px;
+  font-size: 14px;
+
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+
+</style>
+</head>
+<body>
+
+
+<div class="sidenav">
+<a href="#top">Top</a>
+  <a href="#10.10.10.27">10.10.10.27</a>
+  <a href="#10.10.10.34">10.10.10.34</a>
+  <a href="#10.10.10.56">10.10.10.56</a>
+  <a href="#10.10.10.66">10.10.10.66</a>
+  <a href="#10.10.10.72">10.10.10.72</a>
+  <a href="#10.10.10.91">10.10.10.91</a>
+  <a href="#10.10.10.93">10.10.10.93</a>
+</div>
+<div class="main">
+
+<h1 id="top">celerystalk Report</h1>
+<h3><font color="red"> This is a sample report, created with <a href="https://github.com/sethsec/celerystalk/">celerystalk</a> to demonstrate the project. The scanned hosts in this report are all retired <a href="https://www.hackthebox.eu">Hackthebox.eu</a> machines.</font></h3>
+<br>
+
+<div id="myBtnContainer">
+<button class="btn active" onclick="filterSelection('all')"> Show all</button>
+<button class="btn" onclick="filterSelection('services')"> Services</button>
+<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>
+<button class="btn" onclick="filterSelection('nmap_service_scan')"> nmap_service_scan</button>
+<button class="btn" onclick="filterSelection('ncrack_ssh_best15')"> ncrack_ssh_best15</button>
+<button class="btn" onclick="filterSelection('whatweb')"> whatweb</button>
+<button class="btn" onclick="filterSelection('curl_robots')"> curl_robots</button>
+<button class="btn" onclick="filterSelection('nikto')"> nikto</button>
+<button class="btn" onclick="filterSelection('cewl')"> cewl</button>
+<button class="btn" onclick="filterSelection('gobuster-common')"> gobuster-common</button>
+<button class="btn" onclick="filterSelection('hydra_ssh_best15')"> hydra_ssh_best15</button>
+<button class="btn" onclick="filterSelection('nmap_ssh_hostkey')"> nmap_ssh_hostkey</button>
+<button class="btn" onclick="filterSelection('photon')"> photon</button>
+<button class="btn" onclick="filterSelection('medusa')"> medusa</button>
+<button class="btn" onclick="filterSelection('udp_scan')"> udp_scan</button>
+<button class="btn" onclick="filterSelection('nmblookup')"> nmblookup</button>
+<button class="btn" onclick="filterSelection('enum4linux')"> enum4linux</button>
+<button class="btn" onclick="filterSelection('smbclient')"> smbclient</button>
+<button class="btn" onclick="filterSelection('rpcclient')"> rpcclient</button>
+</div><a name="10.10.10.27"></a><br>
+<h2>Host Report: 10.10.10.27</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>22</td>
+<td>tcp</td>
+<td>ssh</td>
+
+<td>OpenSSH</td>
+<td>7.2p2 Ubuntu 4ubuntu2.2</td>
+<td>Ubuntu Linux; protocol 2.0</td></tr>
+<tr>
+<td>80</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Apache httpd</td>
+<td>2.4.18</td>
+<td>(Ubuntu)</td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80">http://10.10.10.27:80</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_.hta_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/.hta/">http://10.10.10.27:80/.hta/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_.htaccess_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/.htaccess/">http://10.10.10.27:80/.htaccess/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_.htpasswd_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/.htpasswd/">http://10.10.10.27:80/.htpasswd/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_admin.php_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/admin.php/">http://10.10.10.27:80/admin.php/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_icons_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/icons/">http://10.10.10.27:80/icons/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_server-status_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/server-status/">http://10.10.10.27:80/server-status/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.27_80_tcp_10.10.10.27_80_uploads_.png" alt="image"/></span></a>  <a href="http://10.10.10.27:80/uploads/">http://10.10.10.27:80/uploads/</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:05:26</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.27:80/ -output /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.27
+<br />+ Target Port: 80
+<br />+ GET Server leaks inodes via ETags, header found with file /, fields: 0x202 0x552f4401e2464 
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ OPTIONS Allowed HTTP Methods: OPTIONS, GET, HEAD, POST 
+<br />+ OSVDB-29786: GET /admin.php?en_log_id=0&amp;action=config: EasyNews from http://www.webrc.ca version 4.3 allows remote admin access. This PHP file should be protected.
+<br />+ OSVDB-29786: GET /admin.php?en_log_id=0&amp;action=users: EasyNews from http://www.webrc.ca version 4.3 allows remote admin access. This PHP file should be protected.
+<br />+ OSVDB-3092: GET /admin.php: This might be interesting...
+<br />+ OSVDB-3233: GET /icons/README: Apache default file found.
+<br />        </div>        </div>
+<div class="filterDiv nmap_ssh_hostkey">
+<button class="collapsible">nmap_ssh_hostkey</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:43</td></tr>
+<tr><td>Run Time:</td><td>00:00:02</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.27 -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:43 2018 as: nmap -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_nmap_ssh_hostkey.txt 10.10.10.27
+<br />Nmap scan report for 10.10.10.27
+<br />Host is up (0.038s latency).
+<br />
+<br />PORT   STATE SERVICE VERSION
+<br />22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 b6:46:31:9c:b5:71:c5:96:91:7d:e4:63:16:f9:59:a2 (RSA)
+<br />|   256 10:c4:09:b9:48:f1:8c:45:26:ca:f6:e1:c2:dc:36:b9 (ECDSA)
+<br />|_  256 a8:bf:dd:c0:71:36:a8:2a:1b:ea:3f:ef:66:99:39:75 (ED25519)
+<br />Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:07:45 2018 -- 1 IP address (1 host up) scanned in 2.21 seconds
+<br />        </div>        </div>
+<div class="filterDiv hydra_ssh_best15">
+<button class="collapsible">hydra_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:05</td></tr>
+<tr><td>Run Time:</td><td>00:00:50</td></tr>
+<tr><td>Command:</td><td>hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.27 ssh > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+<br />
+<br />Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:08:05
+<br />[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+<br />[DATA] attacking ssh://10.10.10.27:22/
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.27 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+<br />1 of 1 target completed, 0 valid passwords found
+<br />Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:08:56
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:09:03</td></tr>
+<tr><td>Run Time:</td><td>00:00:47</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.27 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_udp_scan.txt -oX /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:09:03 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_udp_scan.txt -oX /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_udp_scan.xml 10.10.10.27
+<br />Nmap scan report for 10.10.10.27
+<br />Host is up (0.040s latency).
+<br />All 50 scanned ports on 10.10.10.27 are closed
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:09:50 2018 -- 1 IP address (1 host up) scanned in 47.76 seconds
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:11:00</td></tr>
+<tr><td>Run Time:</td><td>00:00:19</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.27:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.27:80/.hta/
+<br />http://10.10.10.27:80/.htpasswd/
+<br />http://10.10.10.27:80/.htaccess/
+<br />http://10.10.10.27:80/admin.php/
+<br />http://10.10.10.27:80/icons/
+<br />http://10.10.10.27:80/server-status/
+<br />http://10.10.10.27:80/uploads/
+<br />        </div>        </div>
+<div class="filterDiv ncrack_ssh_best15">
+<button class="collapsible">ncrack_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:06</td></tr>
+<tr><td>Run Time:</td><td>00:00:18</td></tr>
+<tr><td>Command:</td><td>ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.27 > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:13 EST
+<br />
+<br />ssh://10.10.10.27:22 finished.
+<br />
+<br />
+<br />Ncrack done: 1 service scanned in 18.00 seconds.
+<br />Probes sent: 10 | timed-out: 0 | prematurely-closed: 0
+<br />
+<br />Ncrack finished.
+<br />        </div>        </div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:14:01</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.27:80/ -m 6 -w /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Brotherhood
+<br />Software
+<br />writing
+<br />security
+<br />related
+<br />software
+<br />design
+<br />forever
+<br />development
+<br />because
+<br />products
+<br />liiiieeesss
+<br />operating
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:15:58</td></tr>
+<tr><td>Run Time:</td><td>00:00:02</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.27 -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:15:58 2018 as: nmap -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_nmap_service_scan.txt 10.10.10.27
+<br />Nmap scan report for 10.10.10.27
+<br />Host is up (0.041s latency).
+<br />
+<br />PORT   STATE SERVICE VERSION
+<br />22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 b6:46:31:9c:b5:71:c5:96:91:7d:e4:63:16:f9:59:a2 (RSA)
+<br />|   256 10:c4:09:b9:48:f1:8c:45:26:ca:f6:e1:c2:dc:36:b9 (ECDSA)
+<br />|_  256 a8:bf:dd:c0:71:36:a8:2a:1b:ea:3f:ef:66:99:39:75 (ED25519)
+<br />Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+<br />
+<br />Read data files from: /usr/bin/../share/nmap
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:16:00 2018 -- 1 IP address (1 host up) scanned in 2.17 seconds
+<br />        </div>        </div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:16:00</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.27:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;html&gt;&lt;head&gt;
+<br />&lt;title&gt;404 Not Found&lt;/title&gt;
+<br />&lt;/head&gt;&lt;body&gt;
+<br />&lt;h1&gt;Not Found&lt;/h1&gt;
+<br />&lt;p&gt;The requested URL /robots.txt was not found on this server.&lt;/p&gt;
+<br />&lt;hr&gt;
+<br />&lt;address&gt;Apache/2.4.18 (Ubuntu) Server at 10.10.10.27 Port 80&lt;/address&gt;
+<br />&lt;/body&gt;&lt;/html&gt;
+<br />        </div>        </div>
+<div class="filterDiv medusa">
+<button class="collapsible">medusa</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:20:50</td></tr>
+<tr><td>Run Time:</td><td>00:00:34</td></tr>
+<tr><td>Command:</td><td>medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.27 - 22 -M ssh > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_medusa.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_22_tcp_medusa.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks &lt;jmk@foofus.net&gt;
+<br />
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234567 (7 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345678 (8 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: abc123 (9 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: dragon (10 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: iloveyou (11 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: letmein (12 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: monkey (13 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: password (14 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: qwerty (15 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: tequiero (16 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.27 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: test (17 of 17 complete)
+<br />        </div>        </div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:24</td></tr>
+<tr><td>Run Time:</td><td>00:00:01</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.27:80/ -a3 --colour=never > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.27:80/ [200 OK] Apache[2.4.18], Country[RESERVED][ZZ], HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], IP[10.10.10.27], Title[Brotherhood Software]
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:24</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.27:80/ -o /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_photon && cat /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.27/celerystalkOutput/10.10.10.27_80_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.27:80
+<br />        </div>        </div>
+<a name="10.10.10.34"></a><br>
+<h2>Host Report: 10.10.10.34</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>22</td>
+<td>tcp</td>
+<td>ssh</td>
+
+<td>OpenSSH</td>
+<td>6.6.1</td>
+<td>protocol 2.0</td></tr>
+<tr>
+<td>80</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Apache httpd</td>
+<td>2.4.6</td>
+<td>(CentOS)</td></tr>
+<tr>
+<td>111</td>
+<td>tcp</td>
+<td>rpcbind</td>
+
+<td></td>
+<td>2-4</td>
+<td>RPC #100000</td></tr>
+<tr>
+<td>2049</td>
+<td>tcp</td>
+<td>nfs_acl</td>
+
+<td></td>
+<td>3</td>
+<td>RPC #100227</td></tr>
+<tr>
+<td>7411</td>
+<td>tcp</td>
+<td>daqstream</td>
+
+<td></td>
+<td></td>
+<td></td></tr>
+<tr>
+<td>20048</td>
+<td>tcp</td>
+<td>mountd</td>
+
+<td></td>
+<td>1-3</td>
+<td>RPC #100005</td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.34_80_tcp_10.10.10.34_80.png" alt="image"/></span></a>  <a href="http://10.10.10.34:80">http://10.10.10.34:80</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.34_80_tcp_10.10.10.34_80_.hta_.png" alt="image"/></span></a>  <a href="http://10.10.10.34:80/.hta/">http://10.10.10.34:80/.hta/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.34_80_tcp_10.10.10.34_80_.htaccess_.png" alt="image"/></span></a>  <a href="http://10.10.10.34:80/.htaccess/">http://10.10.10.34:80/.htaccess/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.34_80_tcp_10.10.10.34_80_.htpasswd_.png" alt="image"/></span></a>  <a href="http://10.10.10.34:80/.htpasswd/">http://10.10.10.34:80/.htpasswd/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.34_80_tcp_10.10.10.34_80_cgi-bin_.png" alt="image"/></span></a>  <a href="http://10.10.10.34:80/cgi-bin/">http://10.10.10.34:80/cgi-bin/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.34_80_tcp_10.10.10.34_80_cgi-bin.png" alt="image"/></span></a>  <a href="http://10.10.10.34:80/cgi-bin//">http://10.10.10.34:80/cgi-bin//</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:12</td></tr>
+<tr><td>Run Time:</td><td>00:00:08</td></tr>
+<tr><td>Command:</td><td>nmap -sV -sC -Pn -p 20048 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_20048_tcp__nmap_service_scan.txt 10.10.10.34</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_20048_tcp__nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:12 2018 as: nmap -sV -sC -Pn -p 20048 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_20048_tcp__nmap_service_scan.txt 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.038s latency).
+<br />
+<br />PORT      STATE SERVICE VERSION
+<br />20048/tcp open  mountd  1-3 (RPC #100005)
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:07:20 2018 -- 1 IP address (1 host up) scanned in 8.20 seconds
+<br />        </div>        </div>
+<div class="filterDiv nmap_ssh_hostkey">
+<button class="collapsible">nmap_ssh_hostkey</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:30</td></tr>
+<tr><td>Run Time:</td><td>00:00:35</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.34 -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:30 2018 as: nmap -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_ssh_hostkey.txt 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.046s latency).
+<br />
+<br />PORT   STATE SERVICE VERSION
+<br />22/tcp open  ssh     OpenSSH 6.6.1 (protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 cd:ec:19:7c:da:dc:16:e2:a3:9d:42:f3:18:4b:e6:4d (RSA)
+<br />|   256 af:94:9f:2f:21:d0:e0:1d:ae:8e:7f:1d:7b:d7:42:ef (ECDSA)
+<br />|_  256 6b:f8:dc:27:4f:1c:89:67:a4:67:c5:ed:07:53:af:97 (ED25519)
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:08:05 2018 -- 1 IP address (1 host up) scanned in 35.29 seconds
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:45</td></tr>
+<tr><td>Run Time:</td><td>00:00:06</td></tr>
+<tr><td>Command:</td><td>nmap -sC -sV -v -Pn 10.10.10.34 -p 111 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:45 2018 as: nmap -sC -sV -v -Pn -p 111 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmap_service_scan.txt 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.039s latency).
+<br />
+<br />PORT    STATE SERVICE VERSION
+<br />111/tcp open  rpcbind 2-4 (RPC #100000)
+<br />| rpcinfo: 
+<br />|   program version   port/proto  service
+<br />|   100000  2,3,4        111/tcp  rpcbind
+<br />|   100000  2,3,4        111/udp  rpcbind
+<br />|   100003  3,4         2049/tcp  nfs
+<br />|   100003  3,4         2049/udp  nfs
+<br />|   100005  1,2,3      20048/tcp  mountd
+<br />|   100005  1,2,3      20048/udp  mountd
+<br />|   100021  1,3,4      33407/tcp  nlockmgr
+<br />|   100021  1,3,4      55204/udp  nlockmgr
+<br />|   100024  1          44100/udp  status
+<br />|   100024  1          55134/tcp  status
+<br />|   100227  3           2049/tcp  nfs_acl
+<br />|_  100227  3           2049/udp  nfs_acl
+<br />
+<br />Read data files from: /usr/bin/../share/nmap
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:07:52 2018 -- 1 IP address (1 host up) scanned in 6.97 seconds
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:52</td></tr>
+<tr><td>Run Time:</td><td>00:00:40</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.34 -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:52 2018 as: nmap -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_service_scan.txt 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.038s latency).
+<br />
+<br />PORT   STATE SERVICE VERSION
+<br />22/tcp open  ssh     OpenSSH 6.6.1 (protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 cd:ec:19:7c:da:dc:16:e2:a3:9d:42:f3:18:4b:e6:4d (RSA)
+<br />|   256 af:94:9f:2f:21:d0:e0:1d:ae:8e:7f:1d:7b:d7:42:ef (ECDSA)
+<br />|_  256 6b:f8:dc:27:4f:1c:89:67:a4:67:c5:ed:07:53:af:97 (ED25519)
+<br />
+<br />Read data files from: /usr/bin/../share/nmap
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:08:33 2018 -- 1 IP address (1 host up) scanned in 40.94 seconds
+<br />        </div>        </div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:56</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.34:80/ -m 6 -w /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED [No Output Data]</td></tr>
+</table>
+</div>
+        <div>        </div>        </div>
+<div class="filterDiv medusa">
+<button class="collapsible">medusa</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:57</td></tr>
+<tr><td>Run Time:</td><td>00:01:41</td></tr>
+<tr><td>Command:</td><td>medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.34 - 22 -M ssh > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_medusa.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_medusa.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks &lt;jmk@foofus.net&gt;
+<br />
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234567 (7 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345678 (8 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: abc123 (9 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: dragon (10 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: iloveyou (11 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: letmein (12 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: monkey (13 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: password (14 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: qwerty (15 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: tequiero (16 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: test (17 of 17 complete)
+<br />        </div>        </div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:09:51</td></tr>
+<tr><td>Run Time:</td><td>00:00:01</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.34:80/ -a3 --colour=never > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.34:80/ [200 OK] Apache[2.4.6], Country[RESERVED][ZZ], HTTPServer[CentOS][Apache/2.4.6 (CentOS)], IP[10.10.10.34]
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:09:54</td></tr>
+<tr><td>Run Time:</td><td>00:01:05</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.34:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.34:80/.hta/
+<br />http://10.10.10.34:80/.htaccess/
+<br />http://10.10.10.34:80/.htpasswd/
+<br />http://10.10.10.34:80/cgi-bin/
+<br />http://10.10.10.34:80/cgi-bin//
+<br />        </div>        </div>
+<div class="filterDiv hydra_ssh_best15">
+<button class="collapsible">hydra_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:11:00</td></tr>
+<tr><td>Run Time:</td><td>00:01:46</td></tr>
+<tr><td>Command:</td><td>hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.34 ssh > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+<br />
+<br />Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:11:00
+<br />[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+<br />[DATA] attacking ssh://10.10.10.34:22/
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+<br />[STATUS] 9.00 tries/min, 9 tries in 00:01h, 6 to do in 00:01h, 1 active
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.34 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+<br />1 of 1 target completed, 0 valid passwords found
+<br />Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:12:46
+<br />        </div>        </div>
+<div class="filterDiv nmblookup">
+<button class="collapsible">nmblookup</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:11:20</td></tr>
+<tr><td>Run Time:</td><td>00:00:10</td></tr>
+<tr><td>Command:</td><td>nmblookup -A 10.10.10.34 > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmblookup.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmblookup.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Looking up status of 10.10.10.34
+<br />No reply from 10.10.10.34
+<br />
+<br />        </div>        </div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:12:38</td></tr>
+<tr><td>Run Time:</td><td>00:11:53</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.34:80/ -output /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.34
+<br />+ Target Port: 80
+<br />+ GET Server leaks inodes via ETags, header found with file /, fields: 0x83a 0x552d2a27c66d2 
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ OPTIONS Allowed HTTP Methods: GET, HEAD, POST, OPTIONS, TRACE 
+<br />+ OSVDB-877: TRACE HTTP TRACE method is active, suggesting the host is vulnerable to XST
+<br />+ OSVDB-3268: GET /icons/: Directory indexing found.
+<br />+ OSVDB-3233: GET /icons/README: Apache default file found.
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:20</td></tr>
+<tr><td>Run Time:</td><td>00:02:37</td></tr>
+<tr><td>Command:</td><td>nmap -sV -sC -Pn -p 7411 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_7411_tcp__nmap_service_scan.txt 10.10.10.34</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_7411_tcp__nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:13:20 2018 as: nmap -sV -sC -Pn -p 7411 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_7411_tcp__nmap_service_scan.txt 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.044s latency).
+<br />
+<br />PORT     STATE SERVICE    VERSION
+<br />7411/tcp open  daqstream?
+<br />| fingerprint-strings: 
+<br />|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, JavaRMI, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NCP, NULL, NotesRPC, RPCCheck, RTSPRequest, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, WMSRequest, X11Probe, afp, giop, ms-sql-s, oracle-tns: 
+<br />|_    OK Ready. Send USER command.
+<br />1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+<br />SF-Port7411-TCP:V=7.70%I=7%D=11/13%Time=5BEB84C7%P=x86_64-pc-linux-gnu%r(N
+<br />SF:ULL,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(GenericLines,1
+<br />SF:D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(GetRequest,1D,"OK\x
+<br />SF:20Ready\.\x20Send\x20USER\x20command\.\n")%r(HTTPOptions,1D,"OK\x20Read
+<br />SF:y\.\x20Send\x20USER\x20command\.\n")%r(RTSPRequest,1D,"OK\x20Ready\.\x2
+<br />SF:0Send\x20USER\x20command\.\n")%r(RPCCheck,1D,"OK\x20Ready\.\x20Send\x20
+<br />SF:USER\x20command\.\n")%r(DNSVersionBindReqTCP,1D,"OK\x20Ready\.\x20Send\
+<br />SF:x20USER\x20command\.\n")%r(DNSStatusRequestTCP,1D,"OK\x20Ready\.\x20Sen
+<br />SF:d\x20USER\x20command\.\n")%r(Help,1D,"OK\x20Ready\.\x20Send\x20USER\x20
+<br />SF:command\.\n")%r(SSLSessionReq,1D,"OK\x20Ready\.\x20Send\x20USER\x20comm
+<br />SF:and\.\n")%r(TLSSessionReq,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\
+<br />SF:.\n")%r(Kerberos,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(S
+<br />SF:MBProgNeg,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(X11Probe
+<br />SF:,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(FourOhFourRequest
+<br />SF:,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(LPDString,1D,"OK\
+<br />SF:x20Ready\.\x20Send\x20USER\x20command\.\n")%r(LDAPSearchReq,1D,"OK\x20R
+<br />SF:eady\.\x20Send\x20USER\x20command\.\n")%r(LDAPBindReq,1D,"OK\x20Ready\.
+<br />SF:\x20Send\x20USER\x20command\.\n")%r(SIPOptions,1D,"OK\x20Ready\.\x20Sen
+<br />SF:d\x20USER\x20command\.\n")%r(LANDesk-RC,1D,"OK\x20Ready\.\x20Send\x20US
+<br />SF:ER\x20command\.\n")%r(TerminalServer,1D,"OK\x20Ready\.\x20Send\x20USER\
+<br />SF:x20command\.\n")%r(NCP,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n
+<br />SF:")%r(NotesRPC,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(Java
+<br />SF:RMI,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(WMSRequest,1D,
+<br />SF:"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(oracle-tns,1D,"OK\x20
+<br />SF:Ready\.\x20Send\x20USER\x20command\.\n")%r(ms-sql-s,1D,"OK\x20Ready\.\x
+<br />SF:20Send\x20USER\x20command\.\n")%r(afp,1D,"OK\x20Ready\.\x20Send\x20USER
+<br />SF:\x20command\.\n")%r(giop,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.
+<br />SF:\n");
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:15:58 2018 -- 1 IP address (1 host up) scanned in 157.62 seconds
+<br />        </div>        </div>
+<div class="filterDiv enum4linux">
+<button class="collapsible">enum4linux</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:37</td></tr>
+<tr><td>Run Time:</td><td>00:00:20</td></tr>
+<tr><td>Command:</td><td>enum4linux -a 10.10.10.34 > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_enum4linux.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_enum4linux.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Starting enum4linux v0.8.9 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Tue Nov 13 21:13:37 2018
+<br />
+<br /> ========================== 
+<br />|    Target Information    |
+<br /> ========================== 
+<br />Target ........... 10.10.10.34
+<br />RID Range ........ 500-550,1000-1050
+<br />Username ......... ''
+<br />Password ......... ''
+<br />Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
+<br />
+<br />
+<br /> =================================================== 
+<br />|    Enumerating Workgroup/Domain on 10.10.10.34    |
+<br /> =================================================== 
+<br />[E] Can't find workgroup/domain
+<br />
+<br />
+<br /> =========================================== 
+<br />|    Nbtstat Information for 10.10.10.34    |
+<br /> =========================================== 
+<br />Looking up status of 10.10.10.34
+<br />No reply from 10.10.10.34
+<br />
+<br /> ==================================== 
+<br />|    Session Check on 10.10.10.34    |
+<br /> ==================================== 
+<br />[E] Server doesn't allow session using username '', password ''.  Aborting remainder of tests.
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:14:02</td></tr>
+<tr><td>Run Time:</td><td>00:00:07</td></tr>
+<tr><td>Command:</td><td>nmap -sV -sC -Pn -p 2049 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_2049_tcp__nmap_service_scan.txt 10.10.10.34</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_2049_tcp__nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:14:02 2018 as: nmap -sV -sC -Pn -p 2049 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_2049_tcp__nmap_service_scan.txt 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.44s latency).
+<br />
+<br />PORT     STATE SERVICE VERSION
+<br />2049/tcp open  nfs     3-4 (RPC #100003)
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:14:09 2018 -- 1 IP address (1 host up) scanned in 7.34 seconds
+<br />        </div>        </div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:16:00</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.34:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;html&gt;&lt;head&gt;
+<br />&lt;title&gt;404 Not Found&lt;/title&gt;
+<br />&lt;/head&gt;&lt;body&gt;
+<br />&lt;h1&gt;Not Found&lt;/h1&gt;
+<br />&lt;p&gt;The requested URL /robots.txt was not found on this server.&lt;/p&gt;
+<br />&lt;/body&gt;&lt;/html&gt;
+<br />        </div>        </div>
+<div class="filterDiv smbclient">
+<button class="collapsible">smbclient</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:17:52</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>smbclient -L //10.10.10.34 -p 111 -N > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_smbclient.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_smbclient.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>protocol negotiation failed: NT_STATUS_CONNECTION_DISCONNECTED
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:17:52</td></tr>
+<tr><td>Run Time:</td><td>00:00:46</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.34 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.txt -oX /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:17:52 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.txt -oX /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.xml 10.10.10.34
+<br />Nmap scan report for 10.10.10.34
+<br />Host is up (0.17s latency).
+<br />Not shown: 49 filtered ports
+<br />PORT    STATE SERVICE VERSION
+<br />111/udp open  rpcbind 2-4 (RPC #100000)
+<br />| rpcinfo: 
+<br />|   program version   port/proto  service
+<br />|   100000  2,3,4        111/tcp  rpcbind
+<br />|   100000  2,3,4        111/udp  rpcbind
+<br />|   100003  3,4         2049/tcp  nfs
+<br />|   100003  3,4         2049/udp  nfs
+<br />|   100005  1,2,3      20048/tcp  mountd
+<br />|   100005  1,2,3      20048/udp  mountd
+<br />|   100021  1,3,4      33407/tcp  nlockmgr
+<br />|   100021  1,3,4      55204/udp  nlockmgr
+<br />|   100024  1          44100/udp  status
+<br />|   100024  1          55134/tcp  status
+<br />|   100227  3           2049/tcp  nfs_acl
+<br />|_  100227  3           2049/udp  nfs_acl
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:18:39 2018 -- 1 IP address (1 host up) scanned in 46.85 seconds
+<br />        </div>        </div>
+<div class="filterDiv ncrack_ssh_best15">
+<button class="collapsible">ncrack_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:19:28</td></tr>
+<tr><td>Run Time:</td><td>00:01:21</td></tr>
+<tr><td>Command:</td><td>ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.34 > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:19 EST
+<br />
+<br />ssh://10.10.10.34:22 finished.
+<br />
+<br />
+<br />Ncrack done: 1 service scanned in 81.00 seconds.
+<br />Probes sent: 13 | timed-out: 0 | prematurely-closed: 0
+<br />
+<br />Ncrack finished.
+<br />        </div>        </div>
+<div class="filterDiv rpcclient">
+<button class="collapsible">rpcclient</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:20:49</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>rpcclient -U \"\" 10.10.10.34 -p 111 -N > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_rpcclient.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_rpcclient.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Cannot connect to server.  Error was NT_STATUS_CONNECTION_DISCONNECTED
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:26</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.34:80/ -o /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon && cat /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.34:80
+<br />        </div>        </div>
+<a name="10.10.10.56"></a><br>
+<h2>Host Report: 10.10.10.56</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>80</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Apache httpd</td>
+<td>2.4.18</td>
+<td>(Ubuntu)</td></tr>
+<tr>
+<td>2222</td>
+<td>tcp</td>
+<td>ssh</td>
+
+<td>OpenSSH</td>
+<td>7.2p2 Ubuntu 4ubuntu2.2</td>
+<td>Ubuntu Linux; protocol 2.0</td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80">http://10.10.10.56:80</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_.hta_.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/.hta/">http://10.10.10.56:80/.hta/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_.htaccess_.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/.htaccess/">http://10.10.10.56:80/.htaccess/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_.htpasswd_.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/.htpasswd/">http://10.10.10.56:80/.htpasswd/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_cgi-bin_.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/cgi-bin/">http://10.10.10.56:80/cgi-bin/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_cgi-bin.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/cgi-bin//">http://10.10.10.56:80/cgi-bin//</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_icons_.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/icons/">http://10.10.10.56:80/icons/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.56_80_tcp_10.10.10.56_80_server-status_.png" alt="image"/></span></a>  <a href="http://10.10.10.56:80/server-status/">http://10.10.10.56:80/server-status/</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:00:01</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.56:80/ -a3 --colour=never > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.56:80/ [200 OK] Apache[2.4.18], Country[RESERVED][ZZ], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], IP[10.10.10.56]
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:13</td></tr>
+<tr><td>Run Time:</td><td>00:00:02</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.56 -p 2222 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:13 2018 as: nmap -p 2222 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_service_scan.txt 10.10.10.56
+<br />Nmap scan report for 10.10.10.56
+<br />Host is up (0.043s latency).
+<br />
+<br />PORT     STATE SERVICE VERSION
+<br />2222/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+<br />|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+<br />|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+<br />Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+<br />
+<br />Read data files from: /usr/bin/../share/nmap
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:07:15 2018 -- 1 IP address (1 host up) scanned in 2.02 seconds
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:20</td></tr>
+<tr><td>Run Time:</td><td>00:00:19</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.56:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.56:80/.hta/
+<br />http://10.10.10.56:80/.htaccess/
+<br />http://10.10.10.56:80/.htpasswd/
+<br />http://10.10.10.56:80/cgi-bin/
+<br />http://10.10.10.56:80/cgi-bin//
+<br />http://10.10.10.56:80/icons/
+<br />http://10.10.10.56:80/server-status/
+<br />        </div>        </div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:29</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.56:80/ -m 6 -w /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED [No Output Data]</td></tr>
+</table>
+</div>
+        <div>        </div>        </div>
+<div class="filterDiv nmap_ssh_hostkey">
+<button class="collapsible">nmap_ssh_hostkey</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:09:52</td></tr>
+<tr><td>Run Time:</td><td>00:00:02</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.56 -p 2222 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:09:52 2018 as: nmap -p 2222 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_ssh_hostkey.txt 10.10.10.56
+<br />Nmap scan report for 10.10.10.56
+<br />Host is up (0.042s latency).
+<br />
+<br />PORT     STATE SERVICE VERSION
+<br />2222/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+<br />|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+<br />|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+<br />Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:09:54 2018 -- 1 IP address (1 host up) scanned in 2.11 seconds
+<br />        </div>        </div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:11:31</td></tr>
+<tr><td>Run Time:</td><td>00:05:58</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.56:80/ -output /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.56
+<br />+ Target Port: 80
+<br />+ GET Server leaks inodes via ETags, header found with file /, fields: 0x89 0x559ccac257884 
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ OPTIONS Allowed HTTP Methods: GET, HEAD, POST, OPTIONS 
+<br />+ OSVDB-3233: GET /icons/README: Apache default file found.
+<br />        </div>        </div>
+<div class="filterDiv medusa">
+<button class="collapsible">medusa</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:24</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.56 - 2222 -M ssh > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_medusa.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_medusa.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks &lt;jmk@foofus.net&gt;
+<br />
+<br />        </div>        </div>
+<div class="filterDiv ncrack_ssh_best15">
+<button class="collapsible">ncrack_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:14:09</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>ncrack -vv -p 2222 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.56 > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:14 EST
+<br />
+<br />        </div>        </div>
+<div class="filterDiv hydra_ssh_best15">
+<button class="collapsible">hydra_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:14:09</td></tr>
+<tr><td>Run Time:</td><td>00:00:52</td></tr>
+<tr><td>Command:</td><td>hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 2222 10.10.10.56 ssh > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+<br />
+<br />Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:14:09
+<br />[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+<br />[DATA] attacking ssh://10.10.10.56:2222/
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.56 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+<br />1 of 1 target completed, 0 valid passwords found
+<br />Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:15:01
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:18:40</td></tr>
+<tr><td>Run Time:</td><td>00:00:47</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.56 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.txt -oX /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:18:40 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.txt -oX /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.xml 10.10.10.56
+<br />Nmap scan report for 10.10.10.56
+<br />Host is up (0.040s latency).
+<br />All 50 scanned ports on 10.10.10.56 are closed
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:19:28 2018 -- 1 IP address (1 host up) scanned in 47.84 seconds
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:25</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.56:80/ -o /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon && cat /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.56:80
+<br />        </div>        </div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:27</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.56:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;html&gt;&lt;head&gt;
+<br />&lt;title&gt;404 Not Found&lt;/title&gt;
+<br />&lt;/head&gt;&lt;body&gt;
+<br />&lt;h1&gt;Not Found&lt;/h1&gt;
+<br />&lt;p&gt;The requested URL /robots.txt was not found on this server.&lt;/p&gt;
+<br />&lt;hr&gt;
+<br />&lt;address&gt;Apache/2.4.18 (Ubuntu) Server at 10.10.10.56 Port 80&lt;/address&gt;
+<br />&lt;/body&gt;&lt;/html&gt;
+<br />        </div>        </div>
+<a name="10.10.10.66"></a><br>
+<h2>Host Report: 10.10.10.66</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>80</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Apache httpd</td>
+<td>2.4.18</td>
+<td>(Ubuntu)</td></tr>
+<tr>
+<td>2222</td>
+<td>tcp</td>
+<td>ssh</td>
+
+<td></td>
+<td></td>
+<td>protocol 2.0</td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80">http://10.10.10.66:80</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_.hta_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/.hta/">http://10.10.10.66:80/.hta/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_.htaccess_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/.htaccess/">http://10.10.10.66:80/.htaccess/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_.htpasswd_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/.htpasswd/">http://10.10.10.66:80/.htpasswd/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_documents_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/documents/">http://10.10.10.66:80/documents/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_icons_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/icons/">http://10.10.10.66:80/icons/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_inc_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/inc/">http://10.10.10.66:80/inc/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_index.php.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/index.php">http://10.10.10.66:80/index.php</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_index.php_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/index.php/">http://10.10.10.66:80/index.php/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_register.php.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/register.php">http://10.10.10.66:80/register.php</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_secret_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/secret/">http://10.10.10.66:80/secret/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.66_80_tcp_10.10.10.66_80_server-status_.png" alt="image"/></span></a>  <a href="http://10.10.10.66:80/server-status/">http://10.10.10.66:80/server-status/</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv ncrack_ssh_best15">
+<button class="collapsible">ncrack_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>ncrack -vv -p 2222 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.66 > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:07 EST
+<br />
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:34</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.66:80/ -o /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_photon && cat /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.66:80
+<br />http://10.10.10.66:80/index.php
+<br />http://10.10.10.66:80/register.php
+<br />        </div>        </div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:35</td></tr>
+<tr><td>Run Time:</td><td>00:00:08</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.66 -p 2222 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:35 2018 as: nmap -p 2222 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_nmap_service_scan.txt 10.10.10.66
+<br />Nmap scan report for 10.10.10.66
+<br />Host is up (0.043s latency).
+<br />
+<br />PORT     STATE SERVICE VERSION
+<br />2222/tcp open  ssh     (protocol 2.0)
+<br />| fingerprint-strings: 
+<br />|   NULL: 
+<br />|_    SSH-2.0-OpenSSH 32bit (not so recent ver)
+<br />| ssh-hostkey: 
+<br />|   1024 e2:71:84:5d:ed:07:89:98:68:8b:6e:78:da:84:4c:b5 (DSA)
+<br />|   2048 bd:1c:11:9a:5b:15:d2:f6:28:76:c3:40:7c:80:6d:ec (RSA)
+<br />|   256 bf:e8:25:bf:ca:92:55:bc:ca:a4:96:c7:43:d0:51:73 (ECDSA)
+<br />|_  256 6f:14:30:b1:39:47:54:b7:5a:01:be:96:2c:a7:96:58 (ED25519)
+<br />1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+<br />SF-Port2222-TCP:V=7.70%I=7%D=11/13%Time=5BEB836D%P=x86_64-pc-linux-gnu%r(N
+<br />SF:ULL,2B,"SSH-2\.0-OpenSSH\x2032bit\x20\(not\x20so\x20recent\x20ver\)\r\n
+<br />SF:");
+<br />
+<br />Read data files from: /usr/bin/../share/nmap
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:07:43 2018 -- 1 IP address (1 host up) scanned in 8.15 seconds
+<br />        </div>        </div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:40</td></tr>
+<tr><td>Run Time:</td><td>00:00:01</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.66:80/ -a3 --colour=never > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.66:80/ [200 OK] Apache[2.4.18], Cookies[PHPSESSID], Country[RESERVED][ZZ], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], IP[10.10.10.66], PasswordField[pass], Title[NOTES]
+<br />        </div>        </div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:08</td></tr>
+<tr><td>Run Time:</td><td>00:05:29</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.66:80/ -output /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.66
+<br />+ Target Port: 80
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ GET Cookie PHPSESSID created without the httponly flag
+<br />+ FYNXSCKP Web Server returns a valid response with junk HTTP methods, this may cause false positives.
+<br />+ GET Server leaks inodes via ETags, header found with file /icons/README, fields: 0x13f4 0x438c034968a80 
+<br />+ OSVDB-3233: GET /icons/README: Apache default file found.
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:33</td></tr>
+<tr><td>Run Time:</td><td>00:00:20</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.66:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.66:80/.htpasswd/
+<br />http://10.10.10.66:80/.hta/
+<br />http://10.10.10.66:80/.htaccess/
+<br />http://10.10.10.66:80/documents/
+<br />http://10.10.10.66:80/icons/
+<br />http://10.10.10.66:80/inc/
+<br />http://10.10.10.66:80/index.php/
+<br />http://10.10.10.66:80/secret/
+<br />http://10.10.10.66:80/server-status/
+<br />        </div>        </div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:54</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.66:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;html&gt;&lt;head&gt;
+<br />&lt;title&gt;404 Not Found&lt;/title&gt;
+<br />&lt;/head&gt;&lt;body&gt;
+<br />&lt;h1&gt;Not Found&lt;/h1&gt;
+<br />&lt;p&gt;The requested URL /robots.txt was not found on this server.&lt;/p&gt;
+<br />&lt;hr&gt;
+<br />&lt;address&gt;Apache/2.4.18 (Ubuntu) Server at 10.10.10.66 Port 80&lt;/address&gt;
+<br />&lt;/body&gt;&lt;/html&gt;
+<br />        </div>        </div>
+<div class="filterDiv nmap_ssh_hostkey">
+<button class="collapsible">nmap_ssh_hostkey</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:55</td></tr>
+<tr><td>Run Time:</td><td>00:00:08</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.66 -p 2222 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:08:55 2018 as: nmap -p 2222 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_nmap_ssh_hostkey.txt 10.10.10.66
+<br />Nmap scan report for 10.10.10.66
+<br />Host is up (0.040s latency).
+<br />
+<br />PORT     STATE SERVICE VERSION
+<br />2222/tcp open  ssh     (protocol 2.0)
+<br />| fingerprint-strings: 
+<br />|   NULL: 
+<br />|_    SSH-2.0-OpenSSH 32bit (not so recent ver)
+<br />| ssh-hostkey: 
+<br />|   1024 e2:71:84:5d:ed:07:89:98:68:8b:6e:78:da:84:4c:b5 (DSA)
+<br />|   2048 bd:1c:11:9a:5b:15:d2:f6:28:76:c3:40:7c:80:6d:ec (RSA)
+<br />|   256 bf:e8:25:bf:ca:92:55:bc:ca:a4:96:c7:43:d0:51:73 (ECDSA)
+<br />|_  256 6f:14:30:b1:39:47:54:b7:5a:01:be:96:2c:a7:96:58 (ED25519)
+<br />1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+<br />SF-Port2222-TCP:V=7.70%I=7%D=11/13%Time=5BEB83BD%P=x86_64-pc-linux-gnu%r(N
+<br />SF:ULL,2B,"SSH-2\.0-OpenSSH\x2032bit\x20\(not\x20so\x20recent\x20ver\)\r\n
+<br />SF:");
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:09:03 2018 -- 1 IP address (1 host up) scanned in 8.16 seconds
+<br />        </div>        </div>
+<div class="filterDiv medusa">
+<button class="collapsible">medusa</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:10:38</td></tr>
+<tr><td>Run Time:</td><td>00:00:21</td></tr>
+<tr><td>Command:</td><td>medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.66 - 2222 -M ssh > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_medusa.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_medusa.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks &lt;jmk@foofus.net&gt;
+<br />
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:58</td></tr>
+<tr><td>Run Time:</td><td>00:05:37</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.66 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_udp_scan.txt -oX /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:13:58 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_udp_scan.txt -oX /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_udp_scan.xml 10.10.10.66
+<br />Nmap scan report for 10.10.10.66
+<br />Host is up.
+<br />All 50 scanned ports on 10.10.10.66 are open|filtered
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:19:35 2018 -- 1 IP address (1 host up) scanned in 337.16 seconds
+<br />        </div>        </div>
+<div class="filterDiv hydra_ssh_best15">
+<button class="collapsible">hydra_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:17:29</td></tr>
+<tr><td>Run Time:</td><td>00:00:22</td></tr>
+<tr><td>Command:</td><td>hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 2222 10.10.10.66 ssh > /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_2222_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+<br />
+<br />Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:17:29
+<br />[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+<br />[DATA] attacking ssh://10.10.10.66:2222/
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.66 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+<br />1 of 1 target completed, 0 valid passwords found
+<br />Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:17:52
+<br />        </div>        </div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:25</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.66:80/ -m 6 -w /assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.66/celerystalkOutput/10.10.10.66_80_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Username
+<br />Password
+<br />Abandon
+<br />Nightmare
+<br />Decoder
+<br />Stefano
+<br />Register
+<br />        </div>        </div>
+<a name="10.10.10.72"></a><br>
+<h2>Host Report: 10.10.10.72</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>80</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Microsoft IIS httpd</td>
+<td>8.5</td>
+<td></td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.72_80_tcp_10.10.10.72_80.png" alt="image"/></span></a>  <a href="http://10.10.10.72:80">http://10.10.10.72:80</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.72_80_tcp_10.10.10.72_80_.png" alt="image"/></span></a>  <a href="http://10.10.10.72:80/">http://10.10.10.72:80/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.72_80_tcp_10.10.10.72_80_Images_.png" alt="image"/></span></a>  <a href="http://10.10.10.72:80/Images/">http://10.10.10.72:80/Images/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.72_80_tcp_10.10.10.72_80_css_.png" alt="image"/></span></a>  <a href="http://10.10.10.72:80/css/">http://10.10.10.72:80/css/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.72_80_tcp_10.10.10.72_80_images_.png" alt="image"/></span></a>  <a href="http://10.10.10.72:80/images/">http://10.10.10.72:80/images/</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.72:80/ -m 6 -w /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Street
+<br />Fighter
+<br />series
+<br />fighting
+<br />Posted
+<br />MoreComments
+<br />Capcom
+<br />features
+<br />Blanka
+<br />members
+<br />released
+<br />PlayStation
+<br />characters
+<br />content
+<br />online
+<br />Online
+<br />street
+<br />Arcade
+<br />Hadoken
+<br />CAPCOM
+<br />competitive
+<br />gaming
+<br />StreetFighter
+<br />Homepage
+<br />Events
+<br />Contact
+<br />header
+<br />important
+<br />announcement
+<br />October
+<br />currently
+<br />redesigning
+<br />website
+<br />streetfighterclub
+<br />modern
+<br />functionality
+<br />should
+<br />running
+<br />Meanwhile
+<br />available
+<br />registered
+<br />Announced
+<br />developed
+<br />numbered
+<br />February
+<br />Microsoft
+<br />Window
+<br />version
+<br />Spring
+<br />platform
+<br />between
+<br />Windows
+<br />versions
+<br />Similar
+<br />previous
+<br />scrolling
+<br />gameplay
+<br />system
+<br />introduces
+<br />builds
+<br />player
+<br />receives
+<br />attacks
+<br />skills
+<br />launch
+<br />additional
+<br />through
+<br />updates
+<br />downloadable
+<br />Welcome
+<br />classic
+<br />figher
+<br />Latest
+<br />Updates
+<br />Edition
+<br />coming
+<br />January
+<br />Features
+<br />Battle
+<br />Details
+<br />SFVAEReveal
+<br />Characters
+<br />Balrog
+<br />Shakunetsu
+<br />Buffalo
+<br />Electric
+<br />Thunder
+<br />Vertical
+<br />Lightning
+<br />History
+<br />Crossover
+<br />sidebar
+<br />Japanese
+<br />American
+<br />action
+<br />written
+<br />directed
+<br />Steven
+<br />loosely
+<br />produced
+<br />Claude
+<br />supporting
+<br />performances
+<br />Damian
+<br />Minogue
+<br />Tournaments
+<br />Schedule
+<br />premier
+<br />league
+<br />destination
+<br />Featuring
+<br />latest
+<br />flagship
+<br />legendary
+<br />brings
+<br />together
+<br />players
+<br />spectators
+<br />official
+<br />events
+<br />independently
+<br />tournaments
+<br />involved
+<br />showcases
+<br />Recommended
+<br />streetfighter
+<br />Wikipedia
+<br />capcom
+<br />fighter
+<br />Streetfighterclub
+<br />rights
+<br />reserved
+<br />Sponsored
+<br />footer
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:13</td></tr>
+<tr><td>Run Time:</td><td>00:00:20</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.72:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.72:80/Images/
+<br />http://10.10.10.72:80/css/
+<br />http://10.10.10.72:80/images/
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:11:30</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.72:80/ -o /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_photon && cat /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.72:80
+<br />http://10.10.10.72:80/
+<br />        </div>        </div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:14:01</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.72:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+<br />&lt;head&gt;
+<br />&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/&gt;
+<br />&lt;title&gt;404 - File or directory not found.&lt;/title&gt;
+<br />&lt;style type="text/css"&gt;
+<br /><br />body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}
+<br />fieldset{padding:0 15px 10px 15px;} 
+<br />h1{font-size:2.4em;margin:0;color:#FFF;}
+<br />h2{font-size:1.7em;margin:0;color:#CC0000;} 
+<br />h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} 
+<br />#header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:"trebuchet MS", Verdana, sans-serif;color:#FFF;
+<br />background-color:#555555;}
+<br />#content{margin:0 0 0 2%;position:relative;}
+<br />.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}
+<br />--&gt;
+<br />&lt;/style&gt;
+<br />&lt;/head&gt;
+<br />&lt;body&gt;
+<br />&lt;div id="header"&gt;&lt;h1&gt;Server Error&lt;/h1&gt;&lt;/div&gt;
+<br />&lt;div id="content"&gt;
+<br /> &lt;div class="content-container"&gt;&lt;fieldset&gt;
+<br />  &lt;h2&gt;404 - File or directory not found.&lt;/h2&gt;
+<br />  &lt;h3&gt;The resource you are looking for might have been removed, had its name changed, or is temporarily unavailable.&lt;/h3&gt;
+<br /> &lt;/fieldset&gt;&lt;/div&gt;
+<br />&lt;/div&gt;
+<br />&lt;/body&gt;
+<br />&lt;/html&gt;
+<br />        </div>        </div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:15:02</td></tr>
+<tr><td>Run Time:</td><td>00:05:41</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.72:80/ -output /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.72
+<br />+ Target Port: 80
+<br />+ GET Retrieved x-powered-by header: ASP.NET
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ GET Retrieved x-aspnet-version header: 4.0.30319
+<br />+ OPTIONS Allowed HTTP Methods: OPTIONS, TRACE, GET, HEAD, POST 
+<br />+ OPTIONS Public HTTP Methods: OPTIONS, TRACE, GET, HEAD, POST 
+<br />        </div>        </div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:18:39</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.72:80/ -a3 --colour=never > /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_80_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.72:80/ [200 OK] Country[RESERVED][ZZ], HTTPServer[Microsoft-IIS/8.5], IP[10.10.10.72], Microsoft-IIS[8.5], Title[StreetFighter Club], X-Powered-By[ASP.NET]
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:27</td></tr>
+<tr><td>Run Time:</td><td>00:05:36</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.72 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_udp_scan.txt -oX /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:21:27 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_udp_scan.txt -oX /assessments/htb/10.10.10.72/celerystalkOutput/10.10.10.72_udp_scan.xml 10.10.10.72
+<br />Nmap scan report for 10.10.10.72
+<br />Host is up.
+<br />All 50 scanned ports on 10.10.10.72 are open|filtered
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:27:04 2018 -- 1 IP address (1 host up) scanned in 336.71 seconds
+<br />        </div>        </div>
+<a name="10.10.10.91"></a><br>
+<h2>Host Report: 10.10.10.91</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>22</td>
+<td>tcp</td>
+<td>ssh</td>
+
+<td>OpenSSH</td>
+<td>7.2p2 Ubuntu 4ubuntu2.4</td>
+<td>Ubuntu Linux; protocol 2.0</td></tr>
+<tr>
+<td>5000</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Gunicorn</td>
+<td>19.7.1</td>
+<td></td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.91_5000_tcp_10.10.10.91_5000.png" alt="image"/></span></a>  <a href="http://10.10.10.91:5000">http://10.10.10.91:5000</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv nmap_service_scan">
+<button class="collapsible">nmap_service_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:00:02</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.91 -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_nmap_service_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:07:11 2018 as: nmap -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_nmap_service_scan.txt 10.10.10.91
+<br />Nmap scan report for 10.10.10.91
+<br />Host is up (0.039s latency).
+<br />
+<br />PORT   STATE SERVICE VERSION
+<br />22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.4 (Ubuntu Linux; protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 42:90:e3:35:31:8d:8b:86:17:2a:fb:38:90:da:c4:95 (RSA)
+<br />|   256 b7:b6:dc:c4:4c:87:9b:75:2a:00:89:83:ed:b2:80:31 (ECDSA)
+<br />|_  256 d5:2f:19:53:b2:8e:3a:4b:b3:dd:3c:1f:c0:37:0d:00 (ED25519)
+<br />Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+<br />
+<br />Read data files from: /usr/bin/../share/nmap
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:07:13 2018 -- 1 IP address (1 host up) scanned in 2.10 seconds
+<br />        </div>        </div>
+<div class="filterDiv ncrack_ssh_best15">
+<button class="collapsible">ncrack_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:00:18</td></tr>
+<tr><td>Command:</td><td>ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.91 > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_ncrack_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:07 EST
+<br />
+<br />ssh://10.10.10.91:22 finished.
+<br />
+<br />
+<br />Ncrack done: 1 service scanned in 18.00 seconds.
+<br />Probes sent: 10 | timed-out: 0 | prematurely-closed: 0
+<br />
+<br />Ncrack finished.
+<br />        </div>        </div>
+<div class="filterDiv hydra_ssh_best15">
+<button class="collapsible">hydra_ssh_best15</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:15</td></tr>
+<tr><td>Run Time:</td><td>00:00:52</td></tr>
+<tr><td>Command:</td><td>hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.91 ssh > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_hydra_ssh_best15.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+<br />
+<br />Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:07:15
+<br />[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+<br />[DATA] attacking ssh://10.10.10.91:22/
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+<br />[ATTEMPT] target 10.10.10.91 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+<br />1 of 1 target completed, 0 valid passwords found
+<br />Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:08:08
+<br />        </div>        </div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:54</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.91:5000/ -a3 --colour=never > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.91:5000/ [200 OK] Country[RESERVED][ZZ], HTTPServer[gunicorn/19.7.1], IP[10.10.10.91]
+<br />        </div>        </div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:08:57</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.91:5000/ -m 6 -w /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>construction
+<br />become
+<br />Blogfeeder
+<br />application
+<br />replace
+<br />proper
+<br />solita
+<br />backend
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:10:59</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.91:5000/ -o /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_photon && cat /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_photon/internal.txt > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.91:5000
+<br />        </div>        </div>
+<div class="filterDiv nmap_ssh_hostkey">
+<button class="collapsible">nmap_ssh_hostkey</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:18</td></tr>
+<tr><td>Run Time:</td><td>00:00:02</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.91 -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_nmap_ssh_hostkey.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:13:18 2018 as: nmap -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_nmap_ssh_hostkey.txt 10.10.10.91
+<br />Nmap scan report for 10.10.10.91
+<br />Host is up (0.039s latency).
+<br />
+<br />PORT   STATE SERVICE VERSION
+<br />22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.4 (Ubuntu Linux; protocol 2.0)
+<br />| ssh-hostkey: 
+<br />|   2048 42:90:e3:35:31:8d:8b:86:17:2a:fb:38:90:da:c4:95 (RSA)
+<br />|   256 b7:b6:dc:c4:4c:87:9b:75:2a:00:89:83:ed:b2:80:31 (ECDSA)
+<br />|_  256 d5:2f:19:53:b2:8e:3a:4b:b3:dd:3c:1f:c0:37:0d:00 (ED25519)
+<br />Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:13:20 2018 -- 1 IP address (1 host up) scanned in 2.10 seconds
+<br />        </div>        </div>
+<div class="filterDiv medusa">
+<button class="collapsible">medusa</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:24</td></tr>
+<tr><td>Run Time:</td><td>00:00:36</td></tr>
+<tr><td>Command:</td><td>medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.91 - 22 -M ssh > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_medusa.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_22_tcp_medusa.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks &lt;jmk@foofus.net&gt;
+<br />
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234567 (7 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345678 (8 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: abc123 (9 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: dragon (10 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: iloveyou (11 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: letmein (12 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: monkey (13 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: password (14 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: qwerty (15 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: tequiero (16 of 17 complete)
+<br />ACCOUNT CHECK: [ssh] Host: 10.10.10.91 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: test (17 of 17 complete)
+<br />        </div>        </div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:16:00</td></tr>
+<tr><td>Run Time:</td><td>00:11:03</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.91:5000/ -output /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.91
+<br />+ Target Port: 5000
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ OPTIONS Allowed HTTP Methods: HEAD, OPTIONS, GET 
+<br />        </div>        </div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:17:52</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.91:5000//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;title&gt;404 Not Found&lt;/title&gt;
+<br />&lt;h1&gt;Not Found&lt;/h1&gt;
+<br />&lt;p&gt;The requested URL was not found on the server.  If you entered the URL manually please check your spelling and try again.&lt;/p&gt;
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:19:35</td></tr>
+<tr><td>Run Time:</td><td>00:02:27</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.91 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_udp_scan.txt -oX /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:19:35 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_udp_scan.txt -oX /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_udp_scan.xml 10.10.10.91
+<br />Nmap scan report for 10.10.10.91
+<br />Host is up (0.040s latency).
+<br />Not shown: 48 closed ports
+<br />PORT     STATE         SERVICE  VERSION
+<br />631/udp  open|filtered ipp
+<br />5353/udp open|filtered zeroconf
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:22:03 2018 -- 1 IP address (1 host up) scanned in 147.78 seconds
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:20:44</td></tr>
+<tr><td>Run Time:</td><td>00:00:39</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.91:5000/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.91/celerystalkOutput/10.10.10.91_5000_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED [No Output Data]</td></tr>
+</table>
+</div>
+        <div>        </div>        </div>
+<a name="10.10.10.93"></a><br>
+<h2>Host Report: 10.10.10.93</h2>
+
+<div class="filterDiv services">
+<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr><tr>
+<td>80</td>
+<td>tcp</td>
+<td>http</td>
+
+<td>Microsoft IIS httpd</td>
+<td>7.5</td>
+<td></td></tr>
+</table>
+<br>
+
+</div>
+
+<div class="filterDiv screenshots">
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.93_80_tcp_10.10.10.93_80.png" alt="image"/></span></a>  <a href="http://10.10.10.93:80">http://10.10.10.93:80</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.93_80_tcp_10.10.10.93_80_.png" alt="image"/></span></a>  <a href="http://10.10.10.93:80/">http://10.10.10.93:80/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.93_80_tcp_10.10.10.93_80_aspnet_client_.png" alt="image"/></span></a>  <a href="http://10.10.10.93:80/aspnet_client/">http://10.10.10.93:80/aspnet_client/</a><br>
+
+</div>
+
+<div id="linkwrap">
+<a class="link" href="#">[Screenshot]<span><img src="screens/10.10.10.93_80_tcp_10.10.10.93_80_uploadedfiles_.png" alt="image"/></span></a>  <a href="http://10.10.10.93:80/uploadedfiles/">http://10.10.10.93:80/uploadedfiles/</a><br>
+
+</div>
+
+<br>
+</div>
+<div class="filterDiv curl_robots">
+<button class="collapsible">curl_robots</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:11</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>curl http://10.10.10.93:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_curl_robots.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>
+<br />&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+<br />&lt;head&gt;
+<br />&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/&gt;
+<br />&lt;title&gt;404 - File or directory not found.&lt;/title&gt;
+<br />&lt;style type="text/css"&gt;
+<br /><br />body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}
+<br />fieldset{padding:0 15px 10px 15px;} 
+<br />h1{font-size:2.4em;margin:0;color:#FFF;}
+<br />h2{font-size:1.7em;margin:0;color:#CC0000;} 
+<br />h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} 
+<br />#header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:"trebuchet MS", Verdana, sans-serif;color:#FFF;
+<br />background-color:#555555;}
+<br />#content{margin:0 0 0 2%;position:relative;}
+<br />.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}
+<br />--&gt;
+<br />&lt;/style&gt;
+<br />&lt;/head&gt;
+<br />&lt;body&gt;
+<br />&lt;div id="header"&gt;&lt;h1&gt;Server Error&lt;/h1&gt;&lt;/div&gt;
+<br />&lt;div id="content"&gt;
+<br /> &lt;div class="content-container"&gt;&lt;fieldset&gt;
+<br />  &lt;h2&gt;404 - File or directory not found.&lt;/h2&gt;
+<br />  &lt;h3&gt;The resource you are looking for might have been removed, had its name changed, or is temporarily unavailable.&lt;/h3&gt;
+<br /> &lt;/fieldset&gt;&lt;/div&gt;
+<br />&lt;/div&gt;
+<br />&lt;/body&gt;
+<br />&lt;/html&gt;
+<br />        </div>        </div>
+<div class="filterDiv nikto">
+<button class="collapsible">nikto</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:07:41</td></tr>
+<tr><td>Run Time:</td><td>00:05:36</td></tr>
+<tr><td>Command:</td><td>nikto -h http://10.10.10.93:80/ -output /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_nikto.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_nikto.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>- Nikto v2.1.6/2.1.5
+<br />+ Target Host: 10.10.10.93
+<br />+ Target Port: 80
+<br />+ GET Retrieved x-powered-by header: ASP.NET
+<br />+ GET The anti-clickjacking X-Frame-Options header is not present.
+<br />+ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
+<br />+ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+<br />+ GET Retrieved x-aspnet-version header: 2.0.50727
+<br />+ OPTIONS Allowed HTTP Methods: OPTIONS, TRACE, GET, HEAD, POST 
+<br />+ OPTIONS Public HTTP Methods: OPTIONS, TRACE, GET, HEAD, POST 
+<br />        </div>        </div>
+<div class="filterDiv gobuster-common">
+<button class="collapsible">gobuster-common</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:12:46</td></tr>
+<tr><td>Run Time:</td><td>00:00:20</td></tr>
+<tr><td>Command:</td><td>gobuster -u http://10.10.10.93:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_gobuster-common.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.93:80/aspnet_client/
+<br />http://10.10.10.93:80/uploadedfiles/
+<br />        </div>        </div>
+<div class="filterDiv photon">
+<button class="collapsible">photon</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:17</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>python /opt/Photon/photon.py -u http://10.10.10.93:80/ -o /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_photon && cat /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_photon.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_photon.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.93:80/
+<br />http://10.10.10.93:80
+<br />        </div>        </div>
+<div class="filterDiv cewl">
+<button class="collapsible">cewl</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:13:58</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>cewl http://10.10.10.93:80/ -m 6 -w /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_cewl.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_cewl.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>Bounty
+<br />        </div>        </div>
+<div class="filterDiv whatweb">
+<button class="collapsible">whatweb</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:20:43</td></tr>
+<tr><td>Run Time:</td><td>00:00:00</td></tr>
+<tr><td>Command:</td><td>whatweb http://10.10.10.93:80/ -a3 --colour=never > /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_whatweb.txt</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_80_tcp_whatweb.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div>http://10.10.10.93:80/ [200 OK] Country[RESERVED][ZZ], HTTPServer[Microsoft-IIS/7.5], IP[10.10.10.93], Microsoft-IIS[7.5], Title[Bounty], X-Powered-By[ASP.NET]
+<br />        </div>        </div>
+<div class="filterDiv udp_scan">
+<button class="collapsible">udp_scan</button>
+<div class="content"><table><tr><td>Start Time:</td><td>11/13/2018 21:21:24</td></tr>
+<tr><td>Run Time:</td><td>00:05:36</td></tr>
+<tr><td>Command:</td><td>nmap 10.10.10.93 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_udp_scan.txt -oX /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_udp_scan.xml</td></tr>
+<tr><td>Output File:</td><td>/assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_udp_scan.txt</td></tr>
+<tr><td>Status:</td><td>COMPLETED</td></tr>
+</table>
+</div>
+        <div># Nmap 7.70 scan initiated Tue Nov 13 21:21:24 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_udp_scan.txt -oX /assessments/htb/10.10.10.93/celerystalkOutput/10.10.10.93_udp_scan.xml 10.10.10.93
+<br />Nmap scan report for 10.10.10.93
+<br />Host is up.
+<br />All 50 scanned ports on 10.10.10.93 are open|filtered
+<br />
+<br />Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+<br /># Nmap done at Tue Nov 13 21:27:01 2018 -- 1 IP address (1 host up) scanned in 336.77 seconds
+<br />        </div>        </div>
+
+
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+
+<script>
+filterSelection("all")
+function filterSelection(c) {
+  var x, i;
+  x = document.getElementsByClassName("filterDiv");
+  if (c == "all") c = "";
+  for (i = 0; i < x.length; i++) {
+    w3RemoveClass(x[i], "show");
+    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+  }
+}
+
+function w3AddClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+  }
+}
+
+function w3RemoveClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    while (arr1.indexOf(arr2[i]) > -1) {
+      arr1.splice(arr1.indexOf(arr2[i]), 1);     
+    }
+  }
+  element.className = arr1.join(" ");
+}
+
+// Add active class to the current button (highlight it)
+var btnContainer = document.getElementById("myBtnContainer");
+var btns = btnContainer.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function(){
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+</script>
+
+
+
