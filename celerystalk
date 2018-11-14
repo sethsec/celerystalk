@@ -19,6 +19,7 @@ Usage:
     celerystalk db export
     celerystalk shutdown
     celerystalk interactive
+    celerystalk reset
     celerystalk (help | -h | --help)
 
 Options:
@@ -126,7 +127,7 @@ from prettytable import PrettyTable
 import csv
 
 
-build=str(123)
+build=str(125)
 
 def print_banner():
 
@@ -364,6 +365,24 @@ def main(arguments):
         lib.utils.shutdown_background_jobs()
         exit()
 
+    ####################################
+    # Shutdown Command
+    ####################################
+
+    if arguments["reset"]:
+        answer = raw_input("[!] WARNING: This action destroy the celerystalk database and flush the redis DB. Are you sure you want to continue? (y\N")
+        print("")
+        if (answer == "Y") or (answer == "y"):
+            from subprocess import Popen, PIPE
+            lib.utils.shutdown_background_jobs()
+
+            path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
+            print(path)
+            os.chdir(path)
+            populated_command = "bash ./reset.sh"
+            p = Popen(populated_command, shell=True)
+            p.communicate()
+            exit()
 
     ####################################
     # Report Command: Run Report

@@ -3,19 +3,14 @@ from celery import Celery
 from celery import chain
 import time
 from timeit import default_timer as timer
-
 import lib.csimport
 from lib import db
 from lib import utils
-from lib import config_parser
 import lib.scan
+import simplejson
 import urlparse
 import os.path
-from celery.signals import after_task_publish
 from celery.utils import uuid
-import sys
-import re
-import socket
 import os
 from libnmap.parser import NmapParser
 from libnmap.process import NmapProcess
@@ -153,7 +148,7 @@ def post_process(*args):
 
         #post_photon_filename = populated_command.split(">")[1].lstrip()
         post_photon_filename = lib.db.get_output_file_for_command(workspace,populated_command)[0][0]
-        print(post_photon_filename)
+        #print(post_photon_filename)
 
 
         print("Post photon filename" + post_photon_filename + "\n")
@@ -168,31 +163,28 @@ def post_process(*args):
             index = index + 1
 
         try:
-            with open(post_photon_filename,'r') as photon_file:
-                lines = photon_file.read().splitlines()
-                print(lines)
-                if len(lines) > 300:
-                    #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                    lines = lines[:300]
+            with open(post_photon_filename, 'r') as photon_file:
+                photon_file_json = simplejson.load(photon_file)
 
-            for url in lines:
-                #url = url.split("?")[0].replace("//","/")
-                if url.startswith("http"):
-                    url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                        .replace("/", "_") \
-                        .replace("\\", "") \
-                        .replace(":", "_") + ".png"
-                    url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                    db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                    db.insert_new_path(db_path)
-                    print("Found Url: " + str(url))
-                    urls_to_screenshot.append((str(url), url_screenshot_filename))
+                good_sections = ["internal", "robots", "fuzzable"]
+                for section in good_sections:
+                    for url in photon_file_json[section]:
+                        if url.startswith("http"):
+                            url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                                .replace("/", "_") \
+                                .replace("\\", "") \
+                                .replace(":", "_") + ".png"
+                            url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                            db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                            db.insert_new_path(db_path)
+                            print("Found Url: " + str(url))
+                            urls_to_screenshot.append((str(url), url_screenshot_filename))
 
-                    #result = lib.utils.take_screenshot(url,url_screenshot_filename)
-                    #print(result)
         except Exception, e:
             if not simulation:
-                print ("[!] Could not open {0}".format(post_photon_filename))
+                print("[!] Could not open {0}".format(post_photon_filename))
+
+
 
     if not simulation:
         if len(urls_to_screenshot) > 0:
@@ -202,56 +194,6 @@ def post_process(*args):
             utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
             cel_take_screenshot.delay(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
 
-    #task_id = uuid()
-    #cmd_name = "Screenshot"
-    #populated_command = "Taking screenshots of all resources found on " + ip
-    #utils.create_task(cmd_name, populated_command, ip, "", workspace, task_id)
-    #lib.utils.take_screenshot(urls_to_screenshot)
-
-
-
-#Commenting this next part out because i don't think i want to auto run against newly discovered paths. I think I am
-#going to give the list of paths back to the user and let them pick which ones to submit to celery
-
-            # post_output_base_file_name = post_gobuster_filename.split("__")[0] + "_" + path.replace("/", "_")
-            #
-            # json_config = read_config_post(path)
-                # for entry in json_config["services"][scanned_service]["output"]:
-                #     for cmd in entry["commands"]:
-                #         if simulation == "True":
-                #             #debug - sends jobs to celery, but with a # in front of every one.
-                #             populated_command = (("##" + cmd) % {"OUTPUTDIR": post_output_base_file_name})
-                #         else:
-                #             populated_command = (cmd % {"IP": ip, "PORT": scanned_service_port,
-                #                                         "OUTPUTDIR": post_output_base_file_name})
-                #
-                #         task_id = uuid()
-                #         result = chain(
-                #             # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                #             # in celery the same way a task does, for instance, you can't find it in flower
-                #             cel_create_task.subtask(args=(populated_command, ip, workspace, task_id), task_id=task_id),
-                #
-                #             # run the command. run_task takes care of marking the task as started and then completed.
-                #             # The si tells run_cmd to ignore the data returned from a previous task
-                #             run_cmd.si(populated_command, output_base_dir, workspace, ip, task_id),
-                #
-                #             # right now, every executed command gets sent to a generic post_process task that can do
-                #             # additinoal stuff based on the command that just ran.
-                #             post_process.si(populated_command, output_base_dir, workspace, ip, host_dir, simulation,
-                #                             scanned_service_port),
-                #         )()  # .apply_async()
-                #
-                #         host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
-                #         f = open(host_audit_log, 'a')
-                #         f.write(populated_command + "\n\n")
-                #         f.close()
-
-
-
-
-    #else:
-        #print("Not gobuster: " + populated_command + "\n")
-    #f.close()
 
 
 
