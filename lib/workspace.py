@@ -42,6 +42,24 @@ def create_workspace(workspace,arguments):
             print('[!] Define where you would like scan output & reports saved (Eg: -o /assessments/)\n')
             exit()
         else:
+            if arguments["-m"] == "vapt":
+                mode = "vapt"
+            elif arguments["-m"] == "bb":
+                mode = "bb"
+            else:
+                print("[!] You must specify the mode [ vapt | bb ].\n")
+                print("  VAPT Mode:\tIn VAPT mode, IP addresses/ranges/CIDRs define scope.")
+                print("\t\tSubdomains that match an in-scope IP are also added to scope.\n ")
+                print("\t\tWays to define your scope:")
+                print("\t\t\t./celerystalk import -S scope.txt")
+                print("\t\t\t./celerysatlk import -f nmap/nessus file")
+                print("\t\tHosts can be explicitly excluded:")
+                print("\t\t\t./celerysatlk import -O out_of_scope.txt. \n")
+                print("  BB Mode:\tIn BB mode, all subdomains found with celerystalk or manually imported are marked in scope.\n")
+                print("\t\tHosts can be explicitly excluded:")
+                print("\t\t\t./celerysatlk import -O out_of_scope.txt. \n")
+                exit()
+
             # if the user did specify an output_dir (and a DB one doesnt exist), create the dir, and the workspace
             output_dir = os.path.join(arguments["-o"],'')
             try:
@@ -49,7 +67,7 @@ def create_workspace(workspace,arguments):
             except:
                 print("[+] Output directory does not exist. Creating " + output_dir)
                 os.makedirs(output_dir)
-            db_workspace = (workspace, output_dir)  # and create the workspace
+            db_workspace = (workspace, output_dir, mode)  # and create the workspace
             # This will create a workspace, only if one does not exist with that name.
             lib.db.create_workspace(db_workspace)
 
@@ -61,8 +79,5 @@ def create_workspace(workspace,arguments):
                 lib.db.set_initial_current_workspace(db_workspace)
             else:
                 lib.db.update_current_workspace(workspace)
-
-
-
 
     return output_dir,workspace

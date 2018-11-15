@@ -62,7 +62,7 @@ def report(workspace,target_list=None):
         unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
 
         #unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
-        for vhost in unique_vhosts_for_ip:
+        for vhost in sorted(unique_vhosts_for_ip):
             vhost = vhost[0]
 
             host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
@@ -75,7 +75,7 @@ def report(workspace,target_list=None):
 
 
     # Create sidebar navigation
-    for vhost,report in sorted(host_report_file_names):
+    for vhost,report in host_report_file_names:
         #TODO: This is static and will be buggy. I think i need to use a regex here to get the hostname which is in between /hostname/celerystalkoutput
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
         combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
@@ -108,7 +108,7 @@ def report(workspace,target_list=None):
 
     combined_report_file.write(filter_html_body)
     # Create the rest of the report
-    for vhost,report in sorted(host_report_file_names):
+    for vhost,report in host_report_file_names:
         report_string = ""
         ip = lib.db.get_vhost_ip(vhost,workspace)
         ip = ip[0][0]
@@ -123,22 +123,33 @@ def report(workspace,target_list=None):
         #These lines write to the parent report file (1 report for however many hosts)
         combined_report_file.write("""<a name="{0}"></a><br>\n""".format(vhost))
         combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
-        #TODO: print services for each host - but onlyh for hte ip??
-        services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr>"
 
+        if ip == vhost:
+            unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
+            for vhost_for_ip in unique_vhosts_for_ip:
+                vhost_for_ip = vhost_for_ip[0]
+                if vhost_for_ip != ip:
+                    combined_report_file.write("""Associated vhost: <a href="#{0}">{0}</a>\n<br>\n""".format(vhost_for_ip))
+            combined_report_file.write("<br>")
+
+
+        services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr>"
         for ip,port,proto,service,product,version,extra_info in services:
             services_table_html = services_table_html + "<tr>\n<td>{0}</td>\n<td>{1}</td>\n<td>{2}</td>\n\n<td>{3}</td>\n<td>{4}</td>\n<td>{5}</td></tr>\n".format(port,proto,service,product,version,extra_info)
         services_table_html = services_table_html + "</table>\n<br>\n"
 
         combined_report_file.write('''\n<div class="filterDiv services">\n''')
-        combined_report_file.write(services_table_html)
+        combined_report_file.write('''<button class="collapsible">Services</button><br>\n''')
+        combined_report_file.write("\n<br>" + services_table_html + "\n<br>")
         combined_report_file.write("\n</div>")
 
 
         screenshot_html = paths_report(vhost)
 
         combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
-        combined_report_file.write(screenshot_html + "\n<br>")
+        combined_report_file.write('''<button class="collapsible">Screenshots</button><br>\n''')
+        #combined_report_file.write("\n<br>\n<div class=\"screenshots\">\n" + screenshot_html + "\n</div>\n<br>")
+        combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
         combined_report_file.write("\n</div>\n")
 
         #Generate the html code for all of that command output and headers
@@ -379,7 +390,7 @@ th {
     color: white;
     cursor: pointer;
     padding: 4px;
-    width: 90%;
+    width: 95%;
     border: none;
     border-radius: 12px;
     text-align: left;
@@ -396,13 +407,21 @@ th {
     padding: 0 18px;
     display: none;
     overflow: hidden;
+    width: 95%;
     background-color: #f1f1f1;    
 }
-
 
 .filterDiv {
   margin: 2px;
   display: none;
+}
+
+.filedata {
+  margin: 2px;  
+  max-height: 700px;
+  overflow: auto;
+  width: 95%;
+  text-indent: 10px;
 }
 
 .show {
@@ -580,7 +599,7 @@ def convert_file_contents_to_html(normalized_output_file):
     # This is the part that reads the contents of each output file
     linecount = 0
     # file_html_string = file_html_string + "        <pre>"
-    file_html_string = "        <div>"
+    file_html_string = "        <div class=\"filedata\">"
 
     try:
         with open(normalized_output_file, "r") as scan_file:

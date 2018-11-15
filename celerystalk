@@ -2,10 +2,11 @@
 
 """
 Usage:
-    celerystalk workspace create -o <output_dir> [-w workspace_name]
+    celerystalk workspace create [-w workspace_name] -o <output_dir> -m <mode>
     celerystalk workspace [<workspace_name>]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-O outOfScope.txt][-u <url>]
     celerystalk subdomains -d <domains> [-s]
+    celerystalk nmap [-t <targets>] [-s]
     celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
     celerystalk scan -u <url> [-s]
     celerystalk rescan [-t <targets>] [-s]
@@ -27,6 +28,7 @@ Options:
     -v --version        Show version
     -f <nmap_file>      Nmap xml import file
     -o <output_dir>     Output directory
+    -m <mode>           vapt = VulnAssmt/PenTest, bb = Bug Bounty
     -S <scope_file>     Scope import file
     -O <outscope_file>  Out of scope hosts file
     -D <subdomains_file> Subdomains import file
@@ -39,8 +41,8 @@ Options:
 Examples:
 
   Workspace
-    Create default workspace    celerystalk workspace create -o /assessments/client
-    Create named workspace      celerystalk workspace create -o /assessments/client -w client
+    Create default workspace    celerystalk workspace create -o /assessments/client -m vapt -w client_name
+    Create named workspace      celerystalk workspace create -o /assessments/client -m bb
     Switch to another worksapce celerystalk workspace client2
 
   Import
@@ -119,6 +121,7 @@ import lib.utils
 import lib.report
 import lib.query
 import lib.csimport
+import lib.nmap
 import lib.config_parser
 #import lib.interactive
 from lib import db
@@ -126,8 +129,9 @@ import lib.workspace
 from prettytable import PrettyTable
 import csv
 
+from lib.nmap import nmapcommand
 
-build=str(125)
+build=str(126)
 
 def print_banner():
 
@@ -196,7 +200,7 @@ def main(arguments):
                 if workspace_exists == "False":
                     # if the new workspace doesnt exists, tell the user they need to create it first
                     print("[!] There is no workspace with that name. Here are the known workspaces:\n")
-                    columns = ["Workspace", "Output Directory"]
+                    columns = ["Workspace", "Output Directory","Mode"]
                     workspace_rows = lib.db.get_all_workspaces()
                     workspaces_table = PrettyTable(columns)
                     workspaces_table.align[columns[1]] = "l"
@@ -219,7 +223,7 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
                 exit()
             
-            columns = ["Workspace", "Output Directory"]
+            columns = ["Workspace", "Output Directory","Mode"]
             workspace_rows = lib.db.get_all_workspaces()
             workspaces_table = PrettyTable(columns)
             workspaces_table.align[columns[1]] = "l"
@@ -373,7 +377,7 @@ def main(arguments):
         answer = raw_input("[!] WARNING: This action destroy the celerystalk database and flush the redis DB. Are you sure you want to continue? (y\N")
         print("")
         if (answer == "Y") or (answer == "y"):
-            from subprocess import Popen, PIPE
+            from subprocess import Popen
             lib.utils.shutdown_background_jobs()
 
             path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
@@ -424,7 +428,7 @@ def main(arguments):
 
         if arguments["workspaces"]:
 
-            columns = ["Workspace", "Output Directory"]
+            columns = ["Workspace", "Output Directory","Mode"]
             workspace_rows = lib.db.get_all_workspaces()
             workspaces_table = PrettyTable(columns)
             workspaces_table.align[columns[1]] = "l"
@@ -635,46 +639,12 @@ def main(arguments):
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
 
+    ####################################
+    # nmap Command
+    ####################################
 
-
-
-        # ####################################
-        # # Scan - Bug Bounty mode - take domains, find subdomains, run nmap, run celerystalk (for ALL hosts in target file)
-        # ####################################
-        #
-        # if arguments["<bb_scope_file>"]:
-        #     scan_mode = "BB"
-        #     in_scope_domains, in_scope_hosts, out_of_scope_hosts = lib.config_parser.read_bb_scope_ini(
-        #         arguments["<bb_scope_file>"])
-        #
-        #
-        #     #submit the in scope hosts to celery
-        #     for in_scope_host in in_scope_hosts:
-        #         in_scope_host = in_scope_host[0]
-        #         #try:
-        #         ip = socket.gethostbyname(in_scope_host)
-        #
-        #         #nmap_report = lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
-        #         lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
-        #         db_vhost = (ip, in_scope_host, 1, 0, workspace)  # in this mode all vhosts are in scope
-        #         print(db_vhost)
-        #         db.create_vhost(db_vhost)
-        #         #lib.scan.process_nmap_data2(nmap_report, workspace)
-        #         #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-        #         # except:
-        #         #     print("2There was an issue running the nmap scan against {0}.").format(in_scope_host)
-        #         #     ip = ""
-        #         #     db_vhost = (ip, in_scope_host, 0, 0, workspace)  # not in scope if no IP
-        #         #     print(db_vhost)
-        #         #     db.create_vhost(db_vhost)
-        #
-        #     for domain in in_scope_domains:
-        #         print("domain pulled from in scope domains")
-        #         print(domain)
-        #         lib.scan.subdomains(domain, arguments["--simulation"], workspace, output_dir,
-        #                                  scan_mode,out_of_scope_hosts)
-        #     #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-
+    if arguments["nmap"]:
+        nmapcommand(arguments["--simulation"], arguments["-t"])
 
 
 if __name__ == "__main__":

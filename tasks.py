@@ -330,14 +330,10 @@ def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery
     start_ctime = time.ctime(start_time)
     start = timer()
 
-    #f.write(str(start_ctime)+ "," + "CMD EXECUTED" + "," + populated_command + "\n")
-    #f.write(task_id)
     print(populated_command)
 
-    #The except isnt working yet if I kill the process from linux cli. i guess that is not enough to trigger an exception.
-    # try:
     print("[+] Kicking off nmap scan for " + host)
-    db.update_task_status_started("STARTED", task_id, 0, start_time_int)
+    lib.db.update_task_status_started("STARTED", task_id, 0, start_time_int)
     nm = NmapProcess(host, options=config_nmap_options)
     rc = nm.run()
     nmap_report = NmapParser.parse(nm.stdout)
@@ -349,19 +345,11 @@ def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery
     #f.write("\n" + str(end_ctime) + "," + "CMD COMPLETED" + ","" + str(run_time) + " - " + populated_command + "\n")
 
     f.write(str(start_ctime)  + "," + str(end_ctime) + "," + str(run_time) + cmd_name + "\n")
-
-    # except:
-    #     end = timer()
-    #     run_time = end - start
-    #     db.update_task_status_error("FAILED", task_id, run_time)
-
     f.close()
-    lib.csimport.process_nmap_data2(nmap_report, workspace)
+    lib.csimport.process_nmap_data(nmap_report, workspace)
     return nmap_report
 
-@app.task()
-def cel_scan_process_nmap_data(nmap_report,workspace):
-    lib.csimport.process_nmap_data2(nmap_report, workspace)
+
 
 @app.task()
 def cel_process_db_services(output_base_dir, simulation, workspace):

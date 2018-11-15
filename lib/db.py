@@ -45,7 +45,8 @@ def create_workspace_table():
 
     sql_create_workspace_table = """ CREATE TABLE IF NOT EXISTS workspace (
                                         name text PRIMARY KEY,
-                                        output_dir text NOT NULL                                        
+                                        output_dir text NOT NULL,
+                                        mode text NOT NULL                                        
                                     ); """
 
     try:
@@ -139,13 +140,19 @@ def create_workspace(db_workspace):
     :param workspace:
     :return:
     """
-    sql_create_workspace = ''' INSERT OR IGNORE INTO workspace(name,output_dir)
-              VALUES(?,?) '''
+    sql_create_workspace = ''' INSERT OR IGNORE INTO workspace(name,output_dir,mode)
+              VALUES(?,?,?) '''
     CUR.execute(sql_create_workspace,db_workspace)
     CONNECTION.commit()
 
 def get_output_dir_for_workspace(workspace):
     CUR.execute("SELECT output_dir FROM workspace where name = ?", (workspace,))
+    workspace = CUR.fetchall()
+    CONNECTION.commit()
+    return workspace
+
+def get_workspace_mode(workspace):
+    CUR.execute("SELECT mode FROM workspace where name = ?", (workspace,))
     workspace = CUR.fetchall()
     CONNECTION.commit()
     return workspace
@@ -158,6 +165,10 @@ def get_all_workspaces():
 
 def update_workspace_output_dir(output_dir,workspace):
     CUR.execute("UPDATE workspace SET output_dir=? WHERE name=?", (output_dir,workspace))
+    CONNECTION.commit()
+
+def update_workspace_mode(mode,workspace):
+    CUR.execute("UPDATE workspace SET mode=? WHERE name=?", (mode,workspace))
     CONNECTION.commit()
 
 #############################
@@ -495,6 +506,13 @@ def get_unique_explicit_out_of_scope_vhosts(workspace):
     host_rows = CUR.fetchall()
     CONNECTION.commit()
     return host_rows
+
+def get_unique_hosts_not_explicitly_out_of_scope_vhosts(workspace):
+    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_scope=?", (workspace,0))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
 
 def is_vhost_explicitly_out_of_scope(vhost,workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=? AND explicit_out_scope=?", (vhost,workspace,1))

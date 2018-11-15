@@ -5,7 +5,6 @@ import sys
 from lib import config_parser, utils, db
 from celery.utils import uuid
 from celery import chain
-from ConfigParser import ConfigParser
 import socket
 import re
 import urlparse
@@ -589,7 +588,9 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mod
 def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
     command_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, scan_mode = process_domain_tuple
     config,supported_services = config_parser.read_config_ini()
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     vhosts = vhosts.splitlines()
+
     # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     for vhost in vhosts:
@@ -597,14 +598,19 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
         vhost = ansi_escape.sub('', vhost)
         #print("escaped:\t" + vhost)
         if re.match(r'\w', vhost):
-            in_scope,ip = utils.domain_scope_checker(vhost,workspace)
-            if in_scope == 1:
+            in_scope, ip = utils.domain_scope_checker(vhost, workspace)
+            if workspace_mode == "vapt":
+                if in_scope == 1:
+                    print("Found subdomain (in scope):\t" + vhost)
+                    db_vhost = (ip,vhost,1,0,0,workspace)
+                    db.create_vhost(db_vhost)
+                else:
+                    print("Found subdomain (out of scope):\t" + vhost)
+                    db_vhost = (ip, vhost, 0,0,0, workspace)
+                    db.create_vhost(db_vhost)
+            elif workspace_mode == "bb":
                 print("Found subdomain (in scope):\t" + vhost)
-                db_vhost = (ip,vhost,1,0,0,workspace)
-                db.create_vhost(db_vhost)
-            else:
-                print("Found subdomain (out of scope):\t" + vhost)
-                db_vhost = (ip, vhost, 0,0,0, workspace)
+                db_vhost = (ip, vhost, 1, 0, 0, workspace)
                 db.create_vhost(db_vhost)
 
 
@@ -658,27 +664,6 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
     if not simulation:
         db.update_vhosts_submitted(vhost_ip, vhost, workspace, 1)
     return populated_command_list
-
-
-def nmap_scan_subdomain_host(host,workspace,simulation,output_base_dir):
-    celery_path = sys.path[0]
-    config_nmap_options = config_parser.extract_bb_nmap_options()
-    config = ConfigParser(allow_no_value=True)
-    config.read(['config.ini'])
-
-
-    #print(config_nmap_options)
-    cmd_name = "nmap_bug_bounty_mode"
-    populated_command = "nmap " + host + config_nmap_options
-    task_id = uuid()
-    utils.create_task(cmd_name, populated_command, host, output_base_dir, workspace, task_id)
-    result = chain(
-        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, host, output_base_dir, workspace, task_id)),
-        tasks.cel_nmap_scan.si(cmd_name, populated_command, host, config_nmap_options, celery_path, task_id,workspace).set(task_id=task_id),
-        tasks.cel_scan_process_nmap_data.s(workspace),
-        tasks.cel_process_db_services.si(output_base_dir, simulation, workspace,host=host),
-        tasks.post_process_domains_bb.si(host,cmd_name, populated_command, output_base_dir, workspace,simulation, celery_path),
-    )()
 
 
 
