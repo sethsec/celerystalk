@@ -79,7 +79,7 @@ if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
     git clone https://github.com/aboul3la/Sublist3r.git
     cd Sublist3r/
     pip install -r requirements.txt
-else:
+else
     cd /opt/Sublist3r/
     git pull
     pip install -r requirements.txt
@@ -91,7 +91,7 @@ if [ ! -f /opt/Photon/photon.py ]; then
     git clone https://github.com/s0md3v/Photon.git
     cd Photon
     pip install -r requirements.txt
-else:
+else
     cd /opt/Photon
     git pull
     pip install -r requirements.txt

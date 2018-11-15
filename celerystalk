@@ -644,6 +644,7 @@ def main(arguments):
     ####################################
 
     if arguments["nmap"]:
+        lib.utils.start_services()
         nmapcommand(arguments["--simulation"], arguments["-t"])
 
 
