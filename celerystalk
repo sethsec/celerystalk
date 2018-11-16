@@ -7,7 +7,7 @@ Usage:
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-O outOfScope.txt][-u <url>]
     celerystalk subdomains -d <domains> [-s]
     celerystalk nmap [-t <targets>] [-s]
-    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
+    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [--noIP] [-s]
     celerystalk scan -u <url> [-s]
     celerystalk rescan [-t <targets>] [-s]
     celerystalk query ([full] | [summary] | [brief]) [watch]
@@ -37,6 +37,7 @@ Options:
     -w <workspace>      Workspace
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
+    --noIP              Only scan targets by DNS hostname (Don't scan the IP address)
 
 Examples:
 
@@ -59,6 +60,7 @@ Examples:
 
   Scan
     Scan all in scope hosts:    celerystalk scan
+    Scan in scope vhosts:       celerystalk scan --noIP
     Scan subset of DB hosts:    celerystalk scan -t 10.0.0.1,10.0.0.3
                                 celerystalk scan -t 10.0.0.100-200
                                 celerystalk scan -t 10.0.0.0/24
@@ -131,7 +133,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(126)
+build=str(127)
 
 def print_banner():
 
@@ -374,7 +376,8 @@ def main(arguments):
     ####################################
 
     if arguments["reset"]:
-        answer = raw_input("[!] WARNING: This action destroy the celerystalk database and flush the redis DB. Are you sure you want to continue? (y\N")
+        print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
+        answer = raw_input("Are you sure you want to continue? (y\N): ")
         print("")
         if (answer == "Y") or (answer == "y"):
             from subprocess import Popen
@@ -629,12 +632,13 @@ def main(arguments):
             target_list = lib.utils.target_splitter(arguments["-t"])
             if arguments["-f"]:
                 lib.csimport.importcommand(workspace, output_dir, arguments)
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list)
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list,dont_scan_ips=arguments["--noIP"])
         else:
             if arguments["-f"]:
                 lib.csimport.importcommand(workspace, output_dir, arguments)
             #this one is the catch all if the user only types scan and nothing else.
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"])
+
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"])
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")

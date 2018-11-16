@@ -117,7 +117,7 @@ def create_vhosts_table():
     sql_create_vhosts_table = """ CREATE TABLE IF NOT EXISTS vhosts (
                                         id INTEGER PRIMARY KEY,
                                         ip text,
-                                        vhost text NOT NULL UNIQUE,
+                                        vhost text NOT NULL,
                                         in_scope int,
                                         explicit_out_scope int,
                                         submitted int NOT NULL,                                                                                
@@ -552,6 +552,10 @@ def get_vhosts_table(workspace):
     CONNECTION.commit()
     return vhost_rows
 
+def update_vhost_ip(ip,vhost,workspace):
+    CUR.execute("UPDATE vhosts SET ip=? WHERE vhost=? AND workspace=?", (ip,vhost,workspace))
+    CONNECTION.commit()
+
 def update_vhosts_submitted(ip,vhost,workspace,submitted):
     CUR.execute("UPDATE vhosts SET submitted=? WHERE ip=? AND vhost=? AND workspace=?", (submitted,ip,vhost,workspace))
     CONNECTION.commit()
@@ -560,9 +564,12 @@ def update_vhosts_in_scope(ip,vhost,workspace,in_scope):
     CUR.execute("UPDATE vhosts SET in_scope=? WHERE ip=? AND vhost=? AND workspace=?", (in_scope,ip,vhost,workspace))
     CONNECTION.commit()
 
-def update_vhosts_explicit_out_of_scope(vhost,workspace,explicit_out_scope):
-    CUR.execute("UPDATE vhosts SET explicit_out_scope=? WHERE vhost=? AND workspace=?", (explicit_out_scope,vhost,workspace))
+def update_vhosts_explicit_out_of_scope(vhost,workspace,in_scope,explicit_out_scope):
+    CUR.execute("UPDATE vhosts SET in_scope=?,explicit_out_scope=? WHERE vhost=? AND workspace=?", (in_scope,explicit_out_scope,vhost,workspace))
     CONNECTION.commit()
+
+
+
 
 #############################
 # Table: Paths

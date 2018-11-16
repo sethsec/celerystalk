@@ -11,7 +11,8 @@ import urlparse
 import lib.db
 from random import shuffle
 
-def process_db_vhosts(workspace, simulation, target_list=None):
+def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None):
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     all_commands = []
     output_base_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
     try:
@@ -32,7 +33,8 @@ def process_db_vhosts(workspace, simulation, target_list=None):
                     if not vhost_explicitly_out_of_scope:
                         try:
                             IPAddress(vhost)
-                            command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                            if not dont_scan_ips:
+                                command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
                         except:
                             command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation,output_base_dir)
                         if len(command_list) > 0:
@@ -45,7 +47,8 @@ def process_db_vhosts(workspace, simulation, target_list=None):
             if not vhost_explicitly_out_of_scope:
                 try:
                     IPAddress(vhost)
-                    command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                    if not dont_scan_ips:
+                        command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
                 except:
                     command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir)
                 if len(command_list) > 0:
@@ -62,17 +65,13 @@ def process_db_vhosts(workspace, simulation, target_list=None):
         print("\n\n[+] Summary:\tSubmitted {0} tasks to the [{1}] workspace.".format(total_tasks_num,workspace))
         print("[+]\t\tThere might be additional tasks added to the queue during post processing\n[+]")
         print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
-        if workspace == "Default":
-            print("[+]\t\tcelerystalk query [watch]")
-            print("[+]\t\tcelerystalk query brief [watch]")
-            print("[+]\t\tcelerystalk query summary [watch]\n")
-        else:
-            print("[+]\t\tcelerystalk query -w {0} [watch]".format(workspace))
-            print("[+]\t\tcelerystalk query -w {0} brief [watch]".format(workspace))
-            print("[+]\t\tcelerystalk query -w {0} summary [watch]\n".format(workspace))
+        print("[+]\t\tcelerystalk query [watch]")
+        print("[+]\t\tcelerystalk query brief [watch]")
+        print("[+]\t\tcelerystalk query summary [watch]\n")
 
 
 def populate_comamnds(vhost,workspace,simulation,output_base_dir):
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     celery_path = sys.path[0]
     config, supported_services = config_parser.read_config_ini()
     task_id_list = []
@@ -121,7 +120,11 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir):
     ###################################
     # Time to parse the services from the DB
     ###################################
-    db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
+
+    if workspace_mode == "vapt":
+        db_services = db.get_all_services_for_ip(vhost_ip[0], workspace)
+    elif workspace_mode == "bb":
+        db_services = db.get_all_services_for_ip(vhost, workspace)
 
     for db_service in db_services:
         (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info) = db_service
@@ -235,15 +238,19 @@ def process_url(url, workspace, output_dir, arguments):
         if not scheme:
             exit()
 
-    #get ip from db, or if not in db, get it through dns
-    db_ip = lib.db.get_vhost_ip(vhost,workspace)
-    if db_ip:
-        ip = db_ip[0][0]
-    else:
-        try:
-            ip = socket.gethostbyname(vhost)
-        except:
-            print("Error getting IP")
+    try:
+        ip = socket.gethostbyname(vhost)
+    except:
+        print("Error getting IP")
+
+
+    db_ip_tuple = lib.db.get_vhost_ip(vhost,workspace)
+    if db_ip_tuple:
+        db_ip = db_ip_tuple[0][0]
+        if db_ip != ip:
+            lib.db.update_vhost_ip(ip, vhost, workspace)
+
+
     proto = "tcp"
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
     if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
@@ -263,12 +270,13 @@ def process_url(url, workspace, output_dir, arguments):
         summary_file_name = host_data_dir + "ScanSummary.log"
         summary_file = open(summary_file_name, 'a')
 
-        db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
-        # print(db_vhost)
-        #create it if it doesnt exist (if it does, doing this doesnt change anything)
-        db.create_vhost(db_vhost)
-        # mark this host as in scope now
-        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+        is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+        if is_vhost_in_db:
+            lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+        else:
+            db_vhost = (ip, vhost, 1, 0, 1, workspace)  # add it to the vhosts db and mark as in scope
+            lib.db.create_vhost(db_vhost)
+
 
         #only mark it as submitted if it is not in scope.
         if not simulation:
@@ -602,19 +610,32 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
             if workspace_mode == "vapt":
                 if in_scope == 1:
                     print("Found subdomain (in scope):\t" + vhost)
-                    db_vhost = (ip,vhost,1,0,0,workspace)
-                    db.create_vhost(db_vhost)
+                    is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                    if is_vhost_in_db:
+                        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                    else:
+                        db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                        lib.db.create_vhost(db_vhost)
                 else:
                     print("Found subdomain (out of scope):\t" + vhost)
-                    db_vhost = (ip, vhost, 0,0,0, workspace)
-                    db.create_vhost(db_vhost)
+                    is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                    if is_vhost_in_db:
+                        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
+                    else:
+                        db_vhost = (ip, vhost, 0, 0, 0, workspace)  # add it to the vhosts db and mark as out of scope
+                        lib.db.create_vhost(db_vhost)
             elif workspace_mode == "bb":
                 print("Found subdomain (in scope):\t" + vhost)
-                db_vhost = (ip, vhost, 1, 0, 0, workspace)
-                db.create_vhost(db_vhost)
+                is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                if is_vhost_in_db:
+                    lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                else:
+                    db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                    lib.db.create_vhost(db_vhost)
 
 
 def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir):
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     #pull all in scope vhosts that have not been submitted
     celery_path = sys.path[0]
     config, supported_services = config_parser.read_config_ini()
@@ -636,7 +657,15 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
     scannable_vhost = vhost
     ip = db.get_vhost_ip(scannable_vhost, workspace)
     ip = ip[0][0]
-    db_scanned_services = db.get_all_services_for_ip(ip, workspace)
+
+
+    if workspace_mode == "vapt":
+        db_scanned_services = db.get_all_services_for_ip(ip, workspace)
+    elif workspace_mode == "bb":
+        db_scanned_services = db.get_all_services_for_ip(vhost, workspace)
+
+
+    #db_scanned_services = db.get_all_services_for_ip(ip, workspace)
     for (ip, scanned_service_port, scanned_service_protocol, scanned_service_name,product,version,extra_info) in db_scanned_services:
     #run chain on each one and then update db as submitted
         scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" +  str(scanned_service_port) + "_" + scanned_service_protocol + "_"

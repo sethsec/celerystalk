@@ -20,7 +20,11 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir):
     if not vhost_explicitly_out_of_scope:
         #print(config_nmap_options)
         cmd_name = "nmap_bug_bounty_mode"
-        populated_command = "nmap " + vhost + config_nmap_options
+        try:
+            populated_command = "nmap " + vhost + config_nmap_options
+        except TypeError:
+            print("[!] Error: In the config file, there needs to be one, and only one, enabled bug_bounty_mode command.")
+            print("[!]        This determines what ports to scan.")
         task_id = uuid()
         utils.create_task(cmd_name, populated_command, vhost, output_base_dir + ".txt", workspace, task_id)
         result = chain(
@@ -54,7 +58,13 @@ def nmapcommand(simulation,targets):
         else:
             lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir)
 
-
+    print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
+    print("[+]\t\tcelerystalk query [watch]")
+    print("[+]\t\tcelerystalk query brief [watch]")
+    print("[+]\t\tcelerystalk query summary [watch]")
+    print("[+]")
+    print("[+] To peak behind the curtain, view log/celeryWorker.log")
+    print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
 
 
         # ####################################

@@ -21,14 +21,15 @@ def import_out_of_scope(out_of_scope_file,workspace):
                 is_vhost_in_db = lib.db.is_vhost_in_db(vhost,workspace)
                 in_scope, ip = lib.utils.domain_scope_checker(vhost, workspace)
                 if is_vhost_in_db:
-                    lib.db.update_vhosts_explicit_out_of_scope(vhost,workspace,1)
+                    lib.db.update_vhosts_explicit_out_of_scope(vhost,workspace,0,1)
                 else:
                     print("[+] Adding vhost to list of explicitly out of scope vhosts:\t" + vhost)
-                    db_vhost = (ip, vhost, 0, 1, 0, workspace)
-                    lib.db.create_vhost(db_vhost)
-                    #print("[+] Adding IP to list of explicitly out of scope vhosts:\t{0} ({1})".format(ip,vhost))
-                    #db_vhost = (ip, ip, 0, 1, 0, workspace)
-                    #lib.db.create_vhost(db_vhost)
+                    is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                    if is_vhost_in_db:
+                        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
+                    else:
+                        db_vhost = (ip, vhost, 0, 1, 0, workspace)
+                        lib.db.create_vhost(db_vhost)
 
 
 def import_scope(scope_file,workspace):
@@ -53,8 +54,12 @@ def import_scope(scope_file,workspace):
                         ip = str(ip)
                         vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
                         if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-                            db_vhost = (ip, ip, 1,0,0, workspace) # add it to the vhosts db and mark as in scope
-                            lib.db.create_vhost(db_vhost)
+                            is_vhost_in_db = lib.db.is_vhost_in_db(ip, workspace)
+                            if is_vhost_in_db:
+                                lib.db.update_vhosts_in_scope(ip,ip,workspace,1)
+                            else:
+                                db_vhost = (ip, ip, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                                lib.db.create_vhost(db_vhost)
                 else:
                     try:
                         # If there is no period, that means we just have the last octet for the second half.
@@ -66,8 +71,12 @@ def import_scope(scope_file,workspace):
                             ip = str(ip)
                             vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
                             if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-                                db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
-                                lib.db.create_vhost(db_vhost)
+                                is_vhost_in_db = lib.db.is_vhost_in_db(ip, workspace)
+                                if is_vhost_in_db:
+                                    lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)
+                                else:
+                                    db_vhost = (ip, ip, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                                    lib.db.create_vhost(db_vhost)
                     except Exception, e:
                         # Putting this try/except here because i have a feeling that at some point we will see
                         # something like 192.168.0.0-192.168.200.255 or something like that.  Not handling that
@@ -82,8 +91,12 @@ def import_scope(scope_file,workspace):
                     ip = str(ip)
                     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
                     if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-                        db_vhost = (ip, ip, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
-                        lib.db.create_vhost(db_vhost)
+                        is_vhost_in_db = lib.db.is_vhost_in_db(ip, workspace)
+                        if is_vhost_in_db:
+                            lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)
+                        else:
+                            db_vhost = (ip, ip, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                            lib.db.create_vhost(db_vhost)
                 #scopeList.append(net)
 
 
@@ -104,16 +117,29 @@ def import_vhosts(subdomains_file,workspace):
                     if workspace_mode == "vapt":
                         if in_scope == 1:
                             print("[+] Found subdomain (in scope):\t\t\t" + vhost)
-                            db_vhost = (ip,vhost,1,0,0,workspace)
-                            lib.db.create_vhost(db_vhost)
+                            is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                            if is_vhost_in_db:
+                                lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                            else:
+                                db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                                lib.db.create_vhost(db_vhost)
                         else:
                             print("[+] Found subdomain (out of scope):\t\t" + vhost)
-                            db_vhost = (ip, vhost, 0,0,0, workspace)
-                            lib.db.create_vhost(db_vhost)
+                            is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                            if is_vhost_in_db:
+                                lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
+                            else:
+                                db_vhost = (ip, vhost, 0, 0, 0, workspace)  # add it to the vhosts db and mark as out of scope
+                                lib.db.create_vhost(db_vhost)
+
                     elif workspace_mode == "bb":
                         print("[+] Found subdomain (in scope):\t\t\t" + vhost)
-                        db_vhost = (ip, vhost, 1, 0, 0, workspace)
-                        lib.db.create_vhost(db_vhost)
+                        is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                        if is_vhost_in_db:
+                            lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                        else:
+                            db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                            lib.db.create_vhost(db_vhost)
 
 
 
@@ -153,9 +179,14 @@ def import_url(url,workspace,output_base_dir):
             if (answer == "Y") or (answer == "y") or (answer == ""):
                 in_scope = 1
         if in_scope == 1:
-            db_vhost = (ip, vhost, 1,0,0, workspace)  # add it to the vhosts db and mark as in scope
-            lib.db.create_vhost(db_vhost)
-            #lib.db.create_service(db_service)
+            is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+            if not is_vhost_in_db:
+                lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                lib.db.update_vhosts_submitted(ip,vhost,workspace,1)
+            else:
+                db_vhost = (ip, vhost, 1, 0, 1, workspace)  # add it to the vhosts db and mark as in scope
+                lib.db.create_vhost(db_vhost)
+
 
             if ip == vhost:
                 scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
@@ -173,14 +204,16 @@ def import_url(url,workspace,output_base_dir):
             summary_file_name = host_data_dir + "ScanSummary.log"
             summary_file = open(summary_file_name, 'a')
 
-            db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
-            # print(db_vhost)
-            db.create_vhost(db_vhost)
+            # db_vhost = (ip, vhost, 1,0,1, workspace)  # in this mode all vhosts are in scope
+            # # print(db_vhost)
+            # db.create_vhost(db_vhost)
 
             # Insert port/service combo into services table if it doesnt exist
             db_service = db.get_service(ip, port, proto, workspace)
             if not db_service:
-                db_string = (ip, port, proto, scheme,'','','',workspace)
+                #db_string = (ip, port, proto, scheme,'','','',workspace)
+                db_string = (vhost, port, proto, scheme,'','','',workspace)
+
                 db.create_service(db_string)
 
             # Insert url into paths table and take screenshot
@@ -191,7 +224,7 @@ def import_url(url,workspace,output_base_dir):
                     .replace("\\", "") \
                     .replace(":", "_") + ".png"
                 url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
+                db_path = (vhost, port, url, 0, url_screenshot_filename, workspace)
                 db.insert_new_path(db_path)
                 # print("Found Url: " + str(url))
                 #urls_to_screenshot.append((url, url_screenshot_filename))
@@ -200,7 +233,7 @@ def import_url(url,workspace,output_base_dir):
                 # print(result)
 
 
-            db_path = (ip, port, url, 0, url_screenshot_filename, workspace)
+            db_path = (vhost, port, url, 0, url_screenshot_filename, workspace)
             lib.db.insert_new_path(db_path)
     else:
         print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
@@ -301,6 +334,7 @@ def process_nessus_data(nessus_report,workspace,target=None):
                         print("if this errors that means there was no service to update as https which is a bigger problem")
 
 def process_nmap_data(nmap_report,workspace, target=None):
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     for scanned_host in nmap_report.hosts:
         ip=scanned_host.id
         unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
@@ -344,7 +378,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 scanned_service_port = scanned_service_item.port
                 scanned_service_name = scanned_service_item.service
                 scanned_service_protocol = scanned_service_item.protocol
-
+                print(str(scanned_service_port))
                 if scanned_service_item.tunnel == 'ssl':
                     scanned_service_name = 'https'
 
@@ -363,6 +397,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
                     scanned_service_extrainfo = ''
                 #print "Port: {0}\tService: {1}\tProduct & Version: {3} {4} {5}".format(scanned_service_port,scanned_service_name,scanned_service_product,scanned_service_version,scanned_service_extrainfo)
 
+
                 db_service = db.get_service(ip, scanned_service_port, scanned_service_protocol, workspace)
                 if not db_service:
                     db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, scanned_service_product, scanned_service_version, scanned_service_extrainfo, workspace)
@@ -370,6 +405,23 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 else:
                     db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
                                       workspace)
+
+                for vhost in vhosts:
+                    #print("process_nmap_data - add service: " + vhost)
+                    db_service = db.get_service(vhost, scanned_service_port, scanned_service_protocol, workspace)
+                    if not db_service:
+                        #print("service didnt exist, adding: " + vhost + str(scanned_service_port))
+                        db_string = (vhost, scanned_service_port, scanned_service_protocol, scanned_service_name,
+                                     scanned_service_product, scanned_service_version, scanned_service_extrainfo,
+                                     workspace)
+                        db.create_service(db_string)
+                    else:
+                        #print("service does exist, updating: " + vhost + str(scanned_service_port))
+
+                        db.update_service(vhost, scanned_service_port, scanned_service_protocol, scanned_service_name,
+                                          workspace)
+
+
 
 def importcommand(workspace, output_dir, arguments):
     celery_path = sys.path[0]

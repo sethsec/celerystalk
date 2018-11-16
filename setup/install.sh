@@ -17,10 +17,10 @@ apt update -y
 echo "[+] Installing redis-server, gobuster, seclists"
 if [ "$DISTRO" == "kali" ]; then
     echo "kali"
-    apt install gobuster redis-server seclists firefox-esr xvfb jq -y
+    apt install gobuster redis-server seclists firefox-esr xvfb python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
     echo "ubuntu"
-    apt install python-pip unzip redis-server firefox xvfb jq -y
+    apt install python-pip python3-pip unzip redis-server firefox xvfb jq -y
 fi
 
 CELERYSTALK_DIR=`pwd`
@@ -95,6 +95,20 @@ else
     cd /opt/Photon
     git pull
     pip install -r requirements.txt
+fi
+
+if [ ! -f /opt/CMSmap/cmsmap.py ]; then
+    echo "[+] Downloading CMSMap to /opt/CMSmap/cmsmap.py"
+    cd /opt/
+    git clone https://github.com/Dionach/CMSmap.git
+    cd CMSmap
+    pip3 install .
+    cmsmap -U PC
+else
+    cd /opt/CMSmap
+    git pull
+    pip3 install .
+    cmsmap -U P
 fi
 
 cd $CELERYSTALK_DIR
