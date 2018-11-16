@@ -103,12 +103,12 @@ if [ ! -f /opt/CMSmap/cmsmap.py ]; then
     git clone https://github.com/Dionach/CMSmap.git
     cd CMSmap
     pip3 install .
-    cmsmap -U P
+    echo "y" | cmsmap -U P
 else
     cd /opt/CMSmap
     git pull
     pip3 install .
-    cmsmap -U P
+    echo "y" | cmsmap -U P
 fi
 
 cd $CELERYSTALK_DIR
