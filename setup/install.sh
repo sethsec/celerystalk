@@ -103,7 +103,7 @@ if [ ! -f /opt/CMSmap/cmsmap.py ]; then
     git clone https://github.com/Dionach/CMSmap.git
     cd CMSmap
     pip3 install .
-    cmsmap -U PC
+    cmsmap -U P
 else
     cd /opt/CMSmap
     git pull
