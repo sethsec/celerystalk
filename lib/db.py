@@ -489,8 +489,8 @@ def get_in_scope_ip(ip,workspace):
     CONNECTION.commit()
     return host_rows
 
-def get_submitted_in_scope_vhost(vhost,workspace):
-    CUR.execute("SELECT ip FROM vhosts WHERE ip=? AND workspace=? AND in_scope=? AND submitted=?", (ip,workspace,1,1))
+def is_vhost_submitted(vhost,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=? AND submitted=?", (vhost,workspace,1))
     host_rows = CUR.fetchall()
     CONNECTION.commit()
     return host_rows

@@ -64,18 +64,19 @@ def report(workspace,target_list=None):
         #unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
         for vhost in sorted(unique_vhosts_for_ip):
             vhost = vhost[0]
-
-            host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
-            host_report_file_names.append([vhost,host_report_file_name])
-            host_report_file = open(host_report_file_name, 'w')
-            populate_report_data(host_report_file,vhost,workspace)
-            host_report_file.close()
-            print("[+] Report file (single host): {0}".format(host_report_file_name))
+            is_vhost_submitted = lib.db.is_vhost_submitted(vhost,workspace)
+            if is_vhost_submitted:
+                host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
+                host_report_file_names.append([vhost,host_report_file_name])
+                host_report_file = open(host_report_file_name, 'w')
+                populate_report_data(host_report_file,vhost,workspace)
+                host_report_file.close()
+                print("[+] Report file (single host): {0}".format(host_report_file_name))
 
 
 
     # Create sidebar navigation
-    for vhost,report in host_report_file_names:
+    for vhost,report in sorted(host_report_file_names):
         #TODO: This is static and will be buggy. I think i need to use a regex here to get the hostname which is in between /hostname/celerystalkoutput
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
         combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
@@ -102,13 +103,13 @@ def report(workspace,target_list=None):
 
     for command_name in unique_non_sim_command_names:
         command_name = command_name[0]
-        if command_name != "Screenshots":
+        if not ((command_name == "Screenshots") or (command_name == "nmap_bug_bounty_mode")):
             filter_html_body = filter_html_body + "<button class=\"btn\" onclick=\"filterSelection(\'{0}\')\"> {0}</button>\n".format(command_name)
     filter_html_body = filter_html_body + "</div>"
 
     combined_report_file.write(filter_html_body)
     # Create the rest of the report
-    for vhost,report in host_report_file_names:
+    for vhost,report in sorted(host_report_file_names):
         report_string = ""
         ip = lib.db.get_vhost_ip(vhost,workspace)
         ip = ip[0][0]
@@ -544,7 +545,7 @@ def populate_report_data_html(vhost,workspace):
         tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
         if len(tasks_for_output_file) > 1:
             command_name, command, status, start_time, run_time = tasks_for_output_file[0]
-            if command_name != "Screenshots":
+            if not ((command_name == "Screenshots") or (command_name == "nmap_bug_bounty_mode")):
                 report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
                 for command_name,command,status,start_time,run_time in tasks_for_output_file:
                     start_time = time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(float(start_time)))
@@ -559,7 +560,7 @@ def populate_report_data_html(vhost,workspace):
                 report_host_html_string = report_host_html_string + "        </div>\n"
         elif len(tasks_for_output_file) == 1:
             command_name, command, status, start_time, run_time = tasks_for_output_file[0]
-            if command_name != "Screenshots":
+            if not ((command_name == "Screenshots") or (command_name == "nmap_bug_bounty_mode")):
                 report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
                 start_time = time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(float(start_time)))
                 if run_time:
