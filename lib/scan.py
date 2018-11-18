@@ -42,6 +42,7 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
                         all_commands = all_commands + command_list
     else:
         for vhost in unique_unscanned_vhosts_list:
+            command_list = []
             #print(vhost)
             vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
             if not vhost_explicitly_out_of_scope:
@@ -49,10 +50,12 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
                     IPAddress(vhost)
                     if not dont_scan_ips:
                         command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                        if len(command_list) > 0:
+                            print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
                 except:
                     command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir)
-                if len(command_list) > 0:
-                    print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
+                    if len(command_list) > 0:
+                        print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
                 all_commands = all_commands + command_list
 
     shuffle(all_commands)
