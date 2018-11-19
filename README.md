@@ -32,36 +32,46 @@ celerystalk helps you automate your network scanning/enumeration process with as
 
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
-# ./celerystalk workspace create -o /htb                            # Create default workspace and set output dir
-# ./celerystalk import -f tenten.xml                                # Import scan 
+# ./celerystalk workspace create -w htb -o /htb -m vapt             # Create workspace. Set output dir and mode
+# ./celerystalk import -f tenten.xml                                # Import nmap scan 
 # ./celerystalk db services                                         # If you want to see what services were loaded
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Watch scans as move from pending > running > complete
 # ./celerystalk report                                              # Generate report
-# firefox /htb/celerystalkReports/Workspace-Report[Default.html] &  # View report 
 ```
 
 **[Vulnerability Assessment Mode]** - How to scan a list of in-scope hosts/networks and any subdomains that resolve to any of the in-scope IPs
-
+* In VAPT mode, IP addresses/ranges/CIDRs define scope.
+* Subdomains that match an in-scope IP are also added to scope.
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
-# ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
-# ./celerystalk import -f client.xml -S scope.txt                   # Import scan and scope files
-# ./celerystalk subdomains -d client.com,client.net            # Find subdomains and determine if in scope
+# ./celerystalk workspace create -o /assessments/client -m vapt     # Create default workspace and set output dir
+# ./celerystalk import -f client.xml -S scope.txt -O out_scope.txt  # Import scan and scope files
+# ./celerystalk subdomains -d client.com,client.net                 # Find subdomains and determine if in scope
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
-# firefox <path>/celerystalkReports/Workspace-Report[Default].html &# View report 
 ```
 
-**[URL Mode]** - How to scan a a URL (Use this mode to scan sub-directories found during first wave of scans).  
-
+**[Bug Bounty Mode]** - How to scan all subdomains identified within a domain or domains, while excluding hosts that are out of scope.  
+*  In BB mode, all subdomains found with celerystalk or manually imported are marked in scope.
 ```
-# ./celerystalk workspace create -o /assessments/client             # Create default workspace and set output dir
+# ./celerystalk workspace create -o /assessments/company -m bb      # Create default workspace and set output dir
+# ./celerystalk subdomains -d company.com,company.net               # Find subdomains and determine if in scope
+# ./celerystalk import -S scope.txt -O out_scope.txt                # Import scan and scope files
+# ./celerystalk nmap                                                # Nmap all in scope hosts (reads options from config.ini)
+# ./celerystalk scan                                                # Run all enabled commands against all in scope hosts
+# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk report                                              # Generate report
+```
+
+**[URL Mode]** - How to scan a a URL  
+* Use this as a follow up whenever you find an interesting directory, or just as quick way to scan one web app without importing anything.
+```
+# ./celerystalk workspace create -o /assessments/client -m {vapt|bb]# Create default workspace and set output dir
 # ./celerystalk scan -u http://10.10.10.10/secret_folder/           # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
-# firefox <path>/celerystalkReports/Workspace-Report[Default].html &# View report 
 ```
 
 ## Using celerystalk - Some more detail
