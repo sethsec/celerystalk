@@ -1,0 +1,477 @@
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1542161232
+Run Time:	8.22014713287354
+Command:	nmap -sV -sC -Pn -p 20048 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_20048_tcp__nmap_service_scan.txt 10.10.10.34
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_20048_tcp__nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:07:12 2018 as: nmap -sV -sC -Pn -p 20048 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_20048_tcp__nmap_service_scan.txt 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.038s latency).
+
+PORT      STATE SERVICE VERSION
+20048/tcp open  mountd  1-3 (RPC #100005)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:07:20 2018 -- 1 IP address (1 host up) scanned in 8.20 seconds
+
+
+--------------------------------------------------
+Command Name:	nmap_ssh_hostkey
+Start Time:	1542161250
+Run Time:	35.3094577789307
+Command:	nmap 10.10.10.34 -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_ssh_hostkey.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_ssh_hostkey.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:07:30 2018 as: nmap -p 22 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_ssh_hostkey.txt 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.046s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 6.6.1 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 cd:ec:19:7c:da:dc:16:e2:a3:9d:42:f3:18:4b:e6:4d (RSA)
+|   256 af:94:9f:2f:21:d0:e0:1d:ae:8e:7f:1d:7b:d7:42:ef (ECDSA)
+|_  256 6b:f8:dc:27:4f:1c:89:67:a4:67:c5:ed:07:53:af:97 (ED25519)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:08:05 2018 -- 1 IP address (1 host up) scanned in 35.29 seconds
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1542161265
+Run Time:	6.98772287368774
+Command:	nmap -sC -sV -v -Pn 10.10.10.34 -p 111 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmap_service_scan.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:07:45 2018 as: nmap -sC -sV -v -Pn -p 111 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmap_service_scan.txt 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.039s latency).
+
+PORT    STATE SERVICE VERSION
+111/tcp open  rpcbind 2-4 (RPC #100000)
+| rpcinfo: 
+|   program version   port/proto  service
+|   100000  2,3,4        111/tcp  rpcbind
+|   100000  2,3,4        111/udp  rpcbind
+|   100003  3,4         2049/tcp  nfs
+|   100003  3,4         2049/udp  nfs
+|   100005  1,2,3      20048/tcp  mountd
+|   100005  1,2,3      20048/udp  mountd
+|   100021  1,3,4      33407/tcp  nlockmgr
+|   100021  1,3,4      55204/udp  nlockmgr
+|   100024  1          44100/udp  status
+|   100024  1          55134/tcp  status
+|   100227  3           2049/tcp  nfs_acl
+|_  100227  3           2049/udp  nfs_acl
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:07:52 2018 -- 1 IP address (1 host up) scanned in 6.97 seconds
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1542161272
+Run Time:	40.9668030738831
+Command:	nmap 10.10.10.34 -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_service_scan.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:07:52 2018 as: nmap -p 22 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_nmap_service_scan.txt 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.038s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 6.6.1 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 cd:ec:19:7c:da:dc:16:e2:a3:9d:42:f3:18:4b:e6:4d (RSA)
+|   256 af:94:9f:2f:21:d0:e0:1d:ae:8e:7f:1d:7b:d7:42:ef (ECDSA)
+|_  256 6b:f8:dc:27:4f:1c:89:67:a4:67:c5:ed:07:53:af:97 (ED25519)
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:08:33 2018 -- 1 IP address (1 host up) scanned in 40.94 seconds
+
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	medusa
+Start Time:	1542161337
+Run Time:	101.305968046188
+Command:	medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.34 - 22 -M ssh > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_medusa.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_medusa.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234567 (7 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345678 (8 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: abc123 (9 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: dragon (10 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: iloveyou (11 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: letmein (12 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: monkey (13 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: password (14 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: qwerty (15 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: tequiero (16 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.34 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: test (17 of 17 complete)
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1542161391
+Run Time:	1.62946105003357
+Command:	whatweb http://10.10.10.34:80/ -a3 --colour=never > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_whatweb.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.34:80/ [200 OK] Apache[2.4.6], Country[RESERVED][ZZ], HTTPServer[CentOS][Apache/2.4.6 (CentOS)], IP[10.10.10.34]
+
+
+--------------------------------------------------
+Command Name:	gobuster-common
+Start Time:	1542161394
+Run Time:	65.6528661251068
+Command:	gobuster -u http://10.10.10.34:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_gobuster-common.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_gobuster-common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.34:80/.hta/
+http://10.10.10.34:80/.htaccess/
+http://10.10.10.34:80/.htpasswd/
+http://10.10.10.34:80/cgi-bin/
+http://10.10.10.34:80/cgi-bin//
+
+
+--------------------------------------------------
+Command Name:	hydra_ssh_best15
+Start Time:	1542161460
+Run Time:	106.001242876053
+Command:	hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.34 ssh > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_hydra_ssh_best15.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_hydra_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:11:00
+[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+[DATA] attacking ssh://10.10.10.34:22/
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+[STATUS] 9.00 tries/min, 9 tries in 00:01h, 6 to do in 00:01h, 1 active
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.34 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+1 of 1 target completed, 0 valid passwords found
+Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:12:46
+
+
+--------------------------------------------------
+Command Name:	nmblookup
+Start Time:	1542161480
+Run Time:	10.0652251243591
+Command:	nmblookup -A 10.10.10.34 > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmblookup.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_nmblookup.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Looking up status of 10.10.10.34
+No reply from 10.10.10.34
+
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1542161558
+Run Time:	713.187407016754
+Command:	nikto -h http://10.10.10.34:80/ -output /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_nikto.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.34
++ Target Port: 80
++ GET Server leaks inodes via ETags, header found with file /, fields: 0x83a 0x552d2a27c66d2 
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ OPTIONS Allowed HTTP Methods: GET, HEAD, POST, OPTIONS, TRACE 
++ OSVDB-877: TRACE HTTP TRACE method is active, suggesting the host is vulnerable to XST
++ OSVDB-3268: GET /icons/: Directory indexing found.
++ OSVDB-3233: GET /icons/README: Apache default file found.
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1542161600
+Run Time:	157.638857126236
+Command:	nmap -sV -sC -Pn -p 7411 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_7411_tcp__nmap_service_scan.txt 10.10.10.34
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_7411_tcp__nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:13:20 2018 as: nmap -sV -sC -Pn -p 7411 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_7411_tcp__nmap_service_scan.txt 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.044s latency).
+
+PORT     STATE SERVICE    VERSION
+7411/tcp open  daqstream?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, JavaRMI, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NCP, NULL, NotesRPC, RPCCheck, RTSPRequest, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, WMSRequest, X11Probe, afp, giop, ms-sql-s, oracle-tns: 
+|_    OK Ready. Send USER command.
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port7411-TCP:V=7.70%I=7%D=11/13%Time=5BEB84C7%P=x86_64-pc-linux-gnu%r(N
+SF:ULL,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(GenericLines,1
+SF:D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(GetRequest,1D,"OK\x
+SF:20Ready\.\x20Send\x20USER\x20command\.\n")%r(HTTPOptions,1D,"OK\x20Read
+SF:y\.\x20Send\x20USER\x20command\.\n")%r(RTSPRequest,1D,"OK\x20Ready\.\x2
+SF:0Send\x20USER\x20command\.\n")%r(RPCCheck,1D,"OK\x20Ready\.\x20Send\x20
+SF:USER\x20command\.\n")%r(DNSVersionBindReqTCP,1D,"OK\x20Ready\.\x20Send\
+SF:x20USER\x20command\.\n")%r(DNSStatusRequestTCP,1D,"OK\x20Ready\.\x20Sen
+SF:d\x20USER\x20command\.\n")%r(Help,1D,"OK\x20Ready\.\x20Send\x20USER\x20
+SF:command\.\n")%r(SSLSessionReq,1D,"OK\x20Ready\.\x20Send\x20USER\x20comm
+SF:and\.\n")%r(TLSSessionReq,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\
+SF:.\n")%r(Kerberos,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(S
+SF:MBProgNeg,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(X11Probe
+SF:,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(FourOhFourRequest
+SF:,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(LPDString,1D,"OK\
+SF:x20Ready\.\x20Send\x20USER\x20command\.\n")%r(LDAPSearchReq,1D,"OK\x20R
+SF:eady\.\x20Send\x20USER\x20command\.\n")%r(LDAPBindReq,1D,"OK\x20Ready\.
+SF:\x20Send\x20USER\x20command\.\n")%r(SIPOptions,1D,"OK\x20Ready\.\x20Sen
+SF:d\x20USER\x20command\.\n")%r(LANDesk-RC,1D,"OK\x20Ready\.\x20Send\x20US
+SF:ER\x20command\.\n")%r(TerminalServer,1D,"OK\x20Ready\.\x20Send\x20USER\
+SF:x20command\.\n")%r(NCP,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n
+SF:")%r(NotesRPC,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(Java
+SF:RMI,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(WMSRequest,1D,
+SF:"OK\x20Ready\.\x20Send\x20USER\x20command\.\n")%r(oracle-tns,1D,"OK\x20
+SF:Ready\.\x20Send\x20USER\x20command\.\n")%r(ms-sql-s,1D,"OK\x20Ready\.\x
+SF:20Send\x20USER\x20command\.\n")%r(afp,1D,"OK\x20Ready\.\x20Send\x20USER
+SF:\x20command\.\n")%r(giop,1D,"OK\x20Ready\.\x20Send\x20USER\x20command\.
+SF:\n");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:15:58 2018 -- 1 IP address (1 host up) scanned in 157.62 seconds
+
+
+--------------------------------------------------
+Command Name:	enum4linux
+Start Time:	1542161617
+Run Time:	20.5077388286591
+Command:	enum4linux -a 10.10.10.34 > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_enum4linux.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_enum4linux.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Starting enum4linux v0.8.9 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Tue Nov 13 21:13:37 2018
+
+ ========================== 
+|    Target Information    |
+ ========================== 
+Target ........... 10.10.10.34
+RID Range ........ 500-550,1000-1050
+Username ......... ''
+Password ......... ''
+Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
+
+
+ =================================================== 
+|    Enumerating Workgroup/Domain on 10.10.10.34    |
+ =================================================== 
+[E] Can't find workgroup/domain
+
+
+ =========================================== 
+|    Nbtstat Information for 10.10.10.34    |
+ =========================================== 
+Looking up status of 10.10.10.34
+No reply from 10.10.10.34
+
+ ==================================== 
+|    Session Check on 10.10.10.34    |
+ ==================================== 
+[E] Server doesn't allow session using username '', password ''.  Aborting remainder of tests.
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1542161642
+Run Time:	7.36412596702576
+Command:	nmap -sV -sC -Pn -p 2049 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_2049_tcp__nmap_service_scan.txt 10.10.10.34
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_2049_tcp__nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:14:02 2018 as: nmap -sV -sC -Pn -p 2049 -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_2049_tcp__nmap_service_scan.txt 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.44s latency).
+
+PORT     STATE SERVICE VERSION
+2049/tcp open  nfs     3-4 (RPC #100003)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:14:09 2018 -- 1 IP address (1 host up) scanned in 7.34 seconds
+
+
+--------------------------------------------------
+Command Name:	curl_robots
+Start Time:	1542161760
+Run Time:	0.141871929168701
+Command:	curl http://10.10.10.34:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_curl_robots.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_curl_robots.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /robots.txt was not found on this server.</p>
+</body></html>
+
+
+--------------------------------------------------
+Command Name:	smbclient
+Start Time:	1542161872
+Run Time:	0.297976016998291
+Command:	smbclient -L //10.10.10.34 -p 111 -N > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_smbclient.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_smbclient.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+protocol negotiation failed: NT_STATUS_CONNECTION_DISCONNECTED
+
+
+--------------------------------------------------
+Command Name:	udp_scan
+Start Time:	1542161872
+Run Time:	46.8766829967499
+Command:	nmap 10.10.10.34 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.txt -oX /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.xml
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:17:52 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.txt -oX /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_udp_scan.xml 10.10.10.34
+Nmap scan report for 10.10.10.34
+Host is up (0.17s latency).
+Not shown: 49 filtered ports
+PORT    STATE SERVICE VERSION
+111/udp open  rpcbind 2-4 (RPC #100000)
+| rpcinfo: 
+|   program version   port/proto  service
+|   100000  2,3,4        111/tcp  rpcbind
+|   100000  2,3,4        111/udp  rpcbind
+|   100003  3,4         2049/tcp  nfs
+|   100003  3,4         2049/udp  nfs
+|   100005  1,2,3      20048/tcp  mountd
+|   100005  1,2,3      20048/udp  mountd
+|   100021  1,3,4      33407/tcp  nlockmgr
+|   100021  1,3,4      55204/udp  nlockmgr
+|   100024  1          44100/udp  status
+|   100024  1          55134/tcp  status
+|   100227  3           2049/tcp  nfs_acl
+|_  100227  3           2049/udp  nfs_acl
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:18:39 2018 -- 1 IP address (1 host up) scanned in 46.85 seconds
+
+
+--------------------------------------------------
+Command Name:	ncrack_ssh_best15
+Start Time:	1542161968
+Run Time:	81.0128350257874
+Command:	ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.34 > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_ncrack_ssh_best15.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_22_tcp_ncrack_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:19 EST
+
+ssh://10.10.10.34:22 finished.
+
+
+Ncrack done: 1 service scanned in 81.00 seconds.
+Probes sent: 13 | timed-out: 0 | prematurely-closed: 0
+
+Ncrack finished.
+
+
+--------------------------------------------------
+Command Name:	rpcclient
+Start Time:	1542162049
+Run Time:	0.294374942779541
+Command:	rpcclient -U \"\" 10.10.10.34 -p 111 -N > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_rpcclient.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_111_tcp_rpcclient.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Cannot connect to server.  Error was NT_STATUS_CONNECTION_DISCONNECTED
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1542162086
+Run Time:	0.95383882522583
+Command:	python /opt/Photon/photon.py -u http://10.10.10.34:80/ -o /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon && cat /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon.txt
+Output File:	/assessments/htb/10.10.10.34/celerystalkOutput/10.10.10.34_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.34:80
+
+
+--------------------------------------------------
+Command Name:	Screenshots
+Start Time:	1542162143
+Run Time:	4.83076596260071
+Command:	firefox-esr gobuster-screenshots | 10.10.10.34 | /assessments/htb/celerystalkReports/screens/10.10.10.34_80_tcp
+Output File:	/assessments/htb/celerystalkReports/screens/10.10.10.34_80_tcp
+Status:		COMPLETED
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Command Name:	Screenshots
+Start Time:	1542162178
+Run Time:	3.98381304740906
+Command:	firefox-esr photon-screenshots | 10.10.10.34 | /assessments/htb/celerystalkReports/screens/10.10.10.34_80_tcp
+Output File:	/assessments/htb/celerystalkReports/screens/10.10.10.34_80_tcp
+Status:		COMPLETED
+--------------------------------------------------
+

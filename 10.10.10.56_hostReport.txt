@@ -1,0 +1,236 @@
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1542161231
+Run Time:	1.58951997756958
+Command:	whatweb http://10.10.10.56:80/ -a3 --colour=never > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_whatweb.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.56:80/ [200 OK] Apache[2.4.18], Country[RESERVED][ZZ], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], IP[10.10.10.56]
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1542161233
+Run Time:	2.03872799873352
+Command:	nmap 10.10.10.56 -p 2222 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_service_scan.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:07:13 2018 as: nmap -p 2222 -sC -sV -v -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_service_scan.txt 10.10.10.56
+Nmap scan report for 10.10.10.56
+Host is up (0.043s latency).
+
+PORT     STATE SERVICE VERSION
+2222/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:07:15 2018 -- 1 IP address (1 host up) scanned in 2.02 seconds
+
+
+--------------------------------------------------
+Command Name:	gobuster-common
+Start Time:	1542161240
+Run Time:	19.9209048748016
+Command:	gobuster -u http://10.10.10.56:80/ -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_gobuster-common.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_gobuster-common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.56:80/.hta/
+http://10.10.10.56:80/.htaccess/
+http://10.10.10.56:80/.htpasswd/
+http://10.10.10.56:80/cgi-bin/
+http://10.10.10.56:80/cgi-bin//
+http://10.10.10.56:80/icons/
+http://10.10.10.56:80/server-status/
+
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	nmap_ssh_hostkey
+Start Time:	1542161392
+Run Time:	2.13128280639648
+Command:	nmap 10.10.10.56 -p 2222 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_ssh_hostkey.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_ssh_hostkey.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:09:52 2018 as: nmap -p 2222 -sV --script=ssh-hostkey -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_nmap_ssh_hostkey.txt 10.10.10.56
+Nmap scan report for 10.10.10.56
+Host is up (0.042s latency).
+
+PORT     STATE SERVICE VERSION
+2222/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:09:54 2018 -- 1 IP address (1 host up) scanned in 2.11 seconds
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1542161491
+Run Time:	358.237506151199
+Command:	nikto -h http://10.10.10.56:80/ -output /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_nikto.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.56
++ Target Port: 80
++ GET Server leaks inodes via ETags, header found with file /, fields: 0x89 0x559ccac257884 
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ OPTIONS Allowed HTTP Methods: GET, HEAD, POST, OPTIONS 
++ OSVDB-3233: GET /icons/README: Apache default file found.
+
+
+--------------------------------------------------
+Command Name:	medusa
+Start Time:	1542161604
+Run Time:	0.090228796005249
+Command:	medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.56 - 2222 -M ssh > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_medusa.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_medusa.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+
+
+--------------------------------------------------
+Command Name:	ncrack_ssh_best15
+Start Time:	1542161649
+Run Time:	0.0156769752502441
+Command:	ncrack -vv -p 2222 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.56 > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_ncrack_ssh_best15.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_ncrack_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Starting Ncrack 0.6 ( http://ncrack.org ) at 2018-11-13 21:14 EST
+
+
+
+--------------------------------------------------
+Command Name:	hydra_ssh_best15
+Start Time:	1542161649
+Run Time:	52.5333740711212
+Command:	hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 2222 10.10.10.56 ssh > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_hydra_ssh_best15.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_2222_tcp_hydra_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (http://www.thc.org/thc-hydra) starting at 2018-11-13 21:14:09
+[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+[DATA] attacking ssh://10.10.10.56:2222/
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.56 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+1 of 1 target completed, 0 valid passwords found
+Hydra (http://www.thc.org/thc-hydra) finished at 2018-11-13 21:15:01
+
+
+--------------------------------------------------
+Command Name:	udp_scan
+Start Time:	1542161920
+Run Time:	47.8646318912506
+Command:	nmap 10.10.10.56 -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.txt -oX /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.xml
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Tue Nov 13 21:18:40 2018 as: nmap -sU --top-ports 50 -sV -sC -Pn -oN /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.txt -oX /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_udp_scan.xml 10.10.10.56
+Nmap scan report for 10.10.10.56
+Host is up (0.040s latency).
+All 50 scanned ports on 10.10.10.56 are closed
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Nov 13 21:19:28 2018 -- 1 IP address (1 host up) scanned in 47.84 seconds
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1542162085
+Run Time:	0.519470930099487
+Command:	python /opt/Photon/photon.py -u http://10.10.10.56:80/ -o /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon && cat /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon/internal.txt > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.56:80
+
+
+--------------------------------------------------
+Command Name:	curl_robots
+Start Time:	1542162087
+Run Time:	0.0946910381317139
+Command:	curl http://10.10.10.56:80//robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > /assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_curl_robots.txt
+Output File:	/assessments/htb/10.10.10.56/celerystalkOutput/10.10.10.56_80_tcp_curl_robots.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /robots.txt was not found on this server.</p>
+<hr>
+<address>Apache/2.4.18 (Ubuntu) Server at 10.10.10.56 Port 80</address>
+</body></html>
+
+
+--------------------------------------------------
+Command Name:	Screenshots
+Start Time:	1542162133
+Run Time:	4.42825603485107
+Command:	firefox-esr gobuster-screenshots | 10.10.10.56 | /assessments/htb/celerystalkReports/screens/10.10.10.56_80_tcp
+Output File:	/assessments/htb/celerystalkReports/screens/10.10.10.56_80_tcp
+Status:		COMPLETED
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Command Name:	Screenshots
+Start Time:	1542162174
+Run Time:	4.09688520431519
+Command:	firefox-esr photon-screenshots | 10.10.10.56 | /assessments/htb/celerystalkReports/screens/10.10.10.56_80_tcp
+Output File:	/assessments/htb/celerystalkReports/screens/10.10.10.56_80_tcp
+Status:		COMPLETED
+--------------------------------------------------
+
