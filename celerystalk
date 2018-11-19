@@ -908,7 +908,7 @@ def main(arguments):
 
 if __name__ == "__main__":
     arguments = docopt(__doc__, version='Build '+ build, help=False)
-    print(arguments)
+    #print(arguments)
     print_banner()
     if arguments["--help"]:
         print(__doc__)
