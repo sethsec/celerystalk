@@ -471,6 +471,13 @@ def get_unique_inscope_vhosts(workspace):
     CONNECTION.commit()
     return vhost_rows
 
+def get_unique_submitted_vhosts(workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE workspace=? AND submitted=?", (workspace,1))
+    vhost_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return vhost_rows
+
+
 def get_unique_out_of_scope_vhosts(workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE workspace=? AND in_scope=?", (workspace,0))
     vhost_rows = CUR.fetchall()

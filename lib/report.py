@@ -26,7 +26,7 @@ def paths_report(host):
 
 
 def report(workspace,target_list=None):
-
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     cleaner = Cleaner()
     report_count = 0
 
@@ -37,12 +37,17 @@ def report(workspace,target_list=None):
     else:
         #unique_hosts = lib.db.get_unique_hosts_in_workspace(workspace)
         unique_ips = lib.db.get_unique_hosts(workspace)
+        unique_submittted_vhosts = lib.db.get_unique_submitted_vhosts(workspace)
         unique_vhosts = lib.db.get_unique_inscope_vhosts(workspace)
+
         if len(unique_ips) == 0:
             print("[!] - There are no hosts in the [{0}] workspace. Try another?\n".format(workspace))
             exit()
+        elif len(unique_submittted_vhosts) == 0:
+            print("[!] - There are [{0}] in-scope hosts this workspace, but no hosts have been scanned.\n".format(str(len(unique_vhosts))))
+            exit()
 
-    print("\n[+] Generating a report for the [" + workspace + "] workspace (" + str(len(unique_ips)) +") unique IP(s) and (" + str(len(unique_vhosts)) + ") unique vhosts(s)\n")
+    print("\n[+] Generating a report for the [" + workspace + "] workspace (" + str(len(unique_ips)) +") unique in-scope vhosts(s) and (" + str(len(unique_submittted_vhosts)) + ") have been scanned\n")
 
     # HTML Report
     output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
@@ -57,21 +62,16 @@ def report(workspace,target_list=None):
     combined_report_file.write(populate_report_head())
 
 
-    for ip in unique_ips:
-        ip = ip[0]
-        unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
-
-        #unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
-        for vhost in sorted(unique_vhosts_for_ip):
-            vhost = vhost[0]
-            is_vhost_submitted = lib.db.is_vhost_submitted(vhost,workspace)
-            if is_vhost_submitted:
-                host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
-                host_report_file_names.append([vhost,host_report_file_name])
-                host_report_file = open(host_report_file_name, 'w')
-                populate_report_data(host_report_file,vhost,workspace)
-                host_report_file.close()
-                print("[+] Report file (single host): {0}".format(host_report_file_name))
+    for vhost in unique_submittted_vhosts:
+        vhost = vhost[0]
+        is_vhost_submitted = lib.db.is_vhost_submitted(vhost,workspace)
+        if is_vhost_submitted:
+            host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
+            host_report_file_names.append([vhost,host_report_file_name])
+            host_report_file = open(host_report_file_name, 'w')
+            populate_report_data(host_report_file,vhost,workspace)
+            host_report_file.close()
+            print("[+] Report file (single host): {0}".format(host_report_file_name))
 
 
 
@@ -111,10 +111,12 @@ def report(workspace,target_list=None):
     # Create the rest of the report
     for vhost,report in sorted(host_report_file_names):
         report_string = ""
-        ip = lib.db.get_vhost_ip(vhost,workspace)
+        ip = lib.db.get_vhost_ip(vhost, workspace)
         ip = ip[0][0]
-        services = lib.db.get_all_services_for_ip(ip,workspace)
-
+        if workspace_mode == "vapt":
+            services = lib.db.get_all_services_for_ip(ip,workspace)
+        elif workspace_mode == "bb":
+            services = lib.db.get_all_services_for_ip(vhost,workspace)
         #Text report
         #These lines write to the parent report file (1 report for however many hosts)
         combined_report_file_txt.write('*' * 80 + '\n\n')

@@ -120,10 +120,11 @@ celerystalk helps you automate your network scanning/enumeration process with as
     | create | Creates new workspace |
     | -w | Define new workspace name |
     | -o | Define output directory assigned to workspace |   
+    | -m | Mode [vapt|bb] |
 
     ```
-      Create default workspace    ./celerystalk workspace create -o /assessments/client
-      Create named workspace      ./celerystalk workspace create -o /assessments/client -w client
+      Create default workspace    ./celerystalk workspace create -o /assessments/client -m bb
+      Create named workspace      ./celerystalk workspace create -o /assessments/client -w client -m vapt
       Switch to another worksapce ./celerystalk workspace client
     ```
     
@@ -164,7 +165,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
    |-s | <b>Simulation</b><br> Sends all of the tasks to celery, but all commands are executed with a # before them rendering them inert.</li></ul> |
    |<b>Use these only if you want to skip the import phase and import/scan all at once</b>||
    | -f scan.xml | <b>Import and process Nmap/Nessus xml before scan</b><ul><li>Adds all IP addresses from this file to hosts table and marks them all in scope to be scanned.<br>Adds all ports and service types to services table.</li></ul> |
-   | -S scope.txt | <b>Import and process scope file before scan</b><ul><li>Show file differences that haven't been staged.</li></ul> |
+   | -S scope.txt | <b>Import and process scope file before scan</b><ul><li>This adds targets as in scope but does not import any ports/services data.</li></ul> |
    | -D subdomains.txt | <b>Import and process (sub)domains file before scan </b><ul><li>celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>| 
    | -d domain1,domain2,etc| <b>Find Subdomains and scan in scope hosts</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>|
 
@@ -207,7 +208,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
      
     | Option | Description |
    | --- | --- |
-   | no options | Shows all tasks in the defualt workspace |
+   | no options | Shows all tasks in the current workspace |
    | watch | Sends command to the unix watch command which will let you get an updated status every 2 seconds|
    | brief | Limit of 5 results per status (pending/running/completed/cancelled/paused) |
    | summary | Shows only a banner with numbers and not the tasks themselves |  
@@ -250,7 +251,6 @@ celerystalk helps you automate your network scanning/enumeration process with as
     | services | Show all known open ports and service types by IP |
     | hosts | Show all hosts (IP addresses and subdomains/vhosts) and whether they are in scope and whether they have been submitted for scanning |
     | paths | Show all paths that have been identified by vhost |
-    | -w workspace | Specify a non-default workspace | 
    
     ```
     Show workspaces:            ./celeryststalk db workspaces
@@ -264,7 +264,6 @@ celerystalk helps you automate your network scanning/enumeration process with as
     | Option | Description |
     | --- | --- |
     | no options | Export the services, hosts, and paths table from the default database |
-    | -w workspace | Specify a non-default workspace | 
 
     ```
     Export current DB:        ./celerystalk db export

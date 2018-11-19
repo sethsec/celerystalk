@@ -543,7 +543,8 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                     f.close()
 
 
-def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mode=None,out_of_scope_hosts=None):
+def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_scope_hosts=None):
+    workspace_mode = lib.db.get_workspace_mode(workspace)
     task_id_list = []
     total_tasks_num = 0
     config, supported_services = config_parser.read_config_ini()
@@ -563,29 +564,20 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,scan_mod
                     task_id = uuid()
                     utils.create_task(cmd_name, populated_command, domain, "", workspace, task_id)
                     process_domain_tuple = (cmd_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, scan_mode)
-                    if scan_mode == "VAPT":
-                        result = chain(
-                            # insert a row into the database to mark the task as submitted. a subtask does not get tracked
-                            # in celery the same way a task does, for instance, you can't find it in flower
-                            #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
+                    result = chain(
+                        # insert a row into the database to mark the task as submitted. a subtask does not get tracked
+                        # in celery the same way a task does, for instance, you can't find it in flower
+                        #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
 
-                            # run the command. run_task takes care of marking the task as started and then completed.
-                            # The si tells run_cmd to ignore the data returned from a previous task
-                            tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id,process_domain_tuple=process_domain_tuple).set(task_id=task_id),
+                        # run the command. run_task takes care of marking the task as started and then completed.
+                        # The si tells run_cmd to ignore the data returned from a previous task
+                        tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id,process_domain_tuple=process_domain_tuple).set(task_id=task_id),
 
-                            # right now, every executed command gets sent to a generic post_process task that can do
-                            # additinoal stuff based on the command that just ran.
-                            #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,scan_mode),
-                        )()  # .apply_async()
-                        task_id_list.append(result.task_id)
-                    else:
-                        result = chain(
-                            #tasks.cel_create_task.subtask(args=(cmd_name, populated_command, domain, "", workspace, task_id)),
-                            tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-                            tasks.post_process_domains_bb.s(cmd_name, populated_command, output_base_dir, workspace,
-                                                         domain, simulation, celery_path,out_of_scope_hosts),
-                        )()
-                        task_id_list.append(result.task_id)
+                        # right now, every executed command gets sent to a generic post_process task that can do
+                        # additinoal stuff based on the command that just ran.
+                        #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,scan_mode),
+                    )()  # .apply_async()
+                    task_id_list.append(result.task_id)
 
     total_tasks_num = total_tasks_num + len(task_id_list)
     print("\n\n[+] Summary:\tSubmitted {0} tasks to the [{1}] workspace.".format(total_tasks_num, workspace))
