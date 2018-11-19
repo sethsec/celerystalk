@@ -283,23 +283,24 @@ def main(arguments):
 
     # Query - Inform user about job status
     if arguments["query"]:
-        columns = ["Option", "Description"]
-        help_table = PrettyTable(columns)
-        help_table.align[columns[1]] = "l"
-        help_table.add_row(["no options", "Shows all tasks"])
-        help_table.add_row(["watch", "Updates status every two seconds"])
-        help_table.add_row(["brief", "Limit of 5 results per status (pending/running/completed/cancelled/paused)"])
-        help_table.add_row(["summary", "Shows only a banner with numbers and not the tasks themselves"])
-        print(help_table)
-        print("\n")
-        print("""Examples:
-    ./celerystalk query 
-    ./celerystalk query watch                               
-    ./celerystalk query brief
-    ./celerystalk query summary                                
-    ./celerystalk query summary watch
-        \n""")
-        exit()
+        if arguments["--help"]:
+            columns = ["Option", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Shows all tasks"])
+            help_table.add_row(["watch", "Updates status every two seconds"])
+            help_table.add_row(["brief", "Limit of 5 results per status (pending/running/completed/cancelled/paused)"])
+            help_table.add_row(["summary", "Shows only a banner with numbers and not the tasks themselves"])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+        ./celerystalk query 
+        ./celerystalk query watch                               
+        ./celerystalk query brief
+        ./celerystalk query summary                                
+        ./celerystalk query summary watch
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
