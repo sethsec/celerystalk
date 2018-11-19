@@ -4,6 +4,8 @@ from bleach.sanitizer import Cleaner
 import lib.db
 import urllib
 import time
+from netaddr import IPAddress
+
 
 def paths_report(host):
     all_paths = lib.db.get_all_paths_for_host(host)
@@ -23,6 +25,20 @@ def paths_report(host):
             html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
             html_code = html_code + "\n</div>\n"
     return html_code
+
+
+def sort_report_hosts(host_list):
+    ip_list = []
+    vhost_list = []
+    for item in host_list:
+        try:
+            IPAddress(item)
+            ip_list.append(item)
+        except:
+            vhost_list.append(item)
+    sorted(vhost_list)
+    ip_list.sort(key=lambda s: map(int, s.split('.')))
+    return vhost_list + ip_list
 
 
 def report(workspace,target_list=None):
@@ -72,23 +88,24 @@ def report(workspace,target_list=None):
             populate_report_data(host_report_file,vhost,workspace)
             host_report_file.close()
             print("[+] Report file (single host): {0}".format(host_report_file_name))
+    sorted_report_hosts = sort_report_hosts(host_report_file_names)
 
 
 
     # Create sidebar navigation
-    for vhost,report in sorted(host_report_file_names):
+    #combined_report_file.write('''<font size="5">celerystalk</font><br>\n''')
+    for vhost,report in sorted_report_hosts:
         #TODO: This is static and will be buggy. I think i need to use a regex here to get the hostname which is in between /hostname/celerystalkoutput
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
         combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
 
+    combined_report_file.write('''</div>\n<a id="top"></a>\n''')
+
+    combined_report_file.write("""<div class="header" id="myHeader">\n""")
 
 
     #HTML Report header
-    combined_report_file.write("""</div>
-<div class="main">
 
-<h1 id="top">celerystalk Report</h1>
-\n""")
 
 
     #Text Report
@@ -97,6 +114,7 @@ def report(workspace,target_list=None):
     unique_non_sim_command_names = lib.db.get_unique_non_sim_command_names(workspace)
 
     filter_html_body = '''<div id="myBtnContainer">\n'''
+    #filter_html_body = filter_html_body + '''<font size="5">celerystalk Report</font><br>\n'''
     filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('all')"> Show all</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>\n'''
@@ -108,8 +126,10 @@ def report(workspace,target_list=None):
     filter_html_body = filter_html_body + "</div>"
 
     combined_report_file.write(filter_html_body)
+    combined_report_file.write("""</div>\n<div class="main">\n""")
+    combined_report_file.write("""<a name="top"></a>""")
     # Create the rest of the report
-    for vhost,report in sorted(host_report_file_names):
+    for vhost,report in sorted_report_hosts:
         report_string = ""
         ip = lib.db.get_vhost_ip(vhost, workspace)
         ip = ip[0][0]
@@ -124,16 +144,19 @@ def report(workspace,target_list=None):
         combined_report_file_txt.write('\n' + '*' * 80 + '\n\n')
 
         #These lines write to the parent report file (1 report for however many hosts)
-        combined_report_file.write("""<a name="{0}"></a><br>\n""".format(vhost))
+        combined_report_file.write("""\n<a name="{0}"></a>\n""".format(vhost))
         combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
 
         if ip == vhost:
+            at_least_one_vhost = False
             unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
             for vhost_for_ip in unique_vhosts_for_ip:
                 vhost_for_ip = vhost_for_ip[0]
                 if vhost_for_ip != ip:
+                    at_least_one_vhost = True
                     combined_report_file.write("""Associated vhost: <a href="#{0}">{0}</a>\n<br>\n""".format(vhost_for_ip))
-            combined_report_file.write("<br>")
+            if at_least_one_vhost:
+                combined_report_file.write("<br>")
 
 
         services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr>"
@@ -279,7 +302,20 @@ for (var i = 0; i < btns.length; i++) {
 }
 </script>
 
+<script>
+window.onscroll = function() {myFunction()};
 
+var header = document.getElementById("myHeader");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky");
+  } else {
+    header.classList.remove("sticky");
+  }
+}
+</script>
 
 """
 
@@ -305,6 +341,7 @@ def populate_report_head():
 body {
     font-family: "Lato", sans-serif;
     font-size: 16px;
+    margin: unset;
 }
 
 table {
@@ -327,6 +364,36 @@ th {
 
 }
 
+.title {
+  background: #d1e7ff;
+  color: #f1f1f1;
+  margin-left: 160px; /* Same width as the sidebar + left position in px */
+  font-size: 28px; /* Increased text to enable scrolling */
+}
+
+.header {
+  background: white;
+  margin-left: 160px; /* Same width as the sidebar + left position in px */
+  font-size: 14px; /* Increased text to enable scrolling */
+  padding: 5px 5px 10px 10px;
+  z-index: 100;
+  width:85% 
+}
+
+.topcontent {
+  padding: 16px;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+}
+
+.sticky + .topcontent {
+  padding-top: 142px;
+}
+
+
 .sidenav {
     width: 160px;
     position: fixed;
@@ -342,7 +409,7 @@ th {
 }
 
 .sidenav a {
-    padding: 6px 8px 6px 16px;
+    padding: 6px 12px 6px;
     text-decoration: none;
     font-size: 12px;
     color: #2196F3;
@@ -357,6 +424,7 @@ th {
     margin-left: 170px; /* Same width as the sidebar + left position in px */
     font-size: 14px; /* Increased text to enable scrolling */
     padding: 0px 10px;
+    
 }
 
 @media screen and (max-height: 450px) {
@@ -421,7 +489,7 @@ th {
 
 .filedata {
   margin: 2px;  
-  max-height: 700px;
+  max-height: 500px;
   overflow: auto;
   width: 95%;
   text-indent: 10px;
@@ -440,10 +508,10 @@ th {
 .btn {
   border: none;
   outline: none;
-  background-color: #f1f1f1;
-  border-radius: 12px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 6px 4px;
   font-size: 14px;
+  margin-bottom:4px;
 
 }
 
@@ -460,8 +528,10 @@ th {
 </head>
 <body>
 
-
+<br>
 <div class="sidenav">
+
+<br><center><b><font size="5" family="Tahoma">celerystalk</font></b></center><br>
 <a href="#top">Top</a>\n""")
     return web_head
 

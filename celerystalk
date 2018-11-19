@@ -141,7 +141,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(130)
+build=str(131)
 
 def print_banner():
 
@@ -479,7 +479,7 @@ def main(arguments):
         exit()
 
     ####################################
-    # Shutdown Command
+    # Reset Command
     ####################################
 
     if arguments["reset"]:
@@ -508,6 +508,9 @@ def main(arguments):
             p = Popen(populated_command, shell=True)
             p.communicate()
             exit()
+
+
+
 
     ####################################
     # Report Command: Run Report
