@@ -25,6 +25,7 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir):
         except TypeError:
             print("[!] Error: In the config file, there needs to be one, and only one, enabled bug_bounty_mode command.")
             print("[!]        This determines what ports to scan.")
+            exit()
         task_id = uuid()
         utils.create_task(cmd_name, populated_command, vhost, output_base_dir + ".txt", workspace, task_id)
         result = chain(

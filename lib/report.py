@@ -99,7 +99,7 @@ def report(workspace,target_list=None):
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
         combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
 
-    combined_report_file.write('''</div>\n<a id="top"></a>\n''')
+    combined_report_file.write('''</div>\n''')
 
     combined_report_file.write("""<div class="header" id="myHeader">\n""")
 
@@ -145,7 +145,9 @@ def report(workspace,target_list=None):
 
         #These lines write to the parent report file (1 report for however many hosts)
         combined_report_file.write("""\n<a name="{0}"></a>\n""".format(vhost))
-        combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
+        #combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
+        combined_report_file.write("""<div class="host_header">Host Report: {0}</div>\n""".format(vhost))
+
 
         if ip == vhost:
             at_least_one_vhost = False
@@ -377,7 +379,8 @@ th {
   font-size: 14px; /* Increased text to enable scrolling */
   padding: 5px 5px 10px 10px;
   z-index: 100;
-  width:85% 
+  margin-right: 5%;
+ 
 }
 
 .topcontent {
@@ -424,7 +427,23 @@ th {
     margin-left: 170px; /* Same width as the sidebar + left position in px */
     font-size: 14px; /* Increased text to enable scrolling */
     padding: 0px 10px;
-    
+}
+
+.host_header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 12%;
+  right: 0px;
+  background-color: steelblue;
+  color: white;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  padding: 20px 10px;
+  float: right; 
+  font-size: 14px;
+  margin-right: 5%;
+  z-index:100;
 }
 
 @media screen and (max-height: 450px) {

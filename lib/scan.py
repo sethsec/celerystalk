@@ -544,7 +544,7 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
 
 
 def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_scope_hosts=None):
-    workspace_mode = lib.db.get_workspace_mode(workspace)
+    workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     task_id_list = []
     total_tasks_num = 0
     config, supported_services = config_parser.read_config_ini()
@@ -563,7 +563,7 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
                     # that allows me to pass it to all of the tasks in the chain.
                     task_id = uuid()
                     utils.create_task(cmd_name, populated_command, domain, "", workspace, task_id)
-                    process_domain_tuple = (cmd_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, scan_mode)
+                    process_domain_tuple = (cmd_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, workspace_mode)
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked
                         # in celery the same way a task does, for instance, you can't find it in flower
@@ -575,7 +575,7 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
 
                         # right now, every executed command gets sent to a generic post_process task that can do
                         # additinoal stuff based on the command that just ran.
-                        #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,scan_mode),
+                        #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,workspace_mode),
                     )()  # .apply_async()
                     task_id_list.append(result.task_id)
 
