@@ -58,9 +58,9 @@ celerystalk helps you automate your network scanning/enumeration process with as
 ```
 # ./celerystalk workspace create -o /assessments/company -m bb      # Create default workspace and set output dir
 # ./celerystalk subdomains -d company.com,company.net               # Find subdomains and determine if in scope
-# ./celerystalk import -S scope.txt -O out_scope.txt                # Import scan and scope files
-# ./celerystalk nmap                                                # Nmap all in scope hosts (reads options from config.ini)
-# ./celerystalk scan                                                # Run all enabled commands against all in scope hosts
+# ./celerystalk import [-S scope.txt] [-O out_scope.txt]            # Import files that define in-scope/out-of-scope hosts
+# ./celerystalk nmap                                                # Nmap all in-scope hosts (reads options from config.ini)
+# ./celerystalk scan [--noIP]                                       # Run all enabled commands against all in scope hosts
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
 ```
