@@ -142,12 +142,12 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(134)
+build=str(135)
 
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("\t\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.1\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
@@ -178,23 +178,23 @@ def main(arguments):
             columns = ["Option", "Description"]
             help_table = PrettyTable(columns)
             help_table.align[columns[1]] = "l"
-            help_table.add_row(["no options", "Prints current workspace"])
-            help_table.add_row(["create", "Creates a new workspace"])
-            help_table.add_row(["switch", "Switch to another workspace"])
-            help_table.add_row(["-w", "Define workspace name"])
-            help_table.add_row(["-o", "Define output directory for workspace"])
+            help_table.add_row(["no options", "Prints current workspace\n"])
+            help_table.add_row(["create", "Creates a new workspace\n"])
+            help_table.add_row(["switch", "Switch to another workspace\n"])
+            help_table.add_row(["-w", "Define workspace name\n"])
+            help_table.add_row(["-o", "Define output directory for workspace\n"])
             help_table.add_row(["-m [vapt|bb]", "Define workspace mode\n\n"
                                                 "VAPT Mode: In VAPT mode, IP addresses/ranges/CIDRs define scope.\n"
                                                 "           Subdomains that match an in-scope IP are also added to scope.\n\n"
-                                                "       Ways to define your scope:\n"
-                                                "           ./celerystalk import -S scope.txt\n"
-                                                "           ./celerystalk import -f nmap/nessus file\n\n"
-                                                "      Hosts can be explicitly excluded:\n"
-                                                "           ./celerysatlk import -O out_of_scope.txt. \n\n"
+                                                "           Ways to define your scope:\n"
+                                                "               ./celerystalk import -S scope.txt\n"
+                                                "               ./celerystalk import -f nmap/nessus file\n\n"
+                                                "           Hosts can be explicitly excluded:\n"
+                                                "               ./celerysatlk import -O out_of_scope.txt. \n\n"
                                                 "BB Mode:   In BB mode, all subdomains found with celerystalk or\n"
                                                 "           manually imported are marked in scope.\n\n"
-                                                "       Hosts can be explicitly excluded:\n"
-                                                "          ./celerysatlk import -O out_of_scope.txt. \n"
+                                                "           Hosts can be explicitly excluded:\n"
+                                                "              ./celerystalk import -O out_of_scope.txt.\n"
                                                 ])
             print(help_table)
             print("\n")
@@ -470,8 +470,8 @@ def main(arguments):
             columns = ["Options", "Description"]
             help_table = PrettyTable(columns)
             help_table.align[columns[1]] = "l"
-            help_table.add_row(["start", "Start Celery/Redis processes"])
-            help_table.add_row(["stop", "Stop Celery processes"])
+            help_table.add_row(["start", "Start Celery & Redis processes"])
+            help_table.add_row(["stop", "Stop Celery & Redis processes"])
             print(help_table)
             print("\n")
             print("""Examples:

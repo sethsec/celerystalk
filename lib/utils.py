@@ -184,21 +184,23 @@ def start_services():
 def start_celery_worker():
     # We can always just try and start the celery worker because it won't restart already running thanks to pidfile.
     p = Popen("celery -A tasks worker --concurrency=5 -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
-
+    print("[+] Started celery worker")
 
 def start_redis():
     # We can always just try and start the redis-server .
     p = Popen("/etc/init.d/redis-server start > /dev/null 2>&1",shell=True)
     c = p.communicate()
+    print("[+] Started redis service\n")
 
 
 def shutdown_background_jobs():
-    print("[-] Stopping celery worker and flower (if running)")
+    print("[-] Stopping celery worker (if running)")
     #p = Popen("celery -A tasks control shutdown > /dev/null 2>&1", shell=True)
     p = Popen('pkill -f "celery"> /dev/null 2>&1', shell=True)
 
-    #print("[-] Stopping celery flower (if running)")
-    #p = Popen('pkill -f "tasks flower"> /dev/null 2>&1', shell=True)
+    print("[-] Stopping redis service (if running)\n")
+    p = Popen("/etc/init.d/redis-server stop > /dev/null 2>&1", shell=True)
+    c = p.communicate()
 
 
 
