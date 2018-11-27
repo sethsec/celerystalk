@@ -91,18 +91,22 @@ def import_scope(scope_file,workspace):
                 # If there is no "-" in the line, we can deal with it as a simple network or IPAddress. Luckily
                 # IPNetwork automatically converts an IP without a CIDR into /32 CIDR, and it works just like
                 # an IP address
-                net = IPNetwork(network)
-                for ip in net:
-                    ip = str(ip)
-                    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
-                    if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-                        is_vhost_in_db = lib.db.is_vhost_in_db(ip, workspace)
-                        if is_vhost_in_db:
-                            lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)
-                        else:
-                            db_vhost = (ip, ip, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
-                            lib.db.create_vhost(db_vhost)
-                #scopeList.append(net)
+                try:
+                    net = IPNetwork(network)
+                    for ip in net:
+                        ip = str(ip)
+                        vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+                        if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+                            is_vhost_in_db = lib.db.is_vhost_in_db(ip, workspace)
+                            if is_vhost_in_db:
+                                lib.db.update_vhosts_in_scope(ip, ip, workspace, 1)
+                            else:
+                                db_vhost = (ip, ip, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                                lib.db.create_vhost(db_vhost)
+                    #scopeList.append(net)
+                except:
+                    print("[!] Could not read the following IP/network: " + str(network))
+
 
 
 def import_vhosts(subdomains_file,workspace):
