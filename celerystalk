@@ -142,7 +142,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(136)
+build=str(137)
 
 def print_banner():
 
@@ -165,7 +165,7 @@ def main(arguments):
     if arguments["interactive"]:
         prompt = lib.interactive.MyPrompt()
         prompt.prompt = '[celerystalk] '
-        prompt.cmdloop('starting...')
+        prompt.cmdloop("+!" * 35 + '\n\n[!] Interactive mode is still in development and should not be used at this time...\n\n' + "+!" * 35)
 
 
 
