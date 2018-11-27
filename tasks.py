@@ -194,6 +194,12 @@ def post_process(*args):
             utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
             cel_take_screenshot.delay(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
 
+            task_id = uuid()
+            populated_command = "/opt/aquatone -out {0}/{1}".format(scan_output_base_file_dir,ip)
+            command_name = "aquatone"
+            utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
+            cel_take_screenshot.delay(urls_to_screenshot, task_id, ip, scan_output_base_file_dir, workspace,
+                                      command_name, populated_command)
 
 
 

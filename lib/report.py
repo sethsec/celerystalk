@@ -296,9 +296,11 @@ function myFunction() {
 
     print("\n[+] Report file (All workspace hosts): {0} (has screenshots!!!)".format(combined_report_file_name))
     print("[+] Report file (All workspace hosts): {0}\n".format(combined_report_file_name_txt))
-    print("\n[+] For quick access, open with local firefox (works over ssh with x forwarding):\n")
-    print("firefox " + combined_report_file_name + " &\n")
-    print("[+] Or you can copy the celerystalkReports folder, which contains everything you need to view the report\n")
+    print("\n[+] Option 1: Open with local firefox (works over ssh with x forwarding)")
+    print("\t\tfirefox " + combined_report_file_name + " &")
+    print("[+] Option 2: Use Python's SimpleHTTPserver (Don't serve this on a publicly accessible IP!!)")
+    print("\t\tcd {0} && python -m SimpleHTTPServer 27007".format(workspace_report_directory))
+    print("[+] Option 3: Copy the {0} folder to another machine and view locally.\n\n".format(workspace_report_directory))
 
 
 def populate_report_head():
