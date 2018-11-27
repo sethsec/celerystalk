@@ -11,6 +11,7 @@ import urlparse
 import lib.db
 from random import shuffle
 
+
 def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     all_commands = []
@@ -72,6 +73,34 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
         print("[+]\t\tcelerystalk query brief [watch]")
         print("[+]\t\tcelerystalk query summary [watch]\n")
 
+
+def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir):
+    print("in aquatone host")
+    celery_path = sys.path[0]
+    config, supported_services = config_parser.read_config_ini()
+    for (cmd_name, cmd) in config.items("screenshots"):
+        print(cmd_name, cmd)
+        try:
+            if cmd_name == "aquatone":
+                print("found aquatone")
+                print(scan_output_base_file_dir)
+                outfile = scan_output_base_file_dir + "_" + cmd_name
+                print(outfile)
+                str1 = '\n'.join(urls_to_screenshot)
+
+
+                populated_command = cmd.replace("[PATHS]", urls_to_screenshot).replace("[OUTPUT]", outfile)
+                print(populated_command)
+        except TypeError:
+            print("[!] Error1: In the config file, there needs to be one (and only one) enabled aquatone command.")
+            exit()
+
+
+        task_id = uuid()
+        utils.create_task(cmd_name, populated_command, vhost, outfile + "/aquatone_report.html", workspace, task_id)
+        result = chain(
+            tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+        )()
 
 def populate_comamnds(vhost,workspace,simulation,output_base_dir):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
