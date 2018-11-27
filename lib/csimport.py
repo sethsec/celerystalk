@@ -43,7 +43,7 @@ def import_scope(scope_file,workspace):
                 # rangeend = (IPAddress(iprange[1]))
                 # Hold off on converting the second part. We first need to check if
                 # it is a real IP or just the last octet (i.e., 192.168.0.100-110)
-                rangeend = iprange[1]
+                rangeend = iprange[1].rstrip()
                 # If there is a period in the second part, we can just cast to IPAddress now
                 if "." in rangeend:
                     rangeend = IPAddress(rangeend)
@@ -66,7 +66,12 @@ def import_scope(scope_file,workspace):
                         # So this part copies the first three octects from the first half range and prepends
                         # it to the single octet given for the second part.
                         startpart = str(rangestart).rsplit('.', 1)[0]
-                        netRange = IPAddress(startpart + "." + rangeend)
+                        rangeend = (IPAddress(str(startpart) + "." + str(rangeend)))
+
+
+                        netRange = list(iter_iprange(rangestart, rangeend))
+
+
                         for ip in netRange:
                             ip = str(ip)
                             vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
