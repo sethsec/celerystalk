@@ -5,6 +5,7 @@ import lib.db
 import urllib
 import time
 from netaddr import IPAddress
+import hashlib
 
 
 def paths_report(host):
@@ -94,14 +95,25 @@ def report(workspace,target_list=None):
 
     # Create sidebar navigation
     #combined_report_file.write('''<font size="5">celerystalk</font><br>\n''')
+
     for vhost,report in sorted_report_hosts:
+        hash=hashlib.md5(vhost).hexdigest()
         #TODO: This is static and will be buggy. I think i need to use a regex here to get the hostname which is in between /hostname/celerystalkoutput
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
-        combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
+        #combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
 
-    combined_report_file.write('''</div>\n''')
+        combined_report_file.write("""
+            <li class="nav-item">
+                <a class="nav-link" href="#{0}">{1}</a>
+            </li>       
+        \n""".format("loc_" + hash,vhost))
 
-    combined_report_file.write("""<div class="header" id="myHeader">\n""")
+    combined_report_file.write('''
+        </ul>
+    </nav>\n''')
+
+
+    combined_report_file.write("""<div class="col-sm-12">\n<div class="header" id="myHeader">\n""")
 
 
     #HTML Report header
@@ -130,6 +142,7 @@ def report(workspace,target_list=None):
     combined_report_file.write("""<a name="top"></a>""")
     # Create the rest of the report
     for vhost,report in sorted_report_hosts:
+        hash = hashlib.md5(vhost).hexdigest()
         report_string = ""
         ip = lib.db.get_vhost_ip(vhost, workspace)
         ip = ip[0][0]
@@ -144,9 +157,9 @@ def report(workspace,target_list=None):
         combined_report_file_txt.write('\n' + '*' * 80 + '\n\n')
 
         #These lines write to the parent report file (1 report for however many hosts)
-        combined_report_file.write("""\n<a name="{0}"></a>\n""".format(vhost))
+        combined_report_file.write("""\n\n\n\n\n\n\n\n\n\n<div id="{0}">\n""".format("loc_" + hash))
         #combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
-        combined_report_file.write("""<div class="host_header">Host Report: {0}</div>\n""".format(vhost))
+        #combined_report_file.write("""<div class="host_header">Host Report: {0}</div>\n""".format(vhost))
 
 
         if ip == vhost:
@@ -167,7 +180,7 @@ def report(workspace,target_list=None):
         services_table_html = services_table_html + "</table>\n<br>\n"
 
         combined_report_file.write('''\n<div class="filterDiv services">\n''')
-        combined_report_file.write('''<button class="collapsible">Services</button><br>\n''')
+        combined_report_file.write('''<button class="collapsible">Services ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
         combined_report_file.write("\n<br>" + services_table_html + "\n<br>")
         combined_report_file.write("\n</div>")
 
@@ -175,7 +188,7 @@ def report(workspace,target_list=None):
         screenshot_html = paths_report(vhost)
 
         combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
-        combined_report_file.write('''<button class="collapsible">Screenshots</button><br>\n''')
+        combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
         #combined_report_file.write("\n<br>\n<div class=\"screenshots\">\n" + screenshot_html + "\n</div>\n<br>")
         combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
         combined_report_file.write("\n</div>\n")
@@ -185,6 +198,8 @@ def report(workspace,target_list=None):
         report_string = report_string + report_host_string
         #combined_report_file.write('</pre>\n')
         combined_report_file.write(report_string)
+        combined_report_file.write("\n</div>\n")
+
 
 
     combined_report_file.write("\n\n")
@@ -192,53 +207,6 @@ def report(workspace,target_list=None):
 
 
 
-        # with open(report, 'r') as host_report_file:
-        #     #Generate html that has each path with a screenshot per line
-        #     screenshot_html = paths_report(host)
-        #     combined_report_file.write(screenshot_html)
-        #
-        #     combined_report_file.write('<pre>\n')
-        #
-        #
-        #     for line in host_report_file:
-        #         #HTML report
-        #         line = unicode(line, errors='ignore')
-        #         try:
-        #             sanitized = bleach.clean(line)
-        #         except:
-        #             print("[!] Could not output santize the following line (Not including it in report to be safe):")
-        #             print("     " + line)
-        #             sanitized = ""
-        #
-        #         combined_report_file.write(sanitized)
-        #         #txt Report
-        #         combined_report_file_txt.write(line)
-        #     combined_report_file.write('</pre>\n')
-
-    # for ip in unique_ips:
-    #     ip = ip[0]
-    #     services = lib.db.get_all_services_for_ip(ip, workspace)
-    #
-    #     unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
-    #
-    #     # unique_vhosts_for_ip.append(ip) # This line makes sure the report includes the tools run against the IP itself.
-    #
-    #     for vhost in unique_vhosts_for_ip:
-    #         vhost = vhost[0]
-    #
-    #         #Generate html that has each path with a screenshot per line
-    #         screenshot_html = paths_report(vhost)
-    #         combined_report_file.write(screenshot_html)
-    #
-    #         #Generate the html code for all of that command output and headers
-    #         report_host_string = populate_report_data_html(vhost, workspace)
-    #         report_string = report_string + report_host_string
-    #     combined_report_file.write('</pre>\n')
-    #     combined_report_file.write(report_string)
-    #
-    #
-    #     combined_report_file.write("\n\n")
-    #     combined_report_file_txt.write("\n\n")
 
 
     report_footer = """
@@ -339,12 +307,30 @@ def populate_report_head():
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <style>
 body {
     font-family: "Lato", sans-serif;
-    font-size: 16px;
     margin: unset;
 }
+
+ul.nav-pills {
+    top: 20px;
+    width:170px;
+    position: fixed;
+    overflow-x: auto;
+    overflow-y: auto;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    bottom: 0;
+    font-size: 12px;	
+}
+
+
 
 table {
 }
@@ -363,7 +349,6 @@ th {
     background-color: #777;
     color: white;
     padding: 4px;
-
 }
 
 .title {
@@ -375,11 +360,12 @@ th {
 
 .header {
   background: white;
-  margin-left: 160px; /* Same width as the sidebar + left position in px */
+  margin-left: 170px; /* Same width as the sidebar + left position in px */
   font-size: 14px; /* Increased text to enable scrolling */
   padding: 5px 5px 10px 10px;
   z-index: 100;
   margin-right: 5%;
+  width: 100%;
  
 }
 
@@ -545,13 +531,19 @@ th {
 
 </style>
 </head>
-<body>
-
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="1">
 <br>
-<div class="sidenav">
-
-<br><center><b><font size="5" family="Tahoma">celerystalk</font></b></center><br>
-<a href="#top">Top</a>\n""")
+<div class="container-fluid">
+  <div class="row">
+    <nav class="left" id="myScrollspy">
+      <ul class="nav nav-pills">
+        <li>
+            <center><b><font size="5" family="Tahoma">celerystalk</font></b></center>
+        </li> 
+        <li class="nav-item">
+          <a class="nav-link active" href="#top">Top</a>
+        </li>\n       
+        """)
     return web_head
 
 
@@ -644,7 +636,7 @@ def populate_report_data_html(vhost,workspace):
                         run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
                     # Don't print header info for simulation jobs
                     if not command.startswith('#'):
-                        command_header_html = get_command_header_and_info(normalized_output_file,command_name,command,status,start_time,run_time)
+                        command_header_html = get_command_header_and_info(vhost,normalized_output_file,command_name,command,status,start_time,run_time)
                         report_host_html_string = report_host_html_string + command_header_html
                 file_contents_html = convert_file_contents_to_html(normalized_output_file)
                 report_host_html_string = report_host_html_string + file_contents_html
@@ -657,17 +649,17 @@ def populate_report_data_html(vhost,workspace):
                 if run_time:
                     run_time = time.strftime('%H:%M:%S', time.gmtime(float(run_time)))
                 if not command.startswith('#'):
-                    command_header_html = get_command_header_and_info(normalized_output_file,command_name, command, status, start_time,run_time)
+                    command_header_html = get_command_header_and_info(vhost,normalized_output_file,command_name, command, status, start_time,run_time)
                     file_contents_html = convert_file_contents_to_html(normalized_output_file)
 
                     report_host_html_string = report_host_html_string + command_header_html + file_contents_html
                 report_host_html_string = report_host_html_string + "        </div>\n"
     return report_host_html_string
 
-def get_command_header_and_info(normalized_output_file,command_name,command,status,start_time,run_time):
+def get_command_header_and_info(vhost,normalized_output_file,command_name,command,status,start_time,run_time):
     command_header_html_string = ""
 
-    command_header_html_string = command_header_html_string + '''<button class="collapsible">''' + command_name + '''</button>\n'''
+    command_header_html_string = command_header_html_string + '''<button class="collapsible">''' + command_name + ''' [''' + vhost + ''']''' + '''</button>\n'''
     command_header_html_string = command_header_html_string + '''<div class="content">'''
     command_header_html_string = command_header_html_string + '''<table>'''
     try:

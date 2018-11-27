@@ -134,7 +134,7 @@ import lib.query
 import lib.csimport
 import lib.nmap
 import lib.config_parser
-#import lib.interactive
+import lib.interactive
 from lib import db
 import lib.workspace
 from prettytable import PrettyTable
@@ -142,7 +142,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(135)
+build=str(136)
 
 def print_banner():
 
@@ -285,6 +285,7 @@ def main(arguments):
 
     # Query - Inform user about job status
     if arguments["query"]:
+        lib.utils.start_services()
         if arguments["--help"]:
             columns = ["Option", "Description"]
             help_table = PrettyTable(columns)
