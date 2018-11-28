@@ -344,6 +344,10 @@ def process_nessus_data(nessus_report,workspace,target=None):
 
 def process_nmap_data(nmap_report,workspace, target=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
+    services_file = open('/etc/services', mode='r')
+    services_file_data = services_file.readlines()
+    services_file.close()
+
     for scanned_host in nmap_report.hosts:
         ip=scanned_host.id
         unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
@@ -387,9 +391,21 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 scanned_service_port = scanned_service_item.port
                 scanned_service_name = scanned_service_item.service
                 scanned_service_protocol = scanned_service_item.protocol
-                print(str(scanned_service_port))
+                #print(str(scanned_service_port))
                 if scanned_service_item.tunnel == 'ssl':
                     scanned_service_name = 'https'
+
+                if scanned_service_name == "tcpwrapped":
+                    try:
+                        port_proto = "\t" + str(scanned_service_port) + "/" + str(scanned_service_protocol) + "\t"
+                        for line in services_file_data:
+                            if port_proto in line:
+                                scanned_service_name = line.split("\t")[0]
+                    except:
+                        pass
+
+
+
 
                 #Not using this yet, but I'd like to do send this to searchsploit
                 try:
