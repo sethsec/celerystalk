@@ -184,13 +184,13 @@ def start_services():
 def start_celery_worker():
     # We can always just try and start the celery worker because it won't restart already running thanks to pidfile.
     p = Popen("celery -A tasks worker --concurrency=5 -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
-    print("[+] Started celery worker")
+    #print("[+] Started celery worker")
 
 def start_redis():
     # We can always just try and start the redis-server .
     p = Popen("/etc/init.d/redis-server start > /dev/null 2>&1",shell=True)
     c = p.communicate()
-    print("[+] Started redis service\n")
+    #print("[+] Started redis service\n")
 
 
 def shutdown_background_jobs():
@@ -293,6 +293,27 @@ def create_task(command_name, populated_command, ip, output_dir, workspace, task
     db_task = (task_id, 1, command_name, populated_command, ip, output_dir, 'SUBMITTED', workspace)
     db.create_task(db_task)
 
+
+
+def check_for_new_default_config():
+    user_config_file = 'config.ini'
+    default_config_file = 'setup/config_default.ini'
+    user_config_age=os.path.getmtime(user_config_file)
+    #print(user_config_age)
+    default_config_age = os.path.getmtime(default_config_file)
+    #print(default_config_age)
+    if user_config_age < default_config_age:
+        print("[!] [config_default.ini] from the repo is newer than the the current [config.ini] file.")
+        print("[!] This is most likely because a new tool or possibly a new feature has been added.\n")
+        answer = raw_input("[+] Would you like backup your current config and replace [config.ini] with the new version? (y\N)")
+        print("")
+        if (answer == "Y") or (answer == "y"):
+            from shutil import copyfile
+            backup_config_filename = 'config.ini.' + str(user_config_age)
+            copyfile(user_config_file, backup_config_filename)
+            copyfile(default_config_file, user_config_file)
+            print("[+] config.ini has been copied to " +  backup_config_filename)
+            print("[+] setup/config_default.ini has been copied to config.ini")
 
 
 

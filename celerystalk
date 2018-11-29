@@ -142,7 +142,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(142)
+build=str(143)
 
 def print_banner():
 
@@ -207,6 +207,7 @@ def main(arguments):
 \n""")
             exit()
         if arguments["create"]:
+            lib.utils.check_for_new_default_config()
             if arguments["-w"]:
                 workspace = arguments["-w"]
             else:

@@ -30,7 +30,7 @@ def extract_bb_nmap_options():
     config.read(['config.ini'])
 
     for (key, val) in config.items("nmap-commands"):
-        if key == "bug_bounty_mode":
+        if key == "tcp_scan":
             bb_nmap_command = val
             options = bb_nmap_command.replace('nmap', '').replace('[TARGET]', '')
             return options
@@ -45,12 +45,6 @@ def extract_udp_scan_nmap_options():
             options = udp_nmap_command.replace('nmap', '').replace('[TARGET]', '')
             return options
 
-    # try:
-    #     bb_nmap_command = config['nmap-commands']['bug_bounty_mode']
-    #     options = bb_nmap_command.replace('nmap','').replace('[TARGET]','')
-    #     return options
-    # except:
-    #     print("Are you sure only command is enabled in this section?")
 
 
 

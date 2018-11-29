@@ -133,7 +133,7 @@ def report(workspace,target_list=None):
 
     for command_name in unique_non_sim_command_names:
         command_name = command_name[0]
-        if not ((command_name == "Screenshots") or (command_name == "nmap_bug_bounty_mode")):
+        if not ((command_name == "Screenshots") or (command_name == "nmap_tcp_scan")):
             filter_html_body = filter_html_body + "<button class=\"btn\" onclick=\"filterSelection(\'{0}\')\"> {0}</button>\n".format(command_name)
     filter_html_body = filter_html_body + "</div>"
 
@@ -630,7 +630,7 @@ def populate_report_data_html(vhost,workspace):
         tasks_for_output_file = lib.db.get_tasks_for_output_file(workspace,vhost,vhost_output_file)
         if len(tasks_for_output_file) > 1:
             command_name, command, status, start_time, run_time = tasks_for_output_file[0]
-            if not ((command_name == "Screenshots") or (command_name == "nmap_bug_bounty_mode")):
+            if not ((command_name == "Screenshots") or (command_name == "nmap_tcp_scan")):
                 report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
                 for command_name,command,status,start_time,run_time in tasks_for_output_file:
                     start_time = time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(float(start_time)))
@@ -645,7 +645,7 @@ def populate_report_data_html(vhost,workspace):
                 report_host_html_string = report_host_html_string + "        </div>\n"
         elif len(tasks_for_output_file) == 1:
             command_name, command, status, start_time, run_time = tasks_for_output_file[0]
-            if not ((command_name == "Screenshots") or (command_name == "nmap_bug_bounty_mode")):
+            if not ((command_name == "Screenshots") or (command_name == "nmap_tcp_scan")):
                 report_host_html_string = report_host_html_string + '''<div class="filterDiv ''' + command_name + '''">\n'''
                 start_time = time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(float(start_time)))
                 if run_time:
