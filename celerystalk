@@ -44,7 +44,7 @@ Examples:
     Create VAPT workspace       celerystalk workspace create -o /assessments/client -m vapt -w client_name
     Create BB workspace         celerystalk workspace create -o /assessments/client -m bb -w company_name
     Show current workspaces     celerystalk workspace
-    Switch worksapce            celerystalk workspace switch -w client2
+    Switch workspace            celerystalk workspace switch -w client2
 
   Subdomain Recon
     Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
@@ -142,7 +142,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(141)
+build=str(142)
 
 def print_banner():
 
@@ -202,7 +202,7 @@ def main(arguments):
     Create VAPT workspace   ./celerystalk workspace create -o /assessments/client -m vapt -w client_name
     Create BB workspace     ./celerystalk workspace create -o /assessments/client -m bb -w company_name
     Show current workspaces ./celerystalk workspace
-    Switch worksapce        ./celerystalk workspace switch -w company_name
+    Switch workspace        ./celerystalk workspace switch -w company_name
         
 \n""")
             exit()
