@@ -199,9 +199,10 @@ def report(workspace,target_list=None):
             unique_vhosts_for_ip = lib.db.get_unique_inscope_vhosts_for_ip(ip, workspace)
             for vhost_for_ip in unique_vhosts_for_ip:
                 vhost_for_ip = vhost_for_ip[0]
+                hash = hashlib.md5(vhost_for_ip).hexdigest()
                 if vhost_for_ip != ip:
                     at_least_one_vhost = True
-                    combined_report_file.write("""Associated vhost: <a href="#{0}">{0}</a>\n<br>\n""".format(vhost_for_ip))
+                    combined_report_file.write("""Associated vhost: <a href="#{0}">{0}</a>\n<br>\n""".format("loc_" + hash))
             if at_least_one_vhost:
                 combined_report_file.write("<br>")
 
