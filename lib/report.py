@@ -248,7 +248,7 @@ def report(workspace,target_list=None):
         combined_report_file.write("\n</div>")
         combined_report_file.write('''\n<div class="screenshotdata">\n''')
         combined_report_file.write("\n<br>" + screenshot_grid_html + "\n<br>")
-        combined_report_file.write("\n</div>")
+        #combined_report_file.write("\n</div>")
         combined_report_file.write("\n</div>")
 
 
