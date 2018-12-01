@@ -82,13 +82,14 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
 
 @app.task
 def post_process(*args):
-    command_name, populated_command,output_base_dir, workspace, ip, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
+    command_name, populated_command,output_base_dir, workspace, vhost, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
     screenshot_name = ""
     urls_to_screenshot = []
+    urls_to_screenshot_with_filenames = []
     if "gobuster" in populated_command:
         screenshot_name = "gobuster"
 
-        scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",ip + "_" + str(
+        scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",vhost + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
 
         try:
@@ -125,10 +126,12 @@ def post_process(*args):
                         .replace("\\", "") \
                         .replace(":", "_") + ".png"
                     url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                    db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                    db_path = (vhost, scanned_service_port, url, 0, url_screenshot_filename, workspace)
                     db.insert_new_path(db_path)
                     print("Found Url: " + str(url))
+                    urls_to_screenshot_with_filenames.append((url,url_screenshot_filename))
                     urls_to_screenshot.append((url,url_screenshot_filename))
+
                     #result = lib.utils.take_screenshot(url,url_screenshot_filename)
         except Exception, e:
             if not simulation:
@@ -138,7 +141,7 @@ def post_process(*args):
     if "photon" in populated_command:
         screenshot_name = "photon"
 
-        scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", ip + "_" + str(
+        scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", vhost + "_" + str(
             scanned_service_port) + "_" + scanned_service_protocol)
 
         try:
@@ -175,10 +178,12 @@ def post_process(*args):
                                 .replace("\\", "") \
                                 .replace(":", "_") + ".png"
                             url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                            db_path = (ip, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+                            db_path = (vhost, scanned_service_port, url, 0, url_screenshot_filename, workspace)
                             db.insert_new_path(db_path)
                             print("Found Url: " + str(url))
+                            urls_to_screenshot_with_filenames.append((str(url), url_screenshot_filename))
                             urls_to_screenshot.append((str(url), url_screenshot_filename))
+
 
         except Exception, e:
             if not simulation:
@@ -189,19 +194,12 @@ def post_process(*args):
     if not simulation:
         if len(urls_to_screenshot) > 0:
             task_id = uuid()
-            populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, ip, scan_output_base_file_dir)
+            populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, vhost, scan_output_base_file_dir)
             command_name = "Screenshots"
-            utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
-            cel_take_screenshot.delay(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
+            utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
+            cel_take_screenshot.delay(urls_to_screenshot_with_filenames,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
 
-            task_id = uuid()
-            populated_command = "/opt/aquatone -out {0}/{1}".format(scan_output_base_file_dir,ip)
-            command_name = "aquatone"
-            utils.create_task(command_name, populated_command, ip, scan_output_base_file_dir, workspace, task_id)
-            cel_take_screenshot.delay(urls_to_screenshot, task_id, ip, scan_output_base_file_dir, workspace,
-                                      command_name, populated_command)
-
-
+            #lib.scan.aquatone_host(urls_to_screenshot, vhost, workspace, simulation, scan_output_base_file_dir, celery_path)
 
 
 # @after_task_publish.connect(sender='app.task.run_cmd')

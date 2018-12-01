@@ -74,25 +74,33 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
         print("[+]\t\tcelerystalk query summary [watch]\n")
 
 
-def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir):
+def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir,celery_path):
     print("in aquatone host")
-    celery_path = sys.path[0]
+    celery_path = lib.db.get_current_install_path()[0][0]
     config, supported_services = config_parser.read_config_ini()
     for (cmd_name, cmd) in config.items("screenshots"):
-        print(cmd_name, cmd)
+        #print(cmd_name, cmd)
         try:
             if cmd_name == "aquatone":
-                print("found aquatone")
-                print(scan_output_base_file_dir)
                 outfile = scan_output_base_file_dir + "_" + cmd_name
-                print(outfile)
-                str1 = '\n'.join(urls_to_screenshot)
+                filename = "/tmp/" + workspace + "_paths_" + vhost + ".txt"
+                populated_command = cmd.replace("[FILE]", filename).replace("[OUTPUT]", outfile)
+
+                paths = lib.db.get_all_paths_for_host_path_only(vhost,workspace)
+                print(str(paths))
 
 
-                populated_command = cmd.replace("[PATHS]", urls_to_screenshot).replace("[OUTPUT]", outfile)
-                print(populated_command)
-        except TypeError:
-            print("[!] Error1: In the config file, there needs to be one (and only one) enabled aquatone command.")
+                with open(filename, 'w') as paths_tmp_file:
+                    #paths_tmp_file.write(str(paths))
+                    for line in paths:
+                         #print(str(line))
+                         paths_tmp_file.write(str(line[0]) + "\n")
+
+                populated_command = cmd.replace("[FILE]", filename).replace("[OUTPUT]", outfile)
+                #print(populated_command)
+        except Exception, e:
+            print(e)
+            print("[!] Error: In the config file, there needs to be one (and only one) enabled aquatone command.")
             exit()
 
 

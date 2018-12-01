@@ -73,6 +73,23 @@ def create_current_workspace_table():
     except Error as e:
         print(e)
 
+def create_celerystalk_table():
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+
+    sql_create_celerystalk_table = """ CREATE TABLE IF NOT EXISTS celerystalk (
+                                        install_path text PRIMARY KEY                                        
+                                    ); """
+
+    try:
+        CUR.execute(sql_create_celerystalk_table)
+        CONNECTION.commit()
+    except Error as e:
+        print(e)
+
 
 def create_path_table():
     sql_create_paths_table = """ CREATE TABLE IF NOT EXISTS paths (
@@ -197,7 +214,30 @@ def update_current_workspace(workspace):
     CONNECTION.commit()
 
 
+#############################
+# Table: Create celerystalk
+#############################
 
+def set_install_path(db_install_path):
+    """
+
+    :param workspace:
+    :return:
+    """
+    sql_create_celerystalk = ''' INSERT OR IGNORE INTO celerystalk(install_path)
+              VALUES(?) '''
+    CUR.execute(sql_create_celerystalk,db_install_path)
+    CONNECTION.commit()
+
+def get_current_install_path():
+    CUR.execute("SELECT install_path FROM celerystalk")
+    install_path = CUR.fetchall()
+    CONNECTION.commit()
+    return install_path
+
+# def update_current_workspace(workspace):
+#     CUR.execute("UPDATE celerystalk SET install_path=?", (install_path,))
+#     CONNECTION.commit()
 
 #############################
 # Table: Tasks
@@ -601,6 +641,12 @@ def get_all_paths(workspace):
 
 def get_all_paths_for_host(ip):
     CUR.execute("SELECT ip,port,path,url_screenshot_filename,workspace FROM paths WHERE ip = ? ORDER BY port,path", (ip,))
+    all_paths_for_host = CUR.fetchall()
+    CONNECTION.commit()
+    return all_paths_for_host
+
+def get_all_paths_for_host_path_only(ip,workspace):
+    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ?", (ip,workspace))
     all_paths_for_host = CUR.fetchall()
     CONNECTION.commit()
     return all_paths_for_host

@@ -27,6 +27,38 @@ def paths_report(host):
             html_code = html_code + "\n</div>\n"
     return html_code
 
+def paths_report_grid(host):
+    all_paths = lib.db.get_all_paths_for_host(host)
+    from collections import defaultdict
+    d = defaultdict(list)
+    row = 0
+    for path in all_paths:
+        column_number = row % 4
+        d[column_number].append(path[3])
+        row = row + 1
+
+    html_code = '''<div class="row"> '''
+    for column in d:
+        html_code = html_code + '''<div class="column">'''
+        #ip,port,path,url_screenshot_filename,workspace = row
+        for url_screenshot_filename in d[column]:
+            try:
+                os.stat(url_screenshot_filename)
+                url_screenshot_filename = urllib.quote(url_screenshot_filename)
+                url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
+                html_code = html_code + """<a href="{0}"><img class="zoom" src="{1}" style="width:100%"></a>\n""".format(path[2],url_screenshot_filename_relative)
+            except:
+                pass
+                # #print("Could not find screenshot for " + path)
+                # html_code = html_code + """\n<div id="linkwrap">\n"""
+                # html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
+                # html_code = html_code + "\n</div>\n"
+        html_code = html_code + "\n</div>\n"
+    html_code = html_code + "\n</div>\n"
+    return html_code
+
+
+
 
 def sort_report_hosts(host_list):
     ip_list = []
@@ -186,11 +218,40 @@ def report(workspace,target_list=None):
 
 
         screenshot_html = paths_report(vhost)
+        screenshot_grid_html = paths_report_grid(vhost)
+
+        # combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
+        # combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
+        # #combined_report_file.write("\n<br>\n<div class=\"screenshots\">\n" + screenshot_html + "\n</div>\n<br>")
+        # combined_report_file.write('''\n<div class="row filedata"><div class="col-sm-4">\n''')
+        # combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
+        # combined_report_file.write("\n</div>")
+        # combined_report_file.write('''\n<div class="col-sm-8">\n''')
+        # combined_report_file.write("\n<br>" + screenshot_grid_html + "\n<br>")
+        # combined_report_file.write("\n</div>\n</div>")
+
+        # combined_report_file.write('''\n\n<div class="filterDiv paths">\n''')
+        # combined_report_file.write('''<button class="collapsible">Paths ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
+        # #combined_report_file.write('''\n<br>\n<div class="screenshots pathsdata">\n''' + screenshot_html + '''\n</div>\n<br>''')
+        # combined_report_file.write('''\n<div class="pathsdata">\n''')
+        # combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
+        # combined_report_file.write("\n</div>")
+        # combined_report_file.write("\n</div>")
 
         combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
-        combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
-        #combined_report_file.write("\n<br>\n<div class=\"screenshots\">\n" + screenshot_html + "\n</div>\n<br>")
+        combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + '''] <center><b>(Click to see all paths)</b></center>''' + '''</button>\n''')
+        combined_report_file.write('''<div class="content">''')
+        combined_report_file.write('''\n<div pathsdata">\n''')
         combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
+        combined_report_file.write("\n</div>")
+        combined_report_file.write("\n</div>")
+        combined_report_file.write('''\n<div class="screenshotdata">\n''')
+        combined_report_file.write("\n<br>" + screenshot_grid_html + "\n<br>")
+        combined_report_file.write("\n</div>")
+        combined_report_file.write("\n</div>")
+
+
+
         combined_report_file.write("\n</div>\n")
 
         #Generate the html code for all of that command output and headers
@@ -328,7 +389,6 @@ ul.nav-pills {
     position: fixed;
     z-index: 1;
     left: 0;
-    bottom: 0;
     font-size: 12px;	
 }
 
@@ -440,7 +500,7 @@ th {
 }
 
 #linkwrap {
-    position:relative;
+   position:relative;
 
 }
 .link img { 
@@ -457,11 +517,12 @@ th {
     position:absolute;
     visibility:hidden;
     font-size: 16px;
+    max-height:400px;S
 }
 .link:hover, .link:hover span { 
     visibility:visible;
     top:0; left:280px; 
-    z-index:1;
+    z-index:100;
 }
 .collapsible {
     background-color: #777;
@@ -474,7 +535,6 @@ th {
     text-align: left;
     text-indent: 5px;    
     outline: none;
-    font-size: 12px;
 }
 
 .active, .collapsible:hover {
@@ -484,7 +544,9 @@ th {
 .content {
     padding: 0 18px;
     display: none;
-    overflow: hidden;
+    font-size: 14px;
+    overflow: auto;
+    max-height: 500px;    
     width: 95%;
     background-color: #f1f1f1;    
 }
@@ -499,8 +561,24 @@ th {
   max-height: 500px;
   overflow: auto;
   width: 95%;
+}
+
+.pathsdata {
+  margin: 2px;  
+  max-height: 300px;
+  overflow: auto;
+  width: 95%;
   text-indent: 10px;
 }
+
+.screenshotdata {
+  margin: 2px;  
+  max-height: 600px;
+  overflow: auto;
+  width: 95%;
+}
+
+
 
 .show {
   display: block;
@@ -531,6 +609,58 @@ th {
   color: white;
 }
 
+
+* {
+    box-sizing: border-box;
+}
+
+.row {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    -ms-flex-wrap: wrap; /* IE10 */
+    flex-wrap: wrap;
+    padding: 0 4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.column {
+    -ms-flex: 25%; /* IE10 */
+    flex: 25%;
+    max-width: 25%;
+    padding: 0 4px;
+}
+
+.column img {
+    margin-top: 8px;
+    vertical-align: middle;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+    .column {
+        -ms-flex: 50%;
+        flex: 50%;
+        max-width: 50%;
+    }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .column {
+        -ms-flex: 100%;
+        flex: 100%;
+        max-width: 100%;
+    }
+}
+
+.zoom {
+    transition: transform .2s; /* Animation */
+    margin: 0 auto;
+}
+
+.zoom:hover {
+    transform: scale(1.75); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
 </style>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="1">

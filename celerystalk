@@ -38,84 +38,21 @@ Options:
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
     --noIP              Only scan targets by DNS hostname (Don't scan the IP address)
 
-Examples:
+Context specific help with examples:
 
-  Workspace
-    Create VAPT workspace       celerystalk workspace create -o /assessments/client -m vapt -w client_name
-    Create BB workspace         celerystalk workspace create -o /assessments/client -m bb -w company_name
-    Show current workspaces     celerystalk workspace
-    Switch workspace            celerystalk workspace switch -w client2
-
-  Subdomain Recon
-    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
-
-  Import
-    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml
-    Import Nessus file:         celerystalk import -f /assessments/scan.nessus
-    Import list of Domains:     celerystalk import -D <file>
-    Import list of IPs/Ranges:  celerystalk import -S <file>
-    Specify out of scope hosts: celerystalk import -O <file>
-    Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
-
-  Nmap
-    Nmap in-scope hosts         celerystalk nmap
-    Scan subset of DB hosts:    celerystalk nmap -t ip,ip
-    Simulation mode:            celerystalk nmap -s
-
-  Scan
-    Scan all in scope hosts:    celerystalk scan
-    Scan in scope vhosts:       celerystalk scan --noIP
-    Scan subset of DB hosts:    celerystalk scan -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -t 10.0.0.100-200
-                                celerystalk scan -t 10.0.0.0/24
-                                celerystalk scan -t sub.domain.com
-    Simulation mode:            celerystalk scan -s
-
-  Import and Scan
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus
-    Scan subset hosts in XML:   celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -t 10.0.0.100-200
-                                celerystalk scan -f <file> -t 10.0.0.0/24
-                                celerystalk scan -f <file> -t sub.domain.com
-    Simulation mode:            celerystalk scan -f <file> -s
-
-  Rescan
-   Rescan all hosts:            celerystalk rescan
-   Rescan some hosts            celerystalk rescan-t 1.2.3.4,sub.domain.com
-   Simulation mode:             celerystalk rescan -s
-
-  Query Mode
-    All tasks:                  celerystalk query
-    Update status every 2s:     celerystalk query watch
-    Show only 5 tasks per mode: celerystalk query brief
-    Show stats only             celerystalk query summary
-    Show stats every 2s:        celerystalk query summary watch
-
- Job Control (cancel/pause/resume)
-    Specific tasks:             celerystalk cancel 5,6,10-20
-                                celerystalk pause 5,6,10-20
-                                celerystalk resume 5,6,10-20
-
-    All tasks current worspace: celerystalk cancel all
-                                celerystalk pause all
-                                celerystalk resume all
-
- Access the DB
-    Show workspaces:            celeryststalk db workspaces
-    Show services:              celeryststalk db services
-    Show hosts:                 celeryststalk db hosts
-    Show vhosts only            celeryststalk db vhosts
-    Show paths:                 celeryststalk db paths
-    Export tables to csv        celeryststalk db export
-
- Start/Stop Celery
-    Start Celery/Redis:         celerystalk start
-    Shutdown Celery:            celerystalk shutdown
-
-
- Reset
-    Delete DB, flush Redis:     celerystalk reset
+    celerystalk workspace -h
+    celerystalk subdomains -h
+    celerystalk import -h
+    celerystalk nmap -h
+    celerystalk scan -h
+    celerystalk rescan -h
+    celerystalk query -h
+    celerystalk pause -h
+    celerystalk resume -h
+    celerystalk cancel -h
+    celerystalk db -h
+    celerystalk reset -h
+    celerystalk celery -h
 """
 
 
@@ -142,7 +79,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(143)
+build=str(144)
 
 def print_banner():
 
@@ -161,6 +98,13 @@ def main(arguments):
     db.create_vhosts_table()
     db.create_workspace_table()
     db.create_current_workspace_table()
+    db.create_celerystalk_table()
+
+    celery_path = sys.path[0]
+    db.set_install_path((celery_path,))
+
+    lib.utils.check_for_new_default_config()
+
 
     if arguments["interactive"]:
         prompt = lib.interactive.MyPrompt()
@@ -207,7 +151,6 @@ def main(arguments):
 \n""")
             exit()
         if arguments["create"]:
-            lib.utils.check_for_new_default_config()
             if arguments["-w"]:
                 workspace = arguments["-w"]
             else:
@@ -510,14 +453,13 @@ def main(arguments):
         print("")
         if (answer == "Y") or (answer == "y"):
             from subprocess import Popen
-            lib.utils.shutdown_background_jobs()
-
             path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
             print(path)
             os.chdir(path)
             populated_command = "bash ./reset.sh"
             p = Popen(populated_command, shell=True)
             p.communicate()
+            lib.utils.shutdown_background_jobs()
             exit()
 
 
