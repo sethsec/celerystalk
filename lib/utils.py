@@ -314,6 +314,11 @@ def check_for_new_default_config():
             copyfile(default_config_file, user_config_file)
             print("[+] config.ini has been copied to " +  backup_config_filename)
             print("[+] setup/config_default.ini has been copied to config.ini")
+        else:
+            from subprocess import Popen
+            populated_command = "touch config.ini"
+            p = Popen(populated_command, shell=True)
+            p.communicate()
 
 
 
