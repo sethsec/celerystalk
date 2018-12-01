@@ -316,7 +316,8 @@ def check_for_new_default_config():
             print("[+] setup/config_default.ini has been copied to config.ini")
         else:
             from subprocess import Popen
-            populated_command = "touch config.ini"
+            path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(lib.scan.__file__)), "../config.ini", ))
+            populated_command = "touch " + path
             p = Popen(populated_command, shell=True)
             p.communicate()
 
