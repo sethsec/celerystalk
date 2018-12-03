@@ -159,7 +159,7 @@ def report(workspace,target_list=None):
 
     filter_html_body = '''<div id="myBtnContainer">\n'''
     #filter_html_body = filter_html_body + '''<font size="5">celerystalk Report</font><br>\n'''
-    filter_html_body = filter_html_body + '''<button class="btn active" onclick="filterSelection('all')"> Show all</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('all')"> Show all</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>\n'''
 
@@ -242,7 +242,7 @@ def report(workspace,target_list=None):
         combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
         combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + '''] <center><b>(Click to see all paths)</b></center>''' + '''</button>\n''')
         combined_report_file.write('''<div class="content">''')
-        combined_report_file.write('''\n<div pathsdata">\n''')
+        combined_report_file.write('''\n<div class="pathsdata">\n''')
         combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
         combined_report_file.write("\n</div>")
         combined_report_file.write("\n</div>")
@@ -383,13 +383,13 @@ body {
 
 ul.nav-pills {
     top: 20px;
-    width:170px;
     position: fixed;
     overflow-x: auto;
     overflow-y: auto;
-    position: fixed;
+    display: unset;
     z-index: 1;
     left: 0;
+    bottom: 0;
     font-size: 12px;	
 }
 
@@ -577,6 +577,7 @@ th {
   max-height: 600px;
   overflow: auto;
   width: 95%;
+  background-color: lightsteelblue;
 }
 
 
@@ -669,12 +670,12 @@ th {
 <div class="container-fluid">
   <div class="row">
     <nav class="left" id="myScrollspy">
-      <ul class="nav nav-pills">
+      <ul class="nav nav-pills nav-stacked">
         <li>
-            <center><b><font size="5" family="Tahoma">celerystalk</font></b></center>
+            <center><b><font size="6" family="Tahoma">celerystalk</font></b><br>v1.1</center>
         </li> 
         <li class="nav-item">
-          <a class="nav-link active" href="#top">Top</a>
+          <a class="nav-link active" href="#top">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
         </li>\n       
         """)
     return web_head
