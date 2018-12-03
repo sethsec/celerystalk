@@ -291,11 +291,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 
     ```
    
-    Screenshot:
-     
-    ![](https://preview.ibb.co/ixYTsz/report.png)
-
-1. **Access the DB:** List the workspaces, hosts, services, or paths stored in the celerystalk database
+1. **Access the DB:** List or export the workspaces, hosts, services, or paths stored in the celerystalk database
 
     | Option | Description |
     | --- | --- |
@@ -303,46 +299,40 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     | services | Show all known open ports and service types by IP |
     | hosts | Show all hosts (IP addresses and subdomains/vhosts) and whether they are in scope and whether they have been submitted for scanning |
     | paths | Show all paths that have been identified by vhost |
+    | export | Export the services, hosts, and paths tables
    
     ```
-    Show workspaces:            ./celeryststalk db workspaces
-    Show services:              ./celeryststalk db services    
-    Show hosts:                 ./celeryststalk db hosts
-    Show paths:                 ./celeryststalk db paths
+    Show workspaces:            ./celerystalk db workspaces
+    Show services:              ./celerystalk db services    
+    Show hosts:                 ./celerystalk db hosts
+    Show paths:                 ./celerystalk db paths
+    Export current DB:          ./celerystalk db export
     ```
 
-1. **Export DB:** Export each table of the DB to a csv file
 
-    | Option | Description |
-    | --- | --- |
-    | no options | Export the services, hosts, and paths table from the default database |
-
-    ```
-    Export current DB:        ./celerystalk db export
-    Export another DB:        ./celerystalk db export -w test
-    ```
 
 
 ## Usage
 ```
 Usage:
-    celerystalk workspace create -o <output_dir> [-w workspace_name]
-    celerystalk workspace [<workspace_name>]
-    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
-    celerystalk subdomains -d <domains> [-s]
-    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
-    celerystalk scan -u <url> [-s]
-    celerystalk rescan [-t <targets>] [-s]
-    celerystalk query ([full] | [summary] | [brief]) [watch]
-    celerystalk query [watch] ([full] | [summary] | [brief])
-    celerystalk report
-    celerystalk cancel ([all]|[<task_ids>])
-    celerystalk pause  ([all]|[<task_ids>])
-    celerystalk resume ([all]|[<task_ids>])
-    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths])
-    celerystalk db export
-    celerystalk shutdown
-    celerystalk interactive
+    celerystalk workspace ([create]|[switch]) [-w workspace_name] [-o <output_dir>] [-m <mode>] [-h]
+    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-O outOfScope.txt] [-u <url>] [-h]
+    celerystalk subdomains [-d <domains>] [-s] [-h]
+    celerystalk nmap [-t <targets>] [-s] [-h]
+    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [--noIP] [-s] [-h]
+    celerystalk scan -u <url> [-s] [-h]
+    celerystalk rescan [-t <targets>] [-s] [-h]
+    celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
+    celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
+    celerystalk report [-h]
+    celerystalk cancel ([all]|[<task_ids>]) [-h]
+    celerystalk pause  ([all]|[<task_ids>]) [-h]
+    celerystalk resume ([all]|[<task_ids>]) [-h]
+    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths]) [-h]
+    celerystalk db export [-h]
+    celerystalk control ([start]|[stop]) [-h]
+    celerystalk interactive [-h]
+    celerystalk reset [-h]
     celerystalk (help | -h | --help)
 
 Options:
@@ -350,78 +340,32 @@ Options:
     -v --version        Show version
     -f <nmap_file>      Nmap xml import file
     -o <output_dir>     Output directory
-    -S <scope_file>      Scope import file
+    -m <mode>           vapt = VulnAssmt/PenTest, bb = Bug Bounty
+    -S <scope_file>     Scope import file
+    -O <outscope_file>  Out of scope hosts file
     -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
     -u <url>            URL to parse and scan with all configured tools
     -w <workspace>      Workspace
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
+    --noIP              Only scan targets by DNS hostname (Don't scan the IP address)
 
-Examples:
+Context specific help with examples:
 
-  Workspace
-    Create default workspace    celerystalk workspace create -o /assessments/client
-    Create named workspace      celerystalk workspace create -o /assessments/client -w client
-    Switch to another worksapce celerystalk workspace client2
-
-  Import
-    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml
-    Import Nessus file:         celerystalk import -f /assessments/scan.nessus
-    Import list of Domains:     celerystalk import -D <file>
-    Import list of IPs/Ranges:  celerystalk import -S <file>
-    Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
-
-  Subdomain Recon
-    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
-
-  Scan
-    Scan all in scope hosts:    celerystalk scan
-    Scan subset of DB hosts:    celerystalk scan -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -t 10.0.0.100-200
-                                celerystalk scan -t 10.0.0.0/24
-                                celerystalk scan -t sub.domain.com
-    Simulation mode:            celerystalk scan -s
-
-  Import and Scan
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus
-    Scan subset hosts in XML:   celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -t 10.0.0.100-200
-                                celerystalk scan -f <file> -t 10.0.0.0/24
-                                celerystalk scan -f <file> -t sub.domain.com
-    Simulation mode:            celerystalk scan -f <file> -s
-
-  Rescan
-   Rescan all hosts:            celerystalk rescan
-   Rescan some hosts            celerystalk rescan-t 1.2.3.4,sub.domain.com
-   Simulation mode:             celerystalk rescan -s
-
-  Query Mode
-    All tasks:                  celerystalk query
-    Update status every 2s:     celerystalk query watch
-    Show only 5 tasks per mode: celerystalk query brief
-    Show stats only             celerystalk query summary
-    Show stats every 2s:        celerystalk query summary watch
-
- Job Control (cancel/pause/resume)
-    Specific tasks:             celerystalk cancel 5,6,10-20
-                                celerystalk pause 5,6,10-20
-                                celerystalk resume 5,6,10-20
-
-    All tasks current worspace: celerystalk cancel all
-                                celerystalk pause all
-                                celerystalk resume all
-
-  Access the DB
-    Show workspaces:            celeryststalk db workspaces
-    Show services:              celeryststalk db services
-    Show hosts:                 celeryststalk db hosts
-    Show vhosts only            celeryststalk db vhosts
-    Show paths:                 celeryststalk db paths
-
-  Export DB
-    Export current DB:          celerystalk db export
+    celerystalk workspace -h
+    celerystalk subdomains -h
+    celerystalk import -h
+    celerystalk nmap -h
+    celerystalk scan -h
+    celerystalk rescan -h
+    celerystalk query -h
+    celerystalk pause -h
+    celerystalk resume -h
+    celerystalk cancel -h
+    celerystalk db -h
+    celerystalk reset -h
+    celerystalk control -h
 
 ```
 
