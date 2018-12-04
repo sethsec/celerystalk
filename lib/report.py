@@ -34,19 +34,19 @@ def paths_report_grid(host):
     row = 0
     for path in all_paths:
         column_number = row % 4
-        d[column_number].append(path[3])
+        d[column_number].append((path[3],path[2]))
         row = row + 1
 
     html_code = '''<div class="row"> '''
     for column in d:
         html_code = html_code + '''<div class="column">'''
         #ip,port,path,url_screenshot_filename,workspace = row
-        for url_screenshot_filename in d[column]:
+        for url_screenshot_filename,url in d[column]:
             try:
                 os.stat(url_screenshot_filename)
                 url_screenshot_filename = urllib.quote(url_screenshot_filename)
                 url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
-                html_code = html_code + """<a href="{0}"><img class="zoom" src="{1}" style="width:100%"></a>\n""".format(path[2],url_screenshot_filename_relative)
+                html_code = html_code + """<a href="{0}"><img class="zoom" src="{1}" style="width:100%"></a>\n""".format(url,url_screenshot_filename_relative)
             except:
                 pass
                 # #print("Could not find screenshot for " + path)
@@ -379,10 +379,12 @@ def populate_report_head():
 body {
     font-family: "Lato", sans-serif;
     margin: unset;
+    background: dimgray;
+
 }
 
 ul.nav-pills {
-    top: 20px;
+    top: 0px;
     position: fixed;
     overflow-x: auto;
     overflow-y: auto;
@@ -390,7 +392,8 @@ ul.nav-pills {
     z-index: 1;
     left: 0;
     bottom: 0;
-    font-size: 12px;	
+    font-size: 12px;
+    background: black;	
 }
 
 
@@ -426,10 +429,11 @@ th {
   margin-left: 170px; /* Same width as the sidebar + left position in px */
   font-size: 14px; /* Increased text to enable scrolling */
   padding: 5px 5px 10px 10px;
-  z-index: 100;
-  margin-right: 5%;
-  width: 100%;
- 
+  border-radius: 10px;
+ }
+
+_myBtnContainer {
+    width: 100%;
 }
 
 .topcontent {
@@ -443,6 +447,7 @@ th {
 
 .sticky + .topcontent {
   padding-top: 142px;
+  width: 100px;
 }
 
 
@@ -475,7 +480,10 @@ th {
 .main {
     margin-left: 170px; /* Same width as the sidebar + left position in px */
     font-size: 14px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
+    padding: 10px 10px;
+    background: white;
+    border-radius: 10px;
+        
 }
 
 .host_header {
@@ -596,8 +604,8 @@ th {
   border: none;
   outline: none;
   border-radius: 10px;
-  padding: 6px 4px;
-  font-size: 14px;
+  padding: 6px 3px;
+  font-size: 12px;
   margin-bottom:4px;
 
 }
@@ -662,7 +670,12 @@ th {
 
 .zoom:hover {
     transform: scale(1.75); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+    transform-origin: 0% 0%;
+	position: relative;
+	transform-style: preserve-3d;
 }
+
+
 </style>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="1">

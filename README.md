@@ -74,6 +74,7 @@ Option 1: Run nmap yourself and import results (optionally define IPs or hostnam
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
 ```
+**Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
 
 Option 2: Have celerystalk run nmap and parse results (optionally define IPs or hostnames that are out of scope)
 ```

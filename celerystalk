@@ -17,7 +17,7 @@ Usage:
     celerystalk resume ([all]|[<task_ids>]) [-h]
     celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths]) [-h]
     celerystalk db export [-h]
-    celerystalk celery ([start]|[stop]) [-h]
+    celerystalk control ([start]|[stop]) [-h]
     celerystalk interactive [-h]
     celerystalk reset [-h]
     celerystalk (help | -h | --help)
@@ -52,7 +52,7 @@ Context specific help with examples:
     celerystalk cancel -h
     celerystalk db -h
     celerystalk reset -h
-    celerystalk celery -h
+    celerystalk control -h
 """
 
 
@@ -79,7 +79,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(148)
+build=str(149)
 
 def print_banner():
 
@@ -410,7 +410,7 @@ def main(arguments):
     # Celery Command
     ####################################
 
-    if arguments["celery"]:
+    if arguments["control"]:
         if arguments["--help"]:
             columns = ["Options", "Description"]
             help_table = PrettyTable(columns)
@@ -420,8 +420,8 @@ def main(arguments):
             print(help_table)
             print("\n")
             print("""Examples:
-    ./celerystalk celery start
-    ./celerystalk celery stop                
+    ./celerystalk control start
+    ./celerystalk control stop                
             \n""")
             exit()
         if arguments["stop"]:
