@@ -165,7 +165,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
      ```
    * Nessus: Run nessus against your target(s) and export results as a .nessus file
 
-1. **Create worksapce:**
+1. **Create workspace:**
 
     | Option | Description |
     | --- | --- |

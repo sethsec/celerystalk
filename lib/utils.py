@@ -1,3 +1,4 @@
+import subprocess
 from subprocess import Popen
 
 from libnmap.parser import NmapParser
@@ -322,7 +323,19 @@ def check_for_new_default_config():
             p.communicate()
 
 
-
-
-
-
+def get_terminal_width():
+    """
+    From: https://gist.githubusercontent.com/Steelsouls/9626112/raw/e99b6a741fa22c20c3699140d352de5a46db4ad2/terminal_width.py
+    :return: the current width of the terminal
+    """
+    command = ['tput', 'cols']
+    try:
+        width = int(subprocess.check_output(command))
+    except OSError as e:
+        print("Invalid Command '{0}': exit status ({1})".format(
+              command[0], e.errno))
+    except subprocess.CalledProcessError as e:
+        print("Command '{0}' returned non-zero exit status: ({1})".format(
+              command, e.returncode))
+    else:
+        return width

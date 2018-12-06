@@ -7,6 +7,9 @@ import lib.utils
 from lib import db
 import urlparse
 
+import csv
+
+
 def import_out_of_scope(out_of_scope_file,workspace):
     with open(out_of_scope_file) as osf:
         for vhost in osf.readlines():
@@ -342,6 +345,76 @@ def process_nessus_data(nessus_report,workspace,target=None):
                     except:
                         print("if this errors that means there was no service to update as https which is a bigger problem")
 
+def process_qualys_data(qualys_port_services,workspace,target=None):
+    with open(qualys_port_services) as f:
+        for i, line in enumerate(csv.reader(f, delimiter=','), 1):
+            # Skip the header sections. The first entry is on the 7th line
+            if i > 6:
+                ip = line[0]
+                vhost = line[1]
+                service = line[2]
+                protocol = line[3]
+                port = line[4]
+                default_service = line[5]
+                date_first_seen = line[6]
+                date_last_seen = line[7]
+                unique_db_ips = lib.db.is_vhost_in_db(ip, workspace)  # Returns data if IP is in database
+                # print(unique_db_ips)
+                # print("process_nmap_data: " + str(vhosts))
+                vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+                if not vhost_explicitly_out_of_scope:  # if the vhost is not explicitly out of scope, add it to db
+                    is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)  # Returns data if IP is in database
+                    if not is_vhost_in_db:
+                        db_vhost = (ip, vhost, 1, 0, 0, workspace)
+                        lib.db.create_vhost(db_vhost)
+                    else:
+                        if not lib.db.get_in_scope_ip(ip, workspace):  # if it is in the DB but not in scope...
+                            print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
+                            lib.db.update_vhosts_in_scope(ip, vhost, workspace,
+                                                          1)  # update the host to add it to scope, if it was already in scope, do nothing
+                else:
+                    print("[!] {0} is explicitly marked as out of scope. Skipping...".format(ip))
+
+                if unique_db_ips:  # If this IP was in the db...
+                    vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(ip, workspace)
+                    if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
+                        if not lib.db.get_in_scope_ip(ip, workspace):  # and if it is not in scope...
+                            print("[+] IP is in the DB, but not in scope. Adding to scope:\t[{0}]".format(ip))
+                            lib.db.update_vhosts_in_scope(ip, ip, workspace,
+                                                          1)  # update the host to add it to scope, if it was already in scope, do nothing
+                        # else:
+                        #     print("[+] [{0}] is already in the DB and considered in scope".format(ip))
+                    else:
+                        print("[!] {0} is explicitly marked as out of scope. Skipping...".format(ip))
+
+                else:  # if this ip was not already in the db, create a new host and mark it as in scope
+                    # note to self: i dont need to check to see if it is out of scope beccause i already know its not in db at all...
+                    print("[+] IP not in DB. Adding it to DB and to scope:\t [{0}]".format(ip))
+                    db_vhost = (ip, ip, 1, 0, 0, workspace)
+                    db.create_vhost(db_vhost)
+
+                if not service:
+                    service = default_service
+
+                db_service = db.get_service(ip, port, protocol, workspace)
+                if not db_service:
+                    db_string = (ip, port, protocol, service,"", "", "",workspace)
+                    db.create_service(db_string)
+                else:
+                    db.update_service(ip, port, protocol, service,workspace)
+
+                if vhost:
+                    db_service = db.get_service(vhost, port, protocol, workspace)
+                    if not db_service:
+                        db_string = (vhost, port, protocol, service, "", "", "", workspace)
+                        db.create_service(db_string)
+                    else:
+                        db.update_service(vhost, port, protocol, service, workspace)
+
+
+
+
+
 def process_nmap_data(nmap_report,workspace, target=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     services_file = open('/etc/services', mode='r')
@@ -450,8 +523,6 @@ def process_nmap_data(nmap_report,workspace, target=None):
 
 def importcommand(workspace, output_dir, arguments):
     celery_path = sys.path[0]
-
-    #lib.utils.start_services()
     in_scope_hosts_before = lib.db.get_unique_inscope_vhosts(workspace)
 
     if arguments["-O"]:
@@ -461,12 +532,15 @@ def importcommand(workspace, output_dir, arguments):
         lib.csimport.import_scope(arguments["-S"],workspace)
 
     if arguments["-f"]:
-        if "nessus" in arguments["-f"]:
-            nessus_report = lib.utils.nessus_parser(arguments["-f"])
-            lib.csimport.process_nessus_data(nessus_report, workspace)
+        if ".csv" in arguments["-f"]:
+            lib.csimport.process_qualys_data(arguments["-f"], workspace)
         else:
-            nmap_report = lib.utils.nmap_parser(arguments["-f"])
-            lib.csimport.process_nmap_data(nmap_report, workspace)
+            if "nessus" in arguments["-f"]:
+                nessus_report = lib.utils.nessus_parser(arguments["-f"])
+                lib.csimport.process_nessus_data(nessus_report, workspace)
+            else:
+                nmap_report = lib.utils.nmap_parser(arguments["-f"])
+                lib.csimport.process_nmap_data(nmap_report, workspace)
     if arguments["-D"]:
         lib.csimport.import_vhosts(arguments["-D"],workspace)
 
