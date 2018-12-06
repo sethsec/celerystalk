@@ -2,10 +2,12 @@ import os
 import bleach
 from bleach.sanitizer import Cleaner
 import lib.db
+import lib.utils
 import urllib
 import time
 from netaddr import IPAddress
 import hashlib
+
 
 
 def paths_report(host):
@@ -46,7 +48,12 @@ def paths_report_grid(host):
                 os.stat(url_screenshot_filename)
                 url_screenshot_filename = urllib.quote(url_screenshot_filename)
                 url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
-                html_code = html_code + """<a href="{0}"><img class="zoom" src="{1}" style="width:100%"></a>\n""".format(url,url_screenshot_filename_relative)
+                html_code = html_code + """<div class="gallery">"""
+                html_code = html_code + """<img class="zoom" src="{0}" style="width:100%">\n""".format(url_screenshot_filename_relative)
+                html_code = html_code + """<div class="desc"><a href="{0}">{0}</a></div>""".format(url)
+                html_code = html_code + """</div>"""
+
+
             except:
                 pass
                 # #print("Could not find screenshot for " + path)
@@ -75,6 +82,9 @@ def sort_report_hosts(host_list):
 
 
 def report(workspace,target_list=None):
+    terminal_width = lib.utils.get_terminal_width()
+    if not terminal_width:
+        terminal_width = 80
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     cleaner = Cleaner()
     report_count = 0
@@ -97,6 +107,11 @@ def report(workspace,target_list=None):
             exit()
 
     print("\n[+] Generating a report for the [" + workspace + "] workspace (" + str(len(unique_ips)) +") unique in-scope vhosts(s) and (" + str(len(unique_submittted_vhosts)) + ") have been scanned\n")
+
+    print("*" * terminal_width)
+    banner = "Text based report file per target"
+    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner)
+    print("*" * terminal_width + "\n")
 
     # HTML Report
     output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
@@ -355,10 +370,20 @@ function myFunction() {
     combined_report_file.close()
     combined_report_file_txt.close()
 
+    print("\n")
+    print("*" * terminal_width)
+    banner = "Combined Report files"
+    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner )
+    print("*" * terminal_width + "\n")
 
-    print("\n[+] Report file (All workspace hosts): {0} (has screenshots!!!)".format(combined_report_file_name))
+    print("[+] Report file (All workspace hosts): {0} (has screenshots!!!)".format(combined_report_file_name))
     print("[+] Report file (All workspace hosts): {0}\n".format(combined_report_file_name_txt))
-    print("\n[+] Option 1: Open with local firefox (works over ssh with x forwarding)")
+
+    print("*" * terminal_width)
+    banner = "Suggestions for viewing your html report:"
+    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner )
+    print("*" * terminal_width + "\n")
+    print("[+] Option 1: Open with local firefox (works over ssh with x forwarding)")
     print("\t\tfirefox " + combined_report_file_name + " &")
     print("[+] Option 2: Use Python's SimpleHTTPserver (Don't serve this on a publicly accessible IP!!)")
     print("\t\tcd {0} && python -m SimpleHTTPServer 27007".format(workspace_report_directory))
@@ -393,9 +418,14 @@ ul.nav-pills {
     left: 0;
     bottom: 0;
     font-size: 12px;
-    background: black;	
+    background: black;
+    overflow-wrap: break-word;
+    max-width: 170px;	
 }
 
+ul.nav-pills a {
+    color: lightgray;
+}
 
 
 table {
@@ -429,7 +459,7 @@ th {
   margin-left: 170px; /* Same width as the sidebar + left position in px */
   font-size: 14px; /* Increased text to enable scrolling */
   padding: 5px 5px 10px 10px;
-  border-radius: 10px;
+  border-radius: 11px 11px 0px 0px;
  }
 
 _myBtnContainer {
@@ -441,7 +471,7 @@ _myBtnContainer {
 }
 
 .sticky {
-  position: fixed;
+  position: sticky;
   top: 0;
 }
 
@@ -450,6 +480,10 @@ _myBtnContainer {
   width: 100px;
 }
 
+.sticky + .main {
+  padding-top: 142px;
+  border-radius: 10px;
+}
 
 .sidenav {
     width: 160px;
@@ -482,8 +516,25 @@ _myBtnContainer {
     font-size: 14px; /* Increased text to enable scrolling */
     padding: 10px 10px;
     background: white;
-    border-radius: 10px;
+    border-radius: 0px 0px 10px 10px;
+
         
+}
+
+div.desc {
+    padding: 1px;
+    text-align: center;
+    overflow-wrap: break-word;
+    color: white;
+    font-size: smaller
+}
+
+div.desc a {
+    color: white;
+}
+
+div.gallery {
+    margin: 1px;
 }
 
 .host_header {
@@ -553,7 +604,7 @@ _myBtnContainer {
 .content {
     padding: 0 18px;
     display: none;
-    font-size: 14px;
+    font-size: 12px;
     overflow: auto;
     max-height: 500px;    
     width: 95%;
@@ -574,18 +625,21 @@ _myBtnContainer {
 
 .pathsdata {
   margin: 2px;  
-  max-height: 300px;
+  max-height: 600px;
   overflow: auto;
   width: 95%;
   text-indent: 10px;
 }
 
 .screenshotdata {
-  margin: 2px;  
   max-height: 600px;
   overflow: auto;
   width: 95%;
-  background-color: lightsteelblue;
+  background: dimgray;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 15px;
+  
 }
 
 
@@ -669,7 +723,7 @@ _myBtnContainer {
 }
 
 .zoom:hover {
-    transform: scale(1.75); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+    transform: scale(2); 
     transform-origin: 0% 0%;
 	position: relative;
 	transform-style: preserve-3d;
@@ -685,7 +739,7 @@ _myBtnContainer {
     <nav class="left" id="myScrollspy">
       <ul class="nav nav-pills nav-stacked">
         <li>
-            <center><b><font size="6" family="Tahoma">celerystalk</font></b><br>v1.1</center>
+            <center><b><font size="4" color="lightgray" family="Tahoma">celerystalk</font></b><br><font color="lightgray" family="Tahoma">v1.1</font></center>
         </li> 
         <li class="nav-item">
           <a class="nav-link active" href="#top">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
