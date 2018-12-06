@@ -217,7 +217,7 @@ def report(workspace,target_list=None):
                 hash = hashlib.md5(vhost_for_ip).hexdigest()
                 if vhost_for_ip != ip:
                     at_least_one_vhost = True
-                    combined_report_file.write("""Associated vhost: <a href="#{0}">{0}</a>\n<br>\n""".format("loc_" + hash))
+                    combined_report_file.write("""Associated vhost: <a href="#{0}">{1}</a>\n<br>\n""".format("loc_" + hash,vhost))
             if at_least_one_vhost:
                 combined_report_file.write("<br>")
 
