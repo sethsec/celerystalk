@@ -391,6 +391,12 @@ def get_unique_non_sim_command_names(workspace):
     CONNECTION.commit()
     return commands
 
+def get_unique_non_sim_command_names_for_vhost(vhost,workspace):
+    CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=? AND ip=? AND command_name NOT LIKE '#%'", (workspace,vhost))
+    commands = CUR.fetchall()
+    CONNECTION.commit()
+    return commands
+
 def get_unique_command_names(workspace):
     CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=?", (workspace,))
     commands = CUR.fetchall()

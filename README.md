@@ -310,6 +310,26 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     Export current DB:          ./celerystalk db export
     ```
 
+1. **Administrative Functions:** 
+ 
+    |    Options    | Description                                   |
+    | --- | --- |
+    |     start     | Start Celery & Redis processes                |
+    |      stop     | Stop Celery & Redis processes                 |
+    |     reset     | Destroy DB, Flush Redis, start over           |
+    |     backup    | Backup DB and all workspace data directories  |
+    |    restore    | Restore DB and all workspace data directories |
+    | -f [filename] | Restore file name                             |
+   
+    ```
+    Examples:
+    ./celerystalk admin start
+    ./celerystalk admin stop
+    ./celerystalk admin reset
+    ./celerystalk admin backup -f
+    ./celerystalk admin restore -f <filename>
+    
+    ```
 
 
 

@@ -599,7 +599,7 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
                     # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
                     # that allows me to pass it to all of the tasks in the chain.
                     task_id = uuid()
-                    utils.create_task(cmd_name, populated_command, domain, "", workspace, task_id)
+                    utils.create_task(cmd_name, populated_command, domain, outfile + ".txt", workspace, task_id)
                     process_domain_tuple = (cmd_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, workspace_mode)
                     result = chain(
                         # insert a row into the database to mark the task as submitted. a subtask does not get tracked

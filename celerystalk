@@ -17,7 +17,7 @@ Usage:
     celerystalk resume ([all]|[<task_ids>]) [-h]
     celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths]) [-h]
     celerystalk db export [-h]
-    celerystalk control ([start]|[stop]) [-h]
+    celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
     celerystalk reset [-h]
     celerystalk (help | -h | --help)
@@ -40,19 +40,20 @@ Options:
 
 Context specific help with examples:
 
-    celerystalk workspace -h
-    celerystalk subdomains -h
-    celerystalk import -h
-    celerystalk nmap -h
-    celerystalk scan -h
-    celerystalk rescan -h
-    celerystalk query -h
-    celerystalk pause -h
-    celerystalk resume -h
-    celerystalk cancel -h
-    celerystalk db -h
-    celerystalk reset -h
-    celerystalk control -h
+    ./celerystalk workspace -h
+    ./celerystalk subdomains -h
+    ./celerystalk import -h
+    ./celerystalk nmap -h
+    ./celerystalk scan -h
+    ./celerystalk rescan -h
+    ./celerystalk query -h
+    ./celerystalk pause -h
+    ./celerystalk resume -h
+    ./celerystalk cancel -h
+    ./celerystalk db -h
+    ./celerystalk report -h
+    ./celerystalk reset -h
+    ./celerystalk admin -h
 """
 
 
@@ -72,6 +73,7 @@ import lib.csimport
 import lib.nmap
 import lib.config_parser
 import lib.interactive
+import lib.administrative
 from lib import db
 import lib.workspace
 from prettytable import PrettyTable
@@ -79,7 +81,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(152)
+build=str(153)
 
 def print_banner():
 
@@ -410,18 +412,28 @@ def main(arguments):
     # Celery Command
     ####################################
 
-    if arguments["control"]:
+    if arguments["admin"]:
         if arguments["--help"]:
             columns = ["Options", "Description"]
             help_table = PrettyTable(columns)
             help_table.align[columns[1]] = "l"
             help_table.add_row(["start", "Start Celery & Redis processes"])
             help_table.add_row(["stop", "Stop Celery & Redis processes"])
+            help_table.add_row(["reset", "Destroy DB, Flush Redis, start over"])
+            help_table.add_row(["backup", "Backup DB and all workspace data directories"])
+            help_table.add_row(["restore", "Restore DB and all workspace data directories"])
+            help_table.add_row(["-f [filename]", "Restore file name"])
+
+
             print(help_table)
             print("\n")
             print("""Examples:
-    ./celerystalk control start
-    ./celerystalk control stop                
+    ./celerystalk admin start
+    ./celerystalk admin stop
+    ./celerystalk admin reset                
+    ./celerystalk admin backup                  
+    ./celerystalk admin restore -f <filename>                
+                
             \n""")
             exit()
         if arguments["stop"]:
@@ -430,7 +442,28 @@ def main(arguments):
         if arguments["start"]:
             lib.utils.start_services()
             exit()
-
+        if arguments["reset"]:
+            print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
+            answer = raw_input("Are you sure you want to continue? (y\N): ")
+            print("")
+            if (answer == "Y") or (answer == "y"):
+                from subprocess import Popen
+                path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
+                print(path)
+                os.chdir(path)
+                populated_command = "bash ./reset.sh"
+                p = Popen(populated_command, shell=True)
+                p.communicate()
+                lib.utils.shutdown_background_jobs()
+                exit()
+        if arguments["backup"]:
+            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+        if arguments["restore"]:
+            if arguments["-f"]:
+                restore_file = arguments["-f"]
+                lib.administrative.restore_all_workspaces(restore_file)
+            else:
+                print("[!] Use [-f] to specify which backup file would you like to restore")
 
     ####################################
     # Reset Command

@@ -10,8 +10,8 @@ import hashlib
 
 
 
-def paths_report(host):
-    all_paths = lib.db.get_all_paths_for_host(host)
+def paths_report(host,all_paths):
+    #all_paths = lib.db.get_all_paths_for_host(host)
     html_code = ""
     for row in all_paths:
         ip,port,path,url_screenshot_filename,workspace = row
@@ -29,8 +29,8 @@ def paths_report(host):
             html_code = html_code + "\n</div>\n"
     return html_code
 
-def paths_report_grid(host):
-    all_paths = lib.db.get_all_paths_for_host(host)
+def paths_report_grid(host,all_paths):
+    #all_paths = lib.db.get_all_paths_for_host(host)
     from collections import defaultdict
     d = defaultdict(list)
     row = 0
@@ -52,14 +52,8 @@ def paths_report_grid(host):
                 html_code = html_code + """<img class="zoom" src="{0}" style="width:100%">\n""".format(url_screenshot_filename_relative)
                 html_code = html_code + """<div class="desc"><a href="{0}">{0}</a></div>""".format(url)
                 html_code = html_code + """</div>"""
-
-
             except:
                 pass
-                # #print("Could not find screenshot for " + path)
-                # html_code = html_code + """\n<div id="linkwrap">\n"""
-                # html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
-                # html_code = html_code + "\n</div>\n"
         html_code = html_code + "\n</div>\n"
     html_code = html_code + "\n</div>\n"
     return html_code
@@ -125,11 +119,11 @@ def report(workspace,target_list=None):
     combined_report_file = open(combined_report_file_name, 'w')
     combined_report_file.write(populate_report_head())
 
-
     for vhost in unique_submittted_vhosts:
         vhost = vhost[0]
         is_vhost_submitted = lib.db.is_vhost_submitted(vhost,workspace)
-        if is_vhost_submitted:
+        is_tasks_for_vhost = lib.db.get_unique_non_sim_command_names_for_vhost(vhost,workspace)
+        if is_vhost_submitted and is_tasks_for_vhost:
             host_report_file_name = os.path.join(workspace_report_directory,vhost + '_hostReport.txt')
             host_report_file_names.append([vhost,host_report_file_name])
             host_report_file = open(host_report_file_name, 'w')
@@ -138,6 +132,7 @@ def report(workspace,target_list=None):
             print("[+] Report file (single host): {0}".format(host_report_file_name))
     sorted_report_hosts = sort_report_hosts(host_report_file_names)
 
+    print("\n[+] Generating combined report file with screenshots. This might take a while...")
 
 
     # Create sidebar navigation
@@ -177,6 +172,8 @@ def report(workspace,target_list=None):
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('all')"> Show all</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>\n'''
+    filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('hostheader')"> Host Header</button>\n'''
+
 
     for command_name in unique_non_sim_command_names:
         command_name = command_name[0]
@@ -205,8 +202,11 @@ def report(workspace,target_list=None):
 
         #These lines write to the parent report file (1 report for however many hosts)
         combined_report_file.write("""\n\n\n\n\n\n\n\n\n\n<div id="{0}">\n""".format("loc_" + hash))
-        #combined_report_file.write("""<h2>Host Report: {0}</h2>\n""".format(vhost))
-        #combined_report_file.write("""<div class="host_header">Host Report: {0}</div>\n""".format(vhost))
+        combined_report_file.write('''\n\n<div class="filterDiv hostheader">\n''')
+        combined_report_file.write(
+            '''<button class="collapsible">Host Header and Associations[''' + vhost + ''']</button>\n''')
+        #combined_report_file.write('''<div class="content">''')
+        combined_report_file.write("""<h3>Host Report: {0}</h3>\n""".format(vhost))
 
 
         if ip == vhost:
@@ -217,9 +217,12 @@ def report(workspace,target_list=None):
                 hash = hashlib.md5(vhost_for_ip).hexdigest()
                 if vhost_for_ip != ip:
                     at_least_one_vhost = True
-                    combined_report_file.write("""Associated vhost: <a href="#{0}">{1}</a>\n<br>\n""".format("loc_" + hash,vhost))
+                    combined_report_file.write("""Associated vhost: <a href="#{0}">{1}</a>\n<br>\n""".format("loc_" + hash,vhost_for_ip))
             if at_least_one_vhost:
                 combined_report_file.write("<br>")
+        #combined_report_file.write("\n</div>")
+        combined_report_file.write("\n</div>")
+
 
 
         services_table_html = "<table><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th><th>Extra Info</th></tr>"
@@ -232,43 +235,23 @@ def report(workspace,target_list=None):
         combined_report_file.write("\n<br>" + services_table_html + "\n<br>")
         combined_report_file.write("\n</div>")
 
+        all_paths = lib.db.get_all_paths_for_host(vhost)
+        if all_paths:
+            screenshot_html = paths_report(vhost,all_paths)
+            screenshot_grid_html = paths_report_grid(vhost,all_paths)
 
-        screenshot_html = paths_report(vhost)
-        screenshot_grid_html = paths_report_grid(vhost)
-
-        # combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
-        # combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
-        # #combined_report_file.write("\n<br>\n<div class=\"screenshots\">\n" + screenshot_html + "\n</div>\n<br>")
-        # combined_report_file.write('''\n<div class="row filedata"><div class="col-sm-4">\n''')
-        # combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
-        # combined_report_file.write("\n</div>")
-        # combined_report_file.write('''\n<div class="col-sm-8">\n''')
-        # combined_report_file.write("\n<br>" + screenshot_grid_html + "\n<br>")
-        # combined_report_file.write("\n</div>\n</div>")
-
-        # combined_report_file.write('''\n\n<div class="filterDiv paths">\n''')
-        # combined_report_file.write('''<button class="collapsible">Paths ''' + ''' [''' + vhost + ''']''' + '''</button><br>\n''')
-        # #combined_report_file.write('''\n<br>\n<div class="screenshots pathsdata">\n''' + screenshot_html + '''\n</div>\n<br>''')
-        # combined_report_file.write('''\n<div class="pathsdata">\n''')
-        # combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
-        # combined_report_file.write("\n</div>")
-        # combined_report_file.write("\n</div>")
-
-        combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
-        combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + '''] <center><b>(Click to see all paths)</b></center>''' + '''</button>\n''')
-        combined_report_file.write('''<div class="content">''')
-        combined_report_file.write('''\n<div class="pathsdata">\n''')
-        combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
-        combined_report_file.write("\n</div>")
-        combined_report_file.write("\n</div>")
-        combined_report_file.write('''\n<div class="screenshotdata">\n''')
-        combined_report_file.write("\n<br>" + screenshot_grid_html + "\n<br>")
-        #combined_report_file.write("\n</div>")
-        combined_report_file.write("\n</div>")
-
-
-
-        combined_report_file.write("\n</div>\n")
+            combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
+            combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + '''] <center><b>(Click to see all paths)</b></center>''' + '''</button>\n''')
+            combined_report_file.write('''<div class="content">''')
+            combined_report_file.write('''\n<div class="pathsdata">\n''')
+            combined_report_file.write("\n<br>" + screenshot_html + "\n<br>")
+            combined_report_file.write("\n</div>")
+            combined_report_file.write("\n</div>")
+            combined_report_file.write('''\n<div class="screenshotdata">\n''')
+            combined_report_file.write("\n<br>" + screenshot_grid_html + "\n<br>")
+            #combined_report_file.write("\n</div>")
+            combined_report_file.write("\n</div>")
+            combined_report_file.write("\n</div>\n")
 
         #Generate the html code for all of that command output and headers
         report_host_string = populate_report_data_html(vhost, workspace)
@@ -343,7 +326,7 @@ var btns = btnContainer.getElementsByClassName("btn");
 for (var i = 0; i < btns.length; i++) {
   btns[i].addEventListener("click", function(){
     var current = document.getElementsByClassName("active");
-    current[0].className = current[0].className.replace(" active", "");
+    current[0].className = ("btn");
     this.className += " active";
   });
 }
