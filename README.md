@@ -7,7 +7,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 * **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
-* **Screenshots** Automatically takes *screenshots of every url identified* via brute force (gobuster) and spidering (Photon)
+* **Screenshots** Automatically takes *screenshots of every URL identified* via brute force (gobuster) and spidering (Photon)
 
 ## Install/Setup
 
@@ -178,7 +178,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     ```
       Create default workspace    ./celerystalk workspace create -o /assessments/client -m bb
       Create named workspace      ./celerystalk workspace create -o /assessments/client -w client -m vapt
-      Switch to another worksapce ./celerystalk workspace client
+      Switch to another workspace ./celerystalk workspace client
     ```
     
 1. **Import Data:** Import data into celerystalk
@@ -279,7 +279,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     | Option | Description |
     | --- | --- |
     | cancel | <ul><li>Canceling a running task will send a **kill -TERM**</li><li>Canceling a queued task* will make celery ignore it (uses celery's revoke).</li><li>Canceling all tasks* will kill running tasks and revoke all queued tasks.</li></ul>
-    | pause | <ul><li>Pausing a single task uses **kill -STOP** to suspend the process.</li><li>Pausing all tasks* attemps to *kill -STOP* all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.</li></ul>
+    | pause | <ul><li>Pausing a single task uses **kill -STOP** to suspend the process.</li><li>Pausing all tasks* attemtps to *kill -STOP* all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.</li></ul>
     | resume | <ul><li>Resuming tasks* sends a **kill -CONT** which allows the process to start up again where it left off.</li></ul>|
 
     ```
@@ -288,7 +288,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     ```
 1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file. Run this as often as you like. Each time you run the report it overwrites the previous report.  
     ```
-    Create Report:              ./celerystalk report                    #Create a report for all scanneed hosts in current workspace
+    Create Report:              ./celerystalk report                    #Create a report for all scanned hosts in current workspace
 
     ```
    
@@ -351,9 +351,8 @@ Usage:
     celerystalk resume ([all]|[<task_ids>]) [-h]
     celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths]) [-h]
     celerystalk db export [-h]
-    celerystalk control ([start]|[stop]) [-h]
+    celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
-    celerystalk reset [-h]
     celerystalk (help | -h | --help)
 
 Options:
@@ -381,12 +380,12 @@ Context specific help with examples:
     celerystalk scan -h
     celerystalk rescan -h
     celerystalk query -h
+    celerystalk report -h
     celerystalk pause -h
     celerystalk resume -h
     celerystalk cancel -h
     celerystalk db -h
-    celerystalk reset -h
-    celerystalk control -h
+    celerystalk admin -h
 
 ```
 

@@ -236,7 +236,9 @@ def report(workspace,target_list=None):
         combined_report_file.write("\n</div>")
 
         all_paths = lib.db.get_all_paths_for_host(vhost)
-        if all_paths:
+        #print(str(all_paths))
+        #print(len(all_paths))
+        if len(all_paths) > 0:
             screenshot_html = paths_report(vhost,all_paths)
             screenshot_grid_html = paths_report_grid(vhost,all_paths)
 
@@ -326,7 +328,7 @@ var btns = btnContainer.getElementsByClassName("btn");
 for (var i = 0; i < btns.length; i++) {
   btns[i].addEventListener("click", function(){
     var current = document.getElementsByClassName("active");
-    current[0].className = ("btn");
+    btns[i].className = ("btn");
     this.className += " active";
   });
 }
