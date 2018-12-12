@@ -12,7 +12,7 @@ import lib.db
 from random import shuffle
 
 
-def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None):
+def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     all_commands = []
     output_base_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
@@ -35,9 +35,9 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
                         try:
                             IPAddress(vhost)
                             if not dont_scan_ips:
-                                command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                                command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir,config_file=config_file)
                         except:
-                            command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation,output_base_dir)
+                            command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation,output_base_dir,config_file=config_file)
                         if len(command_list) > 0:
                             print("Submitted [{1}] tasks for {0}".format(unscanned_vhost, len(command_list)))
                         all_commands = all_commands + command_list
@@ -50,11 +50,11 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
                 try:
                     IPAddress(vhost)
                     if not dont_scan_ips:
-                        command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir)
+                        command_list = populate_comamnds(vhost, workspace, simulation, output_base_dir,config_file=config_file)
                         if len(command_list) > 0:
                             print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
                 except:
-                    command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir)
+                    command_list = populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir,config_file=config_file)
                     if len(command_list) > 0:
                         print("Submitted [{1}] tasks for {0}".format(vhost, len(command_list)))
                 all_commands = all_commands + command_list
@@ -74,10 +74,10 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
         print("[+]\t\tcelerystalk query summary [watch]\n")
 
 
-def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir,celery_path):
+def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir,celery_path,config_file=None):
     print("in aquatone host")
     celery_path = lib.db.get_current_install_path()[0][0]
-    config, supported_services = config_parser.read_config_ini()
+    config, supported_services = config_parser.read_config_ini(config_file)
     for (cmd_name, cmd) in config.items("screenshots"):
         #print(cmd_name, cmd)
         try:
@@ -110,10 +110,10 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
         )()
 
-def populate_comamnds(vhost,workspace,simulation,output_base_dir):
+def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     celery_path = sys.path[0]
-    config, supported_services = config_parser.read_config_ini()
+    config, supported_services = config_parser.read_config_ini(config_file)
     task_id_list = []
     populated_command_list = []
     total_tasks_num = 0
@@ -252,9 +252,9 @@ def send_commands_to_celery(populated_command_tuple,output_base_dir,simulation):
     f.write(populated_command + "\n\n")
     f.close()
 
-def process_url(url, workspace, output_dir, arguments):
+def process_url(url, workspace, output_dir, arguments,config_file=None):
     celery_path = sys.path[0]
-    config, supported_services = config_parser.read_config_ini()
+    config, supported_services = config_parser.read_config_ini(config_file)
     task_id_list = []
     urls_to_screenshot = []
     simulation = arguments["--simulation"]
@@ -397,9 +397,9 @@ def process_url(url, workspace, output_dir, arguments):
         print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
 
 
-def process_db_services(output_base_dir, simulation, workspace, target=None,host=None):
+def process_db_services(output_base_dir, simulation, workspace, target=None,host=None,config_file=None):
     celery_path = sys.path[0]
-    config, supported_services = config_parser.read_config_ini()
+    config, supported_services = config_parser.read_config_ini(config_file)
     task_id_list = []
     total_tasks_num = 0
     if host:
@@ -580,11 +580,11 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                     f.close()
 
 
-def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_scope_hosts=None):
+def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_scope_hosts=None,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     task_id_list = []
     total_tasks_num = 0
-    config, supported_services = config_parser.read_config_ini()
+    config, supported_services = config_parser.read_config_ini(config_file)
     celery_path = sys.path[0]
     for domain in domains.split(","):
         for section in config.sections():
@@ -627,7 +627,6 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
 
 def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
     command_name, populated_command, output_base_dir, workspace, domain, simulation, celery_path, scan_mode = process_domain_tuple
-    config,supported_services = config_parser.read_config_ini()
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     vhosts = vhosts.splitlines()
 
@@ -666,11 +665,11 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
                     lib.db.create_vhost(db_vhost)
 
 
-def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir):
+def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     #pull all in scope vhosts that have not been submitted
     celery_path = sys.path[0]
-    config, supported_services = config_parser.read_config_ini()
+    config, supported_services = config_parser.read_config_ini(config_file)
     task_id_list = []
     populated_command_list = []
     total_tasks_num = 0

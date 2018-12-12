@@ -4,11 +4,11 @@
 Usage:
     celerystalk workspace ([create]|[switch]) [-w workspace_name] [-o <output_dir>] [-m <mode>] [-h]
     celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-O outOfScope.txt] [-u <url>] [-h]
-    celerystalk subdomains [-d <domains>] [-s] [-h]
-    celerystalk nmap [-t <targets>] [-s] [-h]
-    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [--noIP] [-s] [-h]
-    celerystalk scan -u <url> [-s] [-h]
-    celerystalk rescan [-t <targets>] [-s] [-h]
+    celerystalk subdomains [-d <domains>] [-c <config_file>] [-s] [-h]
+    celerystalk nmap [-t <targets>] [-c <config_file>] [-s] [-h]
+    celerystalk scan [-t <targets>] [--noIP] [-c <config_file>] [-s] [-h]
+    celerystalk scan -u <url> [-c <config_file>] [-s] [-h]
+    celerystalk rescan [-t <targets>] [-c <config_file>] [-s] [-h]
     celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
     celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
     celerystalk report [-h]
@@ -19,13 +19,13 @@ Usage:
     celerystalk db export [-h]
     celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
-    celerystalk reset [-h]
     celerystalk (help | -h | --help)
 
 Options:
     -h --help           Show this screen
     -v --version        Show version
     -f <nmap_file>      Nmap xml import file
+    -c <config_file>    Specify a non-default configuration file  by name
     -o <output_dir>     Output directory
     -m <mode>           vapt = VulnAssmt/PenTest, bb = Bug Bounty
     -S <scope_file>     Scope import file
@@ -52,7 +52,6 @@ Context specific help with examples:
     ./celerystalk cancel -h
     ./celerystalk db -h
     ./celerystalk report -h
-    ./celerystalk reset -h
     ./celerystalk admin -h
 """
 
@@ -81,7 +80,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(155)
+build=str(156)
 
 def print_banner():
 
@@ -707,10 +706,13 @@ def main(arguments):
                                                           "After running your subdomain recon tools celerystalk determines whether each\n"
                                                           "subdomain is in scope by resolving the IP and looking for IP in the DB.\n"
                                                           "If there is a match, the domain is marked as in scope and will be scanned.\n"])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
+
             print(help_table)
             print("\n")
             print("""Examples:
-    Find subdomains:            ./celerystalk subdomains -d domain1.com,domain2.com
+    Find subdomains:                ./celerystalk subdomains -d domain1.com,domain2.com
+    Specify a non-default config:   ./celerystalk subdomains -d domain1.com,domain2.com -c myconfig.ini
 
             \n""")
             exit()
@@ -745,12 +747,14 @@ def main(arguments):
             help_table.add_row(["-t ip,vhost,cidr", "Scan a subset of the in scope IPs and/or subdomains."])
             help_table.add_row(["-s", "Sends all of the tasks to celery, but all commands are executed\n"
                                       "with a # before them rendering them inert."])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
 
             print(help_table)
             print("\n")
             print("""Examples:
      ./celerystalk rescan
-     ./celerystalk rescan -t host.domain.com
+     ./celerystalk rescan -c myconfig.ini
+     ./celerystalk rescan -t host.domain.com     
      ./celerystalk rescan -s
             \n""")
             exit()
@@ -808,35 +812,34 @@ def main(arguments):
             help_table.add_row(["--noIP", "Don't scan hosts by IP (only scan vhosts).\n"])
             help_table.add_row(["-t ip,vhost,cidr", "Scan a specific target or targets.\n"])
             help_table.add_row(["-s", "Sends all of the tasks to celery, but all commands are executed with a \n# before them rendering them inert.\n"])
-            help_table.add_row(["-f [filename]", "Import a nmap/nessus xml file and immediately scan all \nhosts/services (unless any host are specifically marked as \nout of scope in DB.\n"])
-            help_table.add_row(["-S [filename]", "Import text file with IP IP/IP Ranges/CIDRs,mark them \nas in-scope, and scan.\n"])
-            help_table.add_row(["-D [filename]", "Import text file with subdomains/vhosts. If BB mode, mark \nall vhosts as in scope. If VAPT mode, only mark vhosts that resolve\n to an in scope IP address/range/CIDR.\n"])
-            help_table.add_row(["-d domain.tld", "Run subdomain enumeratino tools against the domain to find \nmore subdomains/vhosts. If BB mode, mark all vhosts as in scope. \nIf VAPT mode, only mark vhosts that resolve to an in scope IP address/range/CIDR."])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
+            help_table.add_row(["-u [URL]", "Scan a specific URL, even if it is not in the DB yet"])
+
             print(help_table)
             print("\n")
             print("""Examples:
   Scan
     Scan all in scope hosts:    ./celerystalk scan
+    Specify non-default config  ./celerystalk scan -c myconfig.ini
     Don't scan IPs:             ./celerystalk scan --noIP
     Scan subset of DB hosts:    ./celerystalk scan -t 10.0.0.1,10.0.0.3
                                 ./celerystalk scan -t 10.0.0.100-200
                                 ./celerystalk scan -t 10.0.0.0/24
                                 ./celerystalk scan -t sub.domain.com
+    Scan URL                    ./celerystalk scan -u http://sub.domain.com/
+                                ./celerystalk scan -u http://sub.domain.com/path/
     Simulation mode:            ./celerystalk scan -s
 
-  Import and Scan
-    Start from Nmap XML file:   ./celerystalk scan -f /pentest/nmap.xml
-    Start from Nessus file:     ./celerystalk scan -f /pentest/scan.nessus
-    Scan subset hosts in XML:   ./celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
-                                ./celerystalk scan -f <file> -t 10.0.0.100-200
-                                ./celerystalk scan -f <file> -t 10.0.0.0/24
-                                ./celerystalk scan -f <file> -t sub.domain.com
-    Simulation mode:            ./celerystalk scan -f <file> -s
             \n""")
             exit()
 
         lib.utils.start_services()
         celery_path = sys.path[0]
+        if arguments["-c"]:
+            config_file = arguments["-c"]
+        else:
+            config_file = 'config.ini'
+
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -854,19 +857,19 @@ def main(arguments):
         # Scan - URL - Parse use provided URL and run all celerystalk tools against it
         ####################################
         if arguments["-u"]:
-            lib.scan.process_url(arguments["-u"], workspace, output_dir, arguments)
+            lib.scan.process_url(arguments["-u"], workspace, output_dir, arguments,config_file=config_file)
             exit()
         elif arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             if arguments["-f"]:
                 lib.csimport.importcommand(workspace, output_dir, arguments)
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list,dont_scan_ips=arguments["--noIP"])
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list,dont_scan_ips=arguments["--noIP"],config_file=config_file)
         else:
             if arguments["-f"]:
                 lib.csimport.importcommand(workspace, output_dir, arguments)
             #this one is the catch all if the user only types scan and nothing else.
 
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"])
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"],config_file=config_file)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
@@ -881,18 +884,28 @@ def main(arguments):
             help_table = PrettyTable(columns)
             help_table.align[columns[1]] = "l"
             help_table.add_row(
-                ["celerystalk nmap", "Read nmap command from config and scan all services for in-scope hosts"])
+                ["no options", "Read nmap command from config and scan all services for in-scope hosts"])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
+
             print(help_table)
             print("\n")
             print("""Examples:
     Nmap in-scope hosts         celerystalk nmap
     Scan subset of DB hosts:    celerystalk nmap -t ip,ip
+    Specify non-default config: celerystalk nmap -c myconfig.ini
     Simulation mode:            celerystalk nmap -s
+    
             \n""")
             exit()
 
         lib.utils.start_services()
-        nmapcommand(arguments["--simulation"], arguments["-t"])
+
+        if arguments["-c"]:
+            config_file = arguments["-c"]
+        else:
+            config_file = 'config.ini'
+
+        nmapcommand(arguments["--simulation"], arguments["-t"],config_file=config_file)
 
     if arguments["--help"]:
         print(__doc__)

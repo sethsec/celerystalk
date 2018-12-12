@@ -9,9 +9,9 @@ from lib import config_parser, utils
 import lib.db
 
 
-def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir):
+def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_file=None):
     celery_path = sys.path[0]
-    config_nmap_options = config_parser.extract_bb_nmap_options()
+    config_nmap_options = config_parser.extract_bb_nmap_options(config_file=config_file)
     config = ConfigParser(allow_no_value=True)
     config.read(['config.ini'])
 
@@ -35,7 +35,7 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir):
             tasks.cel_nmap_scan.si(cmd_name, populated_command, vhost, config_nmap_options, celery_path, task_id,workspace).set(task_id=task_id),
         )()
 
-def nmapcommand(simulation,targets):
+def nmapcommand(simulation,targets,config_file=None):
     lib.utils.start_services()
     celery_path = sys.path[0]
 
@@ -56,9 +56,9 @@ def nmapcommand(simulation,targets):
         if targets:
             target_list = lib.utils.target_splitter(targets)
             if vhost in target_list:
-                lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir)
+                lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir,config_file=config_file)
         else:
-            lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir)
+            lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir,config_file=config_file)
 
     print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
     print("[+]\t\tcelerystalk query [watch]")
