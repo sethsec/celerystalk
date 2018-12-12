@@ -3,7 +3,7 @@
 celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want
-* **Service Aware** - Uses nmap/nessus service names rather than port numbers to decide which tools to run 
+* **Service Aware** - Uses Nmap/Nessus service names rather than port numbers to decide which tools to run 
 * **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
@@ -122,7 +122,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 
 1. **Configure which tools you'd like celerystalk to execute:** The install script drops a config.ini file in the celerystalk folder. The config.ini script is broken up into three sections:  
 
-    ***Service Mapping*** - The first section normalizes Nmap & Nessus service names for celerystalk (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
+    ***Service Mapping*** - The first section normalizes Nmap/Nessus service names for celerystalk (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
     ```
     [nmap-service-names]
     http = http,http-alt,http-proxy,www,http?

@@ -7,31 +7,57 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ ! -f config.ini ]; then
+if [ ! -f ../config.ini ]; then
     cp config_default.ini ../config.ini
-    echo "[+] Copied config.ini.repo to config.ini"
 fi
-echo "[+] Updating apt sources"
+
+if [ ! -f update.sh ]; then
+    ln -s install.sh update-tools.sh
+fi
+
+echo ""
+echo "**************************************"
+echo "*      Updating apt sources          *"
+echo "**************************************"
+echo ""
+
 apt update -y
 
-echo "[+] Installing redis-server, gobuster, seclists"
+echo ""
+echo "*************************************************"
+echo "*  Installing redis-server, gobuster, seclists, *"
+echo "*  firefox-esr, xvfb, python3-pip, wpscan, jq   *"
+echo "*************************************************"
+echo ""
 if [ "$DISTRO" == "kali" ]; then
-    echo "kali"
     apt install gobuster redis-server seclists firefox-esr xvfb python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
-    echo "ubuntu"
     apt install python-pip python3-pip unzip redis-server firefox xvfb jq -y
 fi
 
 CELERYSTALK_DIR=`pwd`
 
-echo "[+] Starting redis-server"
+echo ""
+echo "**************************************"
+echo "*      Starting redis-server          *"
+echo "**************************************"
+echo ""
 /etc/init.d/redis-server start
-echo "[+] Installing python requirements via pip"
+
+echo ""
+echo "******************************************"
+echo "* Installing python requirements via pip *"
+echo "******************************************"
+echo ""
 pip install -r requirements.txt --upgrade
 
 
 if [ ! -f /usr/bin/geckodriver ]; then
+    echo ""
+    echo "**************************************"
+    echo "*    Installing geckodriver          *"
+    echo "**************************************"
+    echo ""
     #From: https://github.com/FortyNorthSecurity/EyeWitness/blob/master/setup/setup.sh
     MACHINE_TYPE=`uname -m`
     if [ ${MACHINE_TYPE} == 'x86_64' ]; then
@@ -67,7 +93,11 @@ fi
 
 
 if [ ! -f /opt/amass/amass ]; then
-    echo "[+] Downloading OWASP Amass to /opt/amass/amass"
+    echo ""
+    echo "****************************************"
+    echo "* Installing Amass to /opt/amass/amass *"
+    echo "****************************************"
+    echo ""
     mkdir -p /opt/amass
     wget https://github.com/OWASP/Amass/releases/download/v2.5.0/amass_2.5.2_linux_386.zip -O /opt/amass/amass_2.5.2_linux_386.zip
     unzip /opt/amass/amass_2.5.2_linux_386.zip -d /opt/amass
@@ -83,37 +113,65 @@ fi
 
 
 if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
-    echo "[+] Downloading sublist3r to /opt/Sublist3r"
+    echo ""
+    echo "*******************************************************"
+    echo "* Installing sublist3r to /opt/Sublist3r/sublist3r.py *"
+    echo "*******************************************************"
+    echo ""
+
     cd /opt/
     git clone https://github.com/aboul3la/Sublist3r.git
     cd Sublist3r/
     pip install -r requirements.txt
 else
+    echo ""
+    echo "**********************************************"
+    echo "*           Updating sublist3r               *"
+    echo "**********************************************"
+    echo ""
     cd /opt/Sublist3r/
     git pull
     pip install -r requirements.txt
 fi
 
 if [ ! -f /opt/Photon/photon.py ]; then
-    echo "[+] Downloading Photon Web Spider to /opt/Photon/photon.py"
+    echo ""
+    echo "**********************************************"
+    echo "* Installing Photon to /opt/Photon/photon.py *"
+    echo "**********************************************"
+    echo ""
     cd /opt/
     git clone https://github.com/s0md3v/Photon.git
     cd Photon
     pip install -r requirements.txt
 else
+    echo ""
+    echo "**********************************************"
+    echo "*           Updating Photon                  *"
+    echo "**********************************************"
+    echo ""
     cd /opt/Photon
     git pull
     pip install -r requirements.txt
 fi
 
 if [ ! -f /opt/CMSmap/cmsmap.py ]; then
-    echo "[+] Downloading CMSMap to /opt/CMSmap/cmsmap.py"
+    echo ""
+    echo "**********************************************"
+    echo "* Installing CMSmap to /opt/CMSmap/cmsmap.py *"
+    echo "**********************************************"
+    echo ""
     cd /opt/
     git clone https://github.com/Dionach/CMSmap.git
     cd CMSmap
     pip3 install .
     echo "y" | cmsmap -U P
 else
+    echo ""
+    echo "**********************************************"
+    echo "*           Updating CMSmap                  *"
+    echo "**********************************************"
+    echo ""
     cd /opt/CMSmap
     git pull
     pip3 install .
@@ -122,10 +180,10 @@ fi
 
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
-../celerystalk -h
+cd .. && ./celerystalk -h
 echo ""
 echo "[+] Back up a directory and you are ready to go."
-echo ""
+echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
 
