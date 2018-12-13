@@ -184,7 +184,7 @@ def start_services():
 
 def start_celery_worker():
     # We can always just try and start the celery worker because it won't restart already running thanks to pidfile.
-    p = Popen("celery -A tasks worker --concurrency=5 -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
+    p = Popen("celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
     #print("[+] Started celery worker")
 
 def start_redis():

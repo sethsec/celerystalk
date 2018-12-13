@@ -255,6 +255,11 @@ def create_task(task):
     CUR.execute(sql, task)
     CONNECTION.commit()
 
+def get_all_tasks_in_workspace(workspace):
+    CUR.execute("SELECT id,pid,command,status FROM tasks WHERE workspace = ?", (workspace,))
+    all_tasks = CUR.fetchall()
+    CONNECTION.commit()
+    return all_tasks
 
 def get_completed_task_count(workspace):
     CUR.execute("SELECT count(*) FROM tasks where status = ? AND workspace = ?", ("COMPLETED", workspace))

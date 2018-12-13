@@ -66,8 +66,9 @@ def nmapcommand(simulation,targets,config_file=None):
     print("[+]\t\t./celerystalk query brief [watch]")
     print("[+]\t\t./celerystalk query summary [watch]")
     print("[+]")
+    print("[+]\t\tTo view services as they make it into the DB, run: ")
+    print("[+]\t\t./celerystalk db services")
+    print("[+]")
     print("[+] To peak behind the curtain, view log/celeryWorker.log")
     print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
-    print("[+]")
-    print("[+] To view services as they make it into the DB, run: ")
-    print("[+]\t\t./celerystalk db services")
+

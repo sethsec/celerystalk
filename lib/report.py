@@ -405,7 +405,7 @@ ul.nav-pills {
     font-size: 12px;
     background: black;
     overflow-wrap: break-word;
-    max-width: 170px;	
+    width: 170px;	
 }
 
 ul.nav-pills a {

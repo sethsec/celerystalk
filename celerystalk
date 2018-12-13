@@ -15,7 +15,7 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>]) [-h]
     celerystalk pause  ([all]|[<task_ids>]) [-h]
     celerystalk resume ([all]|[<task_ids>]) [-h]
-    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths]) [-h]
+    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[tasks]) [-h]
     celerystalk db export [-h]
     celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
@@ -80,7 +80,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(157)
+build=str(158)
 
 def print_banner():
 
@@ -540,9 +540,11 @@ def main(arguments):
             help_table.align[columns[1]] = "l"
             help_table.add_row(["workspaces", "Show all workspaces with their output directory and mode."])
             help_table.add_row(["services", "Show all open ports and service types by host."])
-            help_table.add_row(["hosts", "Show all hosts, whther they are in-scope, out of scope, or submitted."])
-            help_table.add_row(["hosts", "Same as hosts command, but excludes vhosts that are IP addresses."])
+            help_table.add_row(["hosts", "Show all hosts, whether they are in-scope, out of scope, or submitted."])
+            help_table.add_row(["vhosts", "Same as hosts command, but excludes vhosts that are IP addresses."])
             help_table.add_row(["paths", "Show all paths that have been identified by vhost."])
+            help_table.add_row(["tasks", "Show all tasks in the DB."])
+
             print(help_table)
             print("\n")
             print("""Examples:
@@ -551,6 +553,7 @@ def main(arguments):
     Show hosts:                 ./celeryststalk db hosts
     Show vhosts only            ./celeryststalk db vhosts
     Show paths:                 ./celeryststalk db paths
+    Show tasks:                 ./celeryststalk db tasks
     Export tables to csv        ./celeryststalk db export
             \n""")
             exit()
@@ -623,6 +626,23 @@ def main(arguments):
                 for row in paths_rows:
                     paths_table.add_row(row[1:4])
                 print(paths_table)
+                print("\n\n")
+            elif arguments["tasks"]:
+                print("[+] Showing tasks for the [{0}] workspace\n".format(workspace))
+                columns = ["ID","PID","Command","Status"]
+                tasks_rows = lib.db.get_all_tasks_in_workspace(workspace)
+                tasks_table = PrettyTable(columns)
+                tasks_table.align[columns[0]] = "l"
+                tasks_table.align[columns[1]] = "l"
+                tasks_table.align[columns[2]] = "l"
+                tasks_table.align[columns[3]] = "l"
+                for row in tasks_rows:
+                    id = row[0]
+                    pid = row[1]
+                    command = row[2][0:50] + "..."
+                    status = row[3]
+                    tasks_table.add_row((id,pid,command,status,))
+                print(tasks_table)
                 print("\n\n")
             elif arguments["export"]:
                 output_dir = db.get_output_dir_for_workspace(workspace)[0][0]
@@ -836,7 +856,11 @@ def main(arguments):
         lib.utils.start_services()
         celery_path = sys.path[0]
         if arguments["-c"]:
-            config_file = arguments["-c"]
+            if os.path.exists(arguments["-c"]):
+                config_file = arguments["-c"]
+            else:
+                print("[!] The specified config file does not exist. Try again?")
+                exit()
         else:
             config_file = 'config.ini'
 
