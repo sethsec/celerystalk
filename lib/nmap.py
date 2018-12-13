@@ -7,6 +7,7 @@ import lib.utils
 import tasks
 from lib import config_parser, utils
 import lib.db
+import os
 
 
 def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_file=None):
@@ -16,20 +17,21 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
     config.read(['config.ini'])
 
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
+    output_file = os.path.normpath(os.path.join(output_base_dir,vhost,".txt"))
     if not vhost_explicitly_out_of_scope:
         #print(config_nmap_options)
         cmd_name = "nmap_tcp_scan"
         try:
             if not simulation:
-                populated_command = "nmap " + vhost + config_nmap_options
+                populated_command = "nmap " + vhost + config_nmap_options + "-oN " + output_file
             else:
-                populated_command = "#nmap " + vhost + config_nmap_options
+                populated_command = "#nmap " + vhost + config_nmap_options + "-oN " + output_file
         except TypeError:
             print("[!] Error: In the config file, there needs to be one, and only one, enabled tcp_scan command in the nmap_commands section.")
             print("[!]        This determines what ports to scan.")
             exit()
         task_id = uuid()
-        utils.create_task(cmd_name, populated_command, vhost, output_base_dir + ".txt", workspace, task_id)
+        utils.create_task(cmd_name, populated_command, vhost, output_file, workspace, task_id)
         result = chain(
             tasks.cel_nmap_scan.si(cmd_name, populated_command, vhost, config_nmap_options, celery_path, task_id,workspace).set(task_id=task_id),
         )()

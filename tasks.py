@@ -121,7 +121,7 @@ def post_process(*args):
             for url in lines:
                 #url = url.split("?")[0].replace("//","/")
                 if url.startswith("http"):
-                    url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                    url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
                         .replace("/", "_") \
                         .replace("\\", "") \
                         .replace(":", "_") + ".png"
@@ -173,7 +173,7 @@ def post_process(*args):
                 for section in good_sections:
                     for url in photon_file_json[section]:
                         if url.startswith("http"):
-                            url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
+                            url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
                                 .replace("/", "_") \
                                 .replace("\\", "") \
                                 .replace(":", "_") + ".png"

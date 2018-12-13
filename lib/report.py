@@ -390,7 +390,6 @@ body {
     font-family: "Lato", sans-serif;
     margin: unset;
     background: dimgray;
-
 }
 
 ul.nav-pills {
@@ -405,7 +404,8 @@ ul.nav-pills {
     font-size: 12px;
     background: black;
     overflow-wrap: break-word;
-    width: 170px;	
+    width: 170px;
+    background-color: dimgray;	
 }
 
 ul.nav-pills a {
@@ -498,7 +498,7 @@ _myBtnContainer {
 
 .main {
     margin-left: 170px; /* Same width as the sidebar + left position in px */
-    font-size: 14px; /* Increased text to enable scrolling */
+    font-size: 12px; /* Increased text to enable scrolling */
     padding: 10px 10px;
     background: white;
     border-radius: 0px 0px 10px 10px;
