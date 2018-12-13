@@ -59,7 +59,7 @@ def nmapcommand(simulation,targets,config_file=None):
             lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir,config_file=config_file)
             task_count = task_count + 1
 
-    print("[+] Submitted {0} nmap tasks to queue.\n".format(len(task_count)))
+    print("[+] Submitted {0} nmap tasks to queue.\n".format(str(len(task_count))))
 
     print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
     print("[+]\t\t./celerystalk query [watch]")
