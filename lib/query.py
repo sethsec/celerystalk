@@ -1,25 +1,7 @@
 import time
 import db
-import subprocess
 import os
-
-
-def get_terminal_width():
-    """
-    From: https://gist.githubusercontent.com/Steelsouls/9626112/raw/e99b6a741fa22c20c3699140d352de5a46db4ad2/terminal_width.py
-    :return: the current width of the terminal
-    """
-    command = ['tput', 'cols']
-    try:
-        width = int(subprocess.check_output(command))
-    except OSError as e:
-        print("Invalid Command '{0}': exit status ({1})".format(
-              command[0], e.errno))
-    except subprocess.CalledProcessError as e:
-        print("Command '{0}' returned non-zero exit status: ({1})".format(
-              command, e.returncode))
-    else:
-        return width
+from lib.utils import get_terminal_width
 
 
 def query_sqlite(workspace, target=None, repeat=None, summary=None):
@@ -142,8 +124,10 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
 
             command_length = len(command)
             if command_length > terminal_width - 11:
-
-                print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
+                if int(id) > 999:
+                    print(" [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
+                else:
+                    print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
             else:
                 print("  [" + str(id) + "]\t" + command)
 

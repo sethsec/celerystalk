@@ -4,7 +4,7 @@ netaddr
 simplejson
 requests
 celery
-redis
+redis==2.10.6
 flower
 docopt==0.6.2
 infi.docopt-completion

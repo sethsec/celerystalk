@@ -1,3 +1,4 @@
+import subprocess
 from subprocess import Popen
 
 from libnmap.parser import NmapParser
@@ -183,22 +184,24 @@ def start_services():
 
 def start_celery_worker():
     # We can always just try and start the celery worker because it won't restart already running thanks to pidfile.
-    p = Popen("celery -A tasks worker --concurrency=5 -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
-
+    p = Popen("celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
+    #print("[+] Started celery worker")
 
 def start_redis():
     # We can always just try and start the redis-server .
     p = Popen("/etc/init.d/redis-server start > /dev/null 2>&1",shell=True)
     c = p.communicate()
+    #print("[+] Started redis service\n")
 
 
 def shutdown_background_jobs():
-    print("[-] Stopping celery worker and flower (if running)")
+    print("[-] Stopping celery worker (if running)")
     #p = Popen("celery -A tasks control shutdown > /dev/null 2>&1", shell=True)
     p = Popen('pkill -f "celery"> /dev/null 2>&1', shell=True)
 
-    #print("[-] Stopping celery flower (if running)")
-    #p = Popen('pkill -f "tasks flower"> /dev/null 2>&1', shell=True)
+    print("[-] Stopping redis service (if running)\n")
+    p = Popen("/etc/init.d/redis-server stop > /dev/null 2>&1", shell=True)
+    c = p.communicate()
 
 
 
@@ -293,7 +296,46 @@ def create_task(command_name, populated_command, ip, output_dir, workspace, task
 
 
 
+def check_for_new_default_config():
+    user_config_file = 'config.ini'
+    default_config_file = 'setup/config_default.ini'
+    user_config_age=os.path.getmtime(user_config_file)
+    #print(user_config_age)
+    default_config_age = os.path.getmtime(default_config_file)
+    #print(default_config_age)
+    if user_config_age < default_config_age:
+        print("[!] [config_default.ini] from the repo is newer than the the current [config.ini] file.")
+        print("[!] This is most likely because a new tool or possibly a new feature has been added.\n")
+        answer = raw_input("[+] Would you like backup your current config and replace [config.ini] with the new version? (y\N)")
+        print("")
+        if (answer == "Y") or (answer == "y"):
+            from shutil import copyfile
+            backup_config_filename = 'config.ini.' + str(user_config_age)
+            copyfile(user_config_file, backup_config_filename)
+            copyfile(default_config_file, user_config_file)
+            print("[+] config.ini has been copied to " +  backup_config_filename)
+            print("[+] setup/config_default.ini has been copied to config.ini")
+        else:
+            from subprocess import Popen
+            path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(lib.scan.__file__)), "../config.ini", ))
+            populated_command = "touch " + path
+            p = Popen(populated_command, shell=True)
+            p.communicate()
 
 
-
-
+def get_terminal_width():
+    """
+    From: https://gist.githubusercontent.com/Steelsouls/9626112/raw/e99b6a741fa22c20c3699140d352de5a46db4ad2/terminal_width.py
+    :return: the current width of the terminal
+    """
+    command = ['tput', 'cols']
+    try:
+        width = int(subprocess.check_output(command))
+    except OSError as e:
+        print("Invalid Command '{0}': exit status ({1})".format(
+              command[0], e.errno))
+    except subprocess.CalledProcessError as e:
+        print("Command '{0}' returned non-zero exit status: ({1})".format(
+              command, e.returncode))
+    else:
+        return width

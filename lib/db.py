@@ -45,7 +45,8 @@ def create_workspace_table():
 
     sql_create_workspace_table = """ CREATE TABLE IF NOT EXISTS workspace (
                                         name text PRIMARY KEY,
-                                        output_dir text NOT NULL                                        
+                                        output_dir text NOT NULL,
+                                        mode text NOT NULL                                        
                                     ); """
 
     try:
@@ -68,6 +69,23 @@ def create_current_workspace_table():
 
     try:
         CUR.execute(sql_create_current_workspace_table)
+        CONNECTION.commit()
+    except Error as e:
+        print(e)
+
+def create_celerystalk_table():
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+
+    sql_create_celerystalk_table = """ CREATE TABLE IF NOT EXISTS celerystalk (
+                                        install_path text PRIMARY KEY                                        
+                                    ); """
+
+    try:
+        CUR.execute(sql_create_celerystalk_table)
         CONNECTION.commit()
     except Error as e:
         print(e)
@@ -96,7 +114,10 @@ def create_services_table():
                                         ip text NOT NULL,
                                         port int NOT NULL,
                                         proto text NOT NULL,
-                                        service text,                                        
+                                        service text,
+                                        product text,
+                                        version text,
+                                        extra_info text,                                        
                                         workspace text
                                     ); """
     CUR.execute(sql_create_services_table)
@@ -113,7 +134,7 @@ def create_vhosts_table():
     sql_create_vhosts_table = """ CREATE TABLE IF NOT EXISTS vhosts (
                                         id INTEGER PRIMARY KEY,
                                         ip text,
-                                        vhost text NOT NULL UNIQUE,
+                                        vhost text NOT NULL,
                                         in_scope int,
                                         explicit_out_scope int,
                                         submitted int NOT NULL,                                                                                
@@ -136,13 +157,19 @@ def create_workspace(db_workspace):
     :param workspace:
     :return:
     """
-    sql_create_workspace = ''' INSERT OR IGNORE INTO workspace(name,output_dir)
-              VALUES(?,?) '''
+    sql_create_workspace = ''' INSERT OR IGNORE INTO workspace(name,output_dir,mode)
+              VALUES(?,?,?) '''
     CUR.execute(sql_create_workspace,db_workspace)
     CONNECTION.commit()
 
 def get_output_dir_for_workspace(workspace):
     CUR.execute("SELECT output_dir FROM workspace where name = ?", (workspace,))
+    workspace = CUR.fetchall()
+    CONNECTION.commit()
+    return workspace
+
+def get_workspace_mode(workspace):
+    CUR.execute("SELECT mode FROM workspace where name = ?", (workspace,))
     workspace = CUR.fetchall()
     CONNECTION.commit()
     return workspace
@@ -155,6 +182,10 @@ def get_all_workspaces():
 
 def update_workspace_output_dir(output_dir,workspace):
     CUR.execute("UPDATE workspace SET output_dir=? WHERE name=?", (output_dir,workspace))
+    CONNECTION.commit()
+
+def update_workspace_mode(mode,workspace):
+    CUR.execute("UPDATE workspace SET mode=? WHERE name=?", (mode,workspace))
     CONNECTION.commit()
 
 #############################
@@ -183,7 +214,30 @@ def update_current_workspace(workspace):
     CONNECTION.commit()
 
 
+#############################
+# Table: Create celerystalk
+#############################
 
+def set_install_path(db_install_path):
+    """
+
+    :param workspace:
+    :return:
+    """
+    sql_create_celerystalk = ''' INSERT OR IGNORE INTO celerystalk(install_path)
+              VALUES(?) '''
+    CUR.execute(sql_create_celerystalk,db_install_path)
+    CONNECTION.commit()
+
+def get_current_install_path():
+    CUR.execute("SELECT install_path FROM celerystalk")
+    install_path = CUR.fetchall()
+    CONNECTION.commit()
+    return install_path
+
+# def update_current_workspace(workspace):
+#     CUR.execute("UPDATE celerystalk SET install_path=?", (install_path,))
+#     CONNECTION.commit()
 
 #############################
 # Table: Tasks
@@ -201,6 +255,11 @@ def create_task(task):
     CUR.execute(sql, task)
     CONNECTION.commit()
 
+def get_all_tasks_in_workspace(workspace):
+    CUR.execute("SELECT id,pid,command,status FROM tasks WHERE workspace = ?", (workspace,))
+    all_tasks = CUR.fetchall()
+    CONNECTION.commit()
+    return all_tasks
 
 def get_completed_task_count(workspace):
     CUR.execute("SELECT count(*) FROM tasks where status = ? AND workspace = ?", ("COMPLETED", workspace))
@@ -331,6 +390,24 @@ def get_unique_command_names(workspace):
     CONNECTION.commit()
     return commands
 
+def get_unique_non_sim_command_names(workspace):
+    CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=? AND command_name NOT LIKE '#%'", (workspace,))
+    commands = CUR.fetchall()
+    CONNECTION.commit()
+    return commands
+
+def get_unique_non_sim_command_names_for_vhost(vhost,workspace):
+    CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=? AND ip=? AND command_name NOT LIKE '#%'", (workspace,vhost))
+    commands = CUR.fetchall()
+    CONNECTION.commit()
+    return commands
+
+def get_unique_command_names(workspace):
+    CUR.execute("SELECT DISTINCT command_name FROM tasks WHERE workspace=?", (workspace,))
+    commands = CUR.fetchall()
+    CONNECTION.commit()
+    return commands
+
 
 def update_task_status_started(status,task_id,pid,start_time):
     CUR.execute("UPDATE tasks SET status=?,pid=?,start_time=? WHERE task_id=?", (status,pid,start_time,task_id))
@@ -371,8 +448,8 @@ def create_service(db_service):
     :param workspace:
     :return:
     """
-    sql = ''' INSERT INTO services(ip,port,proto,service,workspace)
-              VALUES(?,?,?,?,?) '''
+    sql = ''' INSERT INTO services(ip,port,proto,service,product,version,extra_info,workspace)
+              VALUES(?,?,?,?,?,?,?,?) '''
     CUR.execute(sql, db_service)
     CONNECTION.commit()
 
@@ -383,13 +460,13 @@ def get_service(ip,port,protocol,workspace):
     return service_row
 
 def get_all_services(workspace):
-    CUR.execute("SELECT * FROM services WHERE workspace=? ORDER BY ip,port", (workspace,))
+    CUR.execute("SELECT ip,port,proto,service,product,version,extra_info FROM services WHERE workspace=? ORDER BY ip,port", (workspace,))
     service_rows = CUR.fetchall()
     CONNECTION.commit()
     return service_rows
 
 def get_all_services_for_ip(ip,workspace):
-    CUR.execute("SELECT * FROM services WHERE ip=? AND workspace=?", (ip,workspace))
+    CUR.execute("SELECT ip,port,proto,service,product,version,extra_info FROM services WHERE ip=? AND workspace=?", (ip,workspace))
     service_rows = CUR.fetchall()
     CONNECTION.commit()
     return service_rows
@@ -427,8 +504,8 @@ def get_host_by_ip(ip,workspace):
     CONNECTION.commit()
     return vhost_rows
 
-def is_vhost_ip_in_db(ip,workspace):
-    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=?", (ip,workspace))
+def is_vhost_in_db(vhost,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=?", (vhost,workspace))
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
@@ -444,6 +521,13 @@ def get_unique_inscope_vhosts(workspace):
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
+
+def get_unique_submitted_vhosts(workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE workspace=? AND submitted=?", (workspace,1))
+    vhost_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return vhost_rows
+
 
 def get_unique_out_of_scope_vhosts(workspace):
     CUR.execute("SELECT vhost FROM vhosts WHERE workspace=? AND in_scope=?", (workspace,0))
@@ -463,8 +547,8 @@ def get_in_scope_ip(ip,workspace):
     CONNECTION.commit()
     return host_rows
 
-def get_submitted_in_scope_vhost(vhost,workspace):
-    CUR.execute("SELECT ip FROM vhosts WHERE ip=? AND workspace=? AND in_scope=? AND submitted=?", (ip,workspace,1,1))
+def is_vhost_submitted(vhost,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=? AND submitted=?", (vhost,workspace,1))
     host_rows = CUR.fetchall()
     CONNECTION.commit()
     return host_rows
@@ -476,7 +560,20 @@ def get_unique_out_of_scope_ips(workspace):
     return host_rows
 
 def get_unique_explicit_out_of_scope_vhosts(workspace):
-    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_of_scope=?", (workspace,1))
+    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_scope=?", (workspace,1))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+def get_unique_hosts_not_explicitly_out_of_scope_vhosts(workspace):
+    CUR.execute("SELECT DISTINCT vhost FROM vhosts WHERE workspace=? AND explicit_out_scope=?", (workspace,0))
+    host_rows = CUR.fetchall()
+    CONNECTION.commit()
+    return host_rows
+
+
+def is_vhost_explicitly_out_of_scope(vhost,workspace):
+    CUR.execute("SELECT vhost FROM vhosts WHERE vhost=? AND workspace=? AND explicit_out_scope=?", (vhost,workspace,1))
     host_rows = CUR.fetchall()
     CONNECTION.commit()
     return host_rows
@@ -508,10 +605,14 @@ def get_vhost_ip(scannable_vhost,workspace):
     return ip
 
 def get_vhosts_table(workspace):
-    CUR.execute("SELECT ip,vhost,in_scope,submitted FROM vhosts WHERE workspace=? ORDER BY in_scope DESC, ip,vhost", (workspace,))
+    CUR.execute("SELECT ip,vhost,in_scope,explicit_out_scope,submitted FROM vhosts WHERE workspace=? ORDER BY explicit_out_scope ASC, in_scope DESC,ip,vhost", (workspace,))
     vhost_rows = CUR.fetchall()
     CONNECTION.commit()
     return vhost_rows
+
+def update_vhost_ip(ip,vhost,workspace):
+    CUR.execute("UPDATE vhosts SET ip=? WHERE vhost=? AND workspace=?", (ip,vhost,workspace))
+    CONNECTION.commit()
 
 def update_vhosts_submitted(ip,vhost,workspace,submitted):
     CUR.execute("UPDATE vhosts SET submitted=? WHERE ip=? AND vhost=? AND workspace=?", (submitted,ip,vhost,workspace))
@@ -521,9 +622,12 @@ def update_vhosts_in_scope(ip,vhost,workspace,in_scope):
     CUR.execute("UPDATE vhosts SET in_scope=? WHERE ip=? AND vhost=? AND workspace=?", (in_scope,ip,vhost,workspace))
     CONNECTION.commit()
 
-def update_vhosts_explicit_out_of_scope(ip,vhost,workspace,explicit_out_of_scope):
-    CUR.execute("UPDATE vhosts SET explicit_out_of_scope=? AND vhost=? AND workspace=?", (explicit_out_of_scope,vhost,workspace))
+def update_vhosts_explicit_out_of_scope(vhost,workspace,in_scope,explicit_out_scope):
+    CUR.execute("UPDATE vhosts SET in_scope=?,explicit_out_scope=? WHERE vhost=? AND workspace=?", (in_scope,explicit_out_scope,vhost,workspace))
     CONNECTION.commit()
+
+
+
 
 #############################
 # Table: Paths
@@ -548,6 +652,12 @@ def get_all_paths(workspace):
 
 def get_all_paths_for_host(ip):
     CUR.execute("SELECT ip,port,path,url_screenshot_filename,workspace FROM paths WHERE ip = ? ORDER BY port,path", (ip,))
+    all_paths_for_host = CUR.fetchall()
+    CONNECTION.commit()
+    return all_paths_for_host
+
+def get_all_paths_for_host_path_only(ip,workspace):
+    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ?", (ip,workspace))
     all_paths_for_host = CUR.fetchall()
     CONNECTION.commit()
     return all_paths_for_host

@@ -2,103 +2,57 @@
 
 """
 Usage:
-    celerystalk workspace create -o <output_dir> [-w workspace_name]
-    celerystalk workspace [<workspace_name>]
-    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-u <url>]
-    celerystalk subdomains -d <domains> [-s]
-    celerystalk scan [-f <nmap_file>] [-t <targets>] [-d <domains>] [-S scope_file] [-D subdomains_file] [-s]
-    celerystalk scan -u <url> [-s]
-    celerystalk rescan [-t <targets>] [-s]
-    celerystalk query ([full] | [summary] | [brief]) [watch]
-    celerystalk query [watch] ([full] | [summary] | [brief])
-    celerystalk report
-    celerystalk cancel ([all]|[<task_ids>])
-    celerystalk pause  ([all]|[<task_ids>])
-    celerystalk resume ([all]|[<task_ids>])
-    celerystalk db ([workspaces] | [services] | [hosts] | [vhosts] | [paths])
-    celerystalk db export
-    celerystalk shutdown
-    celerystalk interactive
+    celerystalk workspace ([create]|[switch]) [-w workspace_name] [-o <output_dir>] [-m <mode>] [-h]
+    celerystalk import [-f <nmap_file>] [-S scope_file] [-D subdomains_file] [-O outOfScope.txt] [-u <url>] [-h]
+    celerystalk subdomains [-d <domains>] [-c <config_file>] [-s] [-h]
+    celerystalk nmap [-t <targets>] [-c <config_file>] [-s] [-h]
+    celerystalk scan [-t <targets>] [--noIP] [-c <config_file>] [-s] [-h]
+    celerystalk scan -u <url> [-c <config_file>] [-s] [-h]
+    celerystalk rescan [-t <targets>] [-c <config_file>] [-s] [-h]
+    celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
+    celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
+    celerystalk report [-h]
+    celerystalk cancel ([all]|[<task_ids>]) [-h]
+    celerystalk pause  ([all]|[<task_ids>]) [-h]
+    celerystalk resume ([all]|[<task_ids>]) [-h]
+    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[tasks]) [-h]
+    celerystalk db export [-h]
+    celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
+    celerystalk interactive [-h]
     celerystalk (help | -h | --help)
 
 Options:
     -h --help           Show this screen
     -v --version        Show version
     -f <nmap_file>      Nmap xml import file
+    -c <config_file>    Specify a non-default configuration file  by name
     -o <output_dir>     Output directory
-    -S <scope_file>      Scope import file
+    -m <mode>           vapt = VulnAssmt/PenTest, bb = Bug Bounty
+    -S <scope_file>     Scope import file
+    -O <outscope_file>  Out of scope hosts file
     -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
     -u <url>            URL to parse and scan with all configured tools
     -w <workspace>      Workspace
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
+    --noIP              Only scan targets by DNS hostname (Don't scan the IP address)
 
-Examples:
+Context specific help with examples:
 
-  Workspace
-    Create default workspace    celerystalk workspace create -o /assessments/client
-    Create named workspace      celerystalk workspace create -o /assessments/client -w client
-    Switch to another worksapce celerystalk workspace client2
-
-  Import
-    Import Nmap XML file:       celerystalk import -f /assessments/nmap.xml
-    Import Nessus file:         celerystalk import -f /assessments/scan.nessus
-    Import list of Domains:     celerystalk import -D <file>
-    Import list of IPs/Ranges:  celerystalk import -S <file>
-    Import multiple files:      celerystalk import -f nmap.xml -S scope.txt -D domains.txt
-
-  Subdomain Recon
-    Find subdomains:            celerystalk subdomains -d domain1.com,domain2.com
-
-  Scan
-    Scan all in scope hosts:    celerystalk scan
-    Scan subset of DB hosts:    celerystalk scan -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -t 10.0.0.100-200
-                                celerystalk scan -t 10.0.0.0/24
-                                celerystalk scan -t sub.domain.com
-    Simulation mode:            celerystalk scan -s
-
-  Import and Scan
-    Start from Nmap XML file:   celerystalk scan -f /pentest/nmap.xml
-    Start from Nessus file:     celerystalk scan -f /pentest/scan.nessus
-    Scan subset hosts in XML:   celerystalk scan -f <file> -t 10.0.0.1,10.0.0.3
-                                celerystalk scan -f <file> -t 10.0.0.100-200
-                                celerystalk scan -f <file> -t 10.0.0.0/24
-                                celerystalk scan -f <file> -t sub.domain.com
-    Simulation mode:            celerystalk scan -f <file> -s
-
-  Rescan
-   Rescan all hosts:            celerystalk rescan
-   Rescan some hosts            celerystalk rescan-t 1.2.3.4,sub.domain.com
-   Simulation mode:             celerystalk rescan -s
-
-  Query Mode
-    All tasks:                  celerystalk query
-    Update status every 2s:     celerystalk query watch
-    Show only 5 tasks per mode: celerystalk query brief
-    Show stats only             celerystalk query summary
-    Show stats every 2s:        celerystalk query summary watch
-
- Job Control (cancel/pause/resume)
-    Specific tasks:             celerystalk cancel 5,6,10-20
-                                celerystalk pause 5,6,10-20
-                                celerystalk resume 5,6,10-20
-
-    All tasks current worspace: celerystalk cancel all
-                                celerystalk pause all
-                                celerystalk resume all
-
-  Access the DB
-    Show workspaces:            celeryststalk db workspaces
-    Show services:              celeryststalk db services
-    Show hosts:                 celeryststalk db hosts
-    Show vhosts only            celeryststalk db vhosts
-    Show paths:                 celeryststalk db paths
-
-  Export DB
-    Export current DB:          celerystalk db export
-
+    ./celerystalk workspace -h
+    ./celerystalk subdomains -h
+    ./celerystalk import -h
+    ./celerystalk nmap -h
+    ./celerystalk scan -h
+    ./celerystalk rescan -h
+    ./celerystalk query -h
+    ./celerystalk pause -h
+    ./celerystalk resume -h
+    ./celerystalk cancel -h
+    ./celerystalk db -h
+    ./celerystalk report -h
+    ./celerystalk admin -h
 """
 
 
@@ -115,20 +69,23 @@ import lib.utils
 import lib.report
 import lib.query
 import lib.csimport
+import lib.nmap
 import lib.config_parser
-#import lib.interactive
+import lib.interactive
+import lib.administrative
 from lib import db
 import lib.workspace
 from prettytable import PrettyTable
 import csv
 
+from lib.nmap import nmapcommand
 
-build=str(120)
+build=str(159)
 
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("\t\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.1\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
@@ -142,11 +99,18 @@ def main(arguments):
     db.create_vhosts_table()
     db.create_workspace_table()
     db.create_current_workspace_table()
+    db.create_celerystalk_table()
+
+    celery_path = sys.path[0]
+    db.set_install_path((celery_path,))
+
+    lib.utils.check_for_new_default_config()
+
 
     if arguments["interactive"]:
         prompt = lib.interactive.MyPrompt()
         prompt.prompt = '[celerystalk] '
-        prompt.cmdloop('starting...')
+        prompt.cmdloop("+!" * 35 + '\n\n[!] Interactive mode is still in development and should not be used at this time...\n\n' + "+!" * 35)
 
 
 
@@ -155,6 +119,38 @@ def main(arguments):
     ####################################
 
     if arguments["workspace"]:
+        if arguments["--help"]:
+            columns = ["Option", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Prints current workspace\n"])
+            help_table.add_row(["create", "Creates a new workspace\n"])
+            help_table.add_row(["switch", "Switch to another workspace\n"])
+            help_table.add_row(["-w", "Define workspace name\n"])
+            help_table.add_row(["-o", "Define output directory for workspace\n"])
+            help_table.add_row(["-m [vapt|bb]", "Define workspace mode\n\n"
+                                                "VAPT Mode: In VAPT mode, IP addresses/ranges/CIDRs define scope.\n"
+                                                "           Subdomains that match an in-scope IP are also added to scope.\n\n"
+                                                "           Ways to define your scope:\n"
+                                                "               ./celerystalk import -S scope.txt\n"
+                                                "               ./celerystalk import -f nmap/nessus file\n\n"
+                                                "           Hosts can be explicitly excluded:\n"
+                                                "               ./celerysatlk import -O out_of_scope.txt. \n\n"
+                                                "BB Mode:   In BB mode, all subdomains found with celerystalk or\n"
+                                                "           manually imported are marked in scope.\n\n"
+                                                "           Hosts can be explicitly excluded:\n"
+                                                "              ./celerystalk import -O out_of_scope.txt.\n"
+                                                ])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    Create VAPT workspace   ./celerystalk workspace create -o /assessments/client -m vapt -w client_name
+    Create BB workspace     ./celerystalk workspace create -o /assessments/client -m bb -w company_name
+    Show current workspaces ./celerystalk workspace
+    Switch workspace        ./celerystalk workspace switch -w company_name
+        
+\n""")
+            exit()
         if arguments["create"]:
             if arguments["-w"]:
                 workspace = arguments["-w"]
@@ -168,16 +164,16 @@ def main(arguments):
                 lib.db.set_initial_current_workspace(db_workspace)
             else:
                 lib.db.update_current_workspace(workspace)
-        elif arguments["<workspace_name>"]:
-            if arguments["<workspace_name>"]:
-                workspace = arguments["<workspace_name>"]
+        elif arguments["switch"]:
+            if arguments["-w"]:
+                workspace = arguments["-w"]
             else:
                 workspace = 'Default'
             db_workspace = (workspace,)
-            current_workspace = lib.db.get_current_workspace()
-            if not current_workspace:
-                db_workspace = (workspace,)
-                lib.db.set_initial_current_workspace(db_workspace)
+            current_workspace = lib.db.get_current_workspace()[0][0]
+
+            if workspace == current_workspace:
+                print("[!] [{0}] is already the current workspace.\n".format(workspace))
             else:
                 #if the workspace set is not the current workspace, figure out if it exists or if it is new
                 all_workspaces = lib.db.get_all_workspaces()
@@ -187,12 +183,12 @@ def main(arguments):
                     if db_workspace_name == workspace:
                         workspace_exists = "True"
                         lib.db.update_current_workspace(workspace)
-
+                        print("[!] [{0}] is now the current workspace.\n".format(workspace))
 
                 if workspace_exists == "False":
                     # if the new workspace doesnt exists, tell the user they need to create it first
                     print("[!] There is no workspace with that name. Here are the known workspaces:\n")
-                    columns = ["Workspace", "Output Directory"]
+                    columns = ["Workspace", "Output Directory","Mode"]
                     workspace_rows = lib.db.get_all_workspaces()
                     workspaces_table = PrettyTable(columns)
                     workspaces_table.align[columns[1]] = "l"
@@ -202,8 +198,8 @@ def main(arguments):
                     print("\n")
 
                     print("[+] If you'd like to create a new workspace:\n\n")
-                    print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                    print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                    print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                    print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                     exit()
         else:
             try:
@@ -211,11 +207,11 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
-            
-            columns = ["Workspace", "Output Directory"]
+
+            columns = ["Workspace", "Output Directory","Mode"]
             workspace_rows = lib.db.get_all_workspaces()
             workspaces_table = PrettyTable(columns)
             workspaces_table.align[columns[1]] = "l"
@@ -227,9 +223,6 @@ def main(arguments):
 
 
 
-
-
-
     ####################################
     # Query Command: allows users to view the status of ongoing async scan
     ####################################
@@ -237,6 +230,25 @@ def main(arguments):
 
     # Query - Inform user about job status
     if arguments["query"]:
+        lib.utils.start_services()
+        if arguments["--help"]:
+            columns = ["Option", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Shows all tasks"])
+            help_table.add_row(["watch", "Updates status every two seconds"])
+            help_table.add_row(["brief", "Limit of 5 results per status (pending/running/completed/cancelled/paused)"])
+            help_table.add_row(["summary", "Shows only a banner with numbers and not the tasks themselves"])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+        ./celerystalk query 
+        ./celerystalk query watch                               
+        ./celerystalk query brief
+        ./celerystalk query summary                                
+        ./celerystalk query summary watch
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -245,8 +257,8 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
         try:
             if arguments["watch"]:
@@ -271,6 +283,20 @@ def main(arguments):
     ####################################
 
     if arguments["cancel"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["all", "Cancel all tasks in current workspace"])
+            help_table.add_row(["<task id(s)>", "Cancel specific task id, ids, or ranges."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk cancel all
+    ./celerystalk cancel 3
+    ./celerystalk cancel 5,6,10-20                
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -279,8 +305,8 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
         paused_tasks = db.get_paused_tasks(workspace)
         running_tasks = db.get_running_tasks(workspace)
@@ -299,6 +325,20 @@ def main(arguments):
     # Pause Command
     ####################################
     if arguments["pause"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["all", "Pause all running tasks in current workspace"])
+            help_table.add_row(["<task id(s)>", "Pause specific task id, ids, or ranges."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk pause all
+    ./celerystalk pause 3
+    ./celerystalk pause 5,6,10-20                
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -307,8 +347,8 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
         if arguments["all"]:
             num_paused = lib.pause.pause_running_tasks("all",workspace)
@@ -330,6 +370,20 @@ def main(arguments):
     ####################################
 
     if arguments["resume"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["all", "Resume/Unpause all paused tasks in current workspace"])
+            help_table.add_row(["<task id(s)>", "Resume/Unpause specific task id, ids, or ranges."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk resume all
+    ./celerystalk resume 3
+    ./celerystalk resume 5,6,10-20                
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -354,18 +408,110 @@ def main(arguments):
         exit()
 
     ####################################
-    # Shutdown Command
+    # Celery Command
     ####################################
 
-    if arguments["shutdown"]:
-        lib.utils.shutdown_background_jobs()
-        exit()
+    if arguments["admin"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["start", "Start Celery & Redis processes"])
+            help_table.add_row(["stop", "Stop Celery & Redis processes"])
+            help_table.add_row(["reset", "Destroy DB, Flush Redis, start over"])
+            help_table.add_row(["backup", "Backup DB and all workspace data directories"])
+            help_table.add_row(["restore", "Restore DB and all workspace data directories"])
+            help_table.add_row(["-f [filename]", "Restore file name"])
+
+
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk admin start
+    ./celerystalk admin stop
+    ./celerystalk admin reset                
+    ./celerystalk admin backup                  
+    ./celerystalk admin restore -f <filename>                
+                
+            \n""")
+            exit()
+        if arguments["stop"]:
+            lib.utils.shutdown_background_jobs()
+            exit()
+        if arguments["start"]:
+            lib.utils.start_services()
+            exit()
+        if arguments["reset"]:
+            print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
+            answer = raw_input("Are you sure you want to continue? (y\N): ")
+            print("")
+            if (answer == "Y") or (answer == "y"):
+                from subprocess import Popen
+                path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
+                print(path)
+                os.chdir(path)
+                populated_command = "bash ./reset.sh"
+                p = Popen(populated_command, shell=True)
+                p.communicate()
+                lib.utils.shutdown_background_jobs()
+                exit()
+        if arguments["backup"]:
+            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+        if arguments["restore"]:
+            if arguments["-f"]:
+                restore_file = arguments["-f"]
+                lib.administrative.restore_all_workspaces(restore_file)
+            else:
+                print("[!] Use [-f] to specify which backup file would you like to restore")
+
+    ####################################
+    # Reset Command
+    ####################################
+
+    if arguments["reset"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Destroy DB, Flush Redis, start over"])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk reset                
+            \n""")
+            exit()
+        print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
+        answer = raw_input("Are you sure you want to continue? (y\N): ")
+        print("")
+        if (answer == "Y") or (answer == "y"):
+            from subprocess import Popen
+            path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
+            print(path)
+            os.chdir(path)
+            populated_command = "bash ./reset.sh"
+            p = Popen(populated_command, shell=True)
+            p.communicate()
+            lib.utils.shutdown_background_jobs()
+            exit()
+
+
 
 
     ####################################
     # Report Command: Run Report
     ####################################
     if arguments["report"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Create report for all in-scope hosts that have been scanned."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk report                
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -374,8 +520,8 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
@@ -388,6 +534,29 @@ def main(arguments):
     # DB Command: Dump data from DB
     ####################################
     if arguments["db"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["workspaces", "Show all workspaces with their output directory and mode."])
+            help_table.add_row(["services", "Show all open ports and service types by host."])
+            help_table.add_row(["hosts", "Show all hosts, whether they are in-scope, out of scope, or submitted."])
+            help_table.add_row(["vhosts", "Same as hosts command, but excludes vhosts that are IP addresses."])
+            help_table.add_row(["paths", "Show all paths that have been identified by vhost."])
+            help_table.add_row(["tasks", "Show all tasks in the DB."])
+
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    Show workspaces:            ./celeryststalk db workspaces
+    Show services:              ./celeryststalk db services
+    Show hosts:                 ./celeryststalk db hosts
+    Show vhosts only            ./celeryststalk db vhosts
+    Show paths:                 ./celeryststalk db paths
+    Show tasks:                 ./celeryststalk db tasks
+    Export tables to csv        ./celeryststalk db export
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -396,13 +565,13 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
 
         if arguments["workspaces"]:
 
-            columns = ["Workspace", "Output Directory"]
+            columns = ["Workspace", "Output Directory","Mode"]
             workspace_rows = lib.db.get_all_workspaces()
             workspaces_table = PrettyTable(columns)
             workspaces_table.align[columns[1]] = "l"
@@ -413,7 +582,7 @@ def main(arguments):
         else:
             if arguments["hosts"]:
                 print("[+] Showing hosts for the [{0}] workspace\n".format(workspace))
-                columns = ["IP","Vhost","In Scope","Submitted"]
+                columns = ["IP","Vhost","In Scope","Explicit Out of Scope","Submitted"]
                 host_rows = lib.db.get_vhosts_table(workspace)
                 hosts_table = PrettyTable(columns)
                 hosts_table.align[columns[0]] = "l"
@@ -424,7 +593,7 @@ def main(arguments):
                 print("\n\n")
             elif arguments["vhosts"]:
                 print("[+] Showing vhosts for the [{0}] workspace\n".format(workspace))
-                columns = ["IP","Vhost","In Scope","Submitted"]
+                columns = ["IP","Vhost","In Scope","Explicit Out of Scope","Submitted"]
                 host_rows = lib.db.get_vhosts_table(workspace)
                 hosts_table = PrettyTable(columns)
                 hosts_table.align[columns[0]] = "l"
@@ -436,14 +605,14 @@ def main(arguments):
                 print("\n\n")
             elif arguments["services"]:
                 print("[+] Showing services for the [{0}] workspace\n".format(workspace))
-                columns = ["IP", "Port", "Protocol","Service"]
+                columns = ["IP", "Port", "Protocol","Service","Product","Version","Extra Info"]
                 services_rows = lib.db.get_all_services(workspace)
                 services_table = PrettyTable(columns)
                 services_table.align[columns[0]] = "l"
                 services_table.align[columns[1]] = "l"
                 services_table.align[columns[3]] = "l"
                 for row in services_rows:
-                    services_table.add_row(row[1:5])
+                    services_table.add_row(row[0:7])
                 print(services_table)
                 print("\n\n")
             elif arguments["paths"]:
@@ -458,6 +627,23 @@ def main(arguments):
                     paths_table.add_row(row[1:4])
                 print(paths_table)
                 print("\n\n")
+            elif arguments["tasks"]:
+                print("[+] Showing tasks for the [{0}] workspace\n".format(workspace))
+                columns = ["ID","PID","Command","Status"]
+                tasks_rows = lib.db.get_all_tasks_in_workspace(workspace)
+                tasks_table = PrettyTable(columns)
+                tasks_table.align[columns[0]] = "l"
+                tasks_table.align[columns[1]] = "l"
+                tasks_table.align[columns[2]] = "l"
+                tasks_table.align[columns[3]] = "l"
+                for row in tasks_rows:
+                    id = row[0]
+                    pid = row[1]
+                    command = row[2][0:50] + "..."
+                    status = row[3]
+                    tasks_table.add_row((id,pid,command,status,))
+                print(tasks_table)
+                print("\n\n")
             elif arguments["export"]:
                 output_dir = db.get_output_dir_for_workspace(workspace)[0][0]
                 #hosts
@@ -466,7 +652,7 @@ def main(arguments):
                 hosts_output_file = os.path.join(output_dir,hosts_filename)
                 with open(hosts_output_file, 'wb') as f:
                     writer = csv.writer(f)
-                    writer.writerow(["IP","vhost","in_scope"])
+                    writer.writerow(["IP","vhost","in_scope","explicit_out_of_scope","submitted"])
                     writer.writerows(host_rows)
                 print("[+] Saved all hosts in the [{0}] workspace to {1}".format(workspace, hosts_output_file))
 
@@ -476,7 +662,7 @@ def main(arguments):
                 services_output_file = os.path.join(output_dir, services_filename)
                 with open(services_output_file, 'wb') as f:
                     writer = csv.writer(f)
-                    writer.writerow(["IP", "Port", "Protocol","Service"])
+                    writer.writerow(["IP", "Port", "Protocol","Service","Product","Version","Extra Info"])
                     writer.writerows(services_rows)
                 print("[+] Saved all ports in the [{0}] workspace to {1}".format(workspace,services_output_file))
 
@@ -495,6 +681,26 @@ def main(arguments):
     ####################################
 
     if arguments["import"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["-f [filename]", "Import a nmap/nessus xml file."])
+            help_table.add_row(["-S [filename]", "Import a text file with IP IP/IP Ranges/CIDRs and mark them as in-scope."])
+            help_table.add_row(["-D [filename]", "Import a text file with subdomains/vhosts. \nIf BB mode, mark all vhosts as in scope. \nIf VAPT mode, only mark vhosts that resolve to an in scope \nIP address/range/CIDR as in scope."])
+            help_table.add_row(["-O [filename]", "Import a text file with subdomains/vhosts and \nmark hosts as explicitly out of scope. These hosts will never be scanned."])
+            help_table.add_row(["-u url", "Parse the URL. Mark the host as in scope and record \nthe service/port/path in the DB."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    Import Nmap XML file:       ./celerystalk import -f /assessments/nmap.xml
+    Import Nessus file:         ./celerystalk import -f /assessments/scan.nessus
+    Import list of Domains:     ./celerystalk import -D <file>
+    Import list of IPs/Ranges:  ./celerystalk import -S <file>
+    Specify out of scope hosts: ./celerystalk import -O <file>
+    Import multiple files:      ./celerystalk import -f nmap.xml -S scope.txt -D domains.txt
+            \n""")
+            exit()
         if arguments["-w"]:
             output_dir,workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -503,8 +709,8 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
         lib.csimport.importcommand(workspace, output_dir, arguments)
 
@@ -512,6 +718,24 @@ def main(arguments):
     # subdomains Command
     ####################################
     if arguments["subdomains"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["-d domain1,domain2,etc", "Run Amass, Sublist3r, etc. and store domains in DB.\n\n"
+                                                          "After running your subdomain recon tools celerystalk determines whether each\n"
+                                                          "subdomain is in scope by resolving the IP and looking for IP in the DB.\n"
+                                                          "If there is a match, the domain is marked as in scope and will be scanned.\n"])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
+
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    Find subdomains:                ./celerystalk subdomains -d domain1.com,domain2.com
+    Specify a non-default config:   ./celerystalk subdomains -d domain1.com,domain2.com -c myconfig.ini
+
+            \n""")
+            exit()
         lib.utils.start_services()
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
@@ -521,11 +745,11 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
                 exit()
-        lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,scan_mode="VAPT")
+        lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
@@ -534,6 +758,28 @@ def main(arguments):
     # ReScan Command
     ####################################
     if arguments["rescan"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "For each in scope host in the DB, celerystalk will\n"
+                                "ask if if you want to rescan it."])
+            help_table.add_row(["-t ip,vhost,cidr", "Scan a subset of the in scope IPs and/or subdomains."])
+            help_table.add_row(["-s", "Sends all of the tasks to celery, but all commands are executed\n"
+                                      "with a # before them rendering them inert."])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
+
+            print(help_table)
+            print("\n")
+            print("""Examples:
+     ./celerystalk rescan
+     ./celerystalk rescan -c myconfig.ini
+     ./celerystalk rescan -t host.domain.com     
+     ./celerystalk rescan -s
+            \n""")
+            exit()
+
+
         #print(arguments["scan"])
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
@@ -543,23 +789,32 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
 
         arguments["scan"] = True
         all_submitted_vhosts = lib.db.get_inscope_submitted_vhosts(workspace)
+        all_submitted_vhosts_list = []
+        [all_submitted_vhosts_list.append(i[0]) for i in all_submitted_vhosts]  # converts list of tuples that contains the IPs, to a list of IPs
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             for target in target_list:
-                if target not in all_submitted_vhosts:
-                    print("[!] [{0}] has never been submitted, so it can't be rescanned.".format(target))
-        for submitted_vhost in all_submitted_vhosts:
-            vhost = submitted_vhost[0]
-            answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
-            if (answer == "Y") or (answer == "y") or (answer == ""):
-                ip = db.get_vhost_ip(vhost,workspace)[0][0]
-                db.update_vhosts_submitted(ip, vhost, workspace, 0)
+                vhost = str(target)
+                if str(vhost) not in all_submitted_vhosts_list:
+                    print("[!] [{0}] has never been submitted, so it can't be rescanned.".format(vhost))
+                else:
+                    answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+                    if (answer == "Y") or (answer == "y") or (answer == ""):
+                        ip = db.get_vhost_ip(vhost, workspace)[0][0]
+                        db.update_vhosts_submitted(ip, vhost, workspace, 0)
+        else:
+            for submitted_vhost in all_submitted_vhosts:
+                vhost = submitted_vhost[0]
+                answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+                if (answer == "Y") or (answer == "y") or (answer == ""):
+                    ip = db.get_vhost_ip(vhost,workspace)[0][0]
+                    db.update_vhosts_submitted(ip, vhost, workspace, 0)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
@@ -569,8 +824,46 @@ def main(arguments):
     ####################################
 
     if arguments["scan"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Scans all in-scope hosts in the workspace that have not been scanned yet.\n"])
+            help_table.add_row(["--noIP", "Don't scan hosts by IP (only scan vhosts).\n"])
+            help_table.add_row(["-t ip,vhost,cidr", "Scan a specific target or targets.\n"])
+            help_table.add_row(["-s", "Sends all of the tasks to celery, but all commands are executed with a \n# before them rendering them inert.\n"])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
+            help_table.add_row(["-u [URL]", "Scan a specific URL, even if it is not in the DB yet"])
+
+            print(help_table)
+            print("\n")
+            print("""Examples:
+  Scan
+    Scan all in scope hosts:    ./celerystalk scan
+    Specify non-default config  ./celerystalk scan -c myconfig.ini
+    Don't scan IPs:             ./celerystalk scan --noIP
+    Scan subset of DB hosts:    ./celerystalk scan -t 10.0.0.1,10.0.0.3
+                                ./celerystalk scan -t 10.0.0.100-200
+                                ./celerystalk scan -t 10.0.0.0/24
+                                ./celerystalk scan -t sub.domain.com
+    Scan URL                    ./celerystalk scan -u http://sub.domain.com/
+                                ./celerystalk scan -u http://sub.domain.com/path/
+    Simulation mode:            ./celerystalk scan -s
+
+            \n""")
+            exit()
+
         lib.utils.start_services()
         celery_path = sys.path[0]
+        if arguments["-c"]:
+            if os.path.exists(arguments["-c"]):
+                config_file = arguments["-c"]
+            else:
+                print("[!] The specified config file does not exist. Try again?")
+                exit()
+        else:
+            config_file = 'config.ini'
+
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -579,8 +872,8 @@ def main(arguments):
                 output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
             except:
                 print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir                     #Default workspace")
-                print("./celerystalk workspace create -o output_dir -w workspace_name   #Named workspace\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
 
 
@@ -588,70 +881,63 @@ def main(arguments):
         # Scan - URL - Parse use provided URL and run all celerystalk tools against it
         ####################################
         if arguments["-u"]:
-            lib.scan.process_url(arguments["-u"], workspace, output_dir, arguments)
+            lib.scan.process_url(arguments["-u"], workspace, output_dir, arguments,config_file=config_file)
             exit()
         elif arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             if arguments["-f"]:
                 lib.csimport.importcommand(workspace, output_dir, arguments)
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list)
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],target_list=target_list,dont_scan_ips=arguments["--noIP"],config_file=config_file)
         else:
             if arguments["-f"]:
                 lib.csimport.importcommand(workspace, output_dir, arguments)
             #this one is the catch all if the user only types scan and nothing else.
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"])
+
+            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"],config_file=config_file)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
 
+    ####################################
+    # nmap Command
+    ####################################
 
+    if arguments["nmap"]:
+        if arguments["--help"]:
+            columns = ["Command", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(
+                ["no options", "Read nmap command from config and scan all services for in-scope hosts"])
+            help_table.add_row(["-c [filename]", "Specify a celerystalk configuration file [Default: ./config.ini]"])
 
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    Nmap in-scope hosts         celerystalk nmap
+    Scan subset of DB hosts:    celerystalk nmap -t ip,ip
+    Specify non-default config: celerystalk nmap -c myconfig.ini
+    Simulation mode:            celerystalk nmap -s
+    
+            \n""")
+            exit()
 
-        # ####################################
-        # # Scan - Bug Bounty mode - take domains, find subdomains, run nmap, run celerystalk (for ALL hosts in target file)
-        # ####################################
-        #
-        # if arguments["<bb_scope_file>"]:
-        #     scan_mode = "BB"
-        #     in_scope_domains, in_scope_hosts, out_of_scope_hosts = lib.config_parser.read_bb_scope_ini(
-        #         arguments["<bb_scope_file>"])
-        #
-        #
-        #     #submit the in scope hosts to celery
-        #     for in_scope_host in in_scope_hosts:
-        #         in_scope_host = in_scope_host[0]
-        #         #try:
-        #         ip = socket.gethostbyname(in_scope_host)
-        #
-        #         #nmap_report = lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
-        #         lib.scan.nmap_scan_subdomain_host(in_scope_host, workspace,arguments["--simulation"],output_dir)  # run nmap scan
-        #         db_vhost = (ip, in_scope_host, 1, 0, workspace)  # in this mode all vhosts are in scope
-        #         print(db_vhost)
-        #         db.create_vhost(db_vhost)
-        #         #lib.scan.process_nmap_data2(nmap_report, workspace)
-        #         #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
-        #         # except:
-        #         #     print("2There was an issue running the nmap scan against {0}.").format(in_scope_host)
-        #         #     ip = ""
-        #         #     db_vhost = (ip, in_scope_host, 0, 0, workspace)  # not in scope if no IP
-        #         #     print(db_vhost)
-        #         #     db.create_vhost(db_vhost)
-        #
-        #     for domain in in_scope_domains:
-        #         print("domain pulled from in scope domains")
-        #         print(domain)
-        #         lib.scan.subdomains(domain, arguments["--simulation"], workspace, output_dir,
-        #                                  scan_mode,out_of_scope_hosts)
-        #     #lib.scan.process_db_services(output_dir, arguments["--simulation"], workspace)
+        lib.utils.start_services()
 
+        if arguments["-c"]:
+            config_file = arguments["-c"]
+        else:
+            config_file = 'config.ini'
 
+        nmapcommand(arguments["--simulation"], arguments["-t"],config_file=config_file)
+
+    if arguments["--help"]:
+        print(__doc__)
 
 if __name__ == "__main__":
-    arguments = docopt(__doc__, version='Build '+ build)
+    arguments = docopt(__doc__, version='Build '+ build, help=False)
     #print(arguments)
     print_banner()
-    if arguments["help"]:
-       print(__doc__)
     main(arguments)
 
 
