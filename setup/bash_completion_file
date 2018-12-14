@@ -5,26 +5,20 @@ _celerystalk()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 1 ]; then
-        COMPREPLY=( $( compgen -W '-h --help -h --help reset pause shutdown scan nmap help rescan resume db subdomains cancel workspace query report import interactive' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help pause help scan nmap rescan resume db subdomains cancel workspace query report import admin interactive' -- $cur) )
     else
         case ${COMP_WORDS[1]} in
-            reset)
-            _celerystalk_reset
-        ;;
             pause)
             _celerystalk_pause
         ;;
-            shutdown)
-            _celerystalk_shutdown
+            help)
+            _celerystalk_help
         ;;
             scan)
             _celerystalk_scan
         ;;
             nmap)
             _celerystalk_nmap
-        ;;
-            help)
-            _celerystalk_help
         ;;
             rescan)
             _celerystalk_rescan
@@ -53,21 +47,14 @@ _celerystalk()
             import)
             _celerystalk_import
         ;;
+            admin)
+            _celerystalk_admin
+        ;;
             interactive)
             _celerystalk_interactive
         ;;
         esac
 
-    fi
-}
-
-_celerystalk_reset()
-{
-    local cur
-    cur="${COMP_WORDS[COMP_CWORD]}"
-
-    if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W ' ' -- $cur) )
     fi
 }
 
@@ -77,7 +64,7 @@ _celerystalk_pause()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 2 ]; then
-	    COMPREPLY=( $( compgen -W 'all <task_id(s)> ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help all' -- $cur) )
     else
         case ${COMP_WORDS[2]} in
             all)
@@ -98,7 +85,7 @@ _celerystalk_pause_all()
     fi
 }
 
-_celerystalk_shutdown()
+_celerystalk_help()
 {
     local cur
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -114,7 +101,7 @@ _celerystalk_scan()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -fW '-f <nmap/nessus file> -t <target(s)> -d <domains> -S <in_scope_file> -D <subdomains_file> --noIP -u <url> -s --simulation ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-t= --noIP -c= -s --simulation -u= -c= -s --simulation -h --help ' -- $cur) )
     fi
 }
 
@@ -124,17 +111,7 @@ _celerystalk_nmap()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W '-t= -s --simulation ' -- $cur) )
-    fi
-}
-
-_celerystalk_help()
-{
-    local cur
-    cur="${COMP_WORDS[COMP_CWORD]}"
-
-    if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-t= -c= -s --simulation -h --help ' -- $cur) )
     fi
 }
 
@@ -144,7 +121,7 @@ _celerystalk_rescan()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W '-t= -s --simulation ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-t= -c= -s --simulation -h --help ' -- $cur) )
     fi
 }
 
@@ -154,7 +131,7 @@ _celerystalk_resume()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 2 ]; then
-	    COMPREPLY=( $( compgen -W 'all <task_id(s)> -w' -- $cur) )
+        COMPREPLY=( $( compgen -fW 'all -h --help ' -- $cur) )
     else
         case ${COMP_WORDS[2]} in
             all)
@@ -181,11 +158,14 @@ _celerystalk_db()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 2 ]; then
-        COMPREPLY=( $( compgen -W ' paths workspaces vhosts hosts services export' -- $cur) )
+        COMPREPLY=( $( compgen -W 'paths tasks workspaces vhosts hosts services export -h --help' -- $cur) )
     else
         case ${COMP_WORDS[2]} in
             paths)
             _celerystalk_db_paths
+        ;;
+            tasks)
+            _celerystalk_db_tasks
         ;;
             workspaces)
             _celerystalk_db_workspaces
@@ -208,6 +188,16 @@ _celerystalk_db()
 }
 
 _celerystalk_db_paths()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_db_tasks()
 {
     local cur
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -263,7 +253,7 @@ _celerystalk_db_export()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 3 ]; then
-        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help ' -- $cur) )
     fi
 }
 
@@ -273,7 +263,7 @@ _celerystalk_subdomains()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W '-d --domains -s --simulation ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-d --domains -c= -s --simulation -h --help ' -- $cur) )
     fi
 }
 
@@ -283,7 +273,7 @@ _celerystalk_cancel()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 2 ]; then
-	    COMPREPLY=( $( compgen -W 'all <task_id(s)> -w' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help all' -- $cur) )
     else
         case ${COMP_WORDS[2]} in
             all)
@@ -310,11 +300,14 @@ _celerystalk_workspace()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 2 ]; then
-        COMPREPLY=( $( compgen -W ' create' -- $cur) )
+        COMPREPLY=( $( compgen -W '-w= -o= -m= -h --help create switch' -- $cur) )
     else
         case ${COMP_WORDS[2]} in
             create)
             _celerystalk_workspace_create
+        ;;
+            switch)
+            _celerystalk_workspace_switch
         ;;
         esac
 
@@ -327,7 +320,17 @@ _celerystalk_workspace_create()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 3 ]; then
-        COMPREPLY=( $( compgen -W ' -w <workspace> -o <output directory> -m vapt|bb ' -- $cur) )
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_workspace_switch()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
     fi
 }
 
@@ -337,7 +340,7 @@ _celerystalk_query()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 2 ]; then
-        COMPREPLY=( $( compgen -W ' full brief summary watch' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help full watch brief summary' -- $cur) )
     else
         case ${COMP_WORDS[2]} in
             full)
@@ -403,7 +406,7 @@ _celerystalk_report()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help ' -- $cur) )
     fi
 }
 
@@ -413,7 +416,86 @@ _celerystalk_import()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W '-f <nmap/nessus xml> -S_<in_scope_hosts_file> -D <subdomains_file> -O <out_of_scope_file> -u <url>' -- $cur) )
+        COMPREPLY=( $( compgen -fW '-f= -S= -D= -O= -u= -h --help ' -- $cur) )
+    fi
+}
+
+_celerystalk_admin()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W '-f= -h --help reset start stop backup restore' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            reset)
+            _celerystalk_admin_reset
+        ;;
+            start)
+            _celerystalk_admin_start
+        ;;
+            stop)
+            _celerystalk_admin_stop
+        ;;
+            backup)
+            _celerystalk_admin_backup
+        ;;
+            restore)
+            _celerystalk_admin_restore
+        ;;
+        esac
+
+    fi
+}
+
+_celerystalk_admin_reset()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_admin_start()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_admin_stop()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_admin_backup()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_celerystalk_admin_restore()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -fW '-f= ' -- $cur) )
     fi
 }
 
@@ -423,7 +505,7 @@ _celerystalk_interactive()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -ge 2 ]; then
-        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help ' -- $cur) )
     fi
 }
 

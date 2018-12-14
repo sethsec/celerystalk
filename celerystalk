@@ -53,6 +53,8 @@ Context specific help with examples:
     ./celerystalk db -h
     ./celerystalk report -h
     ./celerystalk admin -h
+
+Note: By default, Celery uses the number of CPUs to set the number of concurrent tasks that can execute.
 """
 
 
@@ -80,7 +82,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(159)
+build=str(160)
 
 def print_banner():
 
