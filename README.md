@@ -23,7 +23,6 @@ celerystalk helps you automate your network scanning/enumeration process with as
 # cd ..
 # ./celerystalk -h
 ```
-**You must install and run celerystalk as root**   
 
 
 ## Using celerystalk - The basics
@@ -387,6 +386,7 @@ Context specific help with examples:
     celerystalk db -h
     celerystalk admin -h
 
+Note: By default, Celery uses the number of CPUs to set the number of concurrent tasks that can execute.
 ```
 
 ## Credit
