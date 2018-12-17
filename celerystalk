@@ -82,7 +82,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(160)
+build=str(161)
 
 def print_banner():
 
@@ -751,7 +751,15 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
                 exit()
-        lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir)
+        if arguments["-c"]:
+            if os.path.exists(arguments["-c"]):
+                config_file = arguments["-c"]
+            else:
+                print("[!] The specified config file does not exist. Try again?")
+                exit()
+        else:
+            config_file = 'config.ini'
+        lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,out_of_scope_hosts=None,config_file=config_file)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
@@ -794,7 +802,14 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
-
+        if arguments["-c"]:
+            if os.path.exists(arguments["-c"]):
+                config_file = arguments["-c"]
+            else:
+                print("[!] The specified config file does not exist. Try again?")
+                exit()
+        else:
+            config_file = 'config.ini'
         arguments["scan"] = True
         all_submitted_vhosts = lib.db.get_inscope_submitted_vhosts(workspace)
         all_submitted_vhosts_list = []
