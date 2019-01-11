@@ -357,7 +357,8 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
             if (section == "http") or (section == "https"):
                 if section == scheme:
                     for (cmd_name, cmd) in config.items(section):
-                        outfile = scan_output_base_file_dir + cmd_name
+                        path_for_filename = path.replace("/","_")
+                        outfile = scan_output_base_file_dir + path_for_filename  + "_" + cmd_name
                         populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]",
                                                                                     str(port)).replace("[OUTPUT]",
                                                                                                        outfile).replace(
