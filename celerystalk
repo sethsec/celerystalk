@@ -82,7 +82,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(161)
+build=str(162)
 
 def print_banner():
 
