@@ -119,7 +119,7 @@ def post_process(*args):
                     exit()
 
             for url in lines:
-                #url = url.split("?")[0].replace("//","/")
+                url = url.split("?")[0].replace("//","/")
                 if url.startswith("http"):
                     url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
                         .replace("/", "_") \

@@ -204,7 +204,7 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
                         for (cmd_name, cmd) in config.items(mapped_service_name):
                             outfile = scan_output_base_file_name + cmd_name
                             populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]", str(
-                                scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]",
+                                scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]",
                                                                                             "")
                             if simulation:
                                 # debug - sends jobs to celery, but with a # in front of every one.
@@ -273,7 +273,7 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
                 port = 80
             elif scheme == "https":
                 port = 443
-        path = parsed_url[2]
+        path = parsed_url[2].replace("//", "/")
     except:
         if not scheme:
             exit()
@@ -362,7 +362,7 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
                         populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]",
                                                                                     str(port)).replace("[OUTPUT]",
                                                                                                        outfile).replace(
-                            "[PATH]", path)
+                            "/[PATH]", path)
                         if simulation:
                             # debug - sends jobs to celery, but with a # in front of every one.
                             populated_command = "#" + populated_command
@@ -549,7 +549,7 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                 #print(config.items(mapped_service_name))
                 for (cmd_name, cmd) in config.items(mapped_service_name):
                     outfile = scan_output_base_file_name + cmd_name
-                    populated_command = cmd.replace("[TARGET]", ip).replace("[PORT]", str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]", "")
+                    populated_command = cmd.replace("[TARGET]", ip).replace("[PORT]", str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]", "")
                     if simulation:
                         #debug - sends jobs to celery, but with a # in front of every one.
                         populated_command = "#" + populated_command
@@ -710,7 +710,7 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
                     for (cmd_name, cmd) in config.items(section):
                         outfile = scan_output_base_file_name + cmd_name
                         populated_command = cmd.replace("[TARGET]", scannable_vhost).replace("[PORT]",
-                            str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("[PATH]", "")
+                            str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]", "")
                         if simulation:
                             # debug - sends jobs to celery, but with a # in front of every one.
                             populated_command = "#" + populated_command

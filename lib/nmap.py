@@ -17,15 +17,15 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
     config.read(['config.ini'])
 
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
-    output_file = os.path.normpath(os.path.join(output_base_dir,vhost,".txt"))
+    output_file = os.path.normpath(os.path.join(output_base_dir, vhost,vhost + "_nmap_tcp_scan.txt"))
     if not vhost_explicitly_out_of_scope:
         #print(config_nmap_options)
         cmd_name = "nmap_tcp_scan"
         try:
             if not simulation:
-                populated_command = "nmap " + vhost + config_nmap_options + "-oN " + output_file
+                populated_command = "nmap " + vhost + config_nmap_options + " -oN " + output_file
             else:
-                populated_command = "#nmap " + vhost + config_nmap_options + "-oN " + output_file
+                populated_command = "#nmap " + vhost + config_nmap_options + " -oN " + output_file
         except TypeError:
             print("[!] Error: In the config file, there needs to be one, and only one, enabled tcp_scan command in the nmap_commands section.")
             print("[!]        This determines what ports to scan.")
@@ -50,16 +50,34 @@ def nmapcommand(simulation,targets,config_file=None):
         exit()
 
     in_scope_vhosts = lib.db.get_unique_inscope_vhosts(workspace)
-    for in_scope_vhost in in_scope_vhosts:
-        vhost = in_scope_vhost[0]
-        if targets:
-            target_list = lib.utils.target_splitter(targets)
-            if vhost in target_list:
-                lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir,config_file=config_file)
+
+    if len(in_scope_vhosts) == 0:
+        print("[!] There are no hosts marked as in scope yet.")
+        print("[!] Check out the options for importing hosts: ./celerystalk import -h\n")
+        exit()
+
+    if targets:
+        target_list = lib.utils.target_splitter(targets)
+        for vhost in target_list:
+            vhost = str(vhost)
+            is_target_in_scope = lib.db.is_vhost_in_db(vhost,workspace)
+            if is_target_in_scope:
+                lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir, config_file=config_file)
                 task_count = task_count + 1
-        else:
+            else:
+                print("[!] {0} is not in scope yet. You need to import it first.")
+                print("[!] Check out the options for importing hosts: ./celerystalk import -h\n")
+
+    else:
+
+        #lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir, config_file=config_file)
+        #task_count = task_count + 1
+
+        for in_scope_vhost in in_scope_vhosts:
+            vhost = in_scope_vhost[0]
             lib.nmap.nmap_scan_subdomain_host(vhost, workspace, simulation, output_dir,config_file=config_file)
             task_count = task_count + 1
+
 
     print("[+] Submitted {0} nmap tasks to queue.\n".format(str(task_count)))
 

@@ -54,7 +54,7 @@ Context specific help with examples:
     ./celerystalk report -h
     ./celerystalk admin -h
 
-Note: By default, Celery uses the number of CPUs to set the number of concurrent tasks that can execute.
+Note: By default, Celery uses the number of CPU cores to set the number of concurrent tasks that can execute.
 """
 
 
