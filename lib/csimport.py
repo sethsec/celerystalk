@@ -160,7 +160,7 @@ def import_url(url,workspace,output_base_dir):
     #config, supported_services = config_parser.read_config_ini()
     #task_id_list = []
     urls_to_screenshot = []
-
+    #url = url.split("?")[0].replace("//", "/")
     try:
         parsed_url = urlparse.urlparse(url)
         scheme = parsed_url[0]
@@ -175,7 +175,7 @@ def import_url(url,workspace,output_base_dir):
                 port = 80
             elif scheme == "https":
                 port = 443
-        path = parsed_url[2]
+        path = parsed_url[2].replace("//", "/")
     except:
         if not scheme:
             exit()
