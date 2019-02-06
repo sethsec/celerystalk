@@ -130,6 +130,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     mysql = mysql
     dns = dns,domain,domain
     ```
+    Add new service names to this mapping as needed (and submit an issue if it should be added by default)
 
     ***Domain Recon Tools*** - The second section defines the tools you'd like to use for subdomain discovery (an optional feature):
     ```
@@ -140,19 +141,19 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 
     ***Service Configuration*** - The rest of the confi.ini sections define which commands you want celerystalk to run for each identified service (i.e., http, https, ssh).    
     * Disable any command by commenting it out with a ; or a #. 
-    * Add your own commands using [TARGET],[PORT], and [OUTPUT] placeholders.
+    * Add your own commands using [TARGET],[PORT],[OUTPUT] and [PATH] placeholders.
     
     Here is an example:   
      ```
     [http]
-    whatweb             : whatweb http://[TARGET]:[PORT] -a3 --colour=never > [OUTPUT].txt
-    cewl                : cewl http://[TARGET]:[PORT]/ -m 6 -w [OUTPUT].txt
+    whatweb             : whatweb http://[TARGET]:[PORT]/[PATH] -a3 --colour=never > [OUTPUT].txt
+    cewl                : cewl http://[TARGET]:[PORT]/[PATH] -m 6 -w [OUTPUT].txt
     curl_robots         : curl http://[TARGET]:[PORT]/robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > [OUTPUT].txt
     nmap_http_vuln      : nmap -sC -sV -Pn -v -p [PORT] --script=http-vuln* [TARGET] -d -oN [OUTPUT].txt -oX [OUTPUT].xml --host-timeout 120m --script-timeout 20m
-    nikto               : nikto -h http://[TARGET] -p [PORT] &> [OUTPUT].txt
-    gobuster-common     : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,301,302,307,403,500' -e -n -q > [OUTPUT].txt
-    photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT] -o [OUTPUT]
-    ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/ -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
+    nikto               : nikto -h http://[TARGET]/[PATH] -p [PORT] &> [OUTPUT].txt
+    gobuster-common     : gobuster -u http://[TARGET]:[PORT]/[PATH] -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,301,302,307,403,500' -e -n -q > [OUTPUT].txt
+    photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT]/[PATH] -o [OUTPUT]
+    ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/[PATH] -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
     ```
 
 1. **Run Nmap or Nessus:** 
