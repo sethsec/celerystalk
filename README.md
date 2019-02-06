@@ -67,7 +67,7 @@ Option 1: Run nmap yourself and import results (optionally define IPs or hostnam
 # ./celerystalk import -f client.xml                                # Import services and mark all hosts as in scope
 # ./celerystalk import -S scope.txt                 (optional)      # Import IP/CIDR/Ranges and mark as in scope
 # ./celerystalk import -O out_scope.txt             (optional)      # Define HOSTS/IPs that are out of scope
-# ./celerystalk import -d subdomains.txt            (optional)      # Define HOSTS/IPs that are out of scope
+# ./celerystalk import -d subdomains.txt            (optional)      # Define subdomains that are in scope
 # ./celerystalk subdomains -d client.com,client.net (optional)      # Find subdomains and determine if in scope
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
@@ -110,7 +110,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 **[URL Mode]** - How to scan a a URL  
 * Use this as a follow up whenever you find an interesting directory, or just as quick way to scan one web app without importing anything.
 ```
-# ./celerystalk workspace create -o /assessments/client -m {vapt|bb]# Create default workspace and set output dir
+# ./celerystalk workspace create -o /assessments/client -m {vapt|bb}# Create default workspace and set output dir
 # ./celerystalk scan -u http://10.10.10.10/secret_folder/           # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
 # ./celerystalk report                                              # Generate report
@@ -172,7 +172,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
     | create | Creates new workspace |
     | -w | Define new workspace name |
     | -o | Define output directory assigned to workspace |   
-    | -m | Mode [vapt|bb] |
+    | -m | Mode [vapt \ bb] |
 
     ```
       Create default workspace    ./celerystalk workspace create -o /assessments/client -m bb
@@ -386,4 +386,4 @@ Thanks to @offensivesecurity and @hackthebox_eu for their lab networks
 Also, thanks to:
 1. @decidedlygray for pointing me towards celery, helping me solve python problems that were over my head, and for the extensive beta testing  
 1. @kerpanic for inspiring me to dust off an old project and turn it into celerystalk
-1. My TUV OpenSky team and my IthacaSec hackers for testing this out and submitting bugs and features
+1. My friends at TUV OpenSky and IthacaSec for testing this out and submitting bugs and features
