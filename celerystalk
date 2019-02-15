@@ -82,7 +82,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(162)
+build=str(163)
 
 def print_banner():
 
@@ -910,7 +910,12 @@ def main(arguments):
                 lib.csimport.importcommand(workspace, output_dir, arguments)
             #this one is the catch all if the user only types scan and nothing else.
 
-            lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"],config_file=config_file)
+            all_the_services = lib.db.get_all_services(workspace)
+            if len(all_the_services) > 0:
+                lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"],config_file=config_file)
+            else:
+                print("There no services in the db to scan. Run [./celerystalk nmap] or [./celerytsalk import -f nmap.xml] first.\n")
+                exit()
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
