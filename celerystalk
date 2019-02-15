@@ -914,7 +914,7 @@ def main(arguments):
             if len(all_the_services) > 0:
                 lib.scan.process_db_vhosts(workspace, arguments["--simulation"],dont_scan_ips=arguments["--noIP"],config_file=config_file)
             else:
-                print("There no services in the db to scan. Run [./celerystalk nmap] or [./celerytsalk import -f nmap.xml] first.\n")
+                print("There are no services in the db to scan. Run [./celerystalk nmap] or [./celerytsalk import -f nmap.xml] first.\n")
                 exit()
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
