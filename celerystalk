@@ -12,6 +12,7 @@ Usage:
     celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
     celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
     celerystalk report [-h]
+    celerystalk screenshot [-h]
     celerystalk cancel ([all]|[<task_ids>]) [-h]
     celerystalk pause  ([all]|[<task_ids>]) [-h]
     celerystalk resume ([all]|[<task_ids>]) [-h]
@@ -51,6 +52,7 @@ Context specific help with examples:
     ./celerystalk resume -h
     ./celerystalk cancel -h
     ./celerystalk db -h
+    ./celerystalk screenshot -h
     ./celerystalk report -h
     ./celerystalk admin -h
 
@@ -69,6 +71,7 @@ import lib.resume
 import lib.pause
 import lib.utils
 import lib.report
+import lib.screenshot
 import lib.query
 import lib.csimport
 import lib.nmap
@@ -82,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(164)
+build=str(165)
 
 def print_banner():
 
@@ -531,6 +534,40 @@ def main(arguments):
         else:
             lib.report.report(workspace)
         exit()
+
+    ####################################
+    # Screenshot Command: Take screenshots of all known paths
+    ####################################
+    if arguments["screenshot"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Take screenshots for all known paths."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk screenshot                
+            \n""")
+            exit()
+        if arguments["-w"]:
+            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
+        else:
+            try:
+                workspace = lib.db.get_current_workspace()[0][0]
+                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+            except:
+                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
+                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
+                exit()
+
+        lib.screenshot.screenshot_all_paths(workspace)
+        #ib.screenshot.aquatone_all_paths(workspace)
+
+        exit()
+
+
 
     ####################################
     # DB Command: Dump data from DB

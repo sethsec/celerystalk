@@ -110,6 +110,7 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
         )()
 
+
 def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     celery_path = sys.path[0]
