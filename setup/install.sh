@@ -103,12 +103,12 @@ if [ ! -f /opt/amass/amass ]; then
     unzip /opt/amass/amass_2.5.2_linux_386.zip -d /opt/amass
 fi
 
-# if [ ! -f /opt/aquatone/aquatone ]; then
-#     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
-#     mkdir -p /opt/aquatone
-#     wget https://github.com/michenriksen/aquatone/releases/download/v1.4.2/aquatone_linux_amd64_1.4.2.zip -O /opt/aquatone/aquatone_linux_amd64_1.4.2.zip
-#     unzip /opt/aquatone/aquatone_linux_amd64_1.4.2.zip -d /opt/aquatone
-# fi
+ if [ ! -f /opt/aquatone/aquatone ]; then
+     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
+     mkdir -p /opt/aquatone
+     wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O /opt/aquatone/aquatone_linux_amd64_1.4.3.zip
+     unzip /opt/aquatone/aquatone_linux_amd64_1.4.3.zip -d /opt/aquatone
+ fi
 
 
 
@@ -155,28 +155,28 @@ else
     pip install -r requirements.txt
 fi
 
-if [ ! -f /opt/CMSmap/cmsmap.py ]; then
-    echo ""
-    echo "**********************************************"
-    echo "* Installing CMSmap to /opt/CMSmap/cmsmap.py *"
-    echo "**********************************************"
-    echo ""
-    cd /opt/
-    git clone https://github.com/Dionach/CMSmap.git
-    cd CMSmap
-    pip3 install .
-    echo "y" | cmsmap -U P
-else
-    echo ""
-    echo "**********************************************"
-    echo "*           Updating CMSmap                  *"
-    echo "**********************************************"
-    echo ""
-    cd /opt/CMSmap
-    git pull
-    pip3 install .
-    echo "y" | cmsmap -U P
-fi
+#if [ ! -f /opt/CMSmap/cmsmap.py ]; then
+#    echo ""
+#    echo "**********************************************"
+#    echo "* Installing CMSmap to /opt/CMSmap/cmsmap.py *"
+#    echo "**********************************************"
+#    echo ""
+#    cd /opt/
+#    git clone https://github.com/Dionach/CMSmap.git
+#    cd CMSmap
+#    pip3 install .
+#    echo "y" | cmsmap -U P
+#else
+#    echo ""
+#    echo "**********************************************"
+#    echo "*           Updating CMSmap                  *"
+#    echo "**********************************************"
+#    echo ""
+#    cd /opt/CMSmap
+#    git pull
+#    pip3 install .
+#    echo "y" | cmsmap -U P
+#fi
 
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
