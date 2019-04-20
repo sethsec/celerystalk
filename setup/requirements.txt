@@ -4,10 +4,9 @@ netaddr
 simplejson
 requests
 celery
-redis==2.10.6
+redis
 flower
 docopt==0.6.2
-infi.docopt-completion
 sqlalchemy
 bleach
 selenium
