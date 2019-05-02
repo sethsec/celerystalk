@@ -6,7 +6,7 @@ import lib.db
 import lib.utils
 from lib import db
 import urlparse
-
+import os
 import csv
 
 
@@ -192,7 +192,7 @@ def import_url(url,workspace,output_base_dir):
                 in_scope = 1
         if in_scope == 1:
             is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
-            if not is_vhost_in_db:
+            if is_vhost_in_db:
                 lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
                 lib.db.update_vhosts_submitted(ip,vhost,workspace,1)
             else:
@@ -202,10 +202,10 @@ def import_url(url,workspace,output_base_dir):
 
             if ip == vhost:
                 scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
-                    port) + "_" + proto + "_"
+                    port) + "_" + proto
             else:
                 scan_output_base_file_dir = output_base_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
-                    port) + "_" + proto + "_"
+                    port) + "_" + proto
 
             host_dir = output_base_dir + "/" + ip
             host_data_dir = host_dir + "/celerystalkOutput/"
@@ -231,11 +231,12 @@ def import_url(url,workspace,output_base_dir):
             # Insert url into paths table and take screenshot
             db_path = db.get_path(path, workspace)
             if not db_path:
-                url_screenshot_filename = scan_output_base_file_dir + url.replace("http", "").replace("https", "") \
-                    .replace("/", "_") \
-                    .replace("\\", "") \
-                    .replace(":", "_") + ".png"
-                url_screenshot_filename = url_screenshot_filename.replace("__", "")
+                try:
+                    url_path = url.split("/",3)[1]
+                except:
+                    url_path = ''
+
+                url_screenshot_filename = scan_output_base_file_dir + url_path.replace("/", "_") + ".png"
                 db_path = (vhost, port, url, 0, url_screenshot_filename, workspace)
                 db.insert_new_path(db_path)
                 # print("Found Url: " + str(url))
@@ -249,6 +250,7 @@ def import_url(url,workspace,output_base_dir):
             lib.db.insert_new_path(db_path)
     else:
         print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
+
 
 def update_inscope_vhosts(workspace):
     vhosts = lib.db.get_unique_out_of_scope_vhosts(workspace)
@@ -421,12 +423,14 @@ def process_nmap_data(nmap_report,workspace, target=None):
     services_file_data = services_file.readlines()
     services_file.close()
 
+
+    #This top part of the for loop determines whether or not to add the host
     for scanned_host in nmap_report.hosts:
         ip=scanned_host.id
         unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
         vhosts = scanned_host.hostnames
-        #print("process_nmap_data: " + str(vhosts))
+        print("process_nmap_data: " + str(vhosts))
         for vhost in vhosts:
             print("process_nmap_data: " + vhost)
             vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
@@ -459,6 +463,8 @@ def process_nmap_data(nmap_report,workspace, target=None):
             db_vhost = (ip, ip, 1,0,0, workspace)
             db.create_vhost(db_vhost)
 
+
+        #Now after the host is added, let's add the ports for that host.
         for scanned_service_item in scanned_host.services:
             if scanned_service_item.state == "open":
                 scanned_service_port = scanned_service_item.port
@@ -500,24 +506,58 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 if not db_service:
                     db_string = (ip, scanned_service_port, scanned_service_protocol, scanned_service_name, scanned_service_product, scanned_service_version, scanned_service_extrainfo, workspace)
                     db.create_service(db_string)
+
+
                 else:
                     db.update_service(ip, scanned_service_port, scanned_service_protocol, scanned_service_name,
                                       workspace)
 
+
+
+                output_base_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+
+                file_end_part = "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
+                    scanned_service_port) + "_" + scanned_service_protocol + "_"
+
+                scan_output_base_file_dir = os.path.abspath(output_base_dir + file_end_part)
+
+                if (scanned_service_name == 'https') or (scanned_service_name == 'http'):
+                    path = scanned_service_name + "://" + ip + ":" + str(scanned_service_port) + "/"
+                    db_path = db.get_path(path, workspace)
+                    if not db_path:
+                        url_screenshot_filename = scan_output_base_file_dir + ".png"
+                        db_path = (ip, scanned_service_port, path, 0, url_screenshot_filename, workspace)
+                        db.insert_new_path(db_path)
+
+
                 for vhost in vhosts:
-                    #print("process_nmap_data - add service: " + vhost)
+                    print("process_nmap_data - add service: " + vhost)
                     db_service = db.get_service(vhost, scanned_service_port, scanned_service_protocol, workspace)
                     if not db_service:
-                        #print("service didnt exist, adding: " + vhost + str(scanned_service_port))
+                        print("service didnt exist, adding: " + vhost + str(scanned_service_port))
                         db_string = (vhost, scanned_service_port, scanned_service_protocol, scanned_service_name,
                                      scanned_service_product, scanned_service_version, scanned_service_extrainfo,
                                      workspace)
                         db.create_service(db_string)
                     else:
-                        #print("service does exist, updating: " + vhost + str(scanned_service_port))
+                        print("service does exist, updating: " + vhost + str(scanned_service_port))
 
                         db.update_service(vhost, scanned_service_port, scanned_service_protocol, scanned_service_name,
                                           workspace)
+                    if ip == vhost:
+                        scan_output_base_file_dir = os.path.abspath(output_base_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
+                            scanned_service_port) + "_" + scanned_service_protocol)
+                    else:
+                        scan_output_base_file_dir = os.path.abspath(output_base_dir + "/" + ip + "/celerystalkOutput/" + vhost + "_" + str(
+                            scanned_service_port) + "_" + scanned_service_protocol)
+
+                    if (scanned_service_name == 'https') or (scanned_service_name == 'http'):
+                        path = scanned_service_name + "://" + vhost + ":" + str(scanned_service_port) + "/"
+                        db_path = db.get_path(path, workspace)
+                        if not db_path:
+                            url_screenshot_filename = scan_output_base_file_dir + ".png"
+                            db_path = (vhost, scanned_service_port, path, 0, url_screenshot_filename, workspace)
+                            db.insert_new_path(db_path)
 
 
 
