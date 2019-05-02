@@ -29,9 +29,9 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
         cmd_name = "nmap_tcp_scan"
         try:
             if not simulation:
-                populated_command = "nmap " + vhost + config_nmap_options + " -oN " + output_file
+                populated_command = "nmap " + vhost + config_nmap_options + " -oA " + output_file
             else:
-                populated_command = "#nmap " + vhost + config_nmap_options + " -oN " + output_file
+                populated_command = "#nmap " + vhost + config_nmap_options + " -oA " + output_file
         except TypeError:
             print("[!] Error: In the config file, there needs to be one, and only one, enabled tcp_scan command in the nmap_commands section.")
             print("[!]        This determines what ports to scan.")
