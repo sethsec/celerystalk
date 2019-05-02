@@ -17,7 +17,13 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
     config.read(['config.ini'])
 
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
-    output_file = os.path.normpath(os.path.join(output_base_dir, vhost,vhost + "_nmap_tcp_scan.txt"))
+    output_host_dir = os.path.normpath(os.path.join(output_base_dir, vhost))
+    try:
+        os.stat(output_host_dir)
+    except:
+        os.makedirs(output_host_dir)
+
+    output_file = os.path.normpath(os.path.join(output_host_dir, vhost + "_nmap_tcp_scan.txt"))
     if not vhost_explicitly_out_of_scope:
         #print(config_nmap_options)
         cmd_name = "nmap_tcp_scan"
