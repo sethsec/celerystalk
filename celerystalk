@@ -562,8 +562,8 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
 
-        lib.screenshot.screenshot_all_paths(workspace)
-        #ib.screenshot.aquatone_all_paths(workspace)
+        #lib.screenshot.screenshot_all_paths(workspace)
+        lib.screenshot.aquatone_all_paths(workspace)
 
         exit()
 

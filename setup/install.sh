@@ -103,12 +103,12 @@ if [ ! -f /opt/amass/amass ]; then
     unzip /opt/amass/amass_2.5.2_linux_386.zip -d /opt/amass
 fi
 
-# if [ ! -f /opt/aquatone/aquatone ]; then
-#     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
-#     mkdir -p /opt/aquatone
-#     wget https://github.com/michenriksen/aquatone/releases/download/v1.4.2/aquatone_linux_amd64_1.4.2.zip -O /opt/aquatone/aquatone_linux_amd64_1.4.2.zip
-#     unzip /opt/aquatone/aquatone_linux_amd64_1.4.2.zip -d /opt/aquatone
-# fi
+if [ ! -f /opt/aquatone/aquatone ]; then
+    echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
+    mkdir -p /opt/aquatone
+    wget https://github.com/michenriksen/aquatone/releases/download/v1.6.0/aquatone_linux_amd64_1.6.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.6.0.zip
+    unzip -fo /opt/aquatone/aquatone_linux_amd64_1.6.0.zip -d /opt/aquatone
+fi
 
 
 
