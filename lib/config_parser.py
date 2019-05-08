@@ -44,8 +44,6 @@ def extract_udp_scan_nmap_options(config_file=None):
             options = udp_nmap_command.replace('nmap', '').replace('[TARGET]', '')
             return options
 
-
-
 def read_bb_scope_ini(bb_scope_file):
     bb_config = ConfigParser(allow_no_value=True)
     bb_config.read([bb_scope_file])
