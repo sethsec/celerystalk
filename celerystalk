@@ -16,7 +16,7 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>]) [-h]
     celerystalk pause  ([all]|[<task_ids>]) [-h]
     celerystalk resume ([all]|[<task_ids>]) [-h]
-    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[tasks]) [-h]
+    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
     celerystalk db export [-h]
     celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
@@ -85,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(165)
+build=str(167)
 
 def print_banner():
 
@@ -587,13 +587,17 @@ def main(arguments):
             print(help_table)
             print("\n")
             print("""Examples:
-    Show workspaces:            ./celeryststalk db workspaces
-    Show services:              ./celeryststalk db services
-    Show hosts:                 ./celeryststalk db hosts
-    Show vhosts only            ./celeryststalk db vhosts
-    Show paths:                 ./celeryststalk db paths
-    Show tasks:                 ./celeryststalk db tasks
-    Export tables to csv        ./celeryststalk db export
+    Show workspaces:            ./celerystalk db workspaces
+    Show services:              ./celerystalk db services
+    Show hosts:                 ./celerystalk db hosts
+    Show vhosts only            ./celerystalk db vhosts
+    Show paths:                 ./celerystalk db paths
+    Show paths (no table)       ./celerystalk db paths_only     
+    Show tasks:                 ./celerystalk db tasks
+    Export tables to csv        ./celerystalk db export
+    Export paths to txt         ./celerystalk db export_paths_only
+    
+    
             \n""")
             exit()
         if arguments["-w"]:
@@ -666,6 +670,13 @@ def main(arguments):
                     paths_table.add_row(row[1:4])
                 print(paths_table)
                 print("\n\n")
+            elif arguments["paths_only"]:
+                #print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
+                #columns = ["IP", "Port", "Path"]
+                paths_rows = lib.db.get_all_paths(workspace)
+                for row in paths_rows:
+                    print(row[3])
+                print("\n\n")
             elif arguments["tasks"]:
                 print("[+] Showing tasks for the [{0}] workspace\n".format(workspace))
                 columns = ["ID","PID","Command","Status"]
@@ -713,7 +724,14 @@ def main(arguments):
                     writer = csv.writer(f)
                     writer.writerow(["IP", "Port", "Path"])
                     writer.writerows(paths_rows)
-                print("[+] Saved all paths in the [{0}] workspace to {1}.\n".format(workspace,paths_output_file))
+                print("[+] Saved all paths in the [{0}] workspace to {1}".format(workspace,paths_output_file))
+                paths_filename = workspace + "_paths.txt"
+                paths_output_file = os.path.join(output_dir, paths_filename)
+                with open(paths_output_file, 'wb') as f:
+                    for path in paths_rows:
+                        f.write(path[3] + "\n")
+                print("[+] Saved all paths in the [{0}] workspace to {1}\n".format(workspace, paths_output_file))
+
 
     ####################################
     # Import Command: Import Stuff
