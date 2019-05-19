@@ -283,6 +283,7 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
         ip = socket.gethostbyname(vhost)
     except:
         print("Error getting IP")
+        ip=False
 
 
     db_ip_tuple = lib.db.get_vhost_ip(vhost,workspace)
@@ -295,7 +296,9 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
     proto = "tcp"
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
     if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-        if ip == vhost:
+        if not ip:
+            exit()
+        elif ip == vhost:
             scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
                 port) + "_" + proto + "_"
         else:

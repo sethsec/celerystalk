@@ -5,6 +5,7 @@ import lib.db
 import lib.utils
 import tasks
 from celery.utils import uuid
+import os
 
 from lib import config_parser, utils
 
@@ -32,9 +33,16 @@ def screenshot_all_paths(workspace):
 def aquatone_all_paths(workspace,simulation=None,config_file=None):
     print("in aquatone all_paths")
     urls_to_screenshot = []
+    #TODO: Instead of just grabbing all paths here, maybe add some logic to see if only new paths should be scanned or something. at a minimum, as they are grabbed, we need to update the "screenshot taken" column and put the auatone directory or something like that.
     paths = lib.db.get_all_paths(workspace)
     celery_path = lib.db.get_current_install_path()[0][0]
     outdir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+    outdir = os.path.join(outdir,'celerystalkReports/aquatone/')
+
+    try:
+        os.stat(outdir)
+    except:
+        os.makedirs(outdir)
 
     if config_file == None:
         config_file = "config.ini"

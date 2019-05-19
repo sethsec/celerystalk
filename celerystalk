@@ -90,7 +90,7 @@ build=str(167)
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("    v1.1\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.2\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
@@ -563,6 +563,8 @@ def main(arguments):
                 exit()
 
         #lib.screenshot.screenshot_all_paths(workspace)
+        paths_len = len(lib.db.get_all_paths(workspace))
+        print("Tasking auatone to take [{0}] screenshots").format(str(paths_len))
         lib.screenshot.aquatone_all_paths(workspace)
 
         exit()
