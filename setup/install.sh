@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 DISTRO=`grep "^ID=" /etc/os-release | cut -d\= -f2`
 
 if [[ $EUID -ne 0 ]]; then
@@ -21,7 +23,7 @@ echo "*      Updating apt sources          *"
 echo "**************************************"
 echo ""
 
-apt update -y
+apt-get update -y
 
 echo ""
 echo "*************************************************"
@@ -30,9 +32,9 @@ echo "*  firefox-esr, xvfb, python3-pip, wpscan, jq   *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
-    apt install gobuster redis-server seclists firefox-esr xvfb python3-pip wpscan jq -y
+    apt-get install gobuster redis-server seclists firefox-esr xvfb python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
-    apt install python-pip python3-pip unzip redis-server firefox xvfb jq -y
+    apt-get install python-pip python3-pip unzip redis-server firefox xvfb jq -y
 fi
 
 CELERYSTALK_DIR=`pwd`
