@@ -85,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(167)
+build=str(168)
 
 def print_banner():
 
@@ -528,6 +528,13 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
+
+        screenshots = lib.screenshot.does_aquatone_folder_exixst()
+        if screenshots == False:
+            answer = raw_input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
+            if (answer == "Y") or (answer == "y") or (answer == ""):
+                lib.screenshot.screenshot_command(arguments)
+                exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             lib.report.report(workspace, target_list)
@@ -550,22 +557,7 @@ def main(arguments):
     ./celerystalk screenshot                
             \n""")
             exit()
-        if arguments["-w"]:
-            output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
-        else:
-            try:
-                workspace = lib.db.get_current_workspace()[0][0]
-                output_dir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
-            except:
-                print("[!] There are no workspaces yet. Create one and run your command again:\n\n")
-                print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
-                print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
-                exit()
-
-        #lib.screenshot.screenshot_all_paths(workspace)
-        paths_len = len(lib.db.get_all_paths(workspace))
-        print("Tasking auatone to take [{0}] screenshots").format(str(paths_len))
-        lib.screenshot.aquatone_all_paths(workspace)
+        lib.screenshot.screenshot_command(arguments)
 
         exit()
 

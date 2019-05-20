@@ -107,7 +107,7 @@ if [ ! -f /opt/aquatone/aquatone ]; then
     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
     mkdir -p /opt/aquatone
     wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
-    unzip -fo /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+    unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
 fi
 
 

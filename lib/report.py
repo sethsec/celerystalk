@@ -184,10 +184,6 @@ def sort_report_hosts(host_list):
 
 
 def report(workspace,target_list=None):
-
-
-
-
     terminal_width = lib.utils.get_terminal_width()
     if not terminal_width:
         terminal_width = 80
@@ -244,9 +240,18 @@ def report(workspace,target_list=None):
             print("[+] Report file (single host): {0}".format(host_report_file_name))
     sorted_report_hosts = sort_report_hosts(host_report_file_names)
 
-    print("\n[+] Generating combined report file with screenshots. This might take a while...")
-    print("[+] Grabbing screenshots from Aquatone.")
-    aquatone_parse_paths()
+    workspace = lib.db.get_current_workspace()[0][0]
+    outdir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+    aquatone_dir = os.path.join(outdir, 'celerystalkReports/aquatone/')
+    try:
+        os.stat(aquatone_dir)
+        print("\n[+] Generating combined report file with screenshots. This might take a while...")
+        print("[+] Grabbing screenshots from Aquatone.")
+        aquatone_parse_paths()
+    except:
+        print("\n[+] Generating combined report file without screenshots. You can always run the screenshot command and")
+        print("[+] re-run this report later.")
+
 
     # Create sidebar navigation
     #combined_report_file.write('''<font size="5">celerystalk</font><br>\n''')
