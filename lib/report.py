@@ -830,7 +830,7 @@ div.gallery {
 }
 
 .zoom:hover {
-    transform: scale(2); 
+    transform: scale(1.5); 
     transform-origin: 0% 0%;
 	position: relative;
 	transform-style: preserve-3d;
