@@ -7,7 +7,10 @@ import urllib
 import time
 from netaddr import IPAddress
 import hashlib
-
+import glob
+import simplejson
+from ansi2html import Ansi2HTMLConverter
+from ansi2html.util import read_to_unicode
 
 
 def paths_report(host,all_paths):
@@ -28,6 +31,41 @@ def paths_report(host,all_paths):
             html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
             html_code = html_code + "\n</div>\n"
     return html_code
+
+
+def aquatone_parse_paths():
+
+    output_dir = lib.db.get_output_dir_for_workspace(lib.db.get_current_workspace()[0][0])[0][0]
+    aquatone_session_file = os.path.join(output_dir, 'celerystalkReports/aquatone/aquatone_session.json')
+    aquatone_report_dir = os.path.join(output_dir, 'celerystalkReports/aquatone/')
+    workspace = lib.db.get_current_workspace()[0][0]
+
+    good_sections = ["url", "screenshotPath"]
+
+    with open(aquatone_session_file, 'r') as aquatone_file:
+        aquatone_file_json = simplejson.load(aquatone_file)
+
+        for key,value in aquatone_file_json['pages'].iteritems():
+            #print(page)
+            path = value['url']
+            screenshot_path = value['screenshotPath']
+            filename = os.path.join(aquatone_report_dir, screenshot_path)
+            lib.db.update_path_with_filename(path, filename, workspace)
+
+
+
+    #with open(aquatone_report_file) as file:
+    #    soup = BeautifulSoup(file, 'html.parser')
+
+    # for site in soup.find_all(class_='page card mb-3'):
+    #     print(site.find(class_='card-title'))
+    #     path = site.find(class_='card-title').split('card-title">')[1].split('<')[0]
+    #
+    #     print(site.find(class_='screenshot'))
+    #     filename = site.find(class_='screenshot').split('src="')[1].split('"')[0]
+    #     filename = os.path.join(aquatone_report_dir,filename)
+    #     lib.db.update_path_with_filename(path,filename,workspace)
+
 
 def paths_report_grid(host,all_paths):
     #all_paths = lib.db.get_all_paths_for_host(host)
@@ -59,7 +97,78 @@ def paths_report_grid(host,all_paths):
     return html_code
 
 
+def paths_report_grid_aquatone(host,all_paths):
+    host = host.replace('.', '_')
+    #all_paths = lib.db.get_all_paths_for_host(host)
+    from collections import defaultdict
+    d = defaultdict(list)
+    row = 0
+    for path in all_paths:
+        column_number = row % 4
+        d[column_number].append((path[3],path[2]))
+        row = row + 1
 
+    html_code = '''<div class="row"> '''
+    for column in d:
+        html_code = html_code + '''<div class="column">'''
+        #ip,port,path,url_screenshot_filename,workspace = row
+        for url_screenshot_filename,url in d[column]:
+            try:
+                os.stat(url_screenshot_filename)
+                url_screenshot_filename = urllib.quote(url_screenshot_filename)
+                url_screenshot_filename_relative = url_screenshot_filename.split("/celerystalkReports/")[1]
+
+                #url_screenshot_filename_relative = os.path.join("aquatone/",url_screenshot_filename)
+                html_code = html_code + """<div class="gallery">"""
+                html_code = html_code + """<img class="zoom" src="{0}" style="width:100%">\n""".format(url_screenshot_filename_relative)
+                html_code = html_code + """<div class="desc"><a href="{0}">{0}</a></div>""".format(url)
+                html_code = html_code + """</div>"""
+            except:
+                pass
+        html_code = html_code + "\n</div>\n"
+    html_code = html_code + "\n</div>\n"
+    return html_code
+
+
+
+def paths_report_grid_aquatone_orig(host):
+    #all_paths = lib.db.get_all_paths_for_host(host)
+
+    host = host.replace('.','_')
+    output_dir = lib.db.get_output_dir_for_workspace(lib.db.get_current_workspace()[0][0])[0][0]
+    aquatone_screenshots_dir = os.path.join(output_dir,'celerystalkReports/aquatone/screenshots/')
+
+    files = glob.glob(aquatone_screenshots_dir + 'http?__' + host + '__*')
+
+    from collections import defaultdict
+    d = defaultdict(list)
+    row = 0
+    for path in files:
+        column_number = row % 4
+        d[column_number].append((path))
+        row = row + 1
+
+
+    html_code = '''<div class="row"> '''
+    for column in d:
+        html_code = html_code + '''<div class="column">'''
+        #ip,port,path,url_screenshot_filename,workspace = row
+        for file in d[column]:
+            try:
+                os.stat(file)
+                #url_screenshot_filename = urllib.quote(url_screenshot_filename)
+                #url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
+                url_screenshot_filename_relative = os.path.join("aquatone/screenshots/",os.path.basename(file))
+                html_code = html_code + """<div class="gallery">"""
+                html_code = html_code + """<img class="zoom" src="{0}" style="width:100%">\n""".format(url_screenshot_filename_relative)
+                #html_code = html_code + """<div class="desc"><a href="{0}">{0}</a></div>""".format(url_screenshot_filename_relative)
+                html_code = html_code + """<div class="desc"><a href="aquatone/aquatone_report.html">Aquatone Report</a></div>"""
+                html_code = html_code + """</div>"""
+            except:
+                pass
+        html_code = html_code + "\n</div>\n"
+    html_code = html_code + "\n</div>\n"
+    return html_code
 
 def sort_report_hosts(host_list):
     ip_list = []
@@ -132,7 +241,17 @@ def report(workspace,target_list=None):
             print("[+] Report file (single host): {0}".format(host_report_file_name))
     sorted_report_hosts = sort_report_hosts(host_report_file_names)
 
-    print("\n[+] Generating combined report file with screenshots. This might take a while...")
+    workspace = lib.db.get_current_workspace()[0][0]
+    outdir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
+    aquatone_dir = os.path.join(outdir, 'celerystalkReports/aquatone/')
+    try:
+        os.stat(aquatone_dir)
+        print("\n[+] Generating combined report file with screenshots. This might take a while...")
+        print("[+] Grabbing screenshots from Aquatone.")
+        aquatone_parse_paths()
+    except:
+        print("\n[+] Generating combined report file without screenshots. You can always run the screenshot command and")
+        print("[+] re-run this report later.")
 
 
     # Create sidebar navigation
@@ -170,6 +289,7 @@ def report(workspace,target_list=None):
     filter_html_body = '''<div id="myBtnContainer">\n'''
     #filter_html_body = filter_html_body + '''<font size="5">celerystalk Report</font><br>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('all')"> Show all</button>\n'''
+    filter_html_body = filter_html_body + '''<a class="btn" href="/aquatone/aquatone_report.html" target="_blank">Aquatone Report</a>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('hostheader')"> Host Header</button>\n'''
@@ -240,7 +360,10 @@ def report(workspace,target_list=None):
         #print(len(all_paths))
         if len(all_paths) > 0:
             screenshot_html = paths_report(vhost,all_paths)
-            screenshot_grid_html = paths_report_grid(vhost,all_paths)
+            #TODO: uncomment this when adding if/then logic if allowing a user to still do it the old way
+            #screenshot_grid_html = paths_report_grid(vhost,all_paths)
+            #screenshot_grid_html = paths_report_grid_aquatone(vhost)
+            screenshot_grid_html = paths_report_grid_aquatone(vhost,all_paths)
 
             combined_report_file.write('''\n\n<div class="filterDiv screenshots">\n''')
             combined_report_file.write('''<button class="collapsible">Screenshots ''' + ''' [''' + vhost + '''] <center><b>(Click to see all paths)</b></center>''' + '''</button>\n''')
@@ -708,7 +831,7 @@ div.gallery {
 }
 
 .zoom:hover {
-    transform: scale(2); 
+    transform: scale(1.5); 
     transform-origin: 0% 0%;
 	position: relative;
 	transform-style: preserve-3d;
@@ -871,6 +994,7 @@ def convert_file_contents_to_html(normalized_output_file):
     # file_html_string = file_html_string + "        <pre>"
     file_html_string = "        <div class=\"filedata\">"
 
+
     try:
         with open(normalized_output_file, "r") as scan_file:
             for line in scan_file:
@@ -893,6 +1017,16 @@ def convert_file_contents_to_html(normalized_output_file):
         pass
     file_html_string = file_html_string + "        </div>"
     return file_html_string
+
+def convert_file_contents_to_html2(normalized_output_file):
+    #conv = Ansi2HTMLConverter()
+    with open(normalized_output_file, "rb") as scan_file:
+        test_data = "".join(read_to_unicode(scan_file))
+        #expected_data = [e.rstrip('\n') for e in read_to_unicode(scan_file)]
+        html = Ansi2HTMLConverter().convert(test_data, ensure_trailing_newline=True)
+
+    return html
+
 
 def command_footer_html(tasks_for_output_file):
     for task in tasks_for_output_file:

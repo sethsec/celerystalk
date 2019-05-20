@@ -12,10 +12,11 @@ Usage:
     celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
     celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
     celerystalk report [-h]
+    celerystalk screenshot [-h]
     celerystalk cancel ([all]|[<task_ids>]) [-h]
     celerystalk pause  ([all]|[<task_ids>]) [-h]
     celerystalk resume ([all]|[<task_ids>]) [-h]
-    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[tasks]) [-h]
+    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
     celerystalk db export [-h]
     celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
@@ -51,6 +52,7 @@ Context specific help with examples:
     ./celerystalk resume -h
     ./celerystalk cancel -h
     ./celerystalk db -h
+    ./celerystalk screenshot -h
     ./celerystalk report -h
     ./celerystalk admin -h
 
@@ -69,6 +71,7 @@ import lib.resume
 import lib.pause
 import lib.utils
 import lib.report
+import lib.screenshot
 import lib.query
 import lib.csimport
 import lib.nmap
@@ -82,12 +85,12 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(166)
+build=str(170)
 
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("    v1.1\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.2\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
@@ -525,12 +528,40 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
+
+        screenshots = lib.screenshot.does_aquatone_folder_exixst()
+        if screenshots == False:
+            answer = raw_input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
+            if (answer == "Y") or (answer == "y") or (answer == ""):
+                lib.screenshot.screenshot_command(arguments)
+                exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             lib.report.report(workspace, target_list)
         else:
             lib.report.report(workspace)
         exit()
+
+    ####################################
+    # Screenshot Command: Take screenshots of all known paths
+    ####################################
+    if arguments["screenshot"]:
+        if arguments["--help"]:
+            columns = ["Options", "Description"]
+            help_table = PrettyTable(columns)
+            help_table.align[columns[1]] = "l"
+            help_table.add_row(["no options", "Take screenshots for all known paths."])
+            print(help_table)
+            print("\n")
+            print("""Examples:
+    ./celerystalk screenshot                
+            \n""")
+            exit()
+        lib.screenshot.screenshot_command(arguments)
+
+        exit()
+
+
 
     ####################################
     # DB Command: Dump data from DB
@@ -550,13 +581,17 @@ def main(arguments):
             print(help_table)
             print("\n")
             print("""Examples:
-    Show workspaces:            ./celeryststalk db workspaces
-    Show services:              ./celeryststalk db services
-    Show hosts:                 ./celeryststalk db hosts
-    Show vhosts only            ./celeryststalk db vhosts
-    Show paths:                 ./celeryststalk db paths
-    Show tasks:                 ./celeryststalk db tasks
-    Export tables to csv        ./celeryststalk db export
+    Show workspaces:            ./celerystalk db workspaces
+    Show services:              ./celerystalk db services
+    Show hosts:                 ./celerystalk db hosts
+    Show vhosts only            ./celerystalk db vhosts
+    Show paths:                 ./celerystalk db paths
+    Show paths (no table)       ./celerystalk db paths_only     
+    Show tasks:                 ./celerystalk db tasks
+    Export tables to csv        ./celerystalk db export
+    Export paths to txt         ./celerystalk db export_paths_only
+    
+    
             \n""")
             exit()
         if arguments["-w"]:
@@ -629,6 +664,13 @@ def main(arguments):
                     paths_table.add_row(row[1:4])
                 print(paths_table)
                 print("\n\n")
+            elif arguments["paths_only"]:
+                #print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
+                #columns = ["IP", "Port", "Path"]
+                paths_rows = lib.db.get_all_paths(workspace)
+                for row in paths_rows:
+                    print(row[3])
+                print("\n\n")
             elif arguments["tasks"]:
                 print("[+] Showing tasks for the [{0}] workspace\n".format(workspace))
                 columns = ["ID","PID","Command","Status"]
@@ -676,7 +718,14 @@ def main(arguments):
                     writer = csv.writer(f)
                     writer.writerow(["IP", "Port", "Path"])
                     writer.writerows(paths_rows)
-                print("[+] Saved all paths in the [{0}] workspace to {1}.\n".format(workspace,paths_output_file))
+                print("[+] Saved all paths in the [{0}] workspace to {1}".format(workspace,paths_output_file))
+                paths_filename = workspace + "_paths.txt"
+                paths_output_file = os.path.join(output_dir, paths_filename)
+                with open(paths_output_file, 'wb') as f:
+                    for path in paths_rows:
+                        f.write(path[3] + "\n")
+                print("[+] Saved all paths in the [{0}] workspace to {1}\n".format(workspace, paths_output_file))
+
 
     ####################################
     # Import Command: Import Stuff

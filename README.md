@@ -39,6 +39,7 @@ Option 1: Run nmap yourself and import results
 # ./celerystalk db services                                         # If you want to see what services were loaded
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Watch scans as move from pending > running > complete
+# ./celerystalk screenshots                                         # Take screenshots
 # ./celerystalk report                                              # Generate report
 ```
 
@@ -51,6 +52,7 @@ Option 2: Have celerystalk run nmap and parse results
 # ./celerystalk db services                                         # If you want to see what services were loaded
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Watch scans as they move from pending > running > complete
+# ./celerystalk screenshots                                         # Take screenshots
 # ./celerystalk report                                              # Generate report
 ```
 
@@ -71,6 +73,7 @@ Option 1: Run nmap yourself and import results (optionally define IPs or hostnam
 # ./celerystalk subdomains -d client.com,client.net (optional)      # Find subdomains and determine if in scope
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk screenshots                                         # Take screenshots
 # ./celerystalk report                                              # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
@@ -85,6 +88,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 # ./celerystalk subdomains -d client.com,client.net                 # Find subdomains and determine if in scope
 # ./celerystalk scan                                                # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Watch scans as they move from pending > running > complete
+# ./celerystalk screenshots                                         # Take screenshots
 # ./celerystalk report                                              # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
@@ -99,9 +103,9 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 # ./celerystalk import -O out_scope.txt (optional)                  # Define HOSTS/IPs that are out of scope
 # ./celerystalk nmap                    (optional)                  # Nmap all in-scope hosts (reads options from config.ini)
 # ./celerystalk import -f client.xml    (optional)                  # If you would rather import an nmap file you already ran
-
 # ./celerystalk scan [--noIP]                                       # Run all enabled commands against all in scope hosts
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk screenshots                                         # Take screenshots
 # ./celerystalk report                                              # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.
@@ -113,6 +117,7 @@ Option 2: Have celerystalk run nmap and parse results (optionally define IPs or 
 # ./celerystalk workspace create -o /assessments/client -m {vapt|bb}# Create default workspace and set output dir
 # ./celerystalk scan -u http://10.10.10.10/secret_folder/           # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
+# ./celerystalk screenshots                                         # Take screenshots
 # ./celerystalk report                                              # Generate report
 ```
 

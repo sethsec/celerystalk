@@ -196,8 +196,8 @@ def post_process(*args):
             task_id = uuid()
             populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, vhost, scan_output_base_file_dir)
             command_name = "Screenshots"
-            utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
-            cel_take_screenshot.delay(urls_to_screenshot_with_filenames,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
+            #utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
+            #cel_take_screenshot.delay(urls_to_screenshot_with_filenames,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
 
             #lib.scan.aquatone_host(urls_to_screenshot, vhost, workspace, simulation, scan_output_base_file_dir, celery_path)
 

@@ -677,3 +677,7 @@ def get_unique_hosts_with_paths(workspace):
 def update_path(path,submitted,workspace):
     CUR.execute("UPDATE paths SET submitted=? WHERE path=? AND workspace=?", (submitted,path,workspace))
     CONNECTION.commit()
+
+def update_path_with_filename(path,filename,workspace):
+    CUR.execute("UPDATE paths SET url_screenshot_filename=? WHERE path=? AND workspace=?", (filename,path,workspace))
+    CONNECTION.commit()

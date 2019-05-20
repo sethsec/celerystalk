@@ -110,6 +110,7 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
         )()
 
+
 def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     celery_path = sys.path[0]
@@ -282,6 +283,7 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
         ip = socket.gethostbyname(vhost)
     except:
         print("Error getting IP")
+        ip=False
 
 
     db_ip_tuple = lib.db.get_vhost_ip(vhost,workspace)
@@ -294,7 +296,9 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
     proto = "tcp"
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
     if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-        if ip == vhost:
+        if not ip:
+            exit()
+        elif ip == vhost:
             scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
                 port) + "_" + proto + "_"
         else:
