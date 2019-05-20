@@ -13,3 +13,4 @@ bleach
 selenium
 prettytable
 pyvirtualdisplay
+ansi2html

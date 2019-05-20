@@ -9,7 +9,8 @@ from netaddr import IPAddress
 import hashlib
 import glob
 import simplejson
-
+from ansi2html import Ansi2HTMLConverter
+from ansi2html.util import read_to_unicode
 
 
 def paths_report(host,all_paths):
@@ -993,6 +994,7 @@ def convert_file_contents_to_html(normalized_output_file):
     # file_html_string = file_html_string + "        <pre>"
     file_html_string = "        <div class=\"filedata\">"
 
+
     try:
         with open(normalized_output_file, "r") as scan_file:
             for line in scan_file:
@@ -1015,6 +1017,16 @@ def convert_file_contents_to_html(normalized_output_file):
         pass
     file_html_string = file_html_string + "        </div>"
     return file_html_string
+
+def convert_file_contents_to_html2(normalized_output_file):
+    #conv = Ansi2HTMLConverter()
+    with open(normalized_output_file, "rb") as scan_file:
+        test_data = "".join(read_to_unicode(scan_file))
+        #expected_data = [e.rstrip('\n') for e in read_to_unicode(scan_file)]
+        html = Ansi2HTMLConverter().convert(test_data, ensure_trailing_newline=True)
+
+    return html
+
 
 def command_footer_html(tasks_for_output_file):
     for task in tasks_for_output_file:
