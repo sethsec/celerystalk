@@ -106,7 +106,7 @@ fi
 if [ ! -f /opt/aquatone/aquatone ]; then
     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
     mkdir -p /opt/aquatone
-    wget https://github.com/michenriksen/aquatone/releases/download/v1.6.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
+    wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
     unzip -fo /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
 fi
 
@@ -155,28 +155,28 @@ else
     pip install -r requirements.txt
 fi
 
-if [ ! -f /opt/CMSmap/cmsmap.py ]; then
-    echo ""
-    echo "**********************************************"
-    echo "* Installing CMSmap to /opt/CMSmap/cmsmap.py *"
-    echo "**********************************************"
-    echo ""
-    cd /opt/
-    git clone https://github.com/Dionach/CMSmap.git
-    cd CMSmap
-    pip3 install .
-    echo "y" | cmsmap -U P
-else
-    echo ""
-    echo "**********************************************"
-    echo "*           Updating CMSmap                  *"
-    echo "**********************************************"
-    echo ""
-    cd /opt/CMSmap
-    git pull
-    pip3 install .
-    echo "y" | cmsmap -U P
-fi
+#if [ ! -f /opt/CMSmap/cmsmap.py ]; then
+#    echo ""
+#    echo "**********************************************"
+#    echo "* Installing CMSmap to /opt/CMSmap/cmsmap.py *"
+#    echo "**********************************************"
+#    echo ""
+#    cd /opt/
+#    git clone https://github.com/Dionach/CMSmap.git
+#    cd CMSmap
+#    pip3 install .
+#    echo "y" | cmsmap -U P
+#else
+#    echo ""
+#    echo "**********************************************"
+#    echo "*           Updating CMSmap                  *"
+#    echo "**********************************************"
+#    echo ""
+#    cd /opt/CMSmap
+#    git pull
+#    pip3 install .
+#    echo "y" | cmsmap -U P
+#fi
 
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
