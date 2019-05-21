@@ -5,7 +5,7 @@ _celerystalk()
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     if [ $COMP_CWORD -eq 1 ]; then
-        COMPREPLY=( $( compgen -W '-h --help pause help scan nmap rescan resume db subdomains cancel workspace query report import admin interactive' -- $cur) )
+        COMPREPLY=( $( compgen -W '-h --help pause help scan nmap rescan resume db subdomains cancel workspace query report screenshot import admin interactive' -- $cur) )
     else
         case ${COMP_WORDS[1]} in
             pause)
@@ -43,6 +43,9 @@ _celerystalk()
         ;;
             report)
             _celerystalk_report
+        ;;
+            screenshot)
+            _celerystalk_screenshot
         ;;
             import)
             _celerystalk_import
@@ -401,6 +404,15 @@ _celerystalk_query_summary()
 }
 
 _celerystalk_report()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -W '-h --help ' -- $cur) )
+    fi
+}
+_celerystalk_screenshot()
 {
     local cur
     cur="${COMP_WORDS[COMP_CWORD]}"
