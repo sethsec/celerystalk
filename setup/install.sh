@@ -36,7 +36,7 @@ apt update -y
 echo ""
 echo "*************************************************"
 echo "*  Installing redis-server, gobuster, seclists, *"
-echo "*  firefox-esr, xvfb, python3-pip, wpscan, jq   *"
+echo "*  chromium python3-pip, wpscan, jq             *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
