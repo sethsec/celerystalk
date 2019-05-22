@@ -1,6 +1,4 @@
 from celery import chain
-from kombu import uuid
-
 import lib.db
 import lib.utils
 import tasks
@@ -38,24 +36,24 @@ def screenshot_command(arguments):
     print("Tasking auatone to take [{0}] screenshots").format(str(paths_len))
     lib.screenshot.aquatone_all_paths(workspace)
 
-def screenshot_all_paths(workspace):
-    urls_to_screenshot_with_filenames = []
-
-    paths = lib.db.get_all_paths(workspace)
-
-    if len(paths) > 0:
-        screenshot_name = "db"
-        for (id,vhost,port,path,submitted,scan_output_base_file_dir,workspace) in paths:
-            urls_to_screenshot_with_filenames.append((path, scan_output_base_file_dir))
-
-
-        task_id = uuid()
-        populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, vhost,
-                                                                             scan_output_base_file_dir)
-        command_name = "Screenshots"
-        lib.utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
-        tasks.cel_take_screenshot.delay(urls_to_screenshot_with_filenames, task_id, vhost, scan_output_base_file_dir,
-                                  workspace, command_name, populated_command)
+# def screenshot_all_paths(workspace):
+#     urls_to_screenshot_with_filenames = []
+#
+#     paths = lib.db.get_all_paths(workspace)
+#
+#     if len(paths) > 0:
+#         screenshot_name = "db"
+#         for (id,vhost,port,path,submitted,scan_output_base_file_dir,workspace) in paths:
+#             urls_to_screenshot_with_filenames.append((path, scan_output_base_file_dir))
+#
+#
+#         task_id = uuid()
+#         populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, vhost,
+#                                                                              scan_output_base_file_dir)
+#         command_name = "Screenshots"
+#         lib.utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
+#         tasks.cel_take_screenshot.delay(urls_to_screenshot_with_filenames, task_id, vhost, scan_output_base_file_dir,
+#                                   workspace, command_name, populated_command)
 
 
 def aquatone_all_paths(workspace,simulation=None,config_file=None):

@@ -12,7 +12,7 @@ Usage:
     celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
     celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
     celerystalk report [-h]
-    celerystalk screenshot [-h]
+    celerystalk screenshots [-h]
     celerystalk cancel ([all]|[<task_ids>]) [-h]
     celerystalk pause  ([all]|[<task_ids>]) [-h]
     celerystalk resume ([all]|[<task_ids>]) [-h]
@@ -52,7 +52,7 @@ Context specific help with examples:
     ./celerystalk resume -h
     ./celerystalk cancel -h
     ./celerystalk db -h
-    ./celerystalk screenshot -h
+    ./celerystalk screenshots -h
     ./celerystalk report -h
     ./celerystalk admin -h
 
@@ -85,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(172)
+build=str(175)
 
 def print_banner():
 
@@ -490,6 +490,7 @@ def main(arguments):
         print("")
         if (answer == "Y") or (answer == "y"):
             from subprocess import Popen
+            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
             path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
             print(path)
             os.chdir(path)
@@ -545,7 +546,7 @@ def main(arguments):
     ####################################
     # Screenshot Command: Take screenshots of all known paths
     ####################################
-    if arguments["screenshot"]:
+    if arguments["screenshots"]:
         if arguments["--help"]:
             columns = ["Options", "Description"]
             help_table = PrettyTable(columns)
@@ -554,7 +555,7 @@ def main(arguments):
             print(help_table)
             print("\n")
             print("""Examples:
-    ./celerystalk screenshot                
+    ./celerystalk screenshots                
             \n""")
             exit()
         lib.screenshot.screenshot_command(arguments)

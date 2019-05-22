@@ -15,6 +15,16 @@ if [ ! -f update.sh ]; then
     ln -s install.sh update-tools.sh
 fi
 
+# https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+verlte() {
+    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+}
+
+verlt() {
+    [ "$1" = "$2" ] && return 1 || verlte $1 $2
+}
+
+
 echo ""
 echo "**************************************"
 echo "*      Updating apt sources          *"
@@ -26,13 +36,13 @@ apt update -y
 echo ""
 echo "*************************************************"
 echo "*  Installing redis-server, gobuster, seclists, *"
-echo "*  firefox-esr, xvfb, python3-pip, wpscan, jq   *"
+echo "*  chromium python3-pip, wpscan, jq             *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
-    apt install gobuster redis-server seclists firefox-esr xvfb python3-pip wpscan jq -y
+    apt install gobuster redis-server seclists chromium python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
-    apt install python-pip python3-pip unzip redis-server firefox xvfb jq -y
+    apt install python-pip python3-pip unzip redis-server chromium jq -y
 fi
 
 CELERYSTALK_DIR=`pwd`
@@ -52,44 +62,44 @@ echo ""
 pip install -r requirements.txt --upgrade
 
 
-if [ ! -f /usr/bin/geckodriver ]; then
-    echo ""
-    echo "**************************************"
-    echo "*    Installing geckodriver          *"
-    echo "**************************************"
-    echo ""
-    #From: https://github.com/FortyNorthSecurity/EyeWitness/blob/master/setup/setup.sh
-    MACHINE_TYPE=`uname -m`
-    if [ ${MACHINE_TYPE} == 'x86_64' ]; then
-      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
-      tar -xvf geckodriver-v0.22.0-linux64.tar.gz
-      rm geckodriver-v0.22.0-linux64.tar.gz
-      mv geckodriver /usr/sbin
-      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
-    else
-      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux32.tar.gz
-      tar -xvf geckodriver-v0.22.0-linux32.tar.gz
-      rm geckodriver-v0.22.0-linux64.tar.gz
-      mv geckodriver /usr/sbin
-      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
-    fi
-
-
-    # https://gist.github.com/cgoldberg/4097efbfeb40adf698a7d05e75e0ff51#file-geckodriver-install-sh
-    install_dir="/usr/bin"
-    json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
-    if [[ $(uname) == "Linux" ]]; then
-        url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
-        echo $url
-    else
-        echo "can't determine OS"
-        exit 1
-    fi
-    curl -s -L "$url" | tar -xz
-    chmod +x geckodriver
-    mv geckodriver "$install_dir"
-    echo "installed geckodriver binary in $install_dir"
-fi
+#if [ ! -f /usr/bin/geckodriver ]; then
+#    echo ""
+#    echo "**************************************"
+#    echo "*    Installing geckodriver          *"
+#    echo "**************************************"
+#    echo ""
+#    #From: https://github.com/FortyNorthSecurity/EyeWitness/blob/master/setup/setup.sh
+#    MACHINE_TYPE=`uname -m`
+#    if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+#      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
+#      tar -xvf geckodriver-v0.22.0-linux64.tar.gz
+#      rm geckodriver-v0.22.0-linux64.tar.gz
+#      mv geckodriver /usr/sbin
+#      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
+#    else
+#      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux32.tar.gz
+#      tar -xvf geckodriver-v0.22.0-linux32.tar.gz
+#      rm geckodriver-v0.22.0-linux64.tar.gz
+#      mv geckodriver /usr/sbin
+#      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
+#    fi
+#
+#
+#    # https://gist.github.com/cgoldberg/4097efbfeb40adf698a7d05e75e0ff51#file-geckodriver-install-sh
+#    install_dir="/usr/bin"
+#    json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
+#    if [[ $(uname) == "Linux" ]]; then
+#        url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
+#        echo $url
+#    else
+#        echo "can't determine OS"
+#        exit 1
+#    fi
+#    curl -s -L "$url" | tar -xz
+#    chmod +x geckodriver
+#    mv geckodriver "$install_dir"
+#    echo "installed geckodriver binary in $install_dir"
+#fi
 
 
 if [ ! -f /opt/amass/amass ]; then
@@ -105,13 +115,31 @@ fi
 
 
 if [ ! -f /opt/aquatone/aquatone ]; then
+    echo ""
+    echo "*******************************************************"
+    echo "* Installing Aquatone to /opt/aquatone/aquatone       *"
+    echo "*******************************************************"
+    echo ""
     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
     mkdir -p /opt/aquatone
     wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
     unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+else
+    CURRENT_VERSION=`/opt/aquatone/aquatone -version | cut -dv -f2`
+    DESIRED_MINIMUM_VERSION="1.7.0"
+    IS_LESS_THAN_DESIRED=`verlt $CURRENT_VERSION $DESIRED_MINIMUM_VERSION`
+
+    if [ $? == "0" ]; then
+        echo ""
+        echo "**********************************************"
+        echo "*           Updating Aquatone                *"
+        echo "**********************************************"
+        echo ""
+        cd /opt/aquatone
+        wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
+        unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+    fi
 fi
-
-
 
 
 if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
@@ -188,4 +216,3 @@ echo "[+] Back up a directory and you are ready to go."
 echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
-
