@@ -85,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(172)
+build=str(173)
 
 def print_banner():
 
@@ -490,6 +490,7 @@ def main(arguments):
         print("")
         if (answer == "Y") or (answer == "y"):
             from subprocess import Popen
+            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
             path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
             print(path)
             os.chdir(path)
