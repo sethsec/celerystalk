@@ -85,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(170)
+build=str(172)
 
 def print_banner():
 
@@ -669,7 +669,7 @@ def main(arguments):
                 #columns = ["IP", "Port", "Path"]
                 paths_rows = lib.db.get_all_paths(workspace)
                 for row in paths_rows:
-                    print(row[3])
+                    sys.stdout.write(row[3]+"\n")
                 print("\n\n")
             elif arguments["tasks"]:
                 print("[+] Showing tasks for the [{0}] workspace\n".format(workspace))
