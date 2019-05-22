@@ -15,6 +15,16 @@ if [ ! -f update.sh ]; then
     ln -s install.sh update-tools.sh
 fi
 
+# https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+verlte() {
+    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+}
+
+verlt() {
+    [ "$1" = "$2" ] && return 1 || verlte $1 $2
+}
+
+
 echo ""
 echo "**************************************"
 echo "*      Updating apt sources          *"
@@ -105,13 +115,31 @@ fi
 
 
 if [ ! -f /opt/aquatone/aquatone ]; then
+    echo ""
+    echo "*******************************************************"
+    echo "* Installing Aquatone to /opt/aquatone/aquatone       *"
+    echo "*******************************************************"
+    echo ""
     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
     mkdir -p /opt/aquatone
     wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
     unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+else
+    CURRENT_VERSION=`/opt/aquatone/aquatone -version | cut -dv -f2`
+    DESIRED_MINIMUM_VERSION="1.7.0"
+    IS_LESS_THAN_DESIRED=`verlt $CURRENT_VERSION $DESIRED_MINIMUM_VERSION`
+
+    if [ $? == "0" ]; then
+        echo ""
+        echo "**********************************************"
+        echo "*           Updating Aquatone                *"
+        echo "**********************************************"
+        echo ""
+        cd /opt/aquatone
+        wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
+        unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+    fi
 fi
-
-
 
 
 if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
@@ -188,4 +216,3 @@ echo "[+] Back up a directory and you are ready to go."
 echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
-
