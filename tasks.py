@@ -360,7 +360,7 @@ def cel_process_db_services(output_base_dir, simulation, workspace):
     lib.scan.process_db_services(output_base_dir, simulation, workspace)
 
 
-@app.task()
-def cel_take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
-    #print("cel_take_screenshot")
-    lib.utils.take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
+# @app.task()
+# def cel_take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
+#     #print("cel_take_screenshot")
+#     lib.utils.take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)
