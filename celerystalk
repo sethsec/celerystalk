@@ -85,7 +85,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(177)
+build=str(178)
 
 def print_banner():
 
@@ -110,6 +110,7 @@ def main(arguments):
     db.set_install_path((celery_path,))
 
     lib.utils.check_for_new_default_config()
+    lib.utils.check_for_dependencies()
 
 
     if arguments["interactive"]:

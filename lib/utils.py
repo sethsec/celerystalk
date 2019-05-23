@@ -322,6 +322,15 @@ def check_for_new_default_config():
             p = Popen(populated_command, shell=True)
             p.communicate()
 
+def check_for_dependencies():
+    try:
+        os.stat('/opt/aquatone/aquatone')
+    except:
+        print("[!] Aquatone is not installed.")
+        print("[!]   cd setup")
+        print("[!]   ./install.sh")
+        exit()
+
 
 def get_terminal_width():
     """

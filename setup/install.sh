@@ -11,10 +11,6 @@ if [ ! -f ../config.ini ]; then
     cp config_default.ini ../config.ini
 fi
 
-if [ ! -f update.sh ]; then
-    ln -s install.sh update-tools.sh
-fi
-
 # https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
 verlte() {
     [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
