@@ -16,7 +16,7 @@ Phase | Command | Example tools used
 DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
 Define Scope | ./celerystalk import | celerystalk magic     
 Port Scanning | ./celerystalk nmap | nmap
-Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa 
+Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, etc.
 Screenshots | ./celerystalk sceenshots | Aquatone
 Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 
@@ -38,9 +38,9 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 
 ## Using celerystalk - The basics
 
-###[CTF/HackTheBox/Easy mode] 
+### [CTF/HackTheBox/Easy mode] 
 
-####Import nmap xml and scan a host or multiple hosts by IP
+#### Import nmap xml and scan a host or multiple hosts by IP
 
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
@@ -53,7 +53,7 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 # ./celerystalk report                                              # Generate report
 ```
 
-####Import list of hosts that are in scope and have celerystalk run nmap for you
+#### Import list of hosts that are in scope and have celerystalk run nmap for you
 ```
 # ./celerystalk workspace create -w htb -o /htb -m vapt             # Create workspace. Set output dir and mode
 # ./celerystalk import -S scope.txt                                 # Import IP/CIDR/Ranges and mark as in scope
@@ -67,10 +67,10 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 ```
 
 
-###[Bug Bounty Mode] 
+### [Bug Bounty Mode] 
 *  In BB mode, all subdomains found with celerystalk or manually imported are marked in scope.
 
-####Find subdomains, define out of scope hosts, scan everything else  
+#### Find subdomains, define out of scope hosts, scan everything else  
 
 ```
 # ./celerystalk workspace create -o /assessments/company -m bb      # Create default workspace and set output dir
@@ -87,10 +87,10 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.
 
 
-###[URL Mode] - How to scan a a URL  
+### [URL Mode] - How to scan a a URL  
 * Use this as a follow up whenever you find an interesting directory, or just as quick way to scan one web app without importing anything.
 
-####Launch all enabled tools against a single URL without worrying about scope, nmap, etc. 
+#### Launch all enabled tools against a single URL without worrying about scope, nmap, etc. 
 ```
 # ./celerystalk workspace create -o /assessments/client -m {vapt|bb}# Create default workspace and set output dir
 # ./celerystalk scan -u http://10.10.10.10/secret_folder/           # Run all enabled commands
@@ -99,11 +99,11 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 # ./celerystalk report                                              # Generate report
 ```
 
-###[Vulnerability Assessment Mode]  
+### [Vulnerability Assessment Mode]  
 * In VAPT mode, IP addresses/ranges/CIDRs define scope.
 * Subdomains that match an in-scope IP are also added to scope.
 
-####Import nmap scan, optionally define IPs or hostnames that are out of scope
+#### Import nmap scan, optionally define IPs or hostnames that are out of scope
 ```
 # nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
 # ./celerystalk workspace create -o /assessments/client -m vapt     # Create default workspace and set output dir
@@ -119,7 +119,7 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
 
-####Import list of hosts that are in scope and have celerystalk run nmap and parse results 
+#### Import list of hosts that are in scope and have celerystalk run nmap and parse results 
 ```
 # ./celerystalk workspace create -o /assessments/client -m vapt     # Create default workspace and set output dir
 # ./celerystalk import -S client-inscope-list.txt                   # Import IP/CIDR/Ranges and mark as in scope
