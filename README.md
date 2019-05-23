@@ -43,7 +43,7 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 #### Import nmap xml and scan a host or multiple hosts by IP
 
 ```
-# nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                       # Run nmap
+# nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                  # Run nmap
 # ./celerystalk workspace create -w htb -o /htb -m vapt             # Create workspace. Set output dir and mode
 # ./celerystalk import -f tenten.xml                                # Import nmap scan 
 # ./celerystalk db services                                         # If you want to see what services were loaded
@@ -55,15 +55,15 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 
 #### Import list of hosts that are in scope and have celerystalk run nmap for you
 ```
-# ./celerystalk workspace create -w htb -o /htb -m vapt             # Create workspace. Set output dir and mode
-# ./celerystalk import -S scope.txt                                 # Import IP/CIDR/Ranges and mark as in scope
-# ./celerystalk nmap                                                # Nmap all in-scope hosts (reads options from config.ini)
-# ./celerystalk query watch (then Ctrl+c)                           # Watch nmap scans as they move from pending > running > complete
-# ./celerystalk db services                                         # If you want to see what services were loaded
-# ./celerystalk scan                                                # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                           # Watch scans as they move from pending > running > complete
-# ./celerystalk screenshots                                         # Take screenshots
-# ./celerystalk report                                              # Generate report
+# ./celerystalk workspace create -w htb -o /htb -m vapt # Create workspace. Set output dir and mode
+# ./celerystalk import -S scope.txt                     # Import IP/CIDR/Ranges and mark as in scope
+# ./celerystalk nmap                                    # Nmap all in-scope hosts (reads options from config.ini)
+# ./celerystalk query watch (then Ctrl+c)               # Watch nmap scans as they move from pending > running > complete
+# ./celerystalk db services                             # If you want to see what services were loaded
+# ./celerystalk scan                                    # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)               # Watch scans as they move from pending > running > complete
+# ./celerystalk screenshots                             # Take screenshots
+# ./celerystalk report                                  # Generate report
 ```
 
 
@@ -73,16 +73,16 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 #### Find subdomains, define out of scope hosts, scan everything else  
 
 ```
-# ./celerystalk workspace create -o /assessments/company -m bb      # Create default workspace and set output dir
-# ./celerystalk subdomains -d company.com,company.net               # Find subdomains and determine if in scope
-# ./celerystalk import -S scope.txt     (optional)                  # Import IP/CIDR/Ranges and mark as in scope
-# ./celerystalk import -O out_scope.txt (optional)                  # Define HOSTS/IPs that are out of scope
-# ./celerystalk nmap                    (optional)                  # Nmap all in-scope hosts (reads options from config.ini)
-# ./celerystalk import -f client.xml    (optional)                  # If you would rather import an nmap file you already ran
-# ./celerystalk scan [--noIP]                                       # Run all enabled commands against all in scope hosts
-# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
-# ./celerystalk screenshots                                         # Take screenshots
-# ./celerystalk report                                              # Generate report
+# ./celerystalk workspace create -o /dir -m bb          # Create default workspace and set output dir
+# ./celerystalk subdomains -d company.com,dom.net       # Find subdomains and determine if in scope
+# ./celerystalk import -S scope.txt     (optional)      # Import IP/CIDR/Ranges and mark as in scope
+# ./celerystalk import -O out_scope.txt (optional)      # Define HOSTS/IPs that are out of scope
+# ./celerystalk nmap                    (optional)      # Nmap all in-scope hosts (reads options from config.ini)
+# ./celerystalk import -f client.xml    (optional)      # If you would rather import an nmap file you already ran
+# ./celerystalk scan [--noIP]                           # Run all enabled commands against all in scope hosts
+# ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
+# ./celerystalk screenshots                             # Take screenshots
+# ./celerystalk report                                  # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.
 
@@ -92,11 +92,11 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 
 #### Launch all enabled tools against a single URL without worrying about scope, nmap, etc. 
 ```
-# ./celerystalk workspace create -o /assessments/client -m {vapt|bb}# Create default workspace and set output dir
-# ./celerystalk scan -u http://10.10.10.10/secret_folder/           # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
-# ./celerystalk screenshots                                         # Take screenshots
-# ./celerystalk report                                              # Generate report
+# ./celerystalk workspace create -o /dir -m {vapt|bb}   # Create default workspace and set output dir
+# ./celerystalk scan -u http://host/secret_folder/      # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
+# ./celerystalk screenshots                             # Take screenshots
+# ./celerystalk report                                  # Generate report
 ```
 
 ### [Vulnerability Assessment Mode]  
@@ -105,32 +105,32 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 
 #### Import nmap scan, optionally define IPs or hostnames that are out of scope
 ```
-# nmap -iL client-inscope-list.txt -Pn -p- -sV -oX client.xml       # Run nmap
-# ./celerystalk workspace create -o /assessments/client -m vapt     # Create default workspace and set output dir
-# ./celerystalk import -f client.xml                                # Import services and mark all hosts as in scope
-# ./celerystalk import -S scope.txt                 (optional)      # Import IP/CIDR/Ranges and mark as in scope
-# ./celerystalk import -O out_scope.txt             (optional)      # Define HOSTS/IPs that are out of scope
-# ./celerystalk import -d subdomains.txt            (optional)      # Define subdomains that are in scope
-# ./celerystalk subdomains -d client.com,client.net (optional)      # Find subdomains and determine if in scope
-# ./celerystalk scan                                                # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                           # Wait for scans to finish
-# ./celerystalk screenshots                                         # Take screenshots
-# ./celerystalk report                                              # Generate report
+# nmap -iL inscope-list.txt -Pn -p- -sV -oX client.xml     # Run nmap
+# ./celerystalk workspace create -o /dir -m vapt           # Create default workspace and set output dir
+# ./celerystalk import -f client.xml                       # Import services and mark all hosts as in scope
+# ./celerystalk import -S scope.txt             (optional) # Import IP/CIDR/Ranges and mark as in scope
+# ./celerystalk import -O out_scope.txt         (optional) # Define HOSTS/IPs that are out of scope
+# ./celerystalk import -d subdomains.txt        (optional) # Define subdomains that are in scope
+# ./celerystalk subdomains -d dom1.com,dom2.net (optional) # Find subdomains and determine if in scope
+# ./celerystalk scan                                       # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)                  # Wait for scans to finish
+# ./celerystalk screenshots                                # Take screenshots
+# ./celerystalk report                                     # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
 
 #### Import list of hosts that are in scope and have celerystalk run nmap and parse results 
 ```
-# ./celerystalk workspace create -o /assessments/client -m vapt     # Create default workspace and set output dir
-# ./celerystalk import -S client-inscope-list.txt                   # Import IP/CIDR/Ranges and mark as in scope
-# ./celerystalk import -O out_scope.txt             (optional)      # Define HOSTS/IPs that are out of scope
-# ./celerystalk nmap                                                # Nmap all in-scope hosts (reads options from config.ini)
-# ./celerystalk query watch (then Ctrl+c)                           # Watch nmap scans as they move from pending > running > complete
-# ./celerystalk subdomains -d client.com,client.net                 # Find subdomains and determine if in scope
-# ./celerystalk scan                                                # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                           # Watch scans as they move from pending > running > complete
-# ./celerystalk screenshots                                         # Take screenshots
-# ./celerystalk report                                              # Generate report
+# ./celerystalk workspace create -o /dir -m vapt        # Create default workspace and set output dir
+# ./celerystalk import -S client-inscope-list.txt       # Import IP/CIDR/Ranges and mark as in scope
+# ./celerystalk import -O out_scope.txt      (optional) # Define HOSTS/IPs that are out of scope
+# ./celerystalk nmap                                    # Nmap all in-scope hosts (reads options from config.ini)
+# ./celerystalk query watch (then Ctrl+c)               # Watch nmap scans as they move from pending > running > complete
+# ./celerystalk subdomains -d client.com,client.net     # Find subdomains and determine if in scope
+# ./celerystalk scan                                    # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)               # Watch scans as they move from pending > running > complete
+# ./celerystalk screenshots                             # Take screenshots
+# ./celerystalk report                                  # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
 
