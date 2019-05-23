@@ -638,13 +638,31 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
     # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     for vhost in vhosts:
-        #print("raw:\t" + vhost)
-        vhost = ansi_escape.sub('', vhost)
-        #print("escaped:\t" + vhost)
-        if re.match(r'\w', vhost):
-            in_scope, ip = utils.domain_scope_checker(vhost, workspace)
-            if workspace_mode == "vapt":
-                if in_scope == 1:
+        #This checks for spaces in vhosts and is a dirty way to filter out error messages and other stuff.
+        if ' ' not in vhost:
+            #print("raw:\t" + vhost)
+            vhost = ansi_escape.sub('', vhost)
+            #print("escaped:\t" + vhost)
+            if re.match(r'\w', vhost):
+                in_scope, ip = utils.domain_scope_checker(vhost, workspace)
+                if workspace_mode == "vapt":
+                    if in_scope == 1:
+                        print("Found subdomain (in scope):\t" + vhost)
+                        is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                        if is_vhost_in_db:
+                            lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                        else:
+                            db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                            lib.db.create_vhost(db_vhost)
+                    else:
+                        print("Found subdomain (out of scope):\t" + vhost)
+                        is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                        if is_vhost_in_db:
+                            lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
+                        else:
+                            db_vhost = (ip, vhost, 0, 0, 0, workspace)  # add it to the vhosts db and mark as out of scope
+                            lib.db.create_vhost(db_vhost)
+                elif workspace_mode == "bb":
                     print("Found subdomain (in scope):\t" + vhost)
                     is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
                     if is_vhost_in_db:
@@ -652,22 +670,6 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
                     else:
                         db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
                         lib.db.create_vhost(db_vhost)
-                else:
-                    print("Found subdomain (out of scope):\t" + vhost)
-                    is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
-                    if is_vhost_in_db:
-                        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
-                    else:
-                        db_vhost = (ip, vhost, 0, 0, 0, workspace)  # add it to the vhosts db and mark as out of scope
-                        lib.db.create_vhost(db_vhost)
-            elif workspace_mode == "bb":
-                print("Found subdomain (in scope):\t" + vhost)
-                is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
-                if is_vhost_in_db:
-                    lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
-                else:
-                    db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
-                    lib.db.create_vhost(db_vhost)
 
 
 def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir,config_file=None):
