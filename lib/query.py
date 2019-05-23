@@ -75,8 +75,10 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
 
             command_length = len(command)
             if command_length > terminal_width - 11:
-
-                print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
+                if int(id) > 999:
+                    print(" [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
+                else:
+                    print("  [" + str(id) + "]\t" + command[0:terminal_width - 11] + "...")
             else:
                 print("  [" + str(id) + "]\t" + command)
         if repeat:
@@ -152,7 +154,10 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
                 id_str = str(id) + " "
             command_length = len(command)
             if command_length > terminal_width -22:
-                print("  [" + id_str + "][" + run_time + "] " + command[0:terminal_width - 22] + "...")
+                if int(id) > 999:
+                    print(" [" + id_str + "][" + run_time + "] " + command[0:terminal_width - 22] + "...")
+                else:
+                    print("  [" + id_str + "][" + run_time + "] " + command[0:terminal_width - 22] + "...")
             else:
                 print("  [" + id_str + "][" + run_time + "] " + command)
     else:
