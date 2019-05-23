@@ -847,7 +847,7 @@ div.gallery {
     <nav class="left" id="myScrollspy">
       <ul class="nav nav-pills nav-stacked">
         <li>
-            <center><b><font size="4" color="lightgray" family="Tahoma">celerystalk</font></b><br><font color="lightgray" family="Tahoma">v1.1</font></center>
+            <center><b><font size="4" color="lightgray" family="Tahoma">celerystalk</font></b><br><font color="lightgray" family="Tahoma">v1.2</font></center>
         </li> 
         <li class="nav-item">
           <a class="nav-link active" href="#top">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
