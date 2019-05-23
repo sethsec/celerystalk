@@ -59,8 +59,13 @@ Context specific help with examples:
 Note: By default, Celery uses the number of CPU cores to set the number of concurrent tasks that can execute.
 """
 
-
-from docopt import docopt
+try:
+    from docopt import docopt
+except:
+    print("[!] To install celerystalk:")
+    print("[!]   cd setup")
+    print("[!]   ./install.sh")
+    exit()
 import os
 from time import sleep
 import sys
@@ -85,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(178)
+build=str(179)
 
 def print_banner():
 
