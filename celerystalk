@@ -90,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(180)
+build=str(181)
 
 def print_banner():
 
@@ -419,7 +419,7 @@ def main(arguments):
         exit()
 
     ####################################
-    # Celery Command
+    # Admin Command
     ####################################
 
     if arguments["admin"]:
@@ -453,6 +453,7 @@ def main(arguments):
             lib.utils.start_services()
             exit()
         if arguments["reset"]:
+            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
             print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
             answer = raw_input("Are you sure you want to continue? (y\N): ")
             print("")
@@ -479,32 +480,33 @@ def main(arguments):
     # Reset Command
     ####################################
 
-    if arguments["reset"]:
-        if arguments["--help"]:
-            columns = ["Options", "Description"]
-            help_table = PrettyTable(columns)
-            help_table.align[columns[1]] = "l"
-            help_table.add_row(["no options", "Destroy DB, Flush Redis, start over"])
-            print(help_table)
-            print("\n")
-            print("""Examples:
-    ./celerystalk reset                
-            \n""")
-            exit()
-        print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
-        answer = raw_input("Are you sure you want to continue? (y\N): ")
-        print("")
-        if (answer == "Y") or (answer == "y"):
-            from subprocess import Popen
-            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
-            path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
-            print(path)
-            os.chdir(path)
-            populated_command = "bash ./reset.sh"
-            p = Popen(populated_command, shell=True)
-            p.communicate()
-            lib.utils.shutdown_background_jobs()
-            exit()
+    # if arguments["reset"]:
+    #     if arguments["--help"]:
+    #         columns = ["Options", "Description"]
+    #         help_table = PrettyTable(columns)
+    #         help_table.align[columns[1]] = "l"
+    #         help_table.add_row(["no options", "Destroy DB, Flush Redis, start over"])
+    #         print(help_table)
+    #         print("\n")
+    #         print("""Examples:
+    # ./celerystalk reset
+    #         \n""")
+    #         exit()
+    #     lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+    #     print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
+    #     answer = raw_input("Are you sure you want to continue? (y\N): ")
+    #     print("")
+    #     if (answer == "Y") or (answer == "y"):
+    #         from subprocess import Popen
+    #
+    #         path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "setup"))
+    #         print(path)
+    #         os.chdir(path)
+    #         populated_command = "bash ./reset.sh"
+    #         p = Popen(populated_command, shell=True)
+    #         p.communicate()
+    #         lib.utils.shutdown_background_jobs()
+    #         exit()
 
 
 
