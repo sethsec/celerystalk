@@ -13,8 +13,8 @@ celerystalk helps you automate your network scanning/enumeration process with as
 
 Phase | Command | Example tools used
 --- | --- | ----
-DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
-Define Scope | ./celerystalk import | celerystalk magic     
+DNS Recon/Enumeration | ./celerystalk subdomains | Amass, sublist3r
+Define Scope, Import nmap/nessus | ./celerystalk import | celerystalk magic     
 Port Scanning | ./celerystalk nmap | nmap
 Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, etc.
 Screenshots | ./celerystalk sceenshots | Aquatone
