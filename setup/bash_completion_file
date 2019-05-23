@@ -167,7 +167,6 @@ _celerystalk_db()
             paths)
             _celerystalk_db_paths
         ;;
-        case ${COMP_WORDS[2]} in
             paths_only)
             _celerystalk_db_paths_only
         ;;
