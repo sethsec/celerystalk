@@ -43,14 +43,14 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 #### Import nmap xml and scan a host or multiple hosts by IP
 
 ```
-# nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml                  # Run nmap
-# ./celerystalk workspace create -w htb -o /htb -m vapt             # Create workspace. Set output dir and mode
-# ./celerystalk import -f tenten.xml                                # Import nmap scan 
-# ./celerystalk db services                                         # If you want to see what services were loaded
-# ./celerystalk scan                                                # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)                           # Watch scans as move from pending > running > complete
-# ./celerystalk screenshots                                         # Take screenshots
-# ./celerystalk report                                              # Generate report
+# nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml           # Run nmap
+# ./celerystalk workspace create -w htb -o /htb -m vapt # Create workspace. Set output dir and mode
+# ./celerystalk import -f tenten.xml                    # Import nmap scan 
+# ./celerystalk db services                             # If you want to see what services were loaded
+# ./celerystalk scan                                    # Run all enabled commands
+# ./celerystalk query watch (then Ctrl+c)               # Watch scans as move from pending > running > complete
+# ./celerystalk screenshots                             # Take screenshots
+# ./celerystalk report                                  # Generate report
 ```
 
 #### Import list of hosts that are in scope and have celerystalk run nmap for you
