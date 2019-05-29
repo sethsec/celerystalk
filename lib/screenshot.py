@@ -33,7 +33,7 @@ def screenshot_command(arguments):
 
     # lib.screenshot.screenshot_all_paths(workspace)
     paths_len = len(lib.db.get_all_paths(workspace))
-    print("Tasking auatone to take [{0}] screenshots").format(str(paths_len))
+    print("[+]\n[+] Tasking aquatone to take [{0}] screenshots").format(str(paths_len))
     lib.screenshot.aquatone_all_paths(workspace)
 
 # def screenshot_all_paths(workspace):
