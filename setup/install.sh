@@ -36,10 +36,15 @@ echo "*  chromium python3-pip, wpscan, jq             *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
-    apt install gobuster redis-server seclists chromium python3-pip wpscan jq -y
+    apt install gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
     apt install python-pip python3-pip unzip redis-server chromium jq -y
 fi
+
+
+
+
+
 
 CELERYSTALK_DIR=`pwd`
 
@@ -169,7 +174,7 @@ if [ ! -f /opt/Photon/photon.py ]; then
     cd /opt/
     git clone https://github.com/s0md3v/Photon.git
     cd Photon
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 else
     echo ""
     echo "**********************************************"
