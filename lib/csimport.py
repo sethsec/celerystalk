@@ -522,7 +522,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 scan_output_base_file_dir = os.path.abspath(output_base_dir + file_end_part)
 
                 if (scanned_service_name == 'https') or (scanned_service_name == 'http'):
-                    path = scanned_service_name + "://" + ip + ":" + str(scanned_service_port) + "/"
+                    path = scanned_service_name + "://" + ip + ":" + str(scanned_service_port)
                     db_path = db.get_path(path, workspace)
                     if not db_path:
                         url_screenshot_filename = scan_output_base_file_dir + ".png"
@@ -552,7 +552,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
                             scanned_service_port) + "_" + scanned_service_protocol)
 
                     if (scanned_service_name == 'https') or (scanned_service_name == 'http'):
-                        path = scanned_service_name + "://" + vhost + ":" + str(scanned_service_port) + "/"
+                        path = scanned_service_name + "://" + vhost + ":" + str(scanned_service_port)
                         db_path = db.get_path(path, workspace)
                         if not db_path:
                             url_screenshot_filename = scan_output_base_file_dir + ".png"
