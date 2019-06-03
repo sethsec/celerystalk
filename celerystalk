@@ -90,12 +90,12 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(186)
+build=str(187)
 
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("    v1.2\tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.2 beta \tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
