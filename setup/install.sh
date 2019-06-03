@@ -105,8 +105,9 @@ if [ ! -f /opt/amass/amass ]; then
     echo "****************************************"
     echo ""
     mkdir -p /opt/amass
-    wget https://github.com/OWASP/Amass/releases/download/v2.5.0/amass_2.5.2_linux_386.zip -O /opt/amass/amass_2.5.2_linux_386.zip
-    unzip /opt/amass/amass_2.5.2_linux_386.zip -d /opt/amass
+    wget https://github.com/OWASP/Amass/releases/download/3.0.3/amass_3.0.3_linux_i386.zip -O /opt/amass/amass_3.0.3_linux_i386.zip
+    unzip /opt/amass/amass_3.0.3_linux_i386.zip -d /opt/amass
+    mv /opt/amass/amass_3.0.3_linux_i386/* /opt/amass/
 fi
 
 
@@ -178,7 +179,7 @@ else
     echo ""
     cd /opt/Photon
     git pull
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 fi
 
 #if [ ! -f /opt/CMSmap/cmsmap.py ]; then

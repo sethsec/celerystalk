@@ -16,7 +16,7 @@ Usage:
     celerystalk cancel ([all]|[<task_ids>]) [-h]
     celerystalk pause  ([all]|[<task_ids>]) [-h]
     celerystalk resume ([all]|[<task_ids>]) [-h]
-    celerystalk db ([workspaces]|[services]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
+    celerystalk db ([workspaces]|[workspace]|[services]|[ports]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
     celerystalk db export [-h]
     celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
@@ -90,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(185)
+build=str(186)
 
 def print_banner():
 
@@ -581,7 +581,9 @@ def main(arguments):
             help_table = PrettyTable(columns)
             help_table.align[columns[1]] = "l"
             help_table.add_row(["workspaces", "Show all workspaces with their output directory and mode."])
+            help_table.add_row(["workspace", "Same as workspaces."])
             help_table.add_row(["services", "Show all open ports and service types by host."])
+            help_table.add_row(["ports", "Same as ports."])
             help_table.add_row(["hosts", "Show all hosts, whether they are in-scope, out of scope, or submitted."])
             help_table.add_row(["vhosts", "Same as hosts command, but excludes vhosts that are IP addresses."])
             help_table.add_row(["paths", "Show all paths that have been identified by vhost."])
@@ -591,7 +593,9 @@ def main(arguments):
             print("\n")
             print("""Examples:
     Show workspaces:            ./celerystalk db workspaces
+                                ./celerystalk db workspace
     Show services:              ./celerystalk db services
+                                ./celerystalk db ports
     Show hosts:                 ./celerystalk db hosts
     Show vhosts only            ./celerystalk db vhosts
     Show paths:                 ./celerystalk db paths
@@ -615,7 +619,7 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
 
-        if arguments["workspaces"]:
+        if (arguments["workspaces"]) or (arguments["workspace"]):
 
             columns = ["Workspace", "Output Directory","Mode"]
             workspace_rows = lib.db.get_all_workspaces()
@@ -649,7 +653,7 @@ def main(arguments):
                         hosts_table.add_row(row)
                 print(hosts_table)
                 print("\n\n")
-            elif arguments["services"]:
+            elif (arguments["services"]) or (arguments["ports"]):
                 print("[+] Showing services for the [{0}] workspace\n".format(workspace))
                 columns = ["IP", "Port", "Protocol","Service","Product","Version","Extra Info"]
                 services_rows = lib.db.get_all_services(workspace)
