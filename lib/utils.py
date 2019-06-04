@@ -1,6 +1,6 @@
 import subprocess
 from subprocess import Popen
-
+from time import sleep
 from libnmap.parser import NmapParser
 from libnmap.process import NmapProcess
 from libnessus.parser import NessusParser
@@ -16,6 +16,7 @@ import re
 #import time
 #from timeit import default_timer as timer
 import lib.db
+import lib.config_parser
 
 
 # def take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
@@ -174,17 +175,37 @@ def nmap_follow_up_scan(hosts, port):
     return nmap_report
 
 
-def start_services():
+def start_services(config_file):
     # maybe this first part should be somwhere else.   But for now, in order to run, celery worker and celery flower need to be started.
     #print("[+] Starting celery worker")
-    start_celery_worker()
+    start_celery_worker(config_file)
+    start_redis()
+    #print("[+] Reading config file")
+
+def restart_services(config_file):
+    shutdown_background_jobs()
+    sleep(2)
+    start_celery_worker(config_file)
     start_redis()
     #print("[+] Reading config file")
 
 
-def start_celery_worker():
+
+
+def start_celery_worker(config_file):
     # We can always just try and start the celery worker because it won't restart already running thanks to pidfile.
-    p = Popen("celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
+    try:
+        concurrent_tasks = lib.config_parser.get_concurrent_tasks(config_file)
+        popen_string = "celery -A tasks worker --concurrency=%s -Ofair -q --pidfile ./%%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1" % (str(concurrent_tasks))
+        p = Popen(popen_string, shell=True)
+
+    except Exception, e:
+        #print(e)
+        p = Popen(
+            "celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1",
+            shell=True)
+
+    #p = Popen("celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
     #print("[+] Started celery worker")
 
 def start_redis():
@@ -197,7 +218,7 @@ def start_redis():
 def shutdown_background_jobs():
     print("[-] Stopping celery worker (if running)")
     #p = Popen("celery -A tasks control shutdown > /dev/null 2>&1", shell=True)
-    p = Popen('pkill -f "celery"> /dev/null 2>&1', shell=True)
+    p = Popen('pkill -f "celery -A tasks"> /dev/null 2>&1', shell=True)
 
     print("[-] Stopping redis service (if running)\n")
     p = Popen("/etc/init.d/redis-server stop > /dev/null 2>&1", shell=True)

@@ -43,7 +43,7 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
         )()
 
 def nmapcommand(simulation,targets,config_file=None):
-    lib.utils.start_services()
+    lib.utils.start_services(config_file)
     task_count = 0
 
     try:

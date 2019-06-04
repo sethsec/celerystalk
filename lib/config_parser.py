@@ -1,4 +1,5 @@
 import simplejson
+import lib.db
 from collections import OrderedDict
 from ConfigParser import ConfigParser
 
@@ -23,6 +24,17 @@ def read_config_ini(config_file=None):
             supported_services.append(service)
     return config,supported_services
 
+def get_concurrent_tasks(config_file):
+    config,supported_services = read_config_ini(config_file)
+    for (key, val) in config.items("celerystalk-config"):
+        if key == "concurrent_tasks":
+            return val
+
+def get_simpleserver_port(config_file):
+    config,supported_services = read_config_ini(config_file)
+    for (key, val) in config.items("celerystalk-config"):
+        if key == "simple_server_port":
+            return val
 
 def extract_bb_nmap_options(config_file=None):
     config = ConfigParser(allow_no_value=True)
