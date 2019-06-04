@@ -36,6 +36,11 @@ def get_simpleserver_port(config_file):
         if key == "simple_server_port":
             return val
 
+def get_user_config(config_file):
+    config,supported_services = read_config_ini(config_file)
+    return config.items("user-config")
+
+
 def extract_bb_nmap_options(config_file=None):
     config = ConfigParser(allow_no_value=True)
     config.read([config_file])

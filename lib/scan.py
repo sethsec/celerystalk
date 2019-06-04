@@ -73,6 +73,13 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
         print("[+]\t\tcelerystalk query brief [watch]")
         print("[+]\t\tcelerystalk query summary [watch]\n")
 
+def replace_user_config_options(config_file,populated_command):
+    rep = lib.config_parser.get_user_config(config_file)
+    rep = dict((k, v) for k, v in rep)
+    for k,v in rep.iteritems():
+        k = k.upper()
+        populated_command = populated_command.replace("[" + k + "]",v)
+    return populated_command
 
 def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir,celery_path,config_file=None):
     print("in aquatone host")
@@ -85,6 +92,7 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
                 outfile = scan_output_base_file_dir + "_" + cmd_name
                 filename = "/tmp/" + workspace + "_paths_" + vhost + ".txt"
                 populated_command = cmd.replace("[FILE]", filename).replace("[OUTPUT]", outfile)
+                populated_command = replace_user_config_options(config_file,populated_command)
 
                 paths = lib.db.get_all_paths_for_host_path_only(vhost,workspace)
                 print(str(paths))
@@ -97,6 +105,8 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
                          paths_tmp_file.write(str(line[0]) + "\n")
 
                 populated_command = cmd.replace("[FILE]", filename).replace("[OUTPUT]", outfile)
+                populated_command = replace_user_config_options(config_file,populated_command)
+
                 #print(populated_command)
         except Exception, e:
             print(e)
@@ -143,10 +153,11 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
         if cmd_name == "udp_scan":
             outfile = scan_output_base_host_filename + "_" + cmd_name
             populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
-
+            populated_command = replace_user_config_options(config_file, populated_command)
 
             if simulation:
                 populated_command = "#" + populated_command
+
 
             task_id = uuid()
             scanned_service_port = ""
@@ -188,6 +199,8 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
             cmd_name = "nmap_service_scan"
             populated_command = 'nmap -sV -sC -Pn -p {0} -oN {1}_nmap_service_scan.txt {2}'.format(
                 scanned_service_port, scan_output_base_file_name, vhost)
+            populated_command = replace_user_config_options(config_file, populated_command)
+
             if simulation:
                 populated_command = "#" + populated_command
 
@@ -207,6 +220,8 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
                             populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]", str(
                                 scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]",
                                                                                             "")
+                            populated_command = replace_user_config_options(config_file, populated_command)
+
                             if simulation:
                                 # debug - sends jobs to celery, but with a # in front of every one.
                                 populated_command = "#" + populated_command
@@ -367,6 +382,8 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
                                                                                     str(port)).replace("[OUTPUT]",
                                                                                                        outfile).replace(
                             "/[PATH]", path)
+                        populated_command = replace_user_config_options(config_file, populated_command)
+
                         if simulation:
                             # debug - sends jobs to celery, but with a # in front of every one.
                             populated_command = "#" + populated_command
@@ -444,6 +461,8 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                     #print(cmd_name,cmd)
                     outfile = scan_output_base_host_filename + "_" + cmd_name
                     populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     #print(cmd)
 
                     #cmd_name = "udp-top100"
@@ -491,6 +510,8 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                     cmd_name = "nmap_service_scan"
                     populated_command = 'nmap -sV -sC -Pn -p {0} -oN {1}_nmap_service_scan.txt {2}'.format(
                         scanned_service_port, scan_output_base_file_name, vhost)
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     if simulation:
                         populated_command = "#" + populated_command
 
@@ -554,6 +575,8 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                 for (cmd_name, cmd) in config.items(mapped_service_name):
                     outfile = scan_output_base_file_name + cmd_name
                     populated_command = cmd.replace("[TARGET]", ip).replace("[PORT]", str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]", "")
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     if simulation:
                         #debug - sends jobs to celery, but with a # in front of every one.
                         populated_command = "#" + populated_command
@@ -597,6 +620,8 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
                 for (cmd_name, cmd) in config.items(section):
                     outfile = output_base_dir + domain + "_" + cmd_name
                     populated_command = cmd.replace("[DOMAIN]", domain).replace("[OUTPUT]", outfile)
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     if simulation:
                         populated_command = "#" + populated_command
                     #print(populated_command)
@@ -717,6 +742,8 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
                         outfile = scan_output_base_file_name + cmd_name
                         populated_command = cmd.replace("[TARGET]", scannable_vhost).replace("[PORT]",
                             str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]", "")
+                        populated_command = replace_user_config_options(config_file, populated_command)
+
                         if simulation:
                             # debug - sends jobs to celery, but with a # in front of every one.
                             populated_command = "#" + populated_command
