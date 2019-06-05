@@ -2,6 +2,7 @@ import os
 import bleach
 from bleach.sanitizer import Cleaner
 import lib.db
+import lib.config_parser
 import lib.utils
 import urllib
 import time
@@ -184,7 +185,7 @@ def sort_report_hosts(host_list):
     return vhost_list + ip_list
 
 
-def report(workspace,target_list=None):
+def report(workspace,config_file,target_list=None):
     terminal_width = lib.utils.get_terminal_width()
     if not terminal_width:
         terminal_width = 80
@@ -494,8 +495,16 @@ function myFunction() {
     print("[+] Option 1: Open with local firefox (works over ssh with x forwarding)")
     print("\t\tfirefox " + combined_report_file_name + " &")
     print("[+] Option 2: Use Python's SimpleHTTPserver (Don't serve this on a publicly accessible IP!!)")
-    print("\t\tcd {0} && python -m SimpleHTTPServer 27007".format(workspace_report_directory))
+
+    try:
+        simple_server_port = lib.config_parser.get_simpleserver_port(config_file)
+        print("\t\tcd {0} && python -m SimpleHTTPServer {1}".format(workspace_report_directory, str(simple_server_port)))
+    except:
+        print("\t\tcd {0} && python -m SimpleHTTPServer 27007".format(workspace_report_directory))
+
+    #print("\t\tcd {0} && python -m SimpleHTTPServer 27007".format(workspace_report_directory))
     print("[+] Option 3: Copy the {0} folder to another machine and view locally.\n\n".format(workspace_report_directory))
+
 
 
 def populate_report_head():

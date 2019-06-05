@@ -18,7 +18,7 @@ Usage:
     celerystalk resume ([all]|[<task_ids>]) [-h]
     celerystalk db ([workspaces]|[workspace]|[services]|[ports]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
     celerystalk db export [-h]
-    celerystalk admin ([start]|[stop]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
+    celerystalk admin ([start]|[stop]|[restart]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
     celerystalk (help | -h | --help)
 
@@ -90,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(187)
+build=str(189)
 
 def print_banner():
 
@@ -117,12 +117,19 @@ def main(arguments):
     lib.utils.check_for_new_default_config()
     lib.utils.check_for_dependencies()
 
-
     if arguments["interactive"]:
         prompt = lib.interactive.MyPrompt()
         prompt.prompt = '[celerystalk] '
         prompt.cmdloop("+!" * 35 + '\n\n[!] Interactive mode is still in development and should not be used at this time...\n\n' + "+!" * 35)
 
+    if arguments["-c"]:
+        if os.path.exists(arguments["-c"]):
+            config_file = arguments["-c"]
+        else:
+            print("[!] The specified config file does not exist. Try again?")
+            exit()
+    else:
+        config_file = 'config.ini'
 
 
     ####################################
@@ -241,7 +248,7 @@ def main(arguments):
 
     # Query - Inform user about job status
     if arguments["query"]:
-        lib.utils.start_services()
+        lib.utils.start_services(config_file)
         if arguments["--help"]:
             columns = ["Option", "Description"]
             help_table = PrettyTable(columns)
@@ -429,6 +436,7 @@ def main(arguments):
             help_table.align[columns[1]] = "l"
             help_table.add_row(["start", "Start Celery & Redis processes"])
             help_table.add_row(["stop", "Stop Celery & Redis processes"])
+            help_table.add_row(["restart", "Restart Celery & Redis processes"])
             help_table.add_row(["reset", "Destroy DB, Flush Redis, start over"])
             help_table.add_row(["backup", "Backup DB and all workspace data directories"])
             help_table.add_row(["restore", "Restore DB and all workspace data directories"])
@@ -440,6 +448,7 @@ def main(arguments):
             print("""Examples:
     ./celerystalk admin start
     ./celerystalk admin stop
+    ./celerystalk admin restart
     ./celerystalk admin reset                
     ./celerystalk admin backup                  
     ./celerystalk admin restore -f <filename>                
@@ -450,7 +459,10 @@ def main(arguments):
             lib.utils.shutdown_background_jobs()
             exit()
         if arguments["start"]:
-            lib.utils.start_services()
+            lib.utils.start_services(config_file)
+            exit()
+        if arguments["restart"]:
+            lib.utils.restart_services(config_file)
             exit()
         if arguments["reset"]:
             lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
@@ -546,9 +558,9 @@ def main(arguments):
                 exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
-            lib.report.report(workspace, target_list)
+            lib.report.report(workspace,config_file,target_list)
         else:
-            lib.report.report(workspace)
+            lib.report.report(workspace,config_file)
         exit()
 
     ####################################
@@ -800,7 +812,7 @@ def main(arguments):
 
             \n""")
             exit()
-        lib.utils.start_services()
+        lib.utils.start_services(config_file)
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
         else:
@@ -813,14 +825,7 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
                 exit()
-        if arguments["-c"]:
-            if os.path.exists(arguments["-c"]):
-                config_file = arguments["-c"]
-            else:
-                print("[!] The specified config file does not exist. Try again?")
-                exit()
-        else:
-            config_file = 'config.ini'
+
         lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,out_of_scope_hosts=None,config_file=config_file)
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
@@ -864,14 +869,7 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
-        if arguments["-c"]:
-            if os.path.exists(arguments["-c"]):
-                config_file = arguments["-c"]
-            else:
-                print("[!] The specified config file does not exist. Try again?")
-                exit()
-        else:
-            config_file = 'config.ini'
+
         arguments["scan"] = True
         all_submitted_vhosts = lib.db.get_inscope_submitted_vhosts(workspace)
         all_submitted_vhosts_list = []
@@ -932,16 +930,8 @@ def main(arguments):
             \n""")
             exit()
 
-        lib.utils.start_services()
+        lib.utils.start_services(config_file)
         celery_path = sys.path[0]
-        if arguments["-c"]:
-            if os.path.exists(arguments["-c"]):
-                config_file = arguments["-c"]
-            else:
-                print("[!] The specified config file does not exist. Try again?")
-                exit()
-        else:
-            config_file = 'config.ini'
 
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
@@ -1006,12 +996,7 @@ def main(arguments):
             \n""")
             exit()
 
-        lib.utils.start_services()
-
-        if arguments["-c"]:
-            config_file = arguments["-c"]
-        else:
-            config_file = 'config.ini'
+        lib.utils.start_services(config_file)
 
         nmapcommand(arguments["--simulation"], arguments["-t"],config_file=config_file)
 
