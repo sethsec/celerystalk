@@ -90,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(189)
+build=str(190)
 
 def print_banner():
 
@@ -824,9 +824,12 @@ def main(arguments):
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
                 print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
                 exit()
-                exit()
 
-        lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,out_of_scope_hosts=None,config_file=config_file)
+        if arguments["<domains>"]:
+            lib.scan.create_dns_recon_tasks(arguments["<domains>"], arguments["--simulation"], workspace, output_dir,out_of_scope_hosts=None,config_file=config_file)
+        else:
+            print("\n[!] Specify domain(s) with the -d flag. Ex: -d domain1.com,domain2.com")
+            exit()
 
         print("\n[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")

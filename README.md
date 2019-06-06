@@ -14,11 +14,11 @@ celerystalk helps you automate your network scanning/enumeration process with as
 Phase | Command | Example tools used
 --- | --- | ----
 DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
-Define Scope, Import nmap/nessus | ./celerystalk import [scan_data,scope_files,etc.] | celerystalk magic     
+Define Scope, Import nmap/nessus | ./celerystalk import [scan_data,scope_files,etc.] | celerystalk     
 Port Scanning | ./celerystalk nmap | nmap
 Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, etc.
 Screenshots | ./celerystalk sceenshots | Aquatone
-Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
+Analysis | ./celerystalk report | celerystalk
 
 ## Install/Setup
 
@@ -38,8 +38,21 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 
 ## Using celerystalk - The basics
 
-### [CTF/HackTheBox/Easy mode] 
 
+### [URL Mode] - How to scan a a URL  
+* Use this as a follow up whenever you find an interesting directory, or just as quick way to scan one web app without importing anything.
+
+#### Launch all enabled tools against a single URL without having to import scope, nmap, etc. 
+```
+# ./celerystalk workspace create -o /dir -m {vapt|bb}   # Create default workspace, set output dir and mode
+# ./celerystalk scan -u url                             # Run all enabled commands against this path
+# ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
+# ./celerystalk screenshots                             # Take screenshots
+# ./celerystalk report                                  # Generate report
+```
+
+### [CTF/HackTheBox/Easy mode] - How to scan one or more hosts
+---
 #### Import nmap xml and scan a host or multiple hosts by IP
 
 ```
@@ -65,9 +78,10 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report
 ```
-
+---
 
 ### [Bug Bounty Mode] 
+---
 *  In BB mode, all subdomains found with celerystalk or manually imported are marked in scope.
 
 #### Find subdomains, define out of scope hosts, scan everything else  
@@ -85,21 +99,12 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 # ./celerystalk report                                  # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.
+---
 
 
-### [URL Mode] - How to scan a a URL  
-* Use this as a follow up whenever you find an interesting directory, or just as quick way to scan one web app without importing anything.
-
-#### Launch all enabled tools against a single URL without worrying about scope, nmap, etc. 
-```
-# ./celerystalk workspace create -o /dir -m {vapt|bb}   # Create default workspace and set output dir
-# ./celerystalk scan -u http://host/secret_folder/      # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
-# ./celerystalk screenshots                             # Take screenshots
-# ./celerystalk report                                  # Generate report
-```
 
 ### [Vulnerability Assessment Mode]  
+---
 * In VAPT mode, IP addresses/ranges/CIDRs define scope.
 * Subdomains that match an in-scope IP are also added to scope.
 
@@ -133,7 +138,7 @@ Analysis | ./celerystalk report | celerystalk magic + Aquatone Report
 # ./celerystalk report                                  # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
-
+---
 
 
 ## Using celerystalk - Some more detail
