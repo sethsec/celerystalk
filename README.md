@@ -52,7 +52,7 @@ Analysis | ./celerystalk report | celerystalk
 ```
 
 ### [CTF/HackTheBox/Easy mode] - How to scan one or more hosts
----
+
 #### Import nmap xml and scan a host or multiple hosts by IP
 
 ```
@@ -78,10 +78,9 @@ Analysis | ./celerystalk report | celerystalk
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report
 ```
----
 
 ### [Bug Bounty Mode] 
----
+
 *  In BB mode, all subdomains found with celerystalk or manually imported are marked in scope.
 
 #### Find subdomains, define out of scope hosts, scan everything else  
@@ -99,12 +98,11 @@ Analysis | ./celerystalk report | celerystalk
 # ./celerystalk report                                  # Generate report
 ```
 **Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.
----
 
 
 
 ### [Vulnerability Assessment Mode]  
----
+
 * In VAPT mode, IP addresses/ranges/CIDRs define scope.
 * Subdomains that match an in-scope IP are also added to scope.
 
@@ -122,7 +120,7 @@ Analysis | ./celerystalk report | celerystalk
 # ./celerystalk screenshots                                # Take screenshots
 # ./celerystalk report                                     # Generate report
 ```
-**Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
+**Note:** You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
 
 #### Import list of hosts that are in scope and have celerystalk run nmap and parse results 
 ```
@@ -137,60 +135,23 @@ Analysis | ./celerystalk report | celerystalk
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report
 ```
-**Note:**  You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
----
-
+**Note:** You can run the subdomains command first and then define scope, or you can define scope and import subdomains.  
 
 ## Using celerystalk - Some more detail
 
+### Config.ini - Your configuration home. 
 
-1. **Configure which tools you'd like celerystalk to execute:** The install script drops a config.ini file in the celerystalk folder. The config.ini script is broken up into three sections:  
+1. Configure celerystalk options like number of concurrent tasks
+1. Create custom configuration replacement variables
+1. Configure Nmap/Nessus to celerystalk service mapping
+1. Configure which tools you'd like celerystalk to execute
 
-    ***Service Mapping*** - The first section normalizes Nmap/Nessus service names for celerystalk (this idea was created by @codingo_ in [Reconnoitre](https://github.com/codingo/Reconnoitre) AFAIK).  
-    ```
-    [nmap-service-names]
-    http = http,http-alt,http-proxy,www,http?
-    https = ssl/http,https,ssl/http-alt,ssl/http?
-    ftp = ftp,ftp?
-    mysql = mysql
-    dns = dns,domain,domain
-    ```
-    Add new service names to this mapping as needed (and submit an issue if it should be added by default)
+For more detail, check out the [Configuration](https://github.com/sethsec/celerystalk/wiki/Configuration) page in the Wiki
 
-    ***Domain Recon Tools*** - The second section defines the tools you'd like to use for subdomain discovery (an optional feature):
-    ```
-    [domain-recon]
-    amass               : /opt/amass/amass -d [DOMAIN]
-    sublist3r           : python /opt/Sublist3r/sublist3r.py -d [DOMAIN]
-    ```  
+### Subcommands
 
-    ***Service Configuration*** - The rest of the confi.ini sections define which commands you want celerystalk to run for each identified service (i.e., http, https, ssh).    
-    * Disable any command by commenting it out with a ; or a #. 
-    * Add your own commands using [TARGET],[PORT],[OUTPUT] and [PATH] placeholders.
-    
-    Here is an example:   
-     ```
-    [http]
-    whatweb             : whatweb http://[TARGET]:[PORT]/[PATH] -a3 --colour=never > [OUTPUT].txt
-    cewl                : cewl http://[TARGET]:[PORT]/[PATH] -m 6 -w [OUTPUT].txt
-    curl_robots         : curl http://[TARGET]:[PORT]/robots.txt --user-agent 'Googlebot/2.1 (+http://www.google.com/bot.html)' --connect-timeout 30 --max-time 180  > [OUTPUT].txt
-    nmap_http_vuln      : nmap -sC -sV -Pn -v -p [PORT] --script=http-vuln* [TARGET] -d -oN [OUTPUT].txt -oX [OUTPUT].xml --host-timeout 120m --script-timeout 20m
-    nikto               : nikto -h http://[TARGET]/[PATH] -p [PORT] &> [OUTPUT].txt
-    gobuster-common     : gobuster -u http://[TARGET]:[PORT]/[PATH] -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,301,302,307,403,500' -e -n -q > [OUTPUT].txt
-    photon              : python /opt/Photon/photon.py -u http://[TARGET]:[PORT]/[PATH] -o [OUTPUT]
-    ;gobuster_2.3-medium : gobuster -u http://[TARGET]:[PORT]/[PATH] -k -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,307,403,500' -e -n -q > [OUTPUT].txt
-    ```
-
-1. **Run Nmap or Nessus:** 
-     
-   * Nmap: Run nmap against your target(s). Required: enable version detection (-sV) and output to XML (-oX filename.xml). All other nmap options are up to you. Here are some examples:
-     ```
-      nmap target(s) -Pn -p- -sV -oX filename.xml 
-      nmap -iL target_list.txt -Pn -sV -oX filename.xml
-     ```
-   * Nessus: Run nessus against your target(s) and export results as a .nessus file
-
-1. **Create workspace:**
+#### workspace
+You need to create a workspace before you can do anything else. 
 
     | Option | Description |
     | --- | --- |
@@ -206,7 +167,8 @@ Analysis | ./celerystalk report | celerystalk
       Switch to another workspace ./celerystalk workspace client
     ```
     
-1. **Import Data:** Import data into celerystalk
+#### import
+This command allows you to import port and host data into celerystalk, and allows you to define what is in scope and what is out of scope. 
 
    | Option | Description |
    | --- | --- |
@@ -224,26 +186,38 @@ Analysis | ./celerystalk report | celerystalk
     Import multiple files:      ./celerystalk import -f nmap.xml -S scope.txt -D domains.txt
     ```
     
-1. **Find Subdomains (Optional):** celerystalk will perform subdomain recon using the tools specified in the config.ini.
-  
+#### subdomains
+This command executes uses all of the subdomain seach tools in your config file. If you prefer, you can do this outside of celerystalk and import the subdomains with the import command
+
    | Option | Description |
    | --- | --- |
-   | -d domain1,domain2,etc| <b>Run Amass, Sublist3r, etc. and store domains in DB</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>
+   | -d domain1,domain2,etc| <b>Run Amass, Sublist3r, etc. and store domains in DB</b><ul><li>After running your subdomain recon tools celerystalk determines whether each subdomain is in scope by resolving the IP and looking for IP in the DB. If there is a match, the domain is marked as in scope and will be scanned.</li></ul>|
 
     ```
     Find subdomains:       celerystalk subdomains -d domain1.com,domain2.com
     ```
 
-1. **Launch Scan:** celerystalk will submit tasks to celery which asynchronously executes them and logs output to your output directory. 
+#### nmap
+This command will run nmap for you, using the options you specified in the config.ini file. You can alternatively import port scan data from an nmap xml file or from a .nessus file 
+     
+   | Option | Description |
+   | --- | --- |
+   | no options | Read nmap command from config and scan all services for in-scope hosts 
+   | -c [filename] | Specify a celerystalk configuration file [Default: ./config.ini]
+
+#### scan
+This command will submit tasks to celery, which asynchronously executes them and logs output to your output directory. 
 
    | Option | Description |
    | --- | --- |
    | no options | <b>Scan all in scope hosts</b><ul><li>Reads DB and scans every in scope IP and subdomain.</li><li>Launches all enabled tools for IPs, but only http/http specific tools against virtualhosts</li></ul>   |
-   | -t ip,vhost,cidr | <b>Scan specific target(s) from DB or scan file</b><ul><li>Scan a subset of the in scope IPs and/or subdomains.</li></ul> |  
-   |-s | <b>Simulation</b><br> Sends all of the tasks to celery, but all commands are executed with a # before them rendering them inert.</li></ul> |
-   
+   | --noIP      | Don't scan hosts by IP (only scan vhosts)
+   | -t ip,vhost,cidr | <b>Scan specific target(s) from DB or scan file</b><ul><li>Scan a subset of the in scope IPs and/or subdomains</li></ul> |  
+   | -s | <b>Simulation</b><br> Sends all of the tasks to celery, but all commands are executed with a # before them rendering them inert</li></ul> |
+   | -c [filename]   | Specify a celerystalk configuration file [Default: ./config.ini]          |
+   | -u [URL]     | Scan a specific URL, even if it is not in the DB yet                      |
+  
  
-    Scan imported hosts/subdomains
     ```    
     Scan all in scope hosts:    ./celerystalk scan    
     Scan subset of DB hosts:    ./celerystalk scan -t 10.0.0.1,10.0.0.3
@@ -253,20 +227,26 @@ Analysis | ./celerystalk report | celerystalk
     Simulation mode:            ./celerystalk scan -s
     ```
  
-1. **Rescan:** Use this command to rescan an already scanned host.
+#### rescan
+This command will rescan an already scanned host.
 
    | Option | Description |
    | --- | --- |
    | no option| For each in scope host in the DB, celerystalk will ask if if you want to rescan it| 
    | -t ip,vhost,cidr | Scan a subset of the in scope IPs and/or subdomains. |
+   |        -s        | Sends all of the tasks to celery, but all commands are executed with a # before them rendering them inert.  
+   |  -c [filename]   | Specify a celerystalk configuration file [Default: ./config.ini] |
+
    
    ```
    Rescan all hosts:           ./celerystalk rescan
-   Rescan some hosts           ./celerystalk rescan-t 1.2.3.4,sub.domain.com  
+                               ./celerystalk rescan -c myconfig.ini
+   Rescan some hosts           ./celerystalk rescan -t 1.2.3.4,sub.domain.com  
    Simulation mode:            ./celerystalk rescan -s   
    ```  
 
-1. **Query Status:** Asynchronously check the status of the tasks queue as frequently as you like. The watch mode actually executes the linux watch command so you don't fill up your entire terminal buffer.
+#### query 
+Asynchronously check the status of the tasks queue as frequently as you like. The watch mode actually executes the linux watch command so you don't fill up your entire terminal buffer.
      
     | Option | Description |
    | --- | --- |
@@ -283,7 +263,8 @@ Analysis | ./celerystalk report | celerystalk
                                 ./celerystalk query summary watch
     ```
 
-1. **Cancel/Pause/Resume Tasks:** Cancel/Pause/Resume any task(s) that are currently running or in the queue.
+#### cancel/pause/resume 
+Cancel/Pause/Resume any task(s) that are currently running or in the queue.
 
     | Option | Description |
     | --- | --- |
@@ -295,7 +276,25 @@ Analysis | ./celerystalk report | celerystalk
     Cancel/Pause/Resume Tasks:  ./celerystalk <verb> 5,6,10-20          #Cancel/Pause/Resume tasks 5, 6, and 10-20 from current workspace
                                 ./celerystalk <verb> all                #Cancel/Pause/Resume all tasks from current workspaces
     ```
-1. **Run Report:** Run a report which combines all of the tool output into an html file and a txt file. Run this as often as you like. Each time you run the report it overwrites the previous report.  
+
+#### screenshots
+
+|  Options   | Description                           |
+    | --- | --- |
+| no options | Take screenshots for all known paths |
+
+```
+    ./celerystalk screenshots
+```
+
+#### report
+Run a report which combines all of the tool output into an html file and a txt file. Run this as often as you like. Each time you run the report it overwrites the previous report.  
+
+|  Options   | Description                           |
+    | --- | --- |
+| no options | Create report for all in-scope hosts that have been scanned |
+
+
     ```
     Create Report:              ./celerystalk report                    #Create a report for all scanned hosts in current workspace
 
@@ -306,34 +305,49 @@ Analysis | ./celerystalk report | celerystalk
     | Option | Description |
     | --- | --- |
     | workspaces | Show all known workspaces and the output directory associated with each workspace |
+    | workspace | Same as workspaces |
     | services | Show all known open ports and service types by IP |
+    | ports    | Same as ports.                                                         |
     | hosts | Show all hosts (IP addresses and subdomains/vhosts) and whether they are in scope and whether they have been submitted for scanning |
+    | vhosts   | Same as hosts command, but excludes vhosts that are IP addresses.      |
     | paths | Show all paths that have been identified by vhost |
+    | paths_only | Show a newline separated list of paths in the db. Useful for piping into another tool |
     | export | Export the services, hosts, and paths tables
+    | export_paths_only | Export just a newline separated list of paths in the db to a file. 
    
     ```
     Show workspaces:            ./celerystalk db workspaces
-    Show services:              ./celerystalk db services    
+                                ./celerystalk db workspace
+    Show services:              ./celerystalk db services
+                                ./celerystalk db ports
     Show hosts:                 ./celerystalk db hosts
+    Show vhosts only            ./celerystalk db vhosts
     Show paths:                 ./celerystalk db paths
-    Export current DB:          ./celerystalk db export
+    Show paths (no table)       ./celerystalk db paths_only     
+    Show tasks:                 ./celerystalk db tasks
+    Export tables to csv        ./celerystalk db export
+    Export paths to txt         ./celerystalk db export_paths_only
     ```
 
-1. **Administrative Functions:** 
+#### admin
+Administrative Functions 
  
     |    Options    | Description                                   |
     | --- | --- |
     |     start     | Start Celery & Redis processes                |
     |      stop     | Stop Celery & Redis processes                 |
+    |    restart    | Restart Celery & Redis processes              |
     |     reset     | Destroy DB, Flush Redis, start over           |
     |     backup    | Backup DB and all workspace data directories  |
     |    restore    | Restore DB and all workspace data directories |
     | -f [filename] | Restore file name                             |
    
+   
     ```
     Examples:
     ./celerystalk admin start
     ./celerystalk admin stop
+    ./celerystalk admin restart
     ./celerystalk admin reset
     ./celerystalk admin backup -f
     ./celerystalk admin restore -f <filename>
