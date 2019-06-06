@@ -1,5 +1,3 @@
-import simplejson
-import lib.db
 from collections import OrderedDict
 from ConfigParser import ConfigParser
 
