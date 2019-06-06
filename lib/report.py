@@ -14,6 +14,11 @@ from ansi2html import Ansi2HTMLConverter
 from ansi2html.util import read_to_unicode
 
 
+
+def summary_paths(workspace):
+    pass
+
+
 def paths_report(host,all_paths):
     #all_paths = lib.db.get_all_paths_for_host(host)
     html_code = ""
