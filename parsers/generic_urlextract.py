@@ -17,11 +17,16 @@ import urlparse
 #         #print(urls)
 #     return urls
 
+
+
 def extract_urls_regex(tool_output):
-    # findall() has been used
-    # with valid conditions for urls in string
+    intereseting_urls = []
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tool_output)
-    return urls
+    not_interesting_extensions = [".png", ".ico", ".js", ".css", ".woff2", ".ttf", ".jpg", ".jpeg", ".svg"]
+    for url in urls:
+        if not url.endswith(tuple(not_interesting_extensions)):
+            intereseting_urls.append(url)
+    return intereseting_urls
 
 
 def extract_urls(tool_output):
