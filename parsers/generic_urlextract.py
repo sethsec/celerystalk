@@ -22,7 +22,7 @@ import urlparse
 def extract_urls_regex(tool_output):
     intereseting_urls = []
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tool_output)
-    not_interesting_extensions = [".png", ".ico", ".js", ".css", ".woff2", ".ttf", ".jpg", ".jpeg", ".svg"]
+    not_interesting_extensions = [".png", ".ico", ".js", ".css", ".woff2", ".ttf", ".jpg", ".jpeg", ".svg", ".eot", ".woff"]
     for url in urls:
         if not url.endswith(tuple(not_interesting_extensions)):
             intereseting_urls.append(url)
