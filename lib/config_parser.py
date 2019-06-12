@@ -34,6 +34,12 @@ def get_simpleserver_port(config_file):
         if key == "simple_server_port":
             return val
 
+def get_screenshot_max(config_file):
+    config,supported_services = read_config_ini(config_file)
+    for (key, val) in config.items("celerystalk-config"):
+        if key == "max_screenshots_per_vhost":
+            return val
+
 def get_user_config(config_file):
     config,supported_services = read_config_ini(config_file)
     return config.items("user-config")

@@ -62,7 +62,7 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
             #print(cmd_name, cmd)
             try:
                 if cmd_name == "aquatone":
-                    populated_command = celery_path + "/celerystalk db paths_only | " + cmd.replace("[OUTPUT]", outdir)
+                    populated_command = celery_path + "/celerystalk db paths_only limit | " + cmd.replace("[OUTPUT]", outdir)
                     #print(populated_command)
             except Exception, e:
                 print(e)
