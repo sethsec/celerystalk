@@ -1,5 +1,5 @@
 # celerystalk
-![](https://imgur.com/a/ASDG2xm)
+![](https://i.imgur.com/tZ4RkOr.png)
 
 celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
