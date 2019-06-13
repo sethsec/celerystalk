@@ -73,6 +73,13 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
         print("[+]\t\tcelerystalk query brief [watch]")
         print("[+]\t\tcelerystalk query summary [watch]\n")
 
+def replace_user_config_options(config_file,populated_command):
+    rep = lib.config_parser.get_user_config(config_file)
+    rep = dict((k, v) for k, v in rep)
+    for k,v in rep.iteritems():
+        k = k.upper()
+        populated_command = populated_command.replace("[" + k + "]",v)
+    return populated_command
 
 def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base_file_dir,celery_path,config_file=None):
     print("in aquatone host")
@@ -85,6 +92,7 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
                 outfile = scan_output_base_file_dir + "_" + cmd_name
                 filename = "/tmp/" + workspace + "_paths_" + vhost + ".txt"
                 populated_command = cmd.replace("[FILE]", filename).replace("[OUTPUT]", outfile)
+                populated_command = replace_user_config_options(config_file,populated_command)
 
                 paths = lib.db.get_all_paths_for_host_path_only(vhost,workspace)
                 print(str(paths))
@@ -97,6 +105,8 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
                          paths_tmp_file.write(str(line[0]) + "\n")
 
                 populated_command = cmd.replace("[FILE]", filename).replace("[OUTPUT]", outfile)
+                populated_command = replace_user_config_options(config_file,populated_command)
+
                 #print(populated_command)
         except Exception, e:
             print(e)
@@ -109,6 +119,7 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
         result = chain(
             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
         )()
+
 
 def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=None):
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
@@ -142,10 +153,11 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
         if cmd_name == "udp_scan":
             outfile = scan_output_base_host_filename + "_" + cmd_name
             populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
-
+            populated_command = replace_user_config_options(config_file, populated_command)
 
             if simulation:
                 populated_command = "#" + populated_command
+
 
             task_id = uuid()
             scanned_service_port = ""
@@ -187,6 +199,8 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
             cmd_name = "nmap_service_scan"
             populated_command = 'nmap -sV -sC -Pn -p {0} -oN {1}_nmap_service_scan.txt {2}'.format(
                 scanned_service_port, scan_output_base_file_name, vhost)
+            populated_command = replace_user_config_options(config_file, populated_command)
+
             if simulation:
                 populated_command = "#" + populated_command
 
@@ -206,6 +220,8 @@ def populate_comamnds(vhost,workspace,simulation,output_base_dir,config_file=Non
                             populated_command = cmd.replace("[TARGET]", vhost).replace("[PORT]", str(
                                 scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]",
                                                                                             "")
+                            populated_command = replace_user_config_options(config_file, populated_command)
+
                             if simulation:
                                 # debug - sends jobs to celery, but with a # in front of every one.
                                 populated_command = "#" + populated_command
@@ -282,6 +298,7 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
         ip = socket.gethostbyname(vhost)
     except:
         print("Error getting IP")
+        ip=False
 
 
     db_ip_tuple = lib.db.get_vhost_ip(vhost,workspace)
@@ -294,7 +311,9 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
     proto = "tcp"
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
     if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
-        if ip == vhost:
+        if not ip:
+            exit()
+        elif ip == vhost:
             scan_output_base_file_dir = output_dir + "/" + ip + "/celerystalkOutput/" + ip + "_" + str(
                 port) + "_" + proto + "_"
         else:
@@ -363,6 +382,8 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
                                                                                     str(port)).replace("[OUTPUT]",
                                                                                                        outfile).replace(
                             "/[PATH]", path)
+                        populated_command = replace_user_config_options(config_file, populated_command)
+
                         if simulation:
                             # debug - sends jobs to celery, but with a # in front of every one.
                             populated_command = "#" + populated_command
@@ -440,6 +461,8 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                     #print(cmd_name,cmd)
                     outfile = scan_output_base_host_filename + "_" + cmd_name
                     populated_command = cmd.replace("[TARGET]", vhost).replace("[OUTPUT]", outfile)
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     #print(cmd)
 
                     #cmd_name = "udp-top100"
@@ -487,6 +510,8 @@ def process_db_services(output_base_dir, simulation, workspace, target=None,host
                     cmd_name = "nmap_service_scan"
                     populated_command = 'nmap -sV -sC -Pn -p {0} -oN {1}_nmap_service_scan.txt {2}'.format(
                         scanned_service_port, scan_output_base_file_name, vhost)
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     if simulation:
                         populated_command = "#" + populated_command
 
@@ -550,6 +575,8 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                 for (cmd_name, cmd) in config.items(mapped_service_name):
                     outfile = scan_output_base_file_name + cmd_name
                     populated_command = cmd.replace("[TARGET]", ip).replace("[PORT]", str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]", "")
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     if simulation:
                         #debug - sends jobs to celery, but with a # in front of every one.
                         populated_command = "#" + populated_command
@@ -593,6 +620,8 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
                 for (cmd_name, cmd) in config.items(section):
                     outfile = output_base_dir + domain + "_" + cmd_name
                     populated_command = cmd.replace("[DOMAIN]", domain).replace("[OUTPUT]", outfile)
+                    populated_command = replace_user_config_options(config_file, populated_command)
+
                     if simulation:
                         populated_command = "#" + populated_command
                     #print(populated_command)
@@ -634,13 +663,31 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
     # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     for vhost in vhosts:
-        #print("raw:\t" + vhost)
-        vhost = ansi_escape.sub('', vhost)
-        #print("escaped:\t" + vhost)
-        if re.match(r'\w', vhost):
-            in_scope, ip = utils.domain_scope_checker(vhost, workspace)
-            if workspace_mode == "vapt":
-                if in_scope == 1:
+        #This checks for spaces in vhosts and is a dirty way to filter out error messages and other stuff.
+        if ' ' not in vhost:
+            #print("raw:\t" + vhost)
+            vhost = ansi_escape.sub('', vhost)
+            #print("escaped:\t" + vhost)
+            if re.match(r'\w', vhost):
+                in_scope, ip = utils.domain_scope_checker(vhost, workspace)
+                if workspace_mode == "vapt":
+                    if in_scope == 1:
+                        print("Found subdomain (in scope):\t" + vhost)
+                        is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                        if is_vhost_in_db:
+                            lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
+                        else:
+                            db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
+                            lib.db.create_vhost(db_vhost)
+                    else:
+                        print("Found subdomain (out of scope):\t" + vhost)
+                        is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
+                        if is_vhost_in_db:
+                            lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
+                        else:
+                            db_vhost = (ip, vhost, 0, 0, 0, workspace)  # add it to the vhosts db and mark as out of scope
+                            lib.db.create_vhost(db_vhost)
+                elif workspace_mode == "bb":
                     print("Found subdomain (in scope):\t" + vhost)
                     is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
                     if is_vhost_in_db:
@@ -648,22 +695,6 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
                     else:
                         db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
                         lib.db.create_vhost(db_vhost)
-                else:
-                    print("Found subdomain (out of scope):\t" + vhost)
-                    is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
-                    if is_vhost_in_db:
-                        lib.db.update_vhosts_in_scope(ip, vhost, workspace, 0)
-                    else:
-                        db_vhost = (ip, vhost, 0, 0, 0, workspace)  # add it to the vhosts db and mark as out of scope
-                        lib.db.create_vhost(db_vhost)
-            elif workspace_mode == "bb":
-                print("Found subdomain (in scope):\t" + vhost)
-                is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)
-                if is_vhost_in_db:
-                    lib.db.update_vhosts_in_scope(ip, vhost, workspace, 1)
-                else:
-                    db_vhost = (ip, vhost, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
-                    lib.db.create_vhost(db_vhost)
 
 
 def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output_base_dir,config_file=None):
@@ -711,6 +742,8 @@ def populate_commands_vhost_http_https_only(vhost, workspace, simulation, output
                         outfile = scan_output_base_file_name + cmd_name
                         populated_command = cmd.replace("[TARGET]", scannable_vhost).replace("[PORT]",
                             str(scanned_service_port)).replace("[OUTPUT]", outfile).replace("/[PATH]", "")
+                        populated_command = replace_user_config_options(config_file, populated_command)
+
                         if simulation:
                             # debug - sends jobs to celery, but with a # in front of every one.
                             populated_command = "#" + populated_command

@@ -11,29 +11,33 @@ if [ ! -f ../config.ini ]; then
     cp config_default.ini ../config.ini
 fi
 
-if [ ! -f update.sh ]; then
-    ln -s install.sh update-tools.sh
-fi
+# https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+verlte() {
+    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+}
 
-echo ""
-echo "**************************************"
-echo "*      Updating apt sources          *"
-echo "**************************************"
-echo ""
-
-apt update -y
+verlt() {
+    [ "$1" = "$2" ] && return 1 || verlte $1 $2
+}
 
 echo ""
 echo "*************************************************"
-echo "*  Installing redis-server, gobuster, seclists, *"
-echo "*  firefox-esr, xvfb, python3-pip, wpscan, jq   *"
+echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
-    apt install gobuster redis-server seclists firefox-esr xvfb python3-pip wpscan jq -y
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+    echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
+    apt-get update -y
+    apt-get remove docker docker-engine docker.io containerd runc -y
+    apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
-    apt install python-pip python3-pip unzip redis-server firefox xvfb jq -y
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
+    apt-get update -y
+    apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
 fi
+
 
 CELERYSTALK_DIR=`pwd`
 
@@ -52,46 +56,6 @@ echo ""
 pip install -r requirements.txt --upgrade
 
 
-if [ ! -f /usr/bin/geckodriver ]; then
-    echo ""
-    echo "**************************************"
-    echo "*    Installing geckodriver          *"
-    echo "**************************************"
-    echo ""
-    #From: https://github.com/FortyNorthSecurity/EyeWitness/blob/master/setup/setup.sh
-    MACHINE_TYPE=`uname -m`
-    if [ ${MACHINE_TYPE} == 'x86_64' ]; then
-      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
-      tar -xvf geckodriver-v0.22.0-linux64.tar.gz
-      rm geckodriver-v0.22.0-linux64.tar.gz
-      mv geckodriver /usr/sbin
-      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
-    else
-      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux32.tar.gz
-      tar -xvf geckodriver-v0.22.0-linux32.tar.gz
-      rm geckodriver-v0.22.0-linux64.tar.gz
-      mv geckodriver /usr/sbin
-      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
-    fi
-
-
-    # https://gist.github.com/cgoldberg/4097efbfeb40adf698a7d05e75e0ff51#file-geckodriver-install-sh
-    install_dir="/usr/bin"
-    json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
-    if [[ $(uname) == "Linux" ]]; then
-        url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
-        echo $url
-    else
-        echo "can't determine OS"
-        exit 1
-    fi
-    curl -s -L "$url" | tar -xz
-    chmod +x geckodriver
-    mv geckodriver "$install_dir"
-    echo "installed geckodriver binary in $install_dir"
-fi
-
-
 if [ ! -f /opt/amass/amass ]; then
     echo ""
     echo "****************************************"
@@ -99,17 +63,38 @@ if [ ! -f /opt/amass/amass ]; then
     echo "****************************************"
     echo ""
     mkdir -p /opt/amass
-    wget https://github.com/OWASP/Amass/releases/download/v2.5.0/amass_2.5.2_linux_386.zip -O /opt/amass/amass_2.5.2_linux_386.zip
-    unzip /opt/amass/amass_2.5.2_linux_386.zip -d /opt/amass
+    wget https://github.com/OWASP/Amass/releases/download/3.0.3/amass_3.0.3_linux_i386.zip -O /opt/amass/amass_3.0.3_linux_i386.zip
+    unzip /opt/amass/amass_3.0.3_linux_i386.zip -d /opt/amass
+    mv /opt/amass/amass_3.0.3_linux_i386/* /opt/amass/
 fi
 
- if [ ! -f /opt/aquatone/aquatone ]; then
-     echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
-     mkdir -p /opt/aquatone
-     wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O /opt/aquatone/aquatone_linux_amd64_1.4.3.zip
-     unzip /opt/aquatone/aquatone_linux_amd64_1.4.3.zip -d /opt/aquatone
- fi
 
+if [ ! -f /opt/aquatone/aquatone ]; then
+    echo ""
+    echo "*******************************************************"
+    echo "* Installing Aquatone to /opt/aquatone/aquatone       *"
+    echo "*******************************************************"
+    echo ""
+    echo "[+] Downloading Aquatone to /opt/aquatone/aquatone"
+    mkdir -p /opt/aquatone
+    wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
+    unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+else
+    CURRENT_VERSION=`/opt/aquatone/aquatone -version | cut -dv -f2`
+    DESIRED_MINIMUM_VERSION="1.7.0"
+    IS_LESS_THAN_DESIRED=`verlt $CURRENT_VERSION $DESIRED_MINIMUM_VERSION`
+
+    if [ $? == "0" ]; then
+        echo ""
+        echo "**********************************************"
+        echo "*           Updating Aquatone                *"
+        echo "**********************************************"
+        echo ""
+        cd /opt/aquatone
+        wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O /opt/aquatone/aquatone_linux_amd64_1.7.0.zip
+        unzip -o /opt/aquatone/aquatone_linux_amd64_1.7.0.zip -d /opt/aquatone
+    fi
+fi
 
 
 if [ ! -f /opt/Sublist3r/sublist3r.py ]; then
@@ -143,7 +128,7 @@ if [ ! -f /opt/Photon/photon.py ]; then
     cd /opt/
     git clone https://github.com/s0md3v/Photon.git
     cd Photon
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 else
     echo ""
     echo "**********************************************"
@@ -152,7 +137,7 @@ else
     echo ""
     cd /opt/Photon
     git pull
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 fi
 
 #if [ ! -f /opt/CMSmap/cmsmap.py ]; then
@@ -186,4 +171,3 @@ echo "[+] Back up a directory and you are ready to go."
 echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
-

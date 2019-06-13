@@ -1,5 +1,4 @@
 from subprocess import Popen
-
 from lib import db
 from lib.utils import task_splitter
 

@@ -1,67 +1,16 @@
 import subprocess
 from subprocess import Popen
-
+from time import sleep
 from libnmap.parser import NmapParser
 from libnmap.process import NmapProcess
 from libnessus.parser import NessusParser
 from netaddr import IPAddress, IPRange, IPNetwork
 import socket
 import db
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.common.exceptions import WebDriverException
-from pyvirtualdisplay import Display
 import os
 import re
-import time
-from timeit import default_timer as timer
 import lib.db
-
-
-def take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
-    path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(lib.scan.__file__)), ".."))
-    audit_log = path + "/log/cmdExecutionAudit.log"
-    f = open(audit_log, 'a')
-    start_time = time.time()
-    start_time_int = int(start_time)
-    start_ctime = time.ctime(start_time)
-    start = timer()
-
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    options = Options()
-    options.add_argument("--headless")
-
-    driver = webdriver.Firefox(firefox_options=options)
-    pid = driver.service.process.pid
-    print(pid)
-    db.update_task_status_started("STARTED", task_id, pid, start_time_int)
-
-    for url,output in urls_to_screenshot:
-        try:
-            #driver = webdriver.Firefox(firefox_options=options)
-            # capture the screen
-            driver.get(url)
-            print("Taking screenshot of [{0}]".format(url))
-            screenshot = driver.save_screenshot(output)
-        except WebDriverException, e:
-            #print('exception: {0}'.format(e))
-            print("Error taking screenshot of [{0}]".format(url))
-        except Exception, e:
-            print('exception: {0}'.format(e))
-            #print(type(e).__name__)
-        # finally:
-        #     driver.quit()
-    driver.quit()
-    display.stop()
-    end = timer()
-    end_ctime = time.ctime(end)
-    run_time = end - start
-    db.update_task_status_completed("COMPLETED", task_id, run_time)
-    # f.write("\n[-] CMD COMPLETED in " + str(run_time) + " - " + populated_command + "\n")
-    f.write("\n" + str(start_ctime) + "\t" + str(end_ctime) + "\t" + str(
-        "{:.2f}".format(run_time)) + "\t" + command_name + "\t" + populated_command)
-    f.close()
+import lib.config_parser
 
 
 def task_splitter(id):
@@ -174,17 +123,37 @@ def nmap_follow_up_scan(hosts, port):
     return nmap_report
 
 
-def start_services():
+def start_services(config_file):
     # maybe this first part should be somwhere else.   But for now, in order to run, celery worker and celery flower need to be started.
     #print("[+] Starting celery worker")
-    start_celery_worker()
+    start_celery_worker(config_file)
+    start_redis()
+    #print("[+] Reading config file")
+
+def restart_services(config_file):
+    shutdown_background_jobs()
+    sleep(2)
+    start_celery_worker(config_file)
     start_redis()
     #print("[+] Reading config file")
 
 
-def start_celery_worker():
+
+
+def start_celery_worker(config_file):
     # We can always just try and start the celery worker because it won't restart already running thanks to pidfile.
-    p = Popen("celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
+    try:
+        concurrent_tasks = lib.config_parser.get_concurrent_tasks(config_file)
+        popen_string = "celery -A tasks worker --concurrency=%s -Ofair -q --pidfile ./%%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1" % (str(concurrent_tasks))
+        p = Popen(popen_string, shell=True)
+
+    except Exception, e:
+        #print(e)
+        p = Popen(
+            "celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1",
+            shell=True)
+
+    #p = Popen("celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1", shell=True)
     #print("[+] Started celery worker")
 
 def start_redis():
@@ -197,7 +166,7 @@ def start_redis():
 def shutdown_background_jobs():
     print("[-] Stopping celery worker (if running)")
     #p = Popen("celery -A tasks control shutdown > /dev/null 2>&1", shell=True)
-    p = Popen('pkill -f "celery"> /dev/null 2>&1', shell=True)
+    p = Popen('pkill -f "celery -A tasks"> /dev/null 2>&1', shell=True)
 
     print("[-] Stopping redis service (if running)\n")
     p = Popen("/etc/init.d/redis-server stop > /dev/null 2>&1", shell=True)
@@ -321,6 +290,15 @@ def check_for_new_default_config():
             populated_command = "touch " + path
             p = Popen(populated_command, shell=True)
             p.communicate()
+
+def check_for_dependencies():
+    try:
+        os.stat('/opt/aquatone/aquatone')
+    except:
+        print("[!] Aquatone is not installed.")
+        print("[!]   cd setup")
+        print("[!]   ./install.sh")
+        exit()
 
 
 def get_terminal_width():

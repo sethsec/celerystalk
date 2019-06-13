@@ -1,14 +1,12 @@
 from subprocess import Popen, PIPE
 from celery import Celery
-from celery import chain
 import time
 from timeit import default_timer as timer
 import lib.csimport
 from lib import db
-from lib import utils
 import lib.scan
+import parsers.generic_urlextract
 import simplejson
-import urlparse
 import os.path
 from celery.utils import uuid
 import os
@@ -74,6 +72,9 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
 
     if process_domain_tuple:
         lib.scan.determine_if_domains_are_in_scope(out,process_domain_tuple)
+    else:
+        #putting this here because i want to parse scan tool output for urls, not subdomain tools output
+        parsers.generic_urlextract.extract_in_scope_urls_from_task_output(out)
 
     return out
 
@@ -82,129 +83,131 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
 
 @app.task
 def post_process(*args):
-    command_name, populated_command,output_base_dir, workspace, vhost, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
-    screenshot_name = ""
-    urls_to_screenshot = []
-    urls_to_screenshot_with_filenames = []
-    if "gobuster" in populated_command:
-        screenshot_name = "gobuster"
-
-        scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",vhost + "_" + str(
-            scanned_service_port) + "_" + scanned_service_protocol)
-
-        try:
-            os.stat(scan_output_base_file_dir)
-        except:
-            os.makedirs(scan_output_base_file_dir)
-
-        post_gobuster_filename = populated_command.split(">")[1].split("&")[0].strip()
-
-        print("Post gobuster filename" + post_gobuster_filename + "\n")
-        populated_command_list = populated_command.split(" ")
-
-        index=0
-        for arg in populated_command_list:
-            if "-u" == populated_command_list[index]:
-                if "http" in populated_command_list[index+1]:
-                    scanned_url = populated_command_list[index+1]
-                    #print("Scanned_url: " + scanned_url)
-            index = index + 1
-
-        try:
-            with open(post_gobuster_filename,'r') as gobuster_file:
-                lines = gobuster_file.read().splitlines()
-                print(lines)
-                if len(lines) > 300:
-                    #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
-                    exit()
-
-            for url in lines:
-                url = url.split("?")[0].replace("//","/")
-                if url.startswith("http"):
-                    url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
-                        .replace("/", "_") \
-                        .replace("\\", "") \
-                        .replace(":", "_") + ".png"
-                    url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                    db_path = (vhost, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                    db.insert_new_path(db_path)
-                    print("Found Url: " + str(url))
-                    urls_to_screenshot_with_filenames.append((url,url_screenshot_filename))
-                    urls_to_screenshot.append((url,url_screenshot_filename))
-
-                    #result = lib.utils.take_screenshot(url,url_screenshot_filename)
-        except Exception, e:
-            if not simulation:
-                print("[!] Could not open {0}".format(post_gobuster_filename))
+    print("in dummy post process")
 
 
-    if "photon" in populated_command:
-        screenshot_name = "photon"
+# @app.task
+# def post_process(*args):
+#
+#     command_name, populated_command,output_base_dir, workspace, vhost, host_dir, simulation, scanned_service_port,scanned_service,scanned_service_protocol,celery_path = args
+#     screenshot_name = ""
+#     urls_to_screenshot = []
+#     urls_to_screenshot_with_filenames = []
+#     if "gobuster" in populated_command:
+#         screenshot_name = "gobuster"
+#
+#         scan_output_base_file_dir = os.path.join(output_base_dir,"celerystalkReports","screens",vhost + "_" + str(
+#             scanned_service_port) + "_" + scanned_service_protocol)
+#
+#         try:
+#             os.stat(scan_output_base_file_dir)
+#         except:
+#             os.makedirs(scan_output_base_file_dir)
+#
+#         post_gobuster_filename = populated_command.split(">")[1].split("&")[0].strip()
+#
+#         print("Post gobuster filename" + post_gobuster_filename + "\n")
+#         populated_command_list = populated_command.split(" ")
+#
+#         index=0
+#         for arg in populated_command_list:
+#             if "-u" == populated_command_list[index]:
+#                 if "http" in populated_command_list[index+1]:
+#                     scanned_url = populated_command_list[index+1]
+#                     #print("Scanned_url: " + scanned_url)
+#             index = index + 1
+#
+#         try:
+#             with open(post_gobuster_filename,'r') as gobuster_file:
+#                 lines = gobuster_file.read().splitlines()
+#                 print(lines)
+#                 if len(lines) > 300:
+#                     #TODO: def don't submit 100 direcotires to scan. but need a way to tell the user
+#                     exit()
+#
+#             for url in lines:
+#                 url = url.split("?")[0]#.replace("//","/")
+#                 if url.startswith("http"):
+#                     url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
+#                         .replace("/", "_") \
+#                         .replace("\\", "") \
+#                         .replace(":", "_") + ".png"
+#                     url_screenshot_filename = url_screenshot_filename.replace("__", "")
+#                     db_path = (vhost, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+#                     db.insert_new_path(db_path)
+#                     print("Found Url: " + str(url))
+#                     urls_to_screenshot_with_filenames.append((url,url_screenshot_filename))
+#                     urls_to_screenshot.append((url,url_screenshot_filename))
+#
+#                     #result = lib.utils.take_screenshot(url,url_screenshot_filename)
+#         except Exception, e:
+#             if not simulation:
+#                 print("[!] Could not open {0}".format(post_gobuster_filename))
+#
+#
+#     if "photon" in populated_command:
+#         screenshot_name = "photon"
+#
+#         scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", vhost + "_" + str(
+#             scanned_service_port) + "_" + scanned_service_protocol)
+#
+#         try:
+#             os.stat(scan_output_base_file_dir)
+#         except:
+#             os.makedirs(scan_output_base_file_dir)
+#
+#         #post_photon_filename = populated_command.split(">")[1].lstrip()
+#         post_photon_filename = lib.db.get_output_file_for_command(workspace,populated_command)[0][0]
+#         #print(post_photon_filename)
+#
+#
+#         print("Post photon filename" + post_photon_filename + "\n")
+#         populated_command_list = populated_command.split(" ")
+#
+#         index=0
+#         for arg in populated_command_list:
+#             if "-u" == populated_command_list[index]:
+#                 if "http" in populated_command_list[index+1]:
+#                     scanned_url = populated_command_list[index+1]
+#                     #print("Scanned_url: " + scanned_url)
+#             index = index + 1
+#
+#         try:
+#             with open(post_photon_filename, 'r') as photon_file:
+#                 photon_file_json = simplejson.load(photon_file)
+#
+#                 good_sections = ["internal", "robots", "fuzzable"]
+#                 for section in good_sections:
+#                     for url in photon_file_json[section]:
+#                         if url.startswith("http"):
+#                             url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
+#                                 .replace("/", "_") \
+#                                 .replace("\\", "") \
+#                                 .replace(":", "_") + ".png"
+#                             url_screenshot_filename = url_screenshot_filename.replace("__", "")
+#                             db_path = (vhost, scanned_service_port, url, 0, url_screenshot_filename, workspace)
+#                             db.insert_new_path(db_path)
+#                             print("Found Url: " + str(url))
+#                             urls_to_screenshot_with_filenames.append((str(url), url_screenshot_filename))
+#                             urls_to_screenshot.append((str(url), url_screenshot_filename))
+#
+#
+#         except Exception, e:
+#             if not simulation:
+#                 print("[!] Could not open {0}".format(post_photon_filename))
+#
+#
+#
+#     if not simulation:
+#         if len(urls_to_screenshot) > 0:
+#             task_id = uuid()
+#             populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, vhost, scan_output_base_file_dir)
+#             command_name = "Screenshots"
+#             #utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
+#             #cel_take_screenshot.delay(urls_to_screenshot_with_filenames,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
+#
+#             #lib.scan.aquatone_host(urls_to_screenshot, vhost, workspace, simulation, scan_output_base_file_dir, celery_path)
 
-        scan_output_base_file_dir = os.path.join(output_base_dir, "celerystalkReports", "screens", vhost + "_" + str(
-            scanned_service_port) + "_" + scanned_service_protocol)
-
-        try:
-            os.stat(scan_output_base_file_dir)
-        except:
-            os.makedirs(scan_output_base_file_dir)
-
-        #post_photon_filename = populated_command.split(">")[1].lstrip()
-        post_photon_filename = lib.db.get_output_file_for_command(workspace,populated_command)[0][0]
-        #print(post_photon_filename)
-
-
-        print("Post photon filename" + post_photon_filename + "\n")
-        populated_command_list = populated_command.split(" ")
-
-        index=0
-        for arg in populated_command_list:
-            if "-u" == populated_command_list[index]:
-                if "http" in populated_command_list[index+1]:
-                    scanned_url = populated_command_list[index+1]
-                    #print("Scanned_url: " + scanned_url)
-            index = index + 1
-
-        try:
-            with open(post_photon_filename, 'r') as photon_file:
-                photon_file_json = simplejson.load(photon_file)
-
-                good_sections = ["internal", "robots", "fuzzable"]
-                for section in good_sections:
-                    for url in photon_file_json[section]:
-                        if url.startswith("http"):
-                            url_screenshot_filename = scan_output_base_file_dir + "/" + url.replace("http", "").replace("https", "") \
-                                .replace("/", "_") \
-                                .replace("\\", "") \
-                                .replace(":", "_") + ".png"
-                            url_screenshot_filename = url_screenshot_filename.replace("__", "")
-                            db_path = (vhost, scanned_service_port, url, 0, url_screenshot_filename, workspace)
-                            db.insert_new_path(db_path)
-                            print("Found Url: " + str(url))
-                            urls_to_screenshot_with_filenames.append((str(url), url_screenshot_filename))
-                            urls_to_screenshot.append((str(url), url_screenshot_filename))
-
-
-        except Exception, e:
-            if not simulation:
-                print("[!] Could not open {0}".format(post_photon_filename))
-
-
-
-    if not simulation:
-        if len(urls_to_screenshot) > 0:
-            task_id = uuid()
-            populated_command = "firefox-esr {0}-screenshots | {1} | {2}".format(screenshot_name, vhost, scan_output_base_file_dir)
-            command_name = "Screenshots"
-            utils.create_task(command_name, populated_command, vhost, scan_output_base_file_dir, workspace, task_id)
-            cel_take_screenshot.delay(urls_to_screenshot_with_filenames,task_id,vhost,scan_output_base_file_dir, workspace,command_name,populated_command)
-
-            #lib.scan.aquatone_host(urls_to_screenshot, vhost, workspace, simulation, scan_output_base_file_dir, celery_path)
-
-
-# @after_task_publish.connect(sender='app.task.run_cmd')
-# def task_sent_handler(sender=None, headers=None, body=None, **kwargs):
-#     db.create_task(task)
 
 
 @app.task()
@@ -213,102 +216,6 @@ def cel_create_task(*args,**kwargs):
     db_task = (task_id, 1, command_name, populated_command, ip, output_dir, 'SUBMITTED', workspace)
     db.create_task(db_task)
     #return populated_command
-
-# @app.task()
-# def post_process_domains_bb(vhosts, command_name, populated_command, output_base_dir, workspace, simulation,
-#                          celery_path,out_of_scope_hosts):
-#     """
-#
-#     :param vhosts:
-#     :param command_name:
-#     :param populated_command:
-#     :param output_base_dir:
-#     :param workspace:
-#     :param simulation:
-#     :param celery_path:
-#     :param out_of_scope_hosts:
-#     :return:
-#     """
-#     config, supported_services = config_parser.read_config_ini()
-#     vhosts = vhosts.splitlines()
-#     # from https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
-#     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
-#     for vhost in vhosts:
-#         # print("raw:\t" + vhost)
-#         vhost = ansi_escape.sub('', vhost)
-#         # print("escaped:\t" + vhost)
-#         if re.match(r'\w', vhost):
-#             try:
-#                 ip = socket.gethostbyname(vhost)
-#                 if vhost not in out_of_scope_hosts:
-#                     print("Found subdomain (in scope):\t" + vhost)
-#                     db_vhost = (ip, vhost, 1,0,0, workspace)
-#                     db.create_vhost(db_vhost)
-#                 else:
-#                     print("Found subdomain (out of scope):\t" + vhost)
-#                     db_vhost = (ip, vhost, 0,0,0, workspace)
-#                     db.create_vhost(db_vhost)
-#             except:
-#                 print("There was an issue running the nmap scan against {0}.").format(vhost)
-#                 ip = ""
-#                 db_vhost = (ip, vhost,0,0,0,workspace)  # not in scope if no IP
-#                 print(db_vhost)
-#                 db.create_vhost(db_vhost)
-#
-#     # pull all in scope vhosts that have not been submitted
-#     inscope_vhosts = db.get_inscope_unsubmitted_vhosts(workspace)
-#     for scannable_vhost in inscope_vhosts:
-#         scannable_vhost = scannable_vhost[0]
-#         ip = db.get_vhost_ip(scannable_vhost, workspace)
-#         ip = ip[0][0]
-#         print("I'm going to scan: " + scannable_vhost + ":" + ip)
-#
-#
-#
-#         db_scanned_services = db.get_all_services_for_ip(ip, workspace)
-#         for (
-#         id, ip, scanned_service_port, scanned_service_protocol, scanned_service_name, workspace) in db_scanned_services:
-#             # run chain on each one and then update db as submitted
-#             scan_output_base_file_name = output_base_dir + "/" + ip + "/celerystalkOutput/" + scannable_vhost + "_" + str(
-#                 scanned_service_port) + "_" + scanned_service_protocol + "_"
-#             host_dir = output_base_dir + "/" + ip
-#
-#             # TODO: This def might introduce a bug - same code as parse config submit jobs to celery. need to just call that function here
-#             for section in config.sections():
-#                 if (section == "http") or (section == "https"):
-#                     if section == scanned_service_name:
-#                         for (cmd_name, cmd) in config.items(section):
-#                             outfile = scan_output_base_file_name + cmd_name
-#                             populated_command = cmd.replace("[TARGET]", scannable_vhost)\
-#                                                     .replace("[PORT]",str(scanned_service_port))\
-#                                                     .replace("[OUTPUT]", outfile) \
-#                                                     .replace("[PATH]", "")
-#                             if simulation:
-#                                 # debug - sends jobs to celery, but with a # in front of every one.
-#                                 populated_command = "#" + populated_command
-#
-#                             # Grab a UUID from celery.utils so that i can assign it to my task at init, which is amazing because
-#                             # that allows me to pass it to all of the tasks in the chain.
-#
-#                             task_id = uuid()
-#                             utils.create_task(cmd_name,populated_command, scannable_vhost, outfile + ".txt",workspace, task_id)
-#                             result = chain(
-#                                 #cel_create_task.subtask(args=(cmd_name,populated_command, scannable_vhost, outfile + ".txt",workspace, task_id)),
-#                                 run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-#                                 post_process.si(cmd_name, populated_command, output_base_dir, workspace, scannable_vhost,
-#                                                 host_dir,
-#                                                 simulation,
-#                                                 scanned_service_port, scanned_service_name,
-#                                                 scanned_service_protocol, celery_path),
-#                             )()
-#
-#                             host_audit_log = host_dir + "/" + "{0}_executed_commands.txt".format(ip)
-#                             f = open(host_audit_log, 'a')
-#                             f.write(populated_command + "\n\n")
-#                             f.close()
-#
-#         db.update_vhosts_submitted(ip, scannable_vhost, workspace, 1)
-
 
 
 @app.task()
@@ -360,7 +267,3 @@ def cel_process_db_services(output_base_dir, simulation, workspace):
     lib.scan.process_db_services(output_base_dir, simulation, workspace)
 
 
-@app.task()
-def cel_take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command):
-    #print("cel_take_screenshot")
-    lib.utils.take_screenshot(urls_to_screenshot,task_id,ip,scan_output_base_file_dir, workspace,command_name,populated_command)

@@ -237,7 +237,7 @@ def import_url(url,workspace,output_base_dir):
                     url_path = ''
 
                 url_screenshot_filename = scan_output_base_file_dir + url_path.replace("/", "_") + ".png"
-                db_path = (vhost, port, url, 0, url_screenshot_filename, workspace)
+                db_path = (vhost, port, url.rstrip("/"), 0, url_screenshot_filename, workspace)
                 db.insert_new_path(db_path)
                 # print("Found Url: " + str(url))
                 #urls_to_screenshot.append((url, url_screenshot_filename))
@@ -246,7 +246,7 @@ def import_url(url,workspace,output_base_dir):
                 # print(result)
 
 
-            db_path = (vhost, port, url, 0, url_screenshot_filename, workspace)
+            db_path = (vhost, port, url.rstrip("/"), 0, url_screenshot_filename, workspace)
             lib.db.insert_new_path(db_path)
     else:
         print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
@@ -430,9 +430,9 @@ def process_nmap_data(nmap_report,workspace, target=None):
         unique_db_ips = lib.db.is_vhost_in_db(ip,workspace) #Returns data if IP is in database
         #print(unique_db_ips)
         vhosts = scanned_host.hostnames
-        print("process_nmap_data: " + str(vhosts))
+        #print("process_nmap_data: " + str(vhosts))
         for vhost in vhosts:
-            print("process_nmap_data: " + vhost)
+            #print("process_nmap_data: " + vhost)
             vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
             if not vhost_explicitly_out_of_scope:  # if the vhost is not explicitly out of scope, add it to db
                 is_vhost_in_db = lib.db.is_vhost_in_db(vhost, workspace)  # Returns data if IP is in database
@@ -522,7 +522,8 @@ def process_nmap_data(nmap_report,workspace, target=None):
                 scan_output_base_file_dir = os.path.abspath(output_base_dir + file_end_part)
 
                 if (scanned_service_name == 'https') or (scanned_service_name == 'http'):
-                    path = scanned_service_name + "://" + ip + ":" + str(scanned_service_port) + "/"
+                    path = scanned_service_name + "://" + ip + ":" + str(scanned_service_port)
+                    path = path.rstrip("/")
                     db_path = db.get_path(path, workspace)
                     if not db_path:
                         url_screenshot_filename = scan_output_base_file_dir + ".png"
@@ -531,7 +532,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
 
 
                 for vhost in vhosts:
-                    print("process_nmap_data - add service: " + vhost)
+                    #print("process_nmap_data - add service: " + vhost)
                     db_service = db.get_service(vhost, scanned_service_port, scanned_service_protocol, workspace)
                     if not db_service:
                         print("service didnt exist, adding: " + vhost + str(scanned_service_port))
@@ -552,7 +553,8 @@ def process_nmap_data(nmap_report,workspace, target=None):
                             scanned_service_port) + "_" + scanned_service_protocol)
 
                     if (scanned_service_name == 'https') or (scanned_service_name == 'http'):
-                        path = scanned_service_name + "://" + vhost + ":" + str(scanned_service_port) + "/"
+                        path = scanned_service_name + "://" + vhost + ":" + str(scanned_service_port)
+                        path = path.rstrip("/")
                         db_path = db.get_path(path, workspace)
                         if not db_path:
                             url_screenshot_filename = scan_output_base_file_dir + ".png"

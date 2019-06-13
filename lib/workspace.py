@@ -1,5 +1,4 @@
 import os
-
 import lib.db
 from prettytable import PrettyTable
 

@@ -662,6 +662,12 @@ def get_all_paths_for_host_path_only(ip,workspace):
     CONNECTION.commit()
     return all_paths_for_host
 
+def get_x_paths_for_host_path_only(ip,workspace,config_max):
+    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ? LIMIT ?", (ip,workspace,config_max))
+    all_paths_for_host = CUR.fetchall()
+    CONNECTION.commit()
+    return all_paths_for_host
+
 def get_path(path,workspace):
     CUR.execute("SELECT * FROM paths WHERE workspace = ? AND path = ?", (workspace,path))
     path = CUR.fetchall()
@@ -676,4 +682,8 @@ def get_unique_hosts_with_paths(workspace):
 
 def update_path(path,submitted,workspace):
     CUR.execute("UPDATE paths SET submitted=? WHERE path=? AND workspace=?", (submitted,path,workspace))
+    CONNECTION.commit()
+
+def update_path_with_filename(path,filename,workspace):
+    CUR.execute("UPDATE paths SET url_screenshot_filename=? WHERE path=? AND workspace=?", (filename,path,workspace))
     CONNECTION.commit()
