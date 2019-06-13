@@ -15,8 +15,28 @@ from ansi2html.util import read_to_unicode
 
 
 
-def summary_paths(workspace):
+def summary_paths():
     pass
+
+def summary_hosts():
+    pass
+
+def summary_services():
+    pass
+
+def summary_tasks():
+    workspace = lib.db.get_current_workspace()[0][0]
+    completed_rows = lib.db.get_completed_tasks(workspace)
+    if completed_rows.__len__() > 0:
+        for completed_row in completed_rows:
+            command = completed_row[1]
+            run_time = completed_row[2]
+            run_time = time.strftime("%H:%M:%S", time.gmtime(float(run_time)))
+            ip = completed_row[3]
+
+
+
+
 
 
 def paths_report(host,all_paths):
@@ -29,12 +49,12 @@ def paths_report(host,all_paths):
             url_screenshot_filename = urllib.quote(url_screenshot_filename)
             url_screenshot_filename_relative = os.path.join("screens/",url_screenshot_filename.split("/screens/")[1])
             html_code = html_code + """\n<div id="linkwrap">\n"""
-            html_code = html_code + """<a class="link" href="#">[Screenshot]<span><img src="{1}" alt="image"/></span></a>  <a href="{0}">{0}</a><br>\n""".format(path,url_screenshot_filename_relative)
+            html_code = html_code + """<a href="{0}">{0}</a><br>\n""".format(path)
             html_code = html_code + "\n</div>\n"
         except:
             #print("Could not find screenshot for " + path)
             html_code = html_code + """\n<div id="linkwrap">\n"""
-            html_code = html_code + "[Screenshot]  " + """<a href="{0}">{0}</a><br>\n""".format(path)
+            html_code = html_code + """<a href="{0}">{0}</a><br>\n""".format(path)
             html_code = html_code + "\n</div>\n"
     return html_code
 

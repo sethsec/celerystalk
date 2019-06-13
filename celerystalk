@@ -90,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(198)
+build=str(199)
 
 def print_banner():
 
@@ -693,13 +693,9 @@ def main(arguments):
                 #print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
                 #columns = ["IP", "Port", "Path"]
                 if arguments["limit"]:
-                    max = lib.config_parser.get_screenshot_max(config_file)
-                    vhosts = lib.db.get_unique_hosts_with_paths(workspace)
-                    for vhost in vhosts:
-                        vhost = vhost[0]
-                        paths = lib.db.get_x_paths_for_host_path_only(vhost, workspace,max)
-                        for path in paths:
-                            print path[0]
+                    paths = lib.screenshot.get_max_screenshots(workspace,config_file)
+                    for path in paths:
+                        print path
                 else:
                     paths_rows = lib.db.get_all_paths(workspace)
                     for row in paths_rows:
