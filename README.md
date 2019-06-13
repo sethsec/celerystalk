@@ -1,7 +1,7 @@
 # celerystalk
 ![](https://i.imgur.com/tZ4RkOr.png)
 Interactive Demo: https://sethsec.github.io/celerystalk/
-
+---
 celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want
@@ -10,7 +10,7 @@ celerystalk helps you automate your network scanning/enumeration process with as
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
 * **Screenshots** - Uses Aquatone to take screenshots of every URL that was identified via brute force (gobuster) or spidering (Photon)
-
+---
 ## What celerystalk can automate for you
 
 Phase | Command | Example tools used
