@@ -273,6 +273,13 @@ def get_pending_task_count(workspace):
     CONNECTION.commit()
     return pending_count
 
+
+def get_total_time_for_completed_tasks_by_name(command, workspace):
+    CUR.execute("SELECT * FROM tasks where status = ? AND workspace = ?", ("COMPLETED", workspace))
+    completed_tasks = CUR.fetchall()
+    CONNECTION.commit()
+    return completed_tasks
+
 def get_completed_tasks(workspace):
     CUR.execute("SELECT pid,command,run_time,ip FROM tasks where status = ? AND workspace = ?", ("COMPLETED", workspace))
     completed_tasks = CUR.fetchall()
