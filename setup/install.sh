@@ -20,24 +20,22 @@ verlt() {
     [ "$1" = "$2" ] && return 1 || verlte $1 $2
 }
 
-
-echo ""
-echo "**************************************"
-echo "*      Updating apt sources          *"
-echo "**************************************"
-echo ""
-
-apt update -y
-
 echo ""
 echo "*************************************************"
 echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
-    apt install gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq -y
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+    echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
+    apt-get update -y
+    apt-get remove docker docker-engine docker.io containerd runc -y
+    apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
-    apt install python-pip python3-pip unzip redis-server chromium jq -y
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
+    apt-get update -y
+    apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
 fi
 
 
@@ -56,46 +54,6 @@ echo "* Installing python requirements via pip *"
 echo "******************************************"
 echo ""
 pip install -r requirements.txt --upgrade
-
-
-#if [ ! -f /usr/bin/geckodriver ]; then
-#    echo ""
-#    echo "**************************************"
-#    echo "*    Installing geckodriver          *"
-#    echo "**************************************"
-#    echo ""
-#    #From: https://github.com/FortyNorthSecurity/EyeWitness/blob/master/setup/setup.sh
-#    MACHINE_TYPE=`uname -m`
-#    if [ ${MACHINE_TYPE} == 'x86_64' ]; then
-#      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
-#      tar -xvf geckodriver-v0.22.0-linux64.tar.gz
-#      rm geckodriver-v0.22.0-linux64.tar.gz
-#      mv geckodriver /usr/sbin
-#      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
-#    else
-#      wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux32.tar.gz
-#      tar -xvf geckodriver-v0.22.0-linux32.tar.gz
-#      rm geckodriver-v0.22.0-linux64.tar.gz
-#      mv geckodriver /usr/sbin
-#      ln -s /usr/sbin/geckodriver /usr/bin/geckodriver
-#    fi
-#
-#
-#    # https://gist.github.com/cgoldberg/4097efbfeb40adf698a7d05e75e0ff51#file-geckodriver-install-sh
-#    install_dir="/usr/bin"
-#    json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
-#    if [[ $(uname) == "Linux" ]]; then
-#        url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
-#        echo $url
-#    else
-#        echo "can't determine OS"
-#        exit 1
-#    fi
-#    curl -s -L "$url" | tar -xz
-#    chmod +x geckodriver
-#    mv geckodriver "$install_dir"
-#    echo "installed geckodriver binary in $install_dir"
-#fi
 
 
 if [ ! -f /opt/amass/amass ]; then
