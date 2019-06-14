@@ -18,6 +18,7 @@ Usage:
     celerystalk resume ([all]|[<task_ids>]) [-h]
     celerystalk db ([workspaces]|[workspace]|[services]|[ports]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
     celerystalk db export [-h]
+    celerystalk db paths_only limit [-h]
     celerystalk admin ([start]|[stop]|[restart]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
     celerystalk (help | -h | --help)
@@ -89,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(191)
+build=str(202)
 
 def print_banner():
 
@@ -691,10 +692,15 @@ def main(arguments):
             elif arguments["paths_only"]:
                 #print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
                 #columns = ["IP", "Port", "Path"]
-                paths_rows = lib.db.get_all_paths(workspace)
-                for row in paths_rows:
-                    sys.stdout.write(row[3]+"\n")
-                print("\n\n")
+                if arguments["limit"]:
+                    paths = lib.screenshot.get_max_screenshots(workspace,config_file)
+                    for path in paths:
+                        print path
+                else:
+                    paths_rows = lib.db.get_all_paths(workspace)
+                    for row in paths_rows:
+                        sys.stdout.write(row[3]+"\n")
+                print("\n")
             elif arguments["tasks"]:
                 print("[+] Showing tasks for the [{0}] workspace\n".format(workspace))
                 columns = ["ID","PID","Command","Status"]

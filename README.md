@@ -1,5 +1,8 @@
 # celerystalk
+![](https://i.imgur.com/tZ4RkOr.png)
+Interactive Demo: https://sethsec.github.io/celerystalk/
 
+---
 celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want
@@ -7,16 +10,16 @@ celerystalk helps you automate your network scanning/enumeration process with as
 * **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
 * **VirtualHosts** - Supports subdomain recon and virtualhost scanning
 * **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
-* **Screenshots** - Uses Aquatone to take screenshots of every URL that was identified via brute force (gobuster) or spidering (Photon)
-
+* **Screenshots** - Screenshots (aquatone) every in-scope URL that was identified by any tool (you can limit # of screenshots if you'd like)
+---
 ## What celerystalk can automate for you
 
-Phase | Command | Example tools used
+Phase | Command | Example of tools used
 --- | --- | ----
 DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
 Define Scope, Import nmap/nessus | ./celerystalk import [scan_data,scope_files,etc.] | celerystalk     
 Port Scanning | ./celerystalk nmap | nmap
-Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, etc.
+Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, wappalyzer, whatweb, etc.
 Screenshots | ./celerystalk sceenshots | Aquatone
 Analysis | ./celerystalk report | celerystalk
 
@@ -53,28 +56,27 @@ Analysis | ./celerystalk report | celerystalk
 
 ### [CTF/HackTheBox/Easy mode] - How to scan one or more hosts
 
-#### Import nmap xml and scan a host or multiple hosts by IP
+#### Create workspace. Set output dir and mode
+```
+# ./celerystalk workspace create -w htb -o /htb -m vapt 
+```
 
+#### Import nmap xml
 ```
 # nmap 10.10.10.10 -Pn -p- -sV -oX tenten.xml           # Run nmap
-# ./celerystalk workspace create -w htb -o /htb -m vapt # Create workspace. Set output dir and mode
 # ./celerystalk import -f tenten.xml                    # Import nmap scan 
+```
+#### Or, import list of hosts that are in scope and have celerystalk run nmap for you
+```
+# ./celerystalk import -S scope.txt                     # Import IP/CIDR/Ranges and mark as in scope
+# ./celerystalk nmap                                    # Nmap all in-scope hosts (reads options from config.ini)
+```
+
+#### Check imported services, launch scans, take screenshots, generate report  
+```
 # ./celerystalk db services                             # If you want to see what services were loaded
 # ./celerystalk scan                                    # Run all enabled commands
 # ./celerystalk query watch (then Ctrl+c)               # Watch scans as move from pending > running > complete
-# ./celerystalk screenshots                             # Take screenshots
-# ./celerystalk report                                  # Generate report
-```
-
-#### Import list of hosts that are in scope and have celerystalk run nmap for you
-```
-# ./celerystalk workspace create -w htb -o /htb -m vapt # Create workspace. Set output dir and mode
-# ./celerystalk import -S scope.txt                     # Import IP/CIDR/Ranges and mark as in scope
-# ./celerystalk nmap                                    # Nmap all in-scope hosts (reads options from config.ini)
-# ./celerystalk query watch (then Ctrl+c)               # Watch nmap scans as they move from pending > running > complete
-# ./celerystalk db services                             # If you want to see what services were loaded
-# ./celerystalk scan                                    # Run all enabled commands
-# ./celerystalk query watch (then Ctrl+c)               # Watch scans as they move from pending > running > complete
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report
 ```
