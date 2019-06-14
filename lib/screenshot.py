@@ -29,11 +29,35 @@ def screenshot_command(arguments):
             print("./celerystalk workspace create -o output_dir -w workspace_name -m vapt")
             print("./celerystalk workspace create -o output_dir -w workspace_name -m bb\n")
             exit()
+    if arguments["-c"]:
+        if os.path.exists(arguments["-c"]):
+            config_file = arguments["-c"]
+        else:
+            print("[!] The specified config file does not exist. Try again?")
+            exit()
+    else:
+        config_file = 'config.ini'
 
     # lib.screenshot.screenshot_all_paths(workspace)
+    #TODO: change this to reflect number of screenshots taken based on config.ini max
     paths_len = len(lib.db.get_all_paths(workspace))
-    print("[+]\n[+] Tasking aquatone to take [{0}] screenshots").format(str(paths_len))
+    max_paths_len = len(get_max_screenshots(workspace,config_file))
+    max = lib.config_parser.get_screenshot_max(config_file)
+    print("[+]\n[+] There are [{0}] paths in the DB").format(str(paths_len))
+    #print("[+] max_screenshots_per_vhost set to: [{0}]").format(str(max))
+    print("[+] Tasking aquatone to take [{0}] screenshots per host for a total of [{1}] screenshots\n[+]\n[+]").format(str(max),str(max_paths_len))
     lib.screenshot.aquatone_all_paths(workspace)
+
+def get_max_screenshots(workspace,config_file):
+    screenshot_list = []
+    max = lib.config_parser.get_screenshot_max(config_file)
+    vhosts = lib.db.get_unique_hosts_with_paths(workspace)
+    for vhost in vhosts:
+        vhost = vhost[0]
+        paths = lib.db.get_x_paths_for_host_path_only(vhost, workspace,max)
+        for path in paths:
+            screenshot_list.append(path[0])
+    return screenshot_list
 
 
 def aquatone_all_paths(workspace,simulation=None,config_file=None):
@@ -62,7 +86,7 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
             #print(cmd_name, cmd)
             try:
                 if cmd_name == "aquatone":
-                    populated_command = celery_path + "/celerystalk db paths_only | " + cmd.replace("[OUTPUT]", outdir)
+                    populated_command = celery_path + "/celerystalk db paths_only limit | " + cmd.replace("[OUTPUT]", outdir)
                     #print(populated_command)
             except Exception, e:
                 print(e)
@@ -71,7 +95,7 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
 
 
         task_id = uuid()
-        utils.create_task(cmd_name, populated_command, workspace, outdir + "/aquatone_report.html", workspace, task_id)
+        utils.create_task(cmd_name, populated_command, workspace, outdir + "aquatone_report.html", workspace, task_id)
         result = chain(
             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
         )()
@@ -79,6 +103,7 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
         print("[+]\t\t./celerystalk query [watch]")
         print("[+]\t\t./celerystalk query brief [watch]")
         print("[+]\t\t./celerystalk query summary [watch]")
+        print("[+]\t\tor\n[+]\t\ttail -f " + outdir + "aquatone_stdout.txt")
         print("[+]")
         print("[+] To peak behind the curtain, view log/celeryWorker.log")
         print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
