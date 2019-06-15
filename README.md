@@ -1,6 +1,7 @@
 # celerystalk
 ![](https://i.imgur.com/tZ4RkOr.png)
 Interactive Demo: [Bug Bounty Mode (HackerOne)](https://sethsec.github.io/celerystalk/bug_bounty_mode/celerystalkReports/)
+
 Interactive Demo: [Vulnerability Assessment / PenTest Mode (Retired HackTheBox.eu machines)](https://sethsec.github.io/celerystalk/vapt_mode/celerystalkReports/)
 
 ---
