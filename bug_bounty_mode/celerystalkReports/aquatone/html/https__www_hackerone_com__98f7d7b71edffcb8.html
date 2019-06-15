@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+  <head>
+    <meta charset="utf-8" />
+<meta name="title" content="Server-Side Request Forgery - SSRF Security Testing | HackerOne" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="How To: Server-Side Request Forgery (SSRF)" />
+<meta name="twitter:description" content="Server-Side Request Forgery, SSRF for short, is a vulnerability class that describes the behavior of a server making a request that’s under the attacker’s control. This post will go over the impact, how to test for it, the potential pivots, defeating mitigations, and caveats." />
+<meta name="twitter:site" content="@Hacker0x01" />
+<meta name="description" content="Looking to learn how to detect server side request forgery hacks? HackerOne is the #1 hacker-powered security platform, helping organizations find and fix critical vulnerabilities before they can be criminally exploited." />
+<meta name="generator" content="" />
+<meta name="twitter:url" content="https://www.hackerone.com/blog-How-To-Server-Side-Request-Forgery-SSRF" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.hackerone.com/blog-How-To-Server-Side-Request-Forgery-SSRF" />
+<link rel="canonical" href="/blog-How-To-Server-Side-Request-Forgery-SSRF" />
+<link rel="shortlink" href="/node/1111" />
+<link rel="revision" href="/blog-How-To-Server-Side-Request-Forgery-SSRF" />
+
+    <title>Server-Side Request Forgery - SSRF Security Testing | HackerOne</title>
+    <meta property="og:site_name" content="HackerOne">
+    <meta property="fb:app_id" content="345444188982280">
+    <link rel="stylesheet" href="/sites/default/files/css/css_PjHbx1pBz4BgG4yxUNTdK-JCceIp0vdR6QKI8AjfSFk.css?psyc7h" media="all" />
+<link rel="stylesheet" href="/sites/default/files/css/css_yOiYRp8A8RnOIrCNQ6UkTnEBep18GQin6E08AssMWes.css?psyc7h" media="all" />
+
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog.rss">
+  </head>
+  <body class="blog_posts blog-How-To-Server-Side-Request-Forgery-SSRF -node-1111">
+
+        
+    <div class="search-wrapper">
+    <i class="icon-cross"></i>
+    <div class="inner-container">
+        <form>
+          <div class="search-nav">
+            <i class="icon-search"></i>
+            <input class="search" type="text" placeholder="Search" name="query">
+            <input class="search-results" type="submit" value="See Results">
+          </div>
+        </form>
+    </div>
+</div>
+<div class="js-topbar">
+    <div data-reactroot="" class="topbar">
+        <div class="triangle">
+            <div class="bg-color"></div>
+        </div>
+        <div class="inner-container">
+            <div>
+                <a class="app__logo" href="/"></a>
+                                    <div class="topbar-toggle"><i class="icon-hamburger"></i></div>
+                            </div>
+                        <div class="topbar-subnav-wrapper">
+                <ul class="topbar-subnav">
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/users/sign_in">Sign In </a>&nbsp;|&nbsp;</li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right" style="display:none;"><a class="topbar-subnav-link" href="https://hackerone.com/bugs">Go to Inbox </a></li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/sign_up">Sign Up</a></li>
+                    <li class="topbar-subnav-item"><a class="topbar-subnav-link " href=""><i class="icon-search"></i></a></li>
+                </ul>
+            </div>
+            <div class="topbar-navigation-wrapper">
+                <ul class="topbar-navigation">
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Business</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/product/overview">Product Overview</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/response">HackerOne Response</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/challenge">HackerOne Challenge</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/bounty">HackerOne Bounty</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/resources">Resources</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#case-studies">Case Studies</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#guides">Guides</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#reports">Reports</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#webinars">Webinars</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#videos">Videos</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#infographics">Infographics</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/services">Services</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/customers">Customers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/partners">Partners</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker-community">Meet the Hackers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/live-hacking">Live Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-50305b6216f77bdeb4519ecbc7e20ee7ecc2c9e0455f300aa036dd748af91eba">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/resources/forrester-total-economic-impact-study-hackerone">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Hackers</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/start-hacking">Start Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker101">Hacker101</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/leaderboard/all-time">Leaderboard</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/internet-bug-bounty">Internet Bug Bounty</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/disclosure-guidelines">Disclosure Guidelines</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--two-quarter cta">
+                                    <div class="views-element-container"><div class="js-view-dom-id-16315c5e1efc91bf85d6cb8c8a436c7bbf9b10b01126de99517c84d977765c7b">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/hacker101">  <img src="/sites/default/files/styles/medium/public/H1_194_H101%20Social%20Cards_R1_V1Background_Green.jpg?itok=eUG9c-yC" width="220" height="116" alt="h101" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Learn how to hack</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/hacker101" class="primary-btn">Get Started</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a>
+                            </span>
+                        </span>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">Company</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/about">About Us</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/blog">Blog</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/press">Press</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/careers">Careers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/branding">Brand Assets</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/security">Security</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201086269-Organizations">Help Center</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-efacb8b4b48fd03576c6be44011262de73eb5982a32662164ef3313a37d79792">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/sign_up">Try&nbsp; HackerOne</a>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+                    </div>
+    </div>
+</div>
+
+    
+    <div class="js-full-width-container full-width-container superman-page">
+      <span data-reactroot="">
+        <div>
+          <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div id="page-wrapper">
+  <div id="page">
+
+            <div id="main-wrapper" class="layout-main-wrapper layout-container clearfix">
+      <div id="main" class="layout-main clearfix">
+        
+        <main id="content" class="column main-content" role="main">
+          <section class="section">
+            <a id="main-content" tabindex="-1"></a>
+              <div>
+    <div id="block-hackerone-content" data-block-plugin-id="system_main_block">
+  
+    
+          <div class="superman-hero superman-hero--small">
+        <div class="inner-container inner-container--medium">
+            <h1 class="superman-hero__title spec-superman-hero-title">How To: Server-Side Request Forgery (SSRF)</h1>
+            <ul class="list list--inline superman-text--small">
+                            </ul>
+        </div>
+    </div>
+    <div class="superman-container superman-container--tiny text-aligned-left ">
+        <div class="inner-container inner-container--medium">
+            <div class="row">
+                <div class="blog-main">
+                    <div class="">
+                        <div class="blog-info">
+                            <div class="date"><i class="fa fa-clock-o" aria-hidden="true"></i>Jun 14 2017
+                            </div>
+                            <div class="author"><i class="fa fa-user" aria-hidden="true"></i>
+                                                        Jobert Abma                        
+                                                        </div>
+
+                            <div class="share">SHARE
+                                <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.hackerone.com%2Fblog-How-To-Server-Side-Request-Forgery-SSRF" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-facebook"></i></a>
+                                <a href="https://twitter.com/share?url=https%3A%2F%2Fwww.hackerone.com%2Fblog-How-To-Server-Side-Request-Forgery-SSRF&amp;text=How%20To%3A%20Server-Side%20Request%20Forgery%20%28SSRF%29" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-twitter"></i></a>
+                                <a href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2Fwww.hackerone.com%2Fblog-How-To-Server-Side-Request-Forgery-SSRF" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-linkedin"></i></a>
+                            </div>
+                            <div class="back">
+                            <a class="primary-btn" href="/blog">< BACK TO POSTS</a>
+                            </div>
+                        </div>
+                        <div>
+                            
+            <div><p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Server-Side Request Forgery, SSRF for short, is a vulnerability class that describes the behavior of a server making a request that’s under the attacker’s control. This post will go over the impact, how to test for it, the potential pivots, defeating mitigations, and caveats.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Before diving into the impact of SSRF vulnerabilities, let’s take a moment to understand the vulnerability itself. It happens that an online application requires outside resources. For example, when you’d tweet this blog post, an avatar would show up for this post on Twitter. The image, title, and description come from the HTML that this page returns. In order to download that information, a Twitter server makes an HTTP request to this page and extracts all the information it needs. Until recently, their link expansion used to be </span></span></span></span></span></span></span></span></span><a href="https://twitter.com/BugBountyHQ/status/868242771617792000" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">vulnerable to an SSRF vulnerability</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">This post will explain in which scenarios this is a security vulnerability and how you can exploit it.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Setting up</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">When you can make the server do a request to another server, it might be an SSRF. For How To articles, it often works best to set up a vulnerable application locally for you to play around with it. For the sake of this blog post, let’s assume we have a server that runs on the following Ruby code:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'sinatra'</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'open-uri'</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">get '/' do</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  format 'RESPONSE: %s', open(params[:url]).read</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">end</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">To run this code locally, store it as server.rb, run </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">gem install sinatra</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">, followed by </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">ruby server.rb</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. I used </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">ruby 2.3.3p222</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. You can then play around with it at </span></span></span></span></span></span></span></span></span><a href="http://localhost:4567" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://localhost:4567</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. Do </span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">NOT</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> run this on anything other than a local loopback interface, this </span></span></span></span></span></span></span></span></span><a href="https://sakurity.com/blog/2015/02/28/openuri.html" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">leads to command execution</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">When someone would request </span></span></span></span></span></span></span></span></span><a href="http://localhost:4567/?url=https://google.com" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://localhost:4567/?url=https://google.com</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">, the </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">open()</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> call fetches </span></span></span></span></span></span></span></span></span><a href="https://google.com" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">https://google.com</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> and returns the response body to the client.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">hack-box-01 $ curl http://localhost:4567/\?url\=https://google.com</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">RESPONSE: &lt;!doctype html&gt;&lt;html itemscope="" itemtype="http://schema.org/WebPage" lang="en"&gt;&lt;head&gt;&lt;meta content="Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for." name="description"&gt;&lt;meta content="noodp" name="robots"&gt;&lt;meta content="text/html; charset=UTF-8" http-equiv="Content-Type"&gt;&lt;meta content="/images/branding/googleg/1x/googleg_standard_color_128dp.png" itemprop="image"&gt;&lt;title&gt;Google&lt;/title&gt;</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Fetching a URL from the internet isn’t that exciting and not a vulnerability by itself – since it’s directly connected the internet, anyone can access it anyway. Now let’s take a moment and think about Local Area Networks (LANs). A big chunk of the internet is behind routers and firewalls. These routers often use Network Address Translation (NAT) to route traffic from an internal IP subnet to the internet and back.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><img alt="Network diagram" data-entity-type="file" data-entity-uuid="68824abe-e5ec-479f-94d5-70143b81e952" src="/sites/default/files/inline-images/Screen%20Shot%202017-06-08%20at%2015.45.32.png" /></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">To explain the impact, consider that the server we’re running with our ruby code (IP address 10.0.0.3) is within a network with another server: </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> (IP address 10.0.0.2). The </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> server serves a site on port 80 without any authentication. The router (10.0.0.1) routes all the internal traffic to the internet. For this example, there aren’t any firewall rules for traffic between internal servers. The </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> server cannot be reached from the internet. The web server can be reached at </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">web-server.com</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. </span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">We know that our web server, 10.0.0.3, processes the requests we send to it. The </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> server serves an HTTP interface on port 4567. Now let’s see what happens when we request the </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> server through the web server:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">hack-box-01 $ curl http://web-server.com:4567/\?url\=http://10.0.0.2/</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">RESPONSE: &lt;html&gt;&lt;head&gt;&lt;title&gt;Internal admin panel&lt;/title&gt;&lt;/head&gt;...&lt;/html&gt;</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Since the web server can actually reach 10.0.0.2, the internal </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> server, it’ll send an HTTP request to it and then reflect the response to the outside world. You could compare it to a web proxy, but abused to proxy external traffic to internal services and vica versa.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Testing</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Now that you have a basic understanding of the vulnerability, let’s dive into how you can test for it. In all the SSRF vulnerabilities that I found, I thought it is really useful to have your own server that you can connect back to. This will help you debug the potential vulnerability. I prefer a </span></span></span></span></span></span></span></span></span><a href="https://digitalocean.com" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">DigitalOcean</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> box for this, but whatever server you can find that you can forward traffic from the internet works just as well.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Let’s debug the SSRF that runs on </span></span></span></span></span></span></span></span></span><a href="http://web-server.com:4567/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://web-server.com:4567/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> by letting it ping to a server you control. First, set up a </span></span></span></span></span></span></span></span></span><a href="http://nc110.sourceforge.net/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">netcat</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> listener to see the requests coming in:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">hack-box-1 $ nc -l -n -vv -p 8080 -k</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Listening on [0.0.0.0] (family 0, port 8080)</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">This will listen to connections on port 8080 on all interfaces and will show us all the traffic sent to it. For the sake of the example, let’s assume </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">hack-box-1</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">’s external IP address is 1.2.3.4. Now let’s let web-server.com ping our server:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">hack-box-01 $ curl http://web-server.com:4567/\?url\=http://1.2.3.4:8080/</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">When you execute that command, you’ll notice an HTTP request in your netcat listener:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">hack-box-1 $ nc -l -n -vv -p 8080 -k</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Listening on [0.0.0.0] (family 0, port 8080)</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Connection from [masked] port 8080 [tcp/*] accepted (family 2, sport 45982)</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">GET / HTTP/1.1</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Accept-Encoding: gzip;q=1.0,deflate;q=0.6,identity;q=0.3</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Accept: */*</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">User-Agent: Ruby</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Host: 1.2.3.4:8080</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">This reveals the HTTP request that is being sent to the IP address / domain name that you pass into the </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">url</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> parameter. Almost all HTTP libraries that I’ve seen over the past few years follow HTTP requests. If your server, the netcat listener in this case, would respond with the HTTP response below, web-server.com would follow it and then make a request to </span></span></span></span></span></span></span></span></span><a href="http://10.0.0.2/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://10.0.0.2/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. </span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">HTTP/1.1 302 Found</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Location: http://10.0.0.2/</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Content-Length: 0</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Why is this important you ask? One of the mitigations that I’ve seen companies implement is to restrict the server to connect to internal services or ports. However, that restriction often doesn’t apply to HTTP redirects. Consider that our server would be implemented like this:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'sinatra'</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'open-uri'</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">get '/' do</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  url = URI.parse params[:url]</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  halt 403 if url.host =~ /\A10\.0\.0\.\d+\z/</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  format 'RESPONSE: %s', open(params[:url]).read</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">end</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">This code parses the URL before sending the request. If the host of the passed URL matches an IP address 10.0.0.[any digit sequence], it will return a HTTP 403 Forbidden status instead. There’s a few ways to sometimes bypass this:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<ul style="margin-top:0pt; margin-bottom:0pt"><li dir="ltr" style="list-style-type:disc; font-size:11pt; color:#000000; font-weight:400; font-style:normal; font-variant:normal; text-decoration:none; vertical-align:baseline">
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Use the </span></span></span></span></span></span></span></span></span><a href="http://www.ipaddressguide.com/ip" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">decimal IP notation</span></span></span></span></span></span></span></span></span></a> <a href="http://167772162/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://167772162/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> instead of </span></span></span></span></span></span></span></span></span><a href="http://10.0.0.2/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://10.0.0.2/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. </span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Create a DNS A record that points to 10.0.0.2 and use </span></span></span></span></span></span></span></span></span><a href="http://subdomain.yourdomain.com" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://subdomain.yourdomain.com/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Use a redirect, as described below.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+</ul><p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">To reach </span></span></span></span></span></span></span></span></span><a href="http://10.0.0.2/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://10.0.0.2/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> with a redirect, your first request would go to the server you control. From that server, you’d redirect back to </span></span></span></span></span></span></span></span></span><a href="http://10.0.0.2/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://10.0.0.2/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. This will bypass the mitigation implemented in the code above because it already reached the </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">open()</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> method. In the code example above, a host blacklist approach is used. This can be a slippery slope because of all the different bypasses you’d have to think about as a developer, but sometimes necessary. When a whitelist is implemented, as shown in the code example below, try to find an open redirect vulnerability in the whitelist host. This can help you pivot to the site’s internal network. Redirects often help you defeat port, host, path, and protocol restrictions.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'sinatra'</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'open-uri'</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">get '/' do</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  url = URI.parse params[:url]</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  halt 403 unless url.host == 'web-server.com'</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  format 'RESPONSE: %s', open(params[:url]).read</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">end</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Here’s the unordered top 5 features that are often prone to SSRF vulnerabilities:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<ul style="margin-top:0pt; margin-bottom:0pt"><li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Webhooks: look for services that make HTTP requests when certain events happen. In most webhook features, the end user can choose their own endpoint and hostname. Try to send HTTP requests to internal services.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">PDF generators: try injecting </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">&lt;iframe&gt;</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">, </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">&lt;img&gt;</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">, </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">&lt;base&gt;</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> or </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">&lt;script&gt;</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> elements or CSS </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">url()</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> functions pointing to internal services.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Document parsers: try to discover how the document is parsed. In case it’s an XML document, use the PDF generator approach. For all other documents, see if there’s a way to reference external resources and let the server make requests to an internal service.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Link expansion: </span></span></span></span></span></span></span></span></span><a href="https://twitter.com/BugBountyHQ/status/868242771617792000" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">kudos to Mark Litchfield</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> for uncovering a vulnerability in Twitter’s link expansion recently.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">File uploads: instead of uploading a file, try sending a URL and see if it downloads the content of the URL. </span></span></span></span></span></span></span></span></span><a href="https://hackerone.com/reports/713" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Here’s an example</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">.</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+</ul><p><span><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Impact</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Because the web server can access the </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">admin-panel</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> because they’re in the same network and there are no additional firewalling rules for internal traffic, an attacker could gather additional information about the network and access internal servers and services. This is a legitimate SSRF vulnerability. Not all SSRF vulnerabilities return the response to the attacker. This is called a blind SSRF vulnerability. Here’s a code example:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'sinatra'</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">require 'open-uri'</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">get '/' do</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  open params[:url]</span></span></span></span></span></span></span></span></span></b></span><br /><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">  'done'</span></span></span></span></span></span></span></span></span></b></span><br /><span><b><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">end</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">The difference with the first code example in the blog post, is that this script will make the HTTP request to whatever is passed to the </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">url</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> parameter, but will always return the string </span></span></span></span></span></span></span></span></span><span><span style="font-family:'Courier New'"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">done</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> to the attacker. In case this happens, the impact is often limited to Service discovery and port scanning (see below).</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:italic"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Expose internal / firewalled systems</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">A good demonstration of an SSRF vulnerability is to reveal a system that is not accessible over the internet. Whenever you want to achieve this, keep the program’s policy in mind and don’t overstep any boundaries. If you do want to look for internal services, here’s a list of </span></span></span></span></span></span></span></span></span><a href="https://en.wikipedia.org/wiki/Private_network" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">private IPv4 networks</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> that you could scan for services:</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<ul style="margin-top:0pt; margin-bottom:0pt"><li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">10.0.0.0/8</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">127.0.0.1/32</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">172.16.0.0/12</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+	<li>
+	<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">192.168.0.0/16</span></span></span></span></span></span></span></span></span></b></span></p>
+	</li>
+</ul><p><span><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Trick</span></span></span></span></span></span></span></span></span><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">: to discover which networks are routed internally, try looking at the time difference in responses. Unrouted networks are often dropped by the router immediately (small time increase). Internal firewalling rules often cause routed networks to increase the RTT (bigger time increase). Also, remember that routers and switches often have an HTTP or SSH interface enabled, so it often pays off to try .1 and .254 addresses on port 22, 80, 443, 8080, and 8443 first.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:italic"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Service discovery and port scanning</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">SSRF vulnerabilities can sometimes be used to run port scans in a local network. This may help with mapping what the infrastructure looks like and can help plan exploiting other vulnerabilities. This is often the easiest demonstration of a (blind) SSRF. Scripts like the one shown above raise exceptions or return an error when they can’t connect or don’t get a response from the server. This can help identify whether a port is “open” (connection established) or “closed” (connection refused or connection timeout).</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<div dir="ltr" style="margin-left:0pt">
+<table style="border:solid #000000 1pt; border-collapse:collapse; width:468pt"><colgroup><col width="*" /><col width="*" /><col width="*" /><col width="*" /></colgroup><tbody><tr style="height:0pt"><td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">URL parameter</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Response HTTP status</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">RTT</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Conclusion</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+		</tr><tr style="height:0pt"><td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://127.0.0.1:22</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">200</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">10ms</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Port is open</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+		</tr><tr style="height:0pt"><td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://127.0.0.1:23</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">500</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">10ms</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Port is closed</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+		</tr><tr style="height:0pt"><td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://10.0.0.1/</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">500</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">30010ms</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Firewalled or unable to route traffic to server</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+		</tr><tr style="height:0pt"><td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://10.0.0.1:8080/</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">500</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">10ms</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+			<td style="border-left:solid #000000 1pt; border-right:solid #000000 1pt; border-bottom:solid #000000 1pt; border-top:solid #000000 1pt">
+			<p dir="ltr" style="margin-top:0pt; margin-bottom:0pt; padding:5pt 5pt 5pt 5pt"><span style="line-height:1.2"><span style="vertical-align:top"><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Port is closed and traffic is routed to server</span></span></span></span></span></span></span></span></span></b></span></span></p>
+			</td>
+		</tr></tbody></table></div>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Every SSRF responds differently to open and closed ports. Try to map the identifiers and detect open and closed ports based on that. The table above is an example of how such a table could look like.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:italic"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Extract EC2 configuration files</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">This is one of my favorite tricks. More and more companies host part of their infrastructure on Amazon EC2. Amazon exposes an internal service every EC2 instance can query for instance metadata about the host. </span></span></span></span></span></span></span></span></span><a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Here’s the AWS documentation</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. If you found an SSRF vulnerability that runs on EC2, try requesting </span></span></span></span></span></span></span></span></span><a href="http://169.254.169.254/latest/meta-data/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://169.254.169.254/latest/meta-data/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. This will return a lot of useful information for you to understand the infrastructure and may reveal Amazon S3 access tokens, API tokens, and more. You may also want to download </span></span></span></span></span></span></span></span></span><a href="http://169.254.169.254/latest/user-data/" style="text-decoration:none"><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">http://169.254.169.254/latest/user-data/</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> and unzip the data.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:700"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Pivots</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">As you might guess, not all SSRF vulnerabilities are using the HTTP protocol. Sometimes, it’s possible to either specify a different protocol or switch protocols with a redirect. A cool pivot to escalate the SSRF to a Remote Code Execution (RCE) is by pushing asynchronous jobs on a Redis queue that then get executed by an application using the </span></span></span></span></span></span></span></span></span><a href="https://en.wikipedia.org/wiki/Gopher_(protocol)" style="text-decoration:none"><span><span style="font-family:'Courier New'"><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">gopher://</span></span></span></span></span></span></span></span></span><span><span><span style="color:#1155cc"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:underline"><span style="vertical-align:baseline"><span style="white-space:pre-wrap"> protocol</span></span></span></span></span></span></span></span></span></a><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">. It’s really convenient that a lot of Redis instances don’t use any form of authentication. Exploiting this, however, warrants its own blog post given the debugging you have to do. Something for another blogpost!</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">In the meantime, pivots often come from found internal services that allow you to increase the impact of the vulnerability, e.g. when you find an unauthenticated admin panel. If the program permits, think about how you’d use the internal services to chain multiple vulnerabilities to elevate your finding’s impact.</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Happy hacking!</span></span></span></span></span></span></span></span></span></b></span></p>
+
+<p><a href="https://twitter.com/jobertabma"><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">Jobert</span></span></span></span></span></span></span></span></span></b></span></a></p>
+
+<p><span><b><span><span><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="font-variant:normal"><span style="text-decoration:none"><span style="vertical-align:baseline"><span style="white-space:pre-wrap">ps - A lot of the techniques described here can be debugged using <a href="https://github.com/jobertabma/ground-control">this repository</a> on my GitHub profile. Go check it out; PRs welcome!</span></span></span></span></span></span></span></span></span></b></span></p>
+</div>
+      
+                        </div>
+                              
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="inner-container">
+            <div class="row">
+                <div class="blog-sidebar">
+                    <div class="superman-title">
+                        <h2 class="superman-title__content">Related Posts</h2>
+                    </div>
+                                        
+                    <div class="views-element-container"></div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+  </div>
+
+  </div>
+
+          </section>
+        </main>
+                      </div>
+    </div>
+        
+  </div>
+</div>
+
+  </div>
+
+        <div class="superman-footer">
+    <div class="superman-container superman-container--small superman-container--footer">
+        <div class="inner-container">
+            <div class="row row--20">
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Business</h4><a class=" footer superman-text--small" href="/product/overview">Product Overview</a><a class=" footer superman-text--small" href="/product/response">HackerOne Response</a><a class=" footer superman-text--small" href="/product/bounty">HackerOne Bounty</a><a class=" footer superman-text--small" href="/product/challenge">HackerOne Challenge</a><a class=" footer superman-text--small" href="/services">Services</a><a class=" footer superman-text--small" href="/resources">Resources</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="/hacker-community">Meet the Hackers</a><a class=" footer superman-text--small" href="/live-hacking">Live Hacking</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/programs.html">Business Support</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Hackers</h4><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a><a class=" footer superman-text--small" href="/hacker101">Hacker101</a><a class=" footer superman-text--small" href="https://hackerone.com/leaderboard/all-time">Leaderboard</a><a class=" footer superman-text--small" href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a><a class=" footer superman-text--small" href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a><a class=" footer superman-text--small" href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a><a class=" footer superman-text--small" href="/disclosure-guidelines">Disclosure Guidelines</a><a class=" footer superman-text--small" href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Community</h4><a class=" footer superman-text--small" href="/product/community">Community Edition</a><a class=" footer superman-text--small" href="/internet-bug-bounty">Internet Bug Bounty</a><a class=" footer superman-text--small" href="/zerodaily">Zero Daily Newsletter</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Company</h4><a class=" footer superman-text--small" href="/about">About Us</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/">Documentation</a><a class=" footer superman-text--small" href="/blog">Blog</a><a class=" footer superman-text--small" href="/press">Press</a><a class=" footer superman-text--small" href="/careers">Careers</a><a class=" footer superman-text--small" href="/customers">Customers</a><a class=" footer superman-text--small" href="/partners">Partners</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Security</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Contact</h4><a class=" footer superman-text--small" href="/contact">Contact Sales</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Report a Bug</a><a class="footer superman-text--small" href="https://support.hackerone.com/hc/en-us/requests/new">Support</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Try HackerOne</h4><a class=" footer superman-text--small" href="https://hackerone.com/sign_up">Start a Program</a><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a></div>
+            </div>
+            <div class="row">
+                <div class="pull-right"><a href="https://facebook.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-facebook"></i></a><a href="https://twitter.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-twitter"></i></a><a href="https://www.linkedin.com/company/hackerone" class="superman-footer__social-link"><i class="fa-share-linkedin"></i></a></div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <a class="superman-footer__logo" href="/"><img src="/assets/images/logo_transparent.png" alt="HackerOne"></a>
+                </div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <ul class="superman-footer__utility superman-text--small">
+                        <li class="superman-footer__utility-item">2019 © HackerOne.</li>
+                        <li class="superman-footer__utility-item"><a href="/terms">Terms |</a></li>
+                        <li class="superman-footer__utility-item"><a href="/privacy">Privacy |</a></li>
+                        <li class="superman-footer__utility-item"><a href="https://hackerone.com/security">Security</a></li>
+                    </ul>                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </span>
+    </div>
+
+    
+    <form id="mktoForm_1013"></form>
+        <div class="footer-popup">
+      <p>We use cookies to collect information to help us personalise your experience and improve the functionality and performance of our site. By continuing to use our site, you consent to our use of cookies. For more information see our <a href="/privacy#cookie-policy">cookies policy.</a><a class="primary-btn--small" href="">I AGREE</a></p>
+    </div>
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/1111","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","fac":{"search":{"jsonFilesPath":"\/sites\/default\/files\/fac-json\/search\/en\/PFTV77uiuT3RCnW9FPkcX-JqOb3eo33V7odD0jXVIr4\/","inputSelectors":"input.search","keyMinLength":1,"keyMaxLength":10,"breakpoint":0,"emptyResult":"","allResultsLink":false,"allResultsLinkThreshold":0,"highlightingEnabled":false,"resultLocation":""}},"gacsp":{"commands":[["create","UA-49905813-1","auto"],["require","linkid"],["send","pageview"]]},"statistics":{"data":{"nid":"1111"},"url":"\/core\/modules\/statistics\/statistics.php"},"ajax":[],"user":{"uid":0,"permissionsHash":"4942d8c07ab2f619645a6faba5d6d5e39604dc3fdc9354dc6eea99d9a4a9d42d"}}</script>
+<script src="/sites/default/files/js/js_NOKW5uJ-_cH32MDwYAx0rbIXRxqF_KUMhWO-W-AEaSg.js"></script>
+<script src="https://app-sj17.marketo.com/js/forms2/js/forms2.min.js"></script>
+<script src="/sites/default/files/js/js_uha13U1BPFZiLOtE9sGkmvqcnX2izBIxBUsHemTm8PM.js"></script>
+<script src="https://cdn.bizible.com/scripts/bizible.js" async id="bizible-settings" data-native-json="true"></script>
+<script src="/sites/default/files/js/js_09q-2nINZLq-grz_lg6wRjXj61uWzqGBBYfPavnoho0.js"></script>
+
+    <noscript>
+      <img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=682812&fmt=gif" />
+    </noscript>
+  </body>
+</html>
+
+
+
+
+
+
+

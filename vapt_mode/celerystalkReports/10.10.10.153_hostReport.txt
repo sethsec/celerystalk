@@ -1,0 +1,315 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.153  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.153/10.10.10.153_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.153/10.10.10.153_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611064
+Run Time:	1.210373878479
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.153:80 -o /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_photon -e json && cat /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [
+        "http://10.10.10.153:80/gallery.html:EMAIL:contact@blackhatuni.com",
+        "http://10.10.10.153:80:EMAIL:contact@blackhatuni.com",
+        "http://10.10.10.153:80/:EMAIL:contact@blackhatuni.com"
+    ],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.153:80/",
+        "http://10.10.10.153:80/gallery.html",
+        "http://10.10.10.153:80"
+    ],
+    "scripts": [
+        "http://10.10.10.153:80/js/plugins.js",
+        "http://10.10.10.153:80/js/main.js",
+        "http://10.10.10.153:80/js/jquery-1.11.1.min.js"
+    ],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611204
+Run Time:	0.72378396987915
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.153:80&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.153
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611475
+Run Time:	447.307325839996
+Command:	nikto -h http://10.10.10.153:80 -output /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.153
++ Target Port: 80
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.25 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ OSVDB-630: GET The web server may reveal its internal or real IP in the Location header via a request to /images over HTTP/1.0. The value is "127.0.0.1".
++ GET Server may leak inodes via ETags, header found with file /, inode: 1f5c, size: 56f96b7bed26f, mtime: gzip
++ OPTIONS Allowed HTTP Methods: POST, OPTIONS, HEAD, GET 
++ OSVDB-3268: GET /css/: Directory indexing found.
++ OSVDB-3092: GET /css/: This might be interesting...
++ OSVDB-3092: GET /manual/: Web server manual found.
++ OSVDB-3268: GET /manual/images/: Directory indexing found.
++ OSVDB-3268: GET /images/: Directory indexing found.
++ OSVDB-3233: GET /icons/README: Apache default file found.
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611530
+Run Time:	1.47840094566345
+Command:	wpscan --url http://10.10.10.153:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611607
+Run Time:	0.621551990509033
+Command:	cewl http://10.10.10.153:80 -m 6 -w /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+container
+Choose
+subject
+voluptatem
+consectetur
+adipisicing
+eiusmod
+tempor
+incididunt
+labore
+dolore
+aliqua
+quibusdam
+school
+programs
+content
+portal
+dolores
+veniam
+Request
+information
+Blackhat
+Courses
+Students
+Events
+Teachers
+Gallery
+navigation
+header
+students
+teachers
+accusantium
+voluptas
+aspernatur
+consequuntur
+events
+Contact
+contact
+blackhatuni
+topics
+libero
+tempore
+soluta
+aperiam
+inventore
+veritatis
+Architecto
+beatae
+Social
+Temporibus
+debitis
+necessitatibus
+Facebook
+Google
+Twitter
+Pinterest
+Newsletter
+Assumenda
+repellendus
+temporibus
+Subscribe
+footer
+request
+highschool
+submit
+homework
+Awesome
+results
+accusamus
+dignissimos
+ducimus
+blanditiis
+praesentium
+voluptatum
+deleniti
+corrupti
+molestias
+excepturi
+occaecati
+cupiditate
+provident
+similique
+Latest
+archival
+Upcoming
+upcoming
+questions
+answer
+Highschool
+Photos
+selected
+category
+teacher
+Student
+olympics
+Halloween
+School
+university
+Karaoke
+sidebar
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611648
+Run Time:	3.08532619476318
+Command:	docker run --rm wappalyzer/cli http://10.10.10.153:80 | jq . | tee /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.153:80/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.25",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Debian",
+      "confidence": "100",
+      "version": "",
+      "icon": "Debian.png",
+      "website": "http://debian.org",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    },
+    {
+      "name": "FancyBox",
+      "confidence": "100",
+      "version": "2.1.4",
+      "icon": "FancyBox.png",
+      "website": "http://fancyapps.com/fancybox",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "1.11.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611657
+Run Time:	66.5726311206818
+Command:	whatweb http://10.10.10.153:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.153:80 [200 OK] Apache[2.4.25]
+ Country[RESERVED][ZZ]
+ Email[contact@blackhatuni.com]
+ HTML5, HTTPServer[Debian Linux][Apache/2.4.25 (Debian)]
+ IP[10.10.10.153]
+ JQuery[1.11.1]
+ Script, Title[Blackhat highschool]
+
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611794
+Run Time:	24.015545129776
+Command:	gobuster -u http://10.10.10.153:80 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.153/celerystalkOutput/10.10.10.153_80_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.153:80/.htpasswd/
+http://10.10.10.153:80/.hta/
+http://10.10.10.153:80/.htaccess/
+http://10.10.10.153:80/css/
+http://10.10.10.153:80/fonts/
+http://10.10.10.153:80/icons/
+http://10.10.10.153:80/images/
+http://10.10.10.153:80/javascript/
+http://10.10.10.153:80/js/
+http://10.10.10.153:80/manual/
+http://10.10.10.153:80/moodle/
+http://10.10.10.153:80/phpmyadmin/
+http://10.10.10.153:80/server-status/

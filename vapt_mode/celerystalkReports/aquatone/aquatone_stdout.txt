@@ -1,0 +1,286 @@
+aquatone v1.7.0 started at 2019-06-15T11:29:12-04:00
+
+Targets    : 131
+Threads    : 4
+Ports      : 80, 443, 8000, 8080, 8443
+Output dir : /pentest/htb/celerystalkReports/aquatone
+
+http://10.10.10.153:80/gallery.html:EMAIL:contact@blackhatuni.com: 404 Not Found
+http://10.10.10.153:80: 200 OK
+http://10.10.10.153: 200 OK
+http://10.10.10.153:80/.htpasswd: 403 Forbidden
+http://10.10.10.13:80/manual: 404 Not Found
+http://10.10.10.153:80/.hta: 403 Forbidden
+http://10.10.10.10/wp-content/plugins/job-manager/readme.txt: 200 OK
+http://10.10.10.10/wp-content/plugins/job-manager: 403 Forbidden
+http://10.10.10.153:80/.htaccess: 403 Forbidden
+http://10.10.10.153:80/css: 200 OK
+http://10.10.10.10/index.php/wp-json/: 200 OK
+http://10.10.10.153:80/fonts: 200 OK
+http://10.10.10.153:80/icons: 404 Not Found
+https://10.10.10.17:443: 200 OK
+http://10.10.10.43:80: 200 OK
+http://10.10.10.153:80/images: 200 OK
+http://10.10.10.153:80/javascript: 403 Forbidden
+https://10.10.10.43:443: 200 OK
+https://10.10.10.43:443/.hta: 403 Forbidden
+http://10.10.10.153:80/js: 200 OK
+https://10.10.10.43:443/.htaccess: 403 Forbidden
+http://10.10.10.153:80/manual: 200 OK
+https://10.10.10.43:443/.htpasswd: 403 Forbidden
+http://10.10.10.153:80/moodle: 200 OK
+https://10.10.10.43:443/icons: 404 Not Found
+https://10.10.10.43:443/db: 200 OK
+http://10.10.10.153:80/phpmyadmin: 403 Forbidden
+http://10.10.10.43/robots.txt: 404 Not Found
+https://10.10.10.43:443/server-status: 403 Forbidden
+http://10.10.10.153:80/server-status: 403 Forbidden
+http://10.10.10.43:80/.htaccess: 403 Forbidden
+http://10.10.10.18:80: 200 OK
+http://10.10.10.43:80/.hta: 403 Forbidden
+http://10.10.10.18: 200 OK
+http://10.10.10.43:80/.htpasswd: 403 Forbidden
+http://10.10.10.43:80/icons: 404 Not Found
+http://10.10.10.18/robots.txt: 404 Not Found
+http://10.10.10.43:80/info.php: 200 OK
+http://10.10.10.18:80/.hta: 403 Forbidden
+http://10.10.10.43:80/server-status: 403 Forbidden
+http://10.10.10.18:80/.htaccess: 403 Forbidden
+http://10.10.10.13:80: 200 OK
+http://10.10.10.18:80/.htpasswd: 403 Forbidden
+http://10.10.10.13:80/.htaccess: 403 Forbidden
+http://10.10.10.13:80/.htpasswd: 403 Forbidden
+http://10.10.10.18:80/classes: 200 OK
+http://10.10.10.13:80/.hta: 403 Forbidden
+http://10.10.10.13:80/icons: 404 Not Found
+http://10.10.10.18:80/css: 200 OK
+http://10.10.10.18:80/icons: 404 Not Found
+http://10.10.10.13:80/server-status: 403 Forbidden
+http://10.10.10.13: 200 OK
+http://10.10.10.18:80/images: 200 OK
+http://10.10.10.17: request timeout
+http://10.10.10.18:80/index.php: 200 OK
+http://10.10.10.17/robots.txt: request timeout
+http://10.10.10.13/robots.txt: 404 Not Found
+http://10.10.10.18:80/server-status: 403 Forbidden
+http://10.10.10.13:80/manual:IPV4:10.10.10.13: 404 Not Found
+http://10.10.10.18:80/register.php: 200 OK
+http://10.10.10.13:80/manual:EMAIL:Server: 404 Not Found
+http://10.10.10.18:80/login.php: 200 OK
+http://10.10.10.13:80//manual: 404 Not Found
+http://10.10.10.121:80: 200 OK
+http://10.10.10.10/GetImage.aspx?namekey=02976071-5bfe-41db-b7c5-e7d8f2f5658e: 404 Not Found
+http://10.10.10.10/robots.txt: 404 Not Found
+http://10.10.10.121:3000: 200 OK
+http://10.10.10.10:80/.hta: 403 Forbidden
+http://10.10.10.121: 200 OK
+http://10.10.10.121/robots.txt: 404 Not Found
+http://10.10.10.10:80/.cache: 403 Forbidden
+http://10.10.10.10:80/.htaccess: 403 Forbidden
+http://10.10.10.10:80/.htpasswd: 403 Forbidden
+http://10.10.10.121:80/.htaccess: 403 Forbidden
+http://10.10.10.121:80/.htpasswd: 403 Forbidden
+http://10.10.10.10:80/icons: 404 Not Found
+http://10.10.10.121:80/.hta: 403 Forbidden
+http://10.10.10.10:80/server-status: 403 Forbidden
+http://10.10.10.121:80/icons: 404 Not Found
+http://10.10.10.10:80/wp-content: 200 OK
+http://10.10.10.121:80/javascript: 403 Forbidden
+http://10.10.10.121:80/server-status: 403 Forbidden
+http://10.10.10.10:80/wp-includes: 403 Forbidden
+http://10.10.10.10/xmlrpc.php: 405 Method Not Allowed
+http://10.10.10.10:80/wp-admin: 200 OK
+http://10.10.10.10/readme.html: 200 OK
+http://10.10.10.121:80/manual:IPV4:10.10.10.121: 404 Not Found
+http://10.10.10.10/wp-cron.php: 200 OK
+http://10.10.10.121:80/support: 200 OK
+http://10.10.10.121:80/manual:EMAIL:Server: 404 Not Found
+http://10.10.10.10/index.php/feed/: 200 OK
+http://10.10.10.121:80/manual: 404 Not Found
+http://10.10.10.121:80//manual: 404 Not Found
+http://10.10.10.10/index.php/comments/feed/: 200 OK
+http://10.10.10.10/wp-content/themes/twentyseventeen/README.txt: 200 OK
+http://10.10.10.10/wp-content/themes/twentyseventeen: 500 Internal Server Error
+http://10.10.10.10/wp-content/themes/twentyseventeen/style.css?ver=4.7.3: 200 OK
+http://10.10.10.10: 200 OK
+http://10.10.10.80: 200 OK
+http://10.10.10.10:80: 200 OK
+http://10.10.10.80:80: 200 OK
+http://10.10.10.80:80/icons: 404 Not Found
+http://10.10.10.80:80/fonts: 200 OK
+http://10.10.10.80:80/?op=upload: 200 OK
+http://10.10.10.80:80/?op=home: 200 OK
+http://10.10.10.80:80/index.php: 200 OK
+http://10.10.10.80:80/images: 200 OK
+http://10.10.10.80:80/.hta: 403 Forbidden
+http://10.10.10.80:80/.htpasswd: 403 Forbidden
+http://10.10.10.80:80/javascript: 403 Forbidden
+http://10.10.10.80:80/.htaccess: 403 Forbidden
+http://10.10.10.80:80/js: 200 OK
+http://10.10.10.80:80/server-status: 403 Forbidden
+http://10.10.10.119:80/: 200 OK
+http://10.10.10.80:80/css: 200 OK
+http://10.10.10.80:80/uploads: 200 OK
+http://10.10.10.80/robots.txt: 404 Not Found
+http://10.10.10.119:80: 200 OK
+http://10.10.10.119/: 200 OK
+http://10.10.10.103:80: 200 OK
+https://10.10.10.103:443: 200 OK
+http://10.10.10.119:80/user.php:IPV4:10.10.14.3: 404 Not Found
+http://10.10.10.119:80/reset.php: 200 OK
+http://10.10.10.119:80/user.php: 200 OK
+http://10.10.10.119:80/info.php: 200 OK
+http://10.10.10.103:47001: 404 Not Found
+http://10.10.10.103:5985: 404 Not Found
+https://10.10.10.103:5986: 404 Not Found
+http://10.10.10.153:80/gallery.html:EMAIL:contact@blackhatuni.com: screenshot successful
+http://10.10.10.153:80: screenshot successful
+https://10.10.10.10/errors/403.jsp: request timeout
+http://10.10.10.153: screenshot successful
+http://10.10.10.153:80/.htpasswd: screenshot successful
+http://10.10.10.13:80/manual: screenshot successful
+http://10.10.10.153:80/.hta: screenshot successful
+http://10.10.10.10/wp-content/plugins/job-manager: screenshot successful
+http://10.10.10.10/wp-content/plugins/job-manager/readme.txt: screenshot successful
+http://10.10.10.153:80/.htaccess: screenshot successful
+http://10.10.10.153:80/css: screenshot successful
+http://10.10.10.10/index.php/wp-json/: screenshot successful
+http://10.10.10.153:80/fonts: screenshot successful
+http://10.10.10.153:80/icons: screenshot successful
+https://10.10.10.17:443: screenshot successful
+http://10.10.10.43:80: screenshot successful
+http://10.10.10.153:80/images: screenshot successful
+http://10.10.10.153:80/javascript: screenshot successful
+https://10.10.10.43:443/.hta: screenshot successful
+http://10.10.10.153:80/js: screenshot successful
+https://10.10.10.43:443/.htaccess: screenshot successful
+https://10.10.10.43:443: screenshot successful
+http://10.10.10.153:80/manual: screenshot successful
+https://10.10.10.43:443/.htpasswd: screenshot successful
+https://10.10.10.43:443/icons: screenshot successful
+http://10.10.10.153:80/phpmyadmin: screenshot successful
+https://10.10.10.43:443/db: screenshot successful
+http://10.10.10.153:80/moodle: screenshot successful
+http://10.10.10.43/robots.txt: screenshot successful
+https://10.10.10.43:443/server-status: screenshot successful
+http://10.10.10.153:80/server-status: screenshot successful
+http://10.10.10.43:80/.htaccess: screenshot successful
+http://10.10.10.43:80/.hta: screenshot successful
+http://10.10.10.18:80: screenshot successful
+http://10.10.10.18: screenshot successful
+http://10.10.10.43:80/.htpasswd: screenshot successful
+http://10.10.10.43:80/icons: screenshot successful
+http://10.10.10.18/robots.txt: screenshot successful
+http://10.10.10.43:80/info.php: screenshot successful
+http://10.10.10.18:80/.hta: screenshot successful
+http://10.10.10.43:80/server-status: screenshot successful
+http://10.10.10.18:80/.htaccess: screenshot successful
+http://10.10.10.13:80/.htaccess: screenshot successful
+http://10.10.10.18:80/.htpasswd: screenshot successful
+http://10.10.10.13:80/.htpasswd: screenshot successful
+http://10.10.10.13:80: screenshot successful
+http://10.10.10.13:80/.hta: screenshot successful
+http://10.10.10.18:80/classes: screenshot successful
+http://10.10.10.13:80/icons: screenshot successful
+http://10.10.10.18:80/css: screenshot successful
+http://10.10.10.18:80/icons: screenshot successful
+http://10.10.10.13:80/server-status: screenshot successful
+http://10.10.10.18:80/images: screenshot successful
+http://10.10.10.13: screenshot successful
+http://10.10.10.18:80/index.php: screenshot successful
+http://10.10.10.13/robots.txt: screenshot successful
+http://10.10.10.18:80/server-status: screenshot successful
+http://10.10.10.13:80/manual:IPV4:10.10.10.13: screenshot successful
+http://10.10.10.18:80/register.php: screenshot successful
+http://10.10.10.13:80/manual:EMAIL:Server: screenshot successful
+http://10.10.10.18:80/login.php: screenshot successful
+http://10.10.10.13:80//manual: screenshot successful
+http://10.10.10.121:80: screenshot successful
+http://10.10.10.10/GetImage.aspx?namekey=02976071-5bfe-41db-b7c5-e7d8f2f5658e: screenshot successful
+http://10.10.10.10/robots.txt: screenshot successful
+http://10.10.10.121:3000: screenshot successful
+http://10.10.10.10:80/.hta: screenshot successful
+http://10.10.10.121: screenshot successful
+http://10.10.10.121/robots.txt: screenshot successful
+http://10.10.10.10:80/.cache: screenshot successful
+http://10.10.10.10:80/.htaccess: screenshot successful
+http://10.10.10.10:80/.htpasswd: screenshot successful
+http://10.10.10.121:80/.htaccess: screenshot successful
+http://10.10.10.121:80/.htpasswd: screenshot successful
+http://10.10.10.10:80/icons: screenshot successful
+http://10.10.10.121:80/.hta: screenshot successful
+http://10.10.10.10:80/server-status: screenshot successful
+http://10.10.10.121:80/icons: screenshot successful
+http://10.10.10.10:80/wp-content: screenshot successful
+http://10.10.10.121:80/javascript: screenshot successful
+http://10.10.10.121:80/server-status: screenshot successful
+http://10.10.10.10:80/wp-includes: screenshot successful
+http://10.10.10.10/xmlrpc.php: screenshot successful
+http://10.10.10.121:80/manual:IPV4:10.10.10.121: screenshot successful
+http://10.10.10.10/readme.html: screenshot successful
+http://10.10.10.10/wp-cron.php: screenshot successful
+http://10.10.10.10:80/wp-admin: screenshot successful
+http://10.10.10.10/index.php/feed/: screenshot successful
+http://10.10.10.121:80/manual:EMAIL:Server: screenshot successful
+http://10.10.10.121:80/manual: screenshot successful
+http://10.10.10.121:80/support: screenshot successful
+http://10.10.10.121:80//manual: screenshot successful
+http://10.10.10.10/index.php/comments/feed/: screenshot successful
+http://10.10.10.10/wp-content/themes/twentyseventeen/README.txt: screenshot successful
+http://10.10.10.10/wp-content/themes/twentyseventeen: screenshot successful
+http://10.10.10.10/wp-content/themes/twentyseventeen/style.css?ver=4.7.3: screenshot successful
+http://10.10.10.10: screenshot successful
+http://10.10.10.80: screenshot successful
+http://10.10.10.10:80: screenshot successful
+http://10.10.10.80:80: screenshot successful
+http://10.10.10.80:80/icons: screenshot successful
+http://10.10.10.80:80/fonts: screenshot successful
+http://10.10.10.80:80/?op=upload: screenshot successful
+http://10.10.10.80:80/images: screenshot successful
+http://10.10.10.80:80/?op=home: screenshot successful
+http://10.10.10.80:80/index.php: screenshot successful
+http://10.10.10.80:80/.hta: screenshot successful
+http://10.10.10.80:80/.htpasswd: screenshot successful
+http://10.10.10.80:80/.htaccess: screenshot successful
+http://10.10.10.80:80/javascript: screenshot successful
+http://10.10.10.80:80/js: screenshot successful
+http://10.10.10.80:80/server-status: screenshot successful
+http://10.10.10.80:80/css: screenshot successful
+http://10.10.10.80/robots.txt: screenshot successful
+http://10.10.10.80:80/uploads: screenshot successful
+http://10.10.10.119:80/: screenshot successful
+http://10.10.10.119:80: screenshot successful
+http://10.10.10.119/: screenshot successful
+http://10.10.10.119:80/user.php:IPV4:10.10.14.3: screenshot successful
+http://10.10.10.103:80: screenshot successful
+http://10.10.10.119:80/reset.php: screenshot successful
+http://10.10.10.119:80/user.php: screenshot successful
+http://10.10.10.103:47001: screenshot successful
+http://10.10.10.119:80/info.php: screenshot successful
+https://10.10.10.103:443: screenshot successful
+http://10.10.10.103:5985: screenshot successful
+https://10.10.10.103:5986: screenshot successful
+Calculating page structures... done
+Clustering similar pages... done
+Generating HTML report... done
+
+Writing session file...Time:
+ - Started at  : 2019-06-15T11:29:12-04:00
+ - Finished at : 2019-06-15T11:29:48-04:00
+ - Duration    : 36s
+
+Requests:
+ - Successful : 126
+ - Failed     : 5
+
+ - 2xx : 57
+ - 3xx : 0
+ - 4xx : 68
+ - 5xx : 1
+
+Screenshots:
+ - Successful : 126
+ - Failed     : 0
+
+Wrote HTML report to: /pentest/htb/celerystalkReports/aquatone/aquatone_report.html
+

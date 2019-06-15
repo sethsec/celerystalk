@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HelpDeskZ Support Center</title>
+<link href="http://10.10.10.121/support/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://10.10.10.121/support/js/jquery.js"></script>
+</head>
+
+<body>
+<div id="wrapper">
+    <div id="header">
+        <div id="logo">
+            <a href="http://10.10.10.121/support"></a>
+        </div>
+    </div>
+    <div id="navbar">
+        <ul>
+            <li><a href="http://10.10.10.121/support" class="current">Home</a></li>
+                        <li><a href="http://10.10.10.121/support/?v=submit_ticket" >Submit a Ticket</a></li>
+                        <li><a href="http://10.10.10.121/support/?v=knowledgebase" >Knowledgebase</a></li>
+                                    <li><a href="http://10.10.10.121/support/?v=news" <?php echo >News</a></li>
+                    </ul>
+        <div id="language">
+        	        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div id="content">
+            <div class="left_content">
+            	<div class="memberbox">
+                	                	<?php if($client_status != 1){ ?>
+                	<div class="mheader">Account Login</div>
+                    <div class="mcontent">
+                    	<form method="post" action="http://10.10.10.121/support/?v=login" autocomplete="off">
+                        	<input type="hidden" name="do" value="login" />
+                        	<input type="hidden" name="csrfhash" value="0490631526469af037e3a33917da29af" />
+                        <div align="center" style="padding:16px;">
+                                    <input type="text" name="email" style="width:177px" placeholder="Your email address"  />
+                        </div>
+                        <div align="center" style="padding:0px 16px 16px 16px;">
+                                    <input type="password" name="password" style="width:177px" placeholder="Your password" />
+                        </div>
+                        <div style="padding:0px 16px 16px 16px;">
+                            <label><input type="checkbox" name="remember" value="1" /> Remember me</label>
+                        </div>
+                        <div style="padding:16px; border-top:1px solid #d8dbdf">
+                            <table width="100%">
+                                <tr>
+                                    <td><a href="http://10.10.10.121/support/?v=lost_password">Lost password</a></td>
+                                    <td align="right"><input type="submit" name="btn" value="Login" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                                                    </form>
+                    </div>
+                                    </div>  
+            </div>
+            <div style="margin:0 10px 0 270px">
+            <div class="searchboxcontainer">
+<form method="post" action="http://10.10.10.121/support/?v=knowledgebase&amp;action=search">
+<input type="submit" value="Search" class="search_button" />
+<input type="text" name="word" class="search_input" placeholder="Search in Knowledgebase" />
+</form>
+</div><div class="title">
+    Knowledgebase </div>
+
+        	<table width="100%" cellpadding="5" cellspacing="5">
+                                                            </table>
+			            
+                        
+            <table width="100%">
+            	<tr>
+                	                	<td width="50%" valign="top"><div class="knowledgebasepopulartitle">Most popular articles</div></td>
+										                	<td width="50%" valign="top"><div class="knowledgebasepopulartitle">Newest articles</div></td>
+					                </tr>
+                <tr>
+                                	<td valign="top">
+										</td>
+								                	<td valign="top">
+										</td>
+				                </tr>
+            </table>
+            </div>
+            <div class="clear"></div>
+	</div>
+    <div class="clear"></div>
+    
+    <div id="footer">    
+        <div class="wrapper">
+            <a href="http://www.helpdeskz.com">Help Desk Software</a> by HelpDeskZ
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

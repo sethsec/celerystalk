@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+  <head>
+    <meta charset="utf-8" />
+<meta name="title" content="Bi-directional JIRA integration at HackerOne" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Bug fixes just got a little easier; HackerOne introduces bi-directional JIRA integration" />
+<meta name="twitter:description" content="It’s now possible to view updates on JIRA issues right inside your HackerOne Reports. The two-way integration means that whenever a JIRA issue changes state, an internal comment is posted on the appropriate HackerOne Report. No more going back and forth between JIRA and HackerOne!" />
+<meta name="twitter:site" content="@Hacker0x01" />
+<meta name="description" content="It’s now possible to view updates on JIRA issues right inside your HackerOne Reports. The two-way integration means that whenever a JIRA issue changes state, an internal comment is posted on the appropriate HackerOne Report. No more going back and forth between JIRA and HackerOne!" />
+<meta name="generator" content="" />
+<meta name="twitter:url" content="https://www.hackerone.com/blog/bug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.hackerone.com/blog/bug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration" />
+<link rel="canonical" href="/blog/bug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration" />
+<link rel="shortlink" href="/node/646" />
+<link rel="revision" href="/blog/bug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration" />
+
+    <title>Bi-directional JIRA integration at HackerOne</title>
+    <meta property="og:site_name" content="HackerOne">
+    <meta property="fb:app_id" content="345444188982280">
+    <link rel="stylesheet" href="/sites/default/files/css/css_PjHbx1pBz4BgG4yxUNTdK-JCceIp0vdR6QKI8AjfSFk.css?psyc7h" media="all" />
+<link rel="stylesheet" href="/sites/default/files/css/css_yOiYRp8A8RnOIrCNQ6UkTnEBep18GQin6E08AssMWes.css?psyc7h" media="all" />
+
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog.rss">
+  </head>
+  <body class="blog_posts blog-bug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration -node-646">
+
+        
+    <div class="search-wrapper">
+    <i class="icon-cross"></i>
+    <div class="inner-container">
+        <form>
+          <div class="search-nav">
+            <i class="icon-search"></i>
+            <input class="search" type="text" placeholder="Search" name="query">
+            <input class="search-results" type="submit" value="See Results">
+          </div>
+        </form>
+    </div>
+</div>
+<div class="js-topbar">
+    <div data-reactroot="" class="topbar">
+        <div class="triangle">
+            <div class="bg-color"></div>
+        </div>
+        <div class="inner-container">
+            <div>
+                <a class="app__logo" href="/"></a>
+                                    <div class="topbar-toggle"><i class="icon-hamburger"></i></div>
+                            </div>
+                        <div class="topbar-subnav-wrapper">
+                <ul class="topbar-subnav">
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/users/sign_in">Sign In </a>&nbsp;|&nbsp;</li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right" style="display:none;"><a class="topbar-subnav-link" href="https://hackerone.com/bugs">Go to Inbox </a></li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/sign_up">Sign Up</a></li>
+                    <li class="topbar-subnav-item"><a class="topbar-subnav-link " href=""><i class="icon-search"></i></a></li>
+                </ul>
+            </div>
+            <div class="topbar-navigation-wrapper">
+                <ul class="topbar-navigation">
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Business</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/product/overview">Product Overview</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/response">HackerOne Response</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/challenge">HackerOne Challenge</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/bounty">HackerOne Bounty</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/resources">Resources</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#case-studies">Case Studies</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#guides">Guides</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#reports">Reports</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#webinars">Webinars</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#videos">Videos</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#infographics">Infographics</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/services">Services</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/customers">Customers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/partners">Partners</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker-community">Meet the Hackers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/live-hacking">Live Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-8660dde42e5fd61e0d3d726fdbc39c726797a2bae95d3c45fe2adc711cf9a8d7">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/resources/forrester-total-economic-impact-study-hackerone">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Hackers</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/start-hacking">Start Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker101">Hacker101</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/leaderboard/all-time">Leaderboard</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/internet-bug-bounty">Internet Bug Bounty</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/disclosure-guidelines">Disclosure Guidelines</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--two-quarter cta">
+                                    <div class="views-element-container"><div class="js-view-dom-id-5f91a1cbb7e22b15db9a0acacebe0d222788dbd5e107ac5eb36979eb7547c88b">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/hacker101">  <img src="/sites/default/files/styles/medium/public/H1_194_H101%20Social%20Cards_R1_V1Background_Green.jpg?itok=eUG9c-yC" width="220" height="116" alt="h101" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Learn how to hack</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/hacker101" class="primary-btn">Get Started</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a>
+                            </span>
+                        </span>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">Company</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/about">About Us</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/blog">Blog</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/press">Press</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/careers">Careers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/branding">Brand Assets</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/security">Security</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201086269-Organizations">Help Center</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-8581edc1473684ae6677396a600c05ca2b96d88e74c5eb34e10dea565d8da284">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/sign_up">Try&nbsp; HackerOne</a>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+                    </div>
+    </div>
+</div>
+
+    
+    <div class="js-full-width-container full-width-container superman-page">
+      <span data-reactroot="">
+        <div>
+          <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div id="page-wrapper">
+  <div id="page">
+
+            <div id="main-wrapper" class="layout-main-wrapper layout-container clearfix">
+      <div id="main" class="layout-main clearfix">
+        
+        <main id="content" class="column main-content" role="main">
+          <section class="section">
+            <a id="main-content" tabindex="-1"></a>
+              <div>
+    <div id="block-hackerone-content" data-block-plugin-id="system_main_block">
+  
+    
+          <div class="superman-hero superman-hero--small">
+        <div class="inner-container inner-container--medium">
+            <h1 class="superman-hero__title spec-superman-hero-title">Bug fixes just got a little easier; HackerOne introduces bi-directional JIRA integration</h1>
+            <ul class="list list--inline superman-text--small">
+                                    <li><a href="/blog/category/New Features">New Features</a></li>
+                            </ul>
+        </div>
+    </div>
+    <div class="superman-container superman-container--tiny text-aligned-left ">
+        <div class="inner-container inner-container--medium">
+            <div class="row">
+                <div class="blog-main">
+                    <div class="">
+                        <div class="blog-info">
+                            <div class="date"><i class="fa fa-clock-o" aria-hidden="true"></i>Apr 7 2017
+                            </div>
+                            <div class="author"><i class="fa fa-user" aria-hidden="true"></i>
+                                                        luke                        
+                                                        </div>
+
+                            <div class="share">SHARE
+                                <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.hackerone.com%2Fblog%2Fbug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-facebook"></i></a>
+                                <a href="https://twitter.com/share?url=https%3A%2F%2Fwww.hackerone.com%2Fblog%2Fbug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration&amp;text=Bug%20fixes%20just%20got%20a%20little%20easier%3B%20HackerOne%20introduces%20bi-directional%20JIRA%20integration" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-twitter"></i></a>
+                                <a href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2Fwww.hackerone.com%2Fblog%2Fbug-fixes-just-got-easier-hackerone-introduces-bi-directional-jira-integration" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-linkedin"></i></a>
+                            </div>
+                            <div class="back">
+                            <a class="primary-btn" href="/blog">< BACK TO POSTS</a>
+                            </div>
+                        </div>
+                        <div>
+                            
+            <div><p>It’s now possible to view updates on JIRA issues right inside your HackerOne Reports. The two-way integration means that whenever a JIRA issue changes state, an internal comment is posted on the appropriate HackerOne Report. No more going back and forth between JIRA and HackerOne!</p>
+<img alt="HackerOne loves JIRA" data-entity-type="file" data-entity-uuid="102b0bd0-87dc-47d0-b9ee-f70490e6a9bf" src="/sites/default/files/inline-images/hackerone-loves-jira-2.png" class="align-center" /><h2 dir="ltr">Why bi-directional integration is so powerful</h2>
+
+<p dir="ltr">When you receive a valid vulnerability report, you will want to fix the bug as soon as possible. Getting the bug into the work queue of the engineering team is critical. The easier and faster it happens, the more secure your company will be.</p>
+
+<p dir="ltr">For this need, we have developed an advanced integration between HackerOne and the world’s leading issue tracker JIRA. With our new bi-directional integration, valid bug reports become task assignments in JIRA with a single click, and fixed bugs come back as resolved automatically. It’s like magic. API handoff magic.</p>
+
+<p dir="ltr">This feature improves the collaboration between Security Team and Engineering Team by automating a key function between those teams. We know many CISOs and VPs of Engineering alike have requested this. Now it’s here and it is a significant step in making sure that vulnerability coordination and bug bounty programs become part of the secure software development lifecycle.</p>
+
+<p dir="ltr">We’ve been beta testing this feature for a few weeks with some lucky customers and are now ready to share it with everyone! </p>
+
+<h2 dir="ltr">How it works</h2>
+
+<p dir="ltr">Let's illustrate this with a real world example:</p>
+
+<p dir="ltr">A HackerOne Report gets triaged and is escalated to JIRA:</p>
+
+<p dir="ltr"><img alt="Escalated triage screenshot" data-entity-type="file" data-entity-uuid="ccfc723a-648f-4ffd-a664-a9e6ecf35638" src="/sites/default/files/inline-images/escalated-triage-img-1.png" /></p>
+
+<p dir="ltr">Hackbot springs into action and the status change is automatically captured, posting an internal comment on the associated HackerOne Report:</p>
+
+<p dir="ltr"><img alt="Hackbot jira hackerone product screenshot" data-entity-type="file" data-entity-uuid="975194de-ae3f-4f60-8194-b91a2ccc286c" src="/sites/default/files/inline-images/hackbot-jira-2.png" /></p>
+
+<p dir="ltr">This helps your development and security teams stay aligned, and contributes to a better workflow to process security vulnerabilities.</p>
+
+<p dir="ltr"><strong>Here’s a bulleted list of the events we currently support full integration syncing:</strong></p>
+
+<ul><li dir="ltr">
+	<p dir="ltr"><strong>Status changes</strong> - Know when your team has started working on a JIRA ticket you created. Are you using custom statuses? We will sync back any status changes that you make to your HackerOne report.</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><strong>Resolution changes</strong> - See when the JIRA issue is closed without going to JIRA. Are you using custom resolutions? We will make sure any issue resolution make it back to your HackerOne report.</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><strong>Priority changes</strong> - Did the team change the priority of the ticket? You can now find it out.</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><strong>Assignee changes</strong> - Want to find out who’s assigned to the issue? We will update your HackerOne report any time the assignee changes.</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><strong>Comment added</strong> - Stay in the loop on what’s being discussed on the JIRA ticket.</p>
+	</li>
+</ul><p dir="ltr">Have any suggestion on what else we should add? Please let us <a href="mailto:support@hackerone.com">know</a>!</p>
+
+<h2 dir="ltr">It will function perfectly behind your Firewall</h2>
+
+<p dir="ltr">This is that moment in the Steve Jobs presentation where he says “And one more thing” and then goes off and reveals that the iPod is also a phone now. <em>Mind blown</em>. So in honor of Steve, we saved the best for last.</p>
+
+<p dir="ltr"><strong>We integrate with both JIRA Cloud and JIRA Server</strong>. Including the escalation into JIRA as well as syncing JIRA changes back into HackerOne. <strong>This means, you don't have to whitelist HackerOne as incoming traffic</strong>.</p>
+
+<p dir="ltr">Nice, right?!</p>
+
+<h2 dir="ltr">So what’s next</h2>
+
+<p dir="ltr">Two-way communication with JIRA is just the beginning. We are actively working on improving our HackerOne JIRA integration and we’ve got some sweet features in the queue. A few capabilities we’re lining up for release include:</p>
+
+<ul><li dir="ltr">
+	<p dir="ltr">Updates from HackerOne activity into JIRA</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr">Selective event tracking for both HackerOne and JIRA activity</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr">One click escalation from HackerOne into JIRA</p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr">Improved integration setup</p>
+	</li>
+</ul><h2 dir="ltr">How to get started using the bi-directional JIRA integration</h2>
+
+<p dir="ltr">If you’re already leveraging our API and enjoy the awesome benefits of being a Professional Edition customer or above, then the feature is ready to go for you! And <a href="mailto:support@hackerone.com">let us know</a> if you’d like us to support posting more JIRA events into HackerOne Reports!</p>
+
+<p dir="ltr">HackerOne is trusted by over 750 customers including <a href="https://hackerone.com/deptofdefense">The U.S. Department of Defense</a>, <a href="https://hackerone.com/gm">General Motors</a>, <a href="https://hackerone.com/uber">Uber</a>, <a href="https://hackerone.com/github">GitHub</a>, <a href="https://hackerone.com/qualcomm">Qualcomm</a> and <a href="https://hackerone.com/starbucks">Starbucks</a>. Our community of 100,000 hackers from countries across the globe includes the best and brightest hackers to which we've paid out over $15,000,000 in bounties for their security work.</p>
+
+<p dir="ltr">This awesome feature is brought to you by Siebe Jan, Philip, Maarten, Martijn, Jens and the HackerOne team.</p>
+
+<p dir="ltr">Ps -Drooling over the API and bi-directional API features? <a href="mailto:sales@hackerone.com">Talk to us</a> to sign up for Pro, Enterprise, or even a Fully Managed offering today.</p>
+
+<p dir="ltr"> </p>
+
+<hr /><p><span>HackerOne is the #1 hacker-powered security platform, helping organizations find and fix critical vulnerabilities before they can be criminally exploited. As the contemporary alternative to traditional<span> </span></span><a href="https://www.hackerone.com/product/challenge">penetration testing</a><span>, our<span> </span></span><a href="https://www.hackerone.com/">bug bounty</a><span><span> </span>solutions encompass<span> </span></span><a href="https://www.hackerone.com/product/response">vulnerability assessment</a><span>,<span> </span></span><a href="https://www.hackerone.com/resources/hacker-powered-security-report">crowdsourced security testing</a><span><span> </span>and<span> </span></span><a href="https://www.hackerone.com/resources/responsible-disclosure-overview">responsible disclosure management</a><span>. Discover more about our<span> </span></span><a href="https://www.hackerone.com/product/overview">hacker powered security testing solutions</a><span><span> </span>or<span> </span></span><a href="https://www.hackerone.com/contact">Contact Us</a><span><span> </span>today.</span></p>
+</div>
+      
+                        </div>
+                              
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="inner-container">
+            <div class="row">
+                <div class="blog-sidebar">
+                    <div class="superman-title">
+                        <h2 class="superman-title__content">Related Posts</h2>
+                    </div>
+                                                                  
+                    
+                    <div class="views-element-container"><div class="js-view-dom-id-b25e439e0d8cd3a43b7e51e10245c8719c3f297bfd8bdec06c2a474b02f708f8">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-view-grid horizontal cols-3 clearfix">
+                          <div class="col col--one-third views-col col-1">
+              <div class="panel">
+                  <div class="views-field views-field-field-main-image"><div class="field-content">  <a href="/blog/improving-your-workflows-and-analysis-custom-fields"><img src="/sites/default/files/styles/large/public/custom_field_settings.png?itok=-pMkHeGr" width="480" height="328" alt="Custom Field examples" typeof="foaf:Image" />
+
+</a>
+</div></div><fieldset class="featured-text ">
+  
+  <div class="views-field views-field-title"><h6 class="field-content">Improving Your Workflows and Analysis with Custom Fields</h6></div><div class="views-field views-field-view-node"><span class="field-content"><a href="/blog/improving-your-workflows-and-analysis-custom-fields" hreflang="en">Read More&gt;</a></span></div></fieldset>
+
+              </div>
+            </div>
+                    <div class="col col--one-third views-col col-2">
+              <div class="panel">
+                  <div class="views-field views-field-field-main-image"><div class="field-content">  <a href="/blog/automate-workflows-enhanced-jira-integration"><img src="/sites/default/files/styles/large/public/jira-social-v2.png?itok=XI3XvUT3" width="480" height="252" alt="Jira integration v2" typeof="foaf:Image" />
+
+</a>
+</div></div><fieldset class="featured-text ">
+  
+  <div class="views-field views-field-title"><h6 class="field-content">Automate Workflows with Enhanced Jira Integration</h6></div><div class="views-field views-field-view-node"><span class="field-content"><a href="/blog/automate-workflows-enhanced-jira-integration" hreflang="en">Read More&gt;</a></span></div></fieldset>
+
+              </div>
+            </div>
+                    <div class="col col--one-third views-col col-3">
+              <div class="panel">
+                  <div class="views-field views-field-field-main-image"><div class="field-content">  <a href="/blog/see-your-success-in-real-time-with-the-new-program-dashboard"><img src="/sites/default/files/styles/large/public/Screenshot%202019-05-22%20at%2015.11.08.png?itok=U7BhZZEA" width="480" height="219" alt="Program Dashboard" typeof="foaf:Image" />
+
+</a>
+</div></div><fieldset class="featured-text ">
+  
+  <div class="views-field views-field-title"><h6 class="field-content">See Your Success In Real Time with the new Program Dashboard</h6></div><div class="views-field views-field-view-node"><span class="field-content"><a href="/blog/see-your-success-in-real-time-with-the-new-program-dashboard" hreflang="en">Read More&gt;</a></span></div></fieldset>
+
+              </div>
+            </div>
+              </div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+  </div>
+
+  </div>
+
+          </section>
+        </main>
+                      </div>
+    </div>
+        
+  </div>
+</div>
+
+  </div>
+
+        <div class="superman-footer">
+    <div class="superman-container superman-container--small superman-container--footer">
+        <div class="inner-container">
+            <div class="row row--20">
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Business</h4><a class=" footer superman-text--small" href="/product/overview">Product Overview</a><a class=" footer superman-text--small" href="/product/response">HackerOne Response</a><a class=" footer superman-text--small" href="/product/bounty">HackerOne Bounty</a><a class=" footer superman-text--small" href="/product/challenge">HackerOne Challenge</a><a class=" footer superman-text--small" href="/services">Services</a><a class=" footer superman-text--small" href="/resources">Resources</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="/hacker-community">Meet the Hackers</a><a class=" footer superman-text--small" href="/live-hacking">Live Hacking</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/programs.html">Business Support</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Hackers</h4><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a><a class=" footer superman-text--small" href="/hacker101">Hacker101</a><a class=" footer superman-text--small" href="https://hackerone.com/leaderboard/all-time">Leaderboard</a><a class=" footer superman-text--small" href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a><a class=" footer superman-text--small" href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a><a class=" footer superman-text--small" href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a><a class=" footer superman-text--small" href="/disclosure-guidelines">Disclosure Guidelines</a><a class=" footer superman-text--small" href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Community</h4><a class=" footer superman-text--small" href="/product/community">Community Edition</a><a class=" footer superman-text--small" href="/internet-bug-bounty">Internet Bug Bounty</a><a class=" footer superman-text--small" href="/zerodaily">Zero Daily Newsletter</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Company</h4><a class=" footer superman-text--small" href="/about">About Us</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/">Documentation</a><a class=" footer superman-text--small" href="/blog">Blog</a><a class=" footer superman-text--small" href="/press">Press</a><a class=" footer superman-text--small" href="/careers">Careers</a><a class=" footer superman-text--small" href="/customers">Customers</a><a class=" footer superman-text--small" href="/partners">Partners</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Security</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Contact</h4><a class=" footer superman-text--small" href="/contact">Contact Sales</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Report a Bug</a><a class="footer superman-text--small" href="https://support.hackerone.com/hc/en-us/requests/new">Support</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Try HackerOne</h4><a class=" footer superman-text--small" href="https://hackerone.com/sign_up">Start a Program</a><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a></div>
+            </div>
+            <div class="row">
+                <div class="pull-right"><a href="https://facebook.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-facebook"></i></a><a href="https://twitter.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-twitter"></i></a><a href="https://www.linkedin.com/company/hackerone" class="superman-footer__social-link"><i class="fa-share-linkedin"></i></a></div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <a class="superman-footer__logo" href="/"><img src="/assets/images/logo_transparent.png" alt="HackerOne"></a>
+                </div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <ul class="superman-footer__utility superman-text--small">
+                        <li class="superman-footer__utility-item">2019 © HackerOne.</li>
+                        <li class="superman-footer__utility-item"><a href="/terms">Terms |</a></li>
+                        <li class="superman-footer__utility-item"><a href="/privacy">Privacy |</a></li>
+                        <li class="superman-footer__utility-item"><a href="https://hackerone.com/security">Security</a></li>
+                    </ul>                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </span>
+    </div>
+
+    
+    <form id="mktoForm_1013"></form>
+        <div class="footer-popup">
+      <p>We use cookies to collect information to help us personalise your experience and improve the functionality and performance of our site. By continuing to use our site, you consent to our use of cookies. For more information see our <a href="/privacy#cookie-policy">cookies policy.</a><a class="primary-btn--small" href="">I AGREE</a></p>
+    </div>
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/646","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","fac":{"search":{"jsonFilesPath":"\/sites\/default\/files\/fac-json\/search\/en\/PFTV77uiuT3RCnW9FPkcX-JqOb3eo33V7odD0jXVIr4\/","inputSelectors":"input.search","keyMinLength":1,"keyMaxLength":10,"breakpoint":0,"emptyResult":"","allResultsLink":false,"allResultsLinkThreshold":0,"highlightingEnabled":false,"resultLocation":""}},"gacsp":{"commands":[["create","UA-49905813-1","auto"],["require","linkid"],["send","pageview"]]},"statistics":{"data":{"nid":"646"},"url":"\/core\/modules\/statistics\/statistics.php"},"ajax":[],"user":{"uid":0,"permissionsHash":"4942d8c07ab2f619645a6faba5d6d5e39604dc3fdc9354dc6eea99d9a4a9d42d"}}</script>
+<script src="/sites/default/files/js/js_NOKW5uJ-_cH32MDwYAx0rbIXRxqF_KUMhWO-W-AEaSg.js"></script>
+<script src="https://app-sj17.marketo.com/js/forms2/js/forms2.min.js"></script>
+<script src="/sites/default/files/js/js_uha13U1BPFZiLOtE9sGkmvqcnX2izBIxBUsHemTm8PM.js"></script>
+<script src="https://cdn.bizible.com/scripts/bizible.js" async id="bizible-settings" data-native-json="true"></script>
+<script src="/sites/default/files/js/js_09q-2nINZLq-grz_lg6wRjXj61uWzqGBBYfPavnoho0.js"></script>
+
+    <noscript>
+      <img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=682812&fmt=gif" />
+    </noscript>
+  </body>
+</html>
+
+
+
+
+
+
+

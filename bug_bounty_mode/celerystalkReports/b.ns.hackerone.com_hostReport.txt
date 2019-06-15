@@ -1,0 +1,7 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap b.ns.hackerone.com  -n -sV -Pn -p 443 -oA h1/b.ns.hackerone.com/b.ns.hackerone.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/b.ns.hackerone.com/b.ns.hackerone.com_nmap_tcp_scan.txt
+--------------------------------------------------

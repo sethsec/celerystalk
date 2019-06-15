@@ -1,0 +1,7 @@
+500 Internal Server Error
+Date: Sat, 15 Jun 2019 15:27:09 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Content-Length: 0
+Connection: close
+Content-Type: text/html; charset=UTF-8
+Retry-Count: 0

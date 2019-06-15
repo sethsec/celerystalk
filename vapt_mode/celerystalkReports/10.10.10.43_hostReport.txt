@@ -1,0 +1,310 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.43  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.43/10.10.10.43_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.43/10.10.10.43_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611063
+Run Time:	1.17851591110229
+Command:	cewl http://10.10.10.43:80 -m 6 -w /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+server
+default
+software
+running
+content
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611064
+Run Time:	445.302342176437
+Command:	nikto -h http://10.10.10.43:80 -output /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.43
++ Target Port: 80
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.18 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ GET Server may leak inodes via ETags, header found with file /, inode: b2, size: 5535e4e04002a, mtime: gzip
++ OPTIONS Allowed HTTP Methods: GET, HEAD, POST, OPTIONS 
++ GET /info.php: Output from the phpinfo() function was found.
++ OSVDB-3233: GET /info.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information.
++ OSVDB-3233: GET /icons/README: Apache default file found.
++ OSVDB-5292: GET /info.php?file=http://cirt.net/rfiinc.txt?: RFI from RSnake's list (http://ha.ckers.org/weird/rfi-locations.dat) or from http://osvdb.org/
+
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611133
+Run Time:	1.23021006584167
+Command:	wpscan --url http://10.10.10.43:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611179
+Run Time:	133.977708101273
+Command:	whatweb https://10.10.10.43:443 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://10.10.10.43:443 [200 OK] Apache[2.4.18]
+ Country[RESERVED][ZZ]
+ HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)]
+ IP[10.10.10.43]
+
+--------------------------------------------------
+Command Name:	photon
+Command:	python3 /opt/Photon/photon.py -u https://10.10.10.43:443 -o /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_photon -e json && cat /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_photon/exported.json | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_photon.txt
+
+No such file or directory: /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_photon.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611251
+Run Time:	70.0827958583832
+Command:	whatweb http://10.10.10.43:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.43:80 [200 OK] Apache[2.4.18]
+ Country[RESERVED][ZZ]
+ HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)]
+ IP[10.10.10.43]
+
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611314
+Run Time:	25.1308541297913
+Command:	gobuster -u https://10.10.10.43:443 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://10.10.10.43:443/.hta/
+https://10.10.10.43:443/.htaccess/
+https://10.10.10.43:443/.htpasswd/
+https://10.10.10.43:443/db/
+https://10.10.10.43:443/icons/
+https://10.10.10.43:443/server-status/
+
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611340
+Run Time:	23.6223108768463
+Command:	gobuster -u http://10.10.10.43:80 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.43:80/.htaccess/
+http://10.10.10.43:80/.hta/
+http://10.10.10.43:80/.htpasswd/
+http://10.10.10.43:80/icons/
+http://10.10.10.43:80/info.php/
+http://10.10.10.43:80/server-status/
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611349
+Run Time:	0.660169124603271
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.43:80 -o /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_photon -e json && cat /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.43:80"
+    ],
+    "scripts": [],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611351
+Run Time:	0.489326000213623
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.43:80&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.43/robots.txt
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611352
+Run Time:	1630.70079922676
+Command:	nikto -h https://10.10.10.43:443 -ssl -output /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.43
++ Target Port: 443
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The site uses SSL and the Strict-Transport-Security HTTP header is not defined.
++ GET The site uses SSL and Expect-CT header is not present.
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.18 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ GET Hostname '10.10.10.43' does not match certificate's names: nineveh.htb
++ OPTIONS Allowed HTTP Methods: GET, HEAD, POST, OPTIONS 
++ GET Cookie PHPSESSID created without the secure flag
++ GET Cookie PHPSESSID created without the httponly flag
++ OSVDB-3092: GET /db/: This might be interesting...
++ OSVDB-3233: GET /icons/README: Apache default file found.
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611604
+Run Time:	0.367164850234985
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.43:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.43/robots.txt
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611651
+Run Time:	2.12950491905212
+Command:	docker run --rm wappalyzer/cli http://10.10.10.43:80 | jq . | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.43:80/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.18",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": null
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611653
+Run Time:	1.34405303001404
+Command:	wpscan --url https://10.10.10.43:443 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611655
+Run Time:	2.22278785705566
+Command:	docker run --rm wappalyzer/cli https://10.10.10.43:443 | jq . | tee /pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.43/celerystalkOutput/10.10.10.43_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://10.10.10.43:443/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.18",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": null
+  }
+}

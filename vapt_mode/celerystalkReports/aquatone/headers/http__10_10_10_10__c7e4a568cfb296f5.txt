@@ -1,0 +1,11 @@
+200 OK
+Server: Apache/2.4.18 (Ubuntu)
+X-Content-Type-Options: nosniff
+Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages
+Date: Sat, 15 Jun 2019 15:27:04 GMT
+X-Robots-Tag: noindex
+Link: <http://10.10.10.10/index.php/wp-json/>; rel="https://api.w.org/"
+Access-Control-Allow-Headers: Authorization, Content-Type
+Allow: GET
+Retry-Count: 0
+Content-Type: application/json; charset=UTF-8

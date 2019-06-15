@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+			<meta charset="utf-8">
+			<title>Hacker101 CTF</title>
+			<meta name="description" content="The Hacker101 CTF is a game designed to let you learn to hack in a safe, rewarding environment. Hacker101 is a free educational site for hackers, run by HackerOne.">
+			<meta name="viewport" content="width=device-width">
+			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+			<style>.navbar-fixed-top { position: absolute!important; }</style>
+			
+			
+	</head>
+	<body>
+		<header>
+			<nav class="navbar navbar-expand-md navbar-dark" style="background-color: #3A3F44">
+				<span class="navbar-brand"><a href="https://www.hacker101.com/" style="color: #6BBD45; text-decoration: none;">Hacker101</a> <a href="/" style="color: white; text-decoration: none;">CTF</a></span>
+				<ul class="navbar-nav mr-auto">
+					<li  class="nav-item" >
+						<a class="nav-link" href="/">Home</a>
+					</li>
+					<li  class="nav-item" >
+						<a class="nav-link" href="/about">About</a>
+					</li>
+					<li  class="nav-item" >
+						<a class="nav-link" href="/howtoplay">How To Play</a>
+					</li>
+					<li  class="nav-item" >
+						<a class="nav-link" href="/group">Groups</a>
+					</li>
+					
+						<li  class="nav-item active" >
+							<a class="nav-link" href="/auth">Log In/Sign Up</a>
+						</li>
+					
+				</ul>
+			</nav>
+		</header>
+
+		<div class="container" style="padding-top: 10px">
+			
+	
+	<div class="col-md-4 order-md-1">
+		<h1 class="h3 mb-3 font-weight-normal">Log in with HackerOne</h1>
+		<form action="/auth/post_loginSso" method="POST"><input type="hidden" name="csrf" value="3f3c9a718b12edbc8dcd16f0f0d5863f">
+			<button class="btn btn-primary btn-block" type="submit">Log in</button>
+		</form>
+	</div>
+	<div class="col-md-4 order-md-1 mt-5">
+		<h1 class="h3 mb-3 font-weight-normal">Link Account</h1>
+		If you already have a username and password for the CTF, use this to link your accounts and claim any flag rewards you may have outstanding.
+		<form action="/auth/post_loginSso" method="POST"><input type="hidden" name="csrf" value="3f3c9a718b12edbc8dcd16f0f0d5863f">
+			<input type="hidden" name="linking" value="1">
+			<button class="btn btn-primary btn-block" type="submit">Log in and link my CTF account</button>
+		</form>
+	</div>
+
+
+			<hr>
+
+			<footer>
+				<p>&copy; <a href="https://www.hackerone.com/">HackerOne</a> 2018 &mdash; <a href="https://www.hackerone.com/privacy">Privacy Policy</a></p>
+			</footer>
+		</div>
+		<script src="//code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+		<script type="text/javascript">
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-49905813-1', 'auto');
+			ga('send', 'pageview');
+		</script>
+	</body>
+</html>

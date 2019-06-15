@@ -1,0 +1,10 @@
+200 OK
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Accept-Encoding
+Retry-Count: 0
+Content-Type: text/html; charset=utf-8
+Date: Sat, 15 Jun 2019 15:27:06 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Set-Cookie: PHPSESSID=qp1fki6v235eb0fdc937rglbl0; path=/

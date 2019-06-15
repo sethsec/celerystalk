@@ -1,0 +1,25 @@
+200 OK
+Cache-Tags: resource:help_center#index, pod:pod13
+X-Zendesk-User-Id: 
+X-Request-Id: 4e6015ff9ca7c554-SEA
+Retry-Count: 0
+X-Ua-Compatible: IE=edge
+Set-Cookie: __cfduid=d5e9bc8b03d1d2baf75c6a9492faf5e551560387189; expires=Fri, 12-Jun-20 00:53:09 GMT; path=/; domain=.support.hackerone.com; HttpOnly __cfruid=7455367a208d14c3d74ca1a1011707895637ae4a-1560387190; path=/; domain=.support.hackerone.com; HttpOnly
+Server: cloudflare
+X-Xss-Protection: 1; mode=block
+Etag: W/"4bb2872c00e6ff8abcbc3239c090312c"
+Content-Type: text/html; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+X-Zendesk-Origin-Server: help-center-unicorn-6f4b4cdb44-27kbh
+X-Runtime: 0.715514
+Expect-Ct: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+Vary: Accept-Encoding
+Status: 200 OK
+Content-Language: en-us
+Cf-Cache-Status: MISS
+Cf-Ray: 4e6015ff9ca7c554-ORD
+Date: Thu, 13 Jun 2019 00:53:10 GMT
+X-Content-Type-Options: nosniff
+Protocol: HTTP/1.0
+Strict-Transport-Security: max-age=31536000;
+Cache-Control: max-age=0, public, s-maxage=180, stale-while-revalidate=60, stale-if-error=10800

@@ -1,0 +1,20 @@
+200 OK
+Via: 1.1 varnish
+X-Cache-Hits: 2
+Last-Modified: Mon, 22 Apr 2019 20:38:35 GMT
+Date: Thu, 13 Jun 2019 00:53:16 GMT
+Server: GitHub.com
+Content-Type: text/html; charset=utf-8
+X-Cache: HIT
+X-Timer: S1560387196.356436,VS0,VE0
+Vary: Accept-Encoding
+X-Fastly-Request-Id: e923d38054eaf0ec99d7f8b9b1a5c3d5eb04e65b
+Access-Control-Allow-Origin: *
+Cache-Control: max-age=600
+X-Github-Request-Id: 4EA0:0D29:46BB80:5C24FB:5D019B09
+Age: 32
+Retry-Count: 0
+Etag: W/"5cbe264b-187d"
+Expires: Thu, 13 Jun 2019 00:48:33 GMT
+Accept-Ranges: bytes
+X-Served-By: cache-mdw17337-MDW

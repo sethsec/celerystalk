@@ -1,0 +1,20 @@
+200 OK
+Access-Control-Allow-Origin: *
+Cache-Control: max-age=600
+Age: 0
+Retry-Count: 0
+X-Served-By: cache-mdw17376-MDW
+Last-Modified: Mon, 22 Apr 2019 20:38:35 GMT
+Expires: Thu, 13 Jun 2019 01:03:20 GMT
+Date: Thu, 13 Jun 2019 00:53:20 GMT
+Via: 1.1 varnish
+X-Cache-Hits: 0
+Vary: Accept-Encoding
+Content-Type: text/html; charset=utf-8
+Accept-Ranges: bytes
+X-Cache: MISS
+X-Timer: S1560387200.109226,VS0,VE27
+X-Fastly-Request-Id: ee680e23ce1dff216b9d32918da4b801014cc1f8
+Etag: W/"5cbe264b-13e9"
+X-Github-Request-Id: A716:7133:F0250:13B55A:5D019E7F
+Server: GitHub.com

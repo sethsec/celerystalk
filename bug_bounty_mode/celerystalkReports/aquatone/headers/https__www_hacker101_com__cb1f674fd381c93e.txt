@@ -1,0 +1,20 @@
+200 OK
+Via: 1.1 varnish
+X-Fastly-Request-Id: 65bf417397270db2db836ead73a8e08b6ad344b2
+Etag: W/"5cbe264b-1718"
+Access-Control-Allow-Origin: *
+Expires: Thu, 13 Jun 2019 01:03:18 GMT
+Content-Type: text/html; charset=utf-8
+Age: 0
+X-Cache-Hits: 0
+Last-Modified: Mon, 22 Apr 2019 20:38:35 GMT
+Cache-Control: max-age=600
+X-Github-Request-Id: 29AA:3269:20B494:2A9EC3:5D019E7E
+X-Served-By: cache-mdw17363-MDW
+X-Cache: MISS
+X-Timer: S1560387199.606477,VS0,VE26
+Vary: Accept-Encoding
+Retry-Count: 0
+Server: GitHub.com
+Accept-Ranges: bytes
+Date: Thu, 13 Jun 2019 00:53:18 GMT

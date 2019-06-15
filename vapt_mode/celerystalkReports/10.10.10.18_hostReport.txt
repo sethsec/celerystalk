@@ -1,0 +1,290 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.18  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.18/10.10.10.18_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.18/10.10.10.18_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611063
+Run Time:	0.716866016387939
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.18:80&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.18
+http://10.10.10.18/robots.txt
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611066
+Run Time:	443.44973897934
+Command:	nikto -h http://10.10.10.18:80 -output /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.18
++ Target Port: 80
++ GET Retrieved x-powered-by header: PHP/5.5.9-1ubuntu4.21
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.7 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ HZIUYTHN Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ OSVDB-3268: GET /css/: Directory indexing found.
++ OSVDB-3092: GET /css/: This might be interesting...
++ OSVDB-3268: GET /images/: Directory indexing found.
++ OSVDB-3233: GET /icons/README: Apache default file found.
++ GET /login.php: Admin login page/section found.
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611371
+Run Time:	68.4513640403748
+Command:	whatweb http://10.10.10.18:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.18:80 [200 OK] Apache[2.4.7]
+ Country[RESERVED][ZZ]
+ HTTPServer[Ubuntu Linux][Apache/2.4.7 (Ubuntu)]
+ IP[10.10.10.18]
+ PHP[5.5.9-1ubuntu4.21]
+ Title[CompanyDev]
+ X-Powered-By[PHP/5.5.9-1ubuntu4.21]
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611471
+Run Time:	1.2257878780365
+Command:	wpscan --url http://10.10.10.18:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	medusa
+Start Time:	1560611509
+Run Time:	10.5455961227417
+Command:	medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.18 - 22 -M ssh | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_medusa.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_medusa.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+ACCOUNT CHECK: [ssh] Host: 10.10.10.18 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+
+
+--------------------------------------------------
+Command Name:	hydra_ssh_best15
+Start Time:	1560611514
+Run Time:	10.4827651977539
+Command:	hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.18 ssh | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_hydra_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_hydra_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hydra v8.8 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2019-06-15 11:11:54
+[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+[DATA] attacking ssh://10.10.10.18:22/
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1560611599
+Run Time:	2.46722412109375
+Command:	nmap 10.10.10.18 -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_nmap_service_scan.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Sat Jun 15 11:13:19 2019 as: nmap -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_nmap_service_scan.txt 10.10.10.18
+Nmap scan report for 10.10.10.18
+Host is up (0.049s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 6.6.1p1 Ubuntu 2ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   1024 e1:92:1b:48:f8:9b:63:96:d4:e5:7a:40:5f:a4:c8:33 (DSA)
+|   2048 af:a0:0f:26:cd:1a:b5:1f:a7:ec:40:94:ef:3c:81:5f (RSA)
+|   256 11:a3:2f:25:73:67:af:70:18:56:fe:a2:e3:54:81:e8 (ECDSA)
+|_  256 96:81:9c:f4:b7:bc:1a:73:05:ea:ba:41:35:a4:66:b7 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 15 11:13:22 2019 -- 1 IP address (1 host up) scanned in 2.44 seconds
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611604
+Run Time:	2.33199405670166
+Command:	docker run --rm wappalyzer/cli http://10.10.10.18:80 | jq . | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.18:80/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.7",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "PHP",
+      "confidence": "100",
+      "version": "5.5.9",
+      "icon": "PHP.svg",
+      "website": "http://php.net",
+      "categories": [
+        {
+          "27": "Programming Languages"
+        }
+      ]
+    },
+    {
+      "name": "Bootstrap",
+      "confidence": "100",
+      "version": "",
+      "icon": "Bootstrap.svg",
+      "website": "https://getbootstrap.com",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": null
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611606
+Run Time:	23.6748459339142
+Command:	gobuster -u http://10.10.10.18:80 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.18:80/.hta/
+http://10.10.10.18:80/.htaccess/
+http://10.10.10.18:80/.htpasswd/
+http://10.10.10.18:80/classes/
+http://10.10.10.18:80/css/
+http://10.10.10.18:80/icons/
+http://10.10.10.18:80/images/
+http://10.10.10.18:80/index.php/
+http://10.10.10.18:80/server-status/
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611724
+Run Time:	0.773473024368286
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.18:80 -o /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_photon -e json && cat /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.18:80",
+        "http://10.10.10.18:80/register.php",
+        "http://10.10.10.18:80/login.php"
+    ],
+    "scripts": [],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611791
+Run Time:	0.687190055847168
+Command:	cewl http://10.10.10.18:80 -m 6 -w /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_80_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Register
+CompanyDev
+Password
+Username
+create
+register
+company
+projects
+potential
+Remember
+
+
+--------------------------------------------------
+Command Name:	ncrack_ssh_best15
+Start Time:	1560611815
+Run Time:	24.0099320411682
+Command:	ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.18 | tee /pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_ncrack_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.18/celerystalkOutput/10.10.10.18_22_tcp_ncrack_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Starting Ncrack 0.6 ( http://ncrack.org ) at 2019-06-15 11:16 EDT
+
+ssh://10.10.10.18:22 finished.
+
+
+Ncrack done: 1 service scanned in 23.99 seconds.
+Probes sent: 10 | timed-out: 0 | prematurely-closed: 0
+
+Ncrack finished.

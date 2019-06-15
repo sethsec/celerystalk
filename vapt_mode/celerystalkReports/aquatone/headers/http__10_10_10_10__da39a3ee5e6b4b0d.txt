@@ -1,0 +1,7 @@
+200 OK
+Vary: Accept-Encoding
+Retry-Count: 0
+Content-Type: text/html; charset=UTF-8
+Date: Sat, 15 Jun 2019 15:27:09 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Link: <http://10.10.10.10/index.php/wp-json/>; rel="https://api.w.org/"

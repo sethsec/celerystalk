@@ -1,0 +1,7 @@
+200 OK
+Date: Sat, 15 Jun 2019 15:27:09 GMT
+Server: Apache/2.4.25 (Ubuntu)
+Set-Cookie: admin=0
+Vary: Accept-Encoding
+Retry-Count: 0
+Content-Type: text/html; charset=UTF-8

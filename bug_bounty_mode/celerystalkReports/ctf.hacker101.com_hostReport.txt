@@ -1,0 +1,237 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap ctf.hacker101.com  -n -sV -Pn -p 443 -oA h1/ctf.hacker101.com/ctf.hacker101.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/ctf.hacker101.com/ctf.hacker101.com_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560310078
+Run Time:	180.827689886093
+Command:	whatweb https://ctf.hacker101.com:443 -a4 --colour=never | sed s/],/]\\n/g | tee h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_whatweb.txt
+Output File:	h1/ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://ctf.hacker101.com:443 [200 OK] CloudFlare, Cookies[__Host-session,__cfduid]
+ Country[UNITED STATES][US]
+ Google-Analytics[Universal] [UA-49905813-1]
+ HTML5, HTTPServer[cloudflare]
+ HttpOnly[__Host-session,__cfduid]
+ IP[104.18.192.12]
+ JQuery, Script[text/javascript]
+ Strict-Transport-Security[max-age=31536000; includeSubDomains; preload]
+ Title[Hacker101 CTF]
+ UncommonHeaders[x-content-type-options,expect-ct,cf-ray]
+ X-Frame-Options[sameorigin]
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560310465
+Run Time:	3.29609489440918
+Command:	docker run --rm wappalyzer/cli https://ctf.hacker101.com:443 | jq . | tee h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_wappalyzer_cli.json
+Output File:	h1/ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://ctf.hacker101.com:443/"
+  ],
+  "applications": [
+    {
+      "name": "CloudFlare",
+      "confidence": "100",
+      "version": "",
+      "icon": "CloudFlare.svg",
+      "website": "http://www.cloudflare.com",
+      "categories": [
+        {
+          "31": "CDN"
+        }
+      ]
+    },
+    {
+      "name": "Google Analytics",
+      "confidence": "100",
+      "version": "UA",
+      "icon": "Google Analytics.svg",
+      "website": "http://google.com/analytics",
+      "categories": [
+        {
+          "10": "Analytics"
+        }
+      ]
+    },
+    {
+      "name": "Bootstrap",
+      "confidence": "100",
+      "version": "4.0.0-beta.2",
+      "icon": "Bootstrap.svg",
+      "website": "https://getbootstrap.com",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "3.2.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560310675
+Run Time:	1.92589497566223
+Command:	python3 /opt/Photon/photon.py -u https://ctf.hacker101.com:443 -o h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_photon -e json && cat h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_photon/exported.json | tee h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_photon.txt
+Output File:	h1/ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [
+        "https://ctf.hacker101.com:443/howtoplay:SHA256:37ae568362f974017fa575f08cd215044cd6bb395c3f5e5e293ee5324ba6769c",
+        "https://ctf.hacker101.com:443/about:SHA256:37ae568362f974017fa575f08cd215044cd6bb395c3f5e5e293ee5324ba6769c"
+    ],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "https://ctf.hacker101.com:443//auth",
+        "https://ctf.hacker101.com:443/group",
+        "https://ctf.hacker101.com:443/about",
+        "https://ctf.hacker101.com:443",
+        "https://ctf.hacker101.com:443//howtoplay",
+        "https://ctf.hacker101.com:443//",
+        "https://ctf.hacker101.com:443//about",
+        "https://ctf.hacker101.com:443/",
+        "https://ctf.hacker101.com:443//group",
+        "https://ctf.hacker101.com:443/auth",
+        "https://ctf.hacker101.com:443/howtoplay"
+    ],
+    "scripts": [],
+    "external": [
+        "https://www.hackerone.com/",
+        "https://www.hackerone.com/privacy",
+        "https://www.hacker101.com/"
+    ],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560310681
+Run Time:	1.7615602016449
+Command:	cewl https://ctf.hacker101.com:443 -m 6 -w h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_cewl.txt
+Output File:	h1/ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hacker
+HackerOne
+designed
+rewarding
+environment
+educational
+hackers
+Groups
+something
+Privacy
+Policy
+Whether
+hacker
+hacking
+everything
+started
+Capture
+placed
+various
+locations
+database
+source
+otherwise
+instant
+Started
+seasoned
+companion
+absolute
+beginner
+advanced
+techniques
+levels
+through
+button
+Welcome
+journey
+looking
+challenges
+another
+integral
+component
+better
+stands
+separate
+containing
+number
+anything
+searching
+arsenal
+scratch
+missed
+inspect
+thoroughly
+Manipulate
+overthink
+usually
+obvious
+looked
+launches
+instance
+helping
+require
+skills
+Account
+already
+username
+password
+accounts
+rewards
+outstanding
+account
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560311157
+Run Time:	0.360797882080078
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://ctf.hacker101.com:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee h1//ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_wayback.txt
+Output File:	h1/ctf.hacker101.com/celerystalkOutput/ctf.hacker101.com_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://ctf.hacker101.com
+https://ctf.hacker101.com/about
+https://ctf.hacker101.com/favicon.ico
+https://ctf.hacker101.com/howtoplay
+http://ctf.hacker101.com/robots.txt

@@ -1,0 +1,787 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.10  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.10/10.10.10.10_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.10/10.10.10.10_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	ncrack_ssh_best15
+Start Time:	1560611063
+Run Time:	18.0427470207214
+Command:	ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.10 | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_ncrack_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_ncrack_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Starting Ncrack 0.6 ( http://ncrack.org ) at 2019-06-15 11:04 EDT
+
+ssh://10.10.10.10:22 finished.
+
+
+Ncrack done: 1 service scanned in 18.01 seconds.
+Probes sent: 10 | timed-out: 0 | prematurely-closed: 0
+
+Ncrack finished.
+
+
+--------------------------------------------------
+Command Name:	medusa
+Start Time:	1560611134
+Run Time:	34.7013821601868
+Command:	medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.10 - 22 -M ssh | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_medusa.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_medusa.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234567 (7 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345678 (8 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: abc123 (9 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: dragon (10 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: iloveyou (11 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: letmein (12 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: monkey (13 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: password (14 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: qwerty (15 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: tequiero (16 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.10 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: test (17 of 17 complete)
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611205
+Run Time:	69.6649022102356
+Command:	whatweb http://10.10.10.10:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.10:80 [200 OK] Apache[2.4.18]
+ Country[RESERVED][ZZ]
+ HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)]
+ IP[10.10.10.10]
+ JQuery[1.12.4]
+ MetaGenerator[WordPress 4.7.3]
+ PoweredBy[WordPress,WordPress,]
+ Script[text/javascript]
+ Title[Job Portal &#8211; Just another WordPress site]
+ UncommonHeaders[link]
+ WordPress[4.7,4.7.3]
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611346
+Run Time:	3.010822057724
+Command:	cewl http://10.10.10.10:80 -m 6 -w /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Portal
+WordPress
+content
+Comments
+comment
+header
+branding
+navigation
+Commenter
+Search
+Recent
+Really
+Simple
+Syndication
+another
+Listing
+custom
+masthead
+primary
+Uncategorized
+Proudly
+powered
+colophon
+contain
+Powered
+comments
+Welcome
+delete
+writing
+Posted
+Archives
+Categories
+Entries
+secondary
+semantic
+personal
+publishing
+platform
+Tester
+started
+moderating
+editing
+deleting
+please
+screen
+dashboard
+avatars
+Gravatar
+address
+marked
+Comment
+author
+metadata
+Cancel
+published
+Required
+fields
+Website
+respond
+Address
+Latest
+degree
+Salary
+Location
+Greece
+Information
+pentester
+Category
+Username
+Password
+password
+hourly
+wordpress
+Application
+Details
+Scroll
+Remember
+Fields
+asterisk
+filled
+before
+submitting
+Personal
+Surname
+Contact
+Country
+Telephone
+Qualifications
+complete
+Upload
+understood
+privacy
+policy
+Author
+Please
+username
+receive
+create
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611511
+Run Time:	3.32811689376831
+Command:	docker run --rm wappalyzer/cli http://10.10.10.10:80 | jq . | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.10:80/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.18",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Google Font API",
+      "confidence": "100",
+      "version": "",
+      "icon": "Google Font API.png",
+      "website": "http://google.com/fonts",
+      "categories": [
+        {
+          "17": "Font Scripts"
+        }
+      ]
+    },
+    {
+      "name": "Twitter Emoji (Twemoji)",
+      "confidence": "100",
+      "version": "",
+      "icon": "default.svg",
+      "website": "http://twitter.github.io/twemoji/",
+      "categories": [
+        {
+          "25": "JavaScript Graphics"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    },
+    {
+      "name": "WordPress",
+      "confidence": "100",
+      "version": " 4.7.3",
+      "icon": "WordPress.svg",
+      "website": "http://wordpress.org",
+      "categories": [
+        {
+          "1": "CMS"
+        },
+        {
+          "11": "Blogs"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "1.12.4",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery Migrate",
+      "confidence": "100",
+      "version": "1.4.1",
+      "icon": "jQuery.svg",
+      "website": "https://github.com/jquery/jquery-migrate",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery UI",
+      "confidence": "100",
+      "version": "1.11.4",
+      "icon": "jQuery UI.svg",
+      "website": "http://jqueryui.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "PHP",
+      "confidence": "0",
+      "version": "",
+      "icon": "PHP.svg",
+      "website": "http://php.net",
+      "categories": [
+        {
+          "27": "Programming Languages"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en-US"
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1560611521
+Run Time:	2.34418511390686
+Command:	nmap 10.10.10.10 -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_nmap_service_scan.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Sat Jun 15 11:12:01 2019 as: nmap -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_nmap_service_scan.txt 10.10.10.10
+Nmap scan report for 10.10.10.10
+Host is up (0.050s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.1 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 ec:f7:9d:38:0c:47:6f:f0:13:0f:b9:3b:d4:d6:e3:11 (RSA)
+|   256 cc:fe:2d:e2:7f:ef:4d:41:ae:39:0e:91:ed:7e:9d:e7 (ECDSA)
+|_  256 8d:b5:83:18:c0:7c:5d:3d:38:df:4b:e1:a4:82:8a:07 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 15 11:12:03 2019 -- 1 IP address (1 host up) scanned in 2.32 seconds
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611527
+Run Time:	0.412395000457764
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.10:80&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.10/
+http://10.10.10.10/bild/sierp.jpg
+https://10.10.10.10/errors/403.jsp
+http://10.10.10.10/favicon.ico
+http://10.10.10.10/GetImage.aspx?namekey=02976071-5bfe-41db-b7c5-e7d8f2f5658e
+http://10.10.10.10/robots.txt
+
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611582
+Run Time:	24.4620411396027
+Command:	gobuster -u http://10.10.10.10:80 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.10:80/.cache/
+http://10.10.10.10:80/.hta/
+http://10.10.10.10:80/.htaccess/
+http://10.10.10.10:80/.htpasswd/
+http://10.10.10.10:80/icons/
+http://10.10.10.10:80/server-status/
+http://10.10.10.10:80/wp-content/
+http://10.10.10.10:80/wp-admin/
+http://10.10.10.10:80/wp-includes/
+
+
+--------------------------------------------------
+Command Name:	hydra_ssh_best15
+Start Time:	1560611717
+Run Time:	98.1240510940552
+Command:	hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.10 ssh | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_hydra_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_22_tcp_hydra_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hydra v8.8 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2019-06-15 11:15:17
+[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+[DATA] attacking ssh://10.10.10.10:22/
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+[STATUS] 11.00 tries/min, 11 tries in 00:01h, 4 to do in 00:01h, 1 active
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.10 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+1 of 1 target completed, 0 valid passwords found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2019-06-15 11:16:55
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611748
+Run Time:	9.81055116653442
+Command:	wpscan --url http://10.10.10.10:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+[+] URL: http://10.10.10.10/
+[+] Started: Sat Jun 15 11:15:54 2019
+
+Interesting Finding(s):
+
+[+] http://10.10.10.10/
+ | Interesting Entry: Server: Apache/2.4.18 (Ubuntu)
+ | Found By: Headers (Passive Detection)
+ | Confidence: 100%
+
+[+] http://10.10.10.10/xmlrpc.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+ | References:
+ |  - http://codex.wordpress.org/XML-RPC_Pingback_API
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner
+ |  - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access
+
+[+] http://10.10.10.10/readme.html
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[+] http://10.10.10.10/wp-cron.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 60%
+ | References:
+ |  - https://www.iplocation.net/defend-wordpress-from-ddos
+ |  - https://github.com/wpscanteam/wpscan/issues/1299
+
+[+] WordPress version 4.7.3 identified (Insecure, released on 2017-03-06).
+ | Detected By: Rss Generator (Passive Detection)
+ |  - http://10.10.10.10/index.php/feed/, <generator>https://wordpress.org/?v=4.7.3</generator>
+ |  - http://10.10.10.10/index.php/comments/feed/, <generator>https://wordpress.org/?v=4.7.3</generator>
+ |
+ | [!] 34 vulnerabilities identified:
+ |
+ | [!] Title: WordPress 2.3-4.8.3 - Host Header Injection in Password Reset
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8807
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-8295
+ |      - https://exploitbox.io/vuln/WordPress-Exploit-4-7-Unauth-Password-Reset-0day-CVE-2017-8295.html
+ |      - http://blog.dewhurstsecurity.com/2017/05/04/exploitbox-wordpress-security-advisories.html
+ |      - https://core.trac.wordpress.org/ticket/25239
+ |
+ | [!] Title: WordPress 2.7.0-4.7.4 - Insufficient Redirect Validation
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8815
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9066
+ |      - https://github.com/WordPress/WordPress/commit/76d77e927bb4d0f87c7262a50e28d84e01fd2b11
+ |      - https://wordpress.org/news/2017/05/wordpress-4-7-5/
+ |
+ | [!] Title: WordPress 2.5.0-4.7.4 - Post Meta Data Values Improper Handling in XML-RPC
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8816
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9062
+ |      - https://wordpress.org/news/2017/05/wordpress-4-7-5/
+ |      - https://github.com/WordPress/WordPress/commit/3d95e3ae816f4d7c638f40d3e936a4be19724381
+ |
+ | [!] Title: WordPress 3.4.0-4.7.4 - XML-RPC Post Meta Data Lack of Capability Checks 
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8817
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9065
+ |      - https://wordpress.org/news/2017/05/wordpress-4-7-5/
+ |      - https://github.com/WordPress/WordPress/commit/e88a48a066ab2200ce3091b131d43e2fab2460a4
+ |
+ | [!] Title: WordPress 2.5.0-4.7.4 - Filesystem Credentials Dialog CSRF
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8818
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9064
+ |      - https://wordpress.org/news/2017/05/wordpress-4-7-5/
+ |      - https://github.com/WordPress/WordPress/commit/38347d7c580be4cdd8476e4bbc653d5c79ed9b67
+ |      - https://sumofpwn.nl/advisory/2016/cross_site_request_forgery_in_wordpress_connection_information.html
+ |
+ | [!] Title: WordPress 3.3-4.7.4 - Large File Upload Error XSS
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8819
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9061
+ |      - https://wordpress.org/news/2017/05/wordpress-4-7-5/
+ |      - https://github.com/WordPress/WordPress/commit/8c7ea71edbbffca5d9766b7bea7c7f3722ffafa6
+ |      - https://hackerone.com/reports/203515
+ |      - https://hackerone.com/reports/203515
+ |
+ | [!] Title: WordPress 3.4.0-4.7.4 - Customizer XSS & CSRF
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8820
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9063
+ |      - https://wordpress.org/news/2017/05/wordpress-4-7-5/
+ |      - https://github.com/WordPress/WordPress/commit/3d10fef22d788f29aed745b0f5ff6f6baea69af3
+ |
+ | [!] Title: WordPress 2.3.0-4.8.1 - $wpdb->prepare() potential SQL Injection
+ |     Fixed in: 4.7.6
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8905
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/70b21279098fc973eae803693c0705a548128e48
+ |      - https://github.com/WordPress/WordPress/commit/fc930d3daed1c3acef010d04acc2c5de93cd18ec
+ |
+ | [!] Title: WordPress 2.3.0-4.7.4 - Authenticated SQL injection
+ |     Fixed in: 4.7.5
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8906
+ |      - https://medium.com/websec/wordpress-sqli-bbb2afcc8e94
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/70b21279098fc973eae803693c0705a548128e48
+ |      - https://wpvulndb.com/vulnerabilities/8905
+ |
+ | [!] Title: WordPress 2.9.2-4.8.1 - Open Redirect
+ |     Fixed in: 4.7.6
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8910
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-14725
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://core.trac.wordpress.org/changeset/41398
+ |
+ | [!] Title: WordPress 3.0-4.8.1 - Path Traversal in Unzipping
+ |     Fixed in: 4.7.6
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8911
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-14719
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://core.trac.wordpress.org/changeset/41457
+ |
+ | [!] Title: WordPress 4.4-4.8.1 - Path Traversal in Customizer 
+ |     Fixed in: 4.7.6
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8912
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-14722
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://core.trac.wordpress.org/changeset/41397
+ |
+ | [!] Title: WordPress 4.4-4.8.1 - Cross-Site Scripting (XSS) in oEmbed
+ |     Fixed in: 4.7.6
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8913
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-14724
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://core.trac.wordpress.org/changeset/41448
+ |
+ | [!] Title: WordPress 4.2.3-4.8.1 - Authenticated Cross-Site Scripting (XSS) in Visual Editor
+ |     Fixed in: 4.7.6
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8914
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-14726
+ |      - https://wordpress.org/news/2017/09/wordpress-4-8-2-security-and-maintenance-release/
+ |      - https://core.trac.wordpress.org/changeset/41395
+ |      - https://blog.sucuri.net/2017/09/stored-cross-site-scripting-vulnerability-in-wordpress-4-8-1.html
+ |
+ | [!] Title: WordPress <= 4.8.2 - $wpdb->prepare() Weakness
+ |     Fixed in: 4.7.7
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8941
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-16510
+ |      - https://wordpress.org/news/2017/10/wordpress-4-8-3-security-release/
+ |      - https://github.com/WordPress/WordPress/commit/a2693fd8602e3263b5925b9d799ddd577202167d
+ |      - https://twitter.com/ircmaxell/status/923662170092638208
+ |      - https://blog.ircmaxell.com/2017/10/disclosure-wordpress-wpdb-sql-injection-technical.html
+ |
+ | [!] Title: WordPress 2.8.6-4.9 - Authenticated JavaScript File Upload
+ |     Fixed in: 4.7.8
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8966
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-17092
+ |      - https://wordpress.org/news/2017/11/wordpress-4-9-1-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/67d03a98c2cae5f41843c897f206adde299b0509
+ |
+ | [!] Title: WordPress 1.5.0-4.9 - RSS and Atom Feed Escaping
+ |     Fixed in: 4.7.8
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8967
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-17094
+ |      - https://wordpress.org/news/2017/11/wordpress-4-9-1-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/f1de7e42df29395c3314bf85bff3d1f4f90541de
+ |
+ | [!] Title: WordPress 4.3.0-4.9 - HTML Language Attribute Escaping
+ |     Fixed in: 4.7.8
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8968
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-17093
+ |      - https://wordpress.org/news/2017/11/wordpress-4-9-1-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/3713ac5ebc90fb2011e98dfd691420f43da6c09a
+ |
+ | [!] Title: WordPress 3.7-4.9 - 'newbloguser' Key Weak Hashing
+ |     Fixed in: 4.7.8
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/8969
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-17091
+ |      - https://wordpress.org/news/2017/11/wordpress-4-9-1-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/eaf1cfdc1fe0bdffabd8d879c591b864d833326c
+ |
+ | [!] Title: WordPress 3.7-4.9.1 - MediaElement Cross-Site Scripting (XSS)
+ |     Fixed in: 4.7.9
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9006
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-5776
+ |      - https://github.com/WordPress/WordPress/commit/3fe9cb61ee71fcfadb5e002399296fcc1198d850
+ |      - https://wordpress.org/news/2018/01/wordpress-4-9-2-security-and-maintenance-release/
+ |      - https://core.trac.wordpress.org/ticket/42720
+ |
+ | [!] Title: WordPress <= 4.9.4 - Application Denial of Service (DoS) (unpatched)
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9021
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-6389
+ |      - https://baraktawily.blogspot.fr/2018/02/how-to-dos-29-of-world-wide-websites.html
+ |      - https://github.com/quitten/doser.py
+ |      - https://thehackernews.com/2018/02/wordpress-dos-exploit.html
+ |
+ | [!] Title: WordPress 3.7-4.9.4 - Remove localhost Default
+ |     Fixed in: 4.7.10
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9053
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-10101
+ |      - https://wordpress.org/news/2018/04/wordpress-4-9-5-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/804363859602d4050d9a38a21f5a65d9aec18216
+ |
+ | [!] Title: WordPress 3.7-4.9.4 - Use Safe Redirect for Login
+ |     Fixed in: 4.7.10
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9054
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-10100
+ |      - https://wordpress.org/news/2018/04/wordpress-4-9-5-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/14bc2c0a6fde0da04b47130707e01df850eedc7e
+ |
+ | [!] Title: WordPress 3.7-4.9.4 - Escape Version in Generator Tag
+ |     Fixed in: 4.7.10
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9055
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-10102
+ |      - https://wordpress.org/news/2018/04/wordpress-4-9-5-security-and-maintenance-release/
+ |      - https://github.com/WordPress/WordPress/commit/31a4369366d6b8ce30045d4c838de2412c77850d
+ |
+ | [!] Title: WordPress <= 4.9.6 - Authenticated Arbitrary File Deletion
+ |     Fixed in: 4.7.11
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9100
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-12895
+ |      - https://blog.ripstech.com/2018/wordpress-file-delete-to-code-execution/
+ |      - http://blog.vulnspy.com/2018/06/27/Wordpress-4-9-6-Arbitrary-File-Delection-Vulnerbility-Exploit/
+ |      - https://github.com/WordPress/WordPress/commit/c9dce0606b0d7e6f494d4abe7b193ac046a322cd
+ |      - https://wordpress.org/news/2018/07/wordpress-4-9-7-security-and-maintenance-release/
+ |      - https://www.wordfence.com/blog/2018/07/details-of-an-additional-file-deletion-vulnerability-patched-in-wordpress-4-9-7/
+ |
+ | [!] Title: WordPress <= 5.0 - Authenticated File Delete
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9169
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20147
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |
+ | [!] Title: WordPress <= 5.0 - Authenticated Post Type Bypass
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9170
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20152
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |      - https://blog.ripstech.com/2018/wordpress-post-type-privilege-escalation/
+ |
+ | [!] Title: WordPress <= 5.0 - PHP Object Injection via Meta Data
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9171
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20148
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |
+ | [!] Title: WordPress <= 5.0 - Authenticated Cross-Site Scripting (XSS)
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9172
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20153
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |
+ | [!] Title: WordPress <= 5.0 - Cross-Site Scripting (XSS) that could affect plugins
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9173
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20150
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |      - https://github.com/WordPress/WordPress/commit/fb3c6ea0618fcb9a51d4f2c1940e9efcd4a2d460
+ |
+ | [!] Title: WordPress <= 5.0 - User Activation Screen Search Engine Indexing
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9174
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20151
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |
+ | [!] Title: WordPress <= 5.0 - File Upload to XSS on Apache Web Servers
+ |     Fixed in: 4.7.12
+ |     References:
+ |      - https://wpvulndb.com/vulnerabilities/9175
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-20149
+ |      - https://wordpress.org/news/2018/12/wordpress-5-0-1-security-release/
+ |      - https://github.com/WordPress/WordPress/commit/246a70bdbfac3bd45ff71c7941deef1bb206b19a
+
+Snip... Only displaying first 300 of the total 368 lines...
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611758
+Run Time:	444.215589046478
+Command:	nikto -h http://10.10.10.10:80 -output /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.10
++ Target Port: 80
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET Uncommon header 'link' found, with contents: <http://10.10.10.10/index.php/wp-json/>; rel="https://api.w.org/"
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.18 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ HBHFVDZC Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ DEBUG DEBUG HTTP verb may show server debugging information. See http://msdn.microsoft.com/en-us/library/e8z01xdh%28VS.80%29.aspx for details.
++ OSVDB-3093: GET /.bashrc: User home dir was found with a shell rc file. This may reveal file and path information.
++ OSVDB-3093: GET /.profile: User home dir with a shell profile was found. May reveal directory information and system configuration.
++ OSVDB-3233: GET /icons/README: Apache default file found.
++ GET /wp-content/plugins/akismet/readme.txt: The WordPress Akismet plugin 'Tested up to' version usually matches the WordPress version
++ GET /readme.html: This WordPress file reveals the installed version.
++ GET /wp-links-opml.php: This WordPress script reveals the installed version.
++ OSVDB-3092: GET /license.txt: License file found may identify site software.
++ GET /: A Wordpress installation was found.
++ GET Cookie wordpress_test_cookie created without the httponly flag
++ GET /wp-login.php: Wordpress login found
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611792
+Run Time:	1.00912690162659
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.10:80 -o /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_photon -e json && cat /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.10/celerystalkOutput/10.10.10.10_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.10:80"
+    ],
+    "scripts": [],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}

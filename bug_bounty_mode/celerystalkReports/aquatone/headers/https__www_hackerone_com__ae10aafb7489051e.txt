@@ -1,0 +1,26 @@
+200 OK
+Content-Type: application/pdf
+Cache-Control: public, max-age=2678400
+X-Request-Id: v-86cc0f9e-8d22-11e9-ae1d-d7eef3a50008
+Referrer-Policy: no-referrer-when-downgrade
+X-Content-Type-Options: nosniff
+Cf-Cache-Status: HIT
+Cf-Ray: 4e6016892d97c548-ORD
+X-Ah-Environment: prod
+Vary: X-Geo-Country, Accept-Encoding
+X-Xss-Protection: 1; mode=block
+Expect-Ct: enforce, max-age=31536000
+Via: varnish
+Retry-Count: 0
+Content-Length: 1211187
+Last-Modified: Sat, 09 Feb 2019 07:49:25 GMT
+Expires: Sun, 14 Jul 2019 00:53:31 GMT
+Content-Security-Policy: default-src 'none'; block-all-mixed-content;
+Server: cloudflare
+Date: Thu, 13 Jun 2019 00:53:31 GMT
+Set-Cookie: __cfduid=ddb70bc8e56c4ce5a9d5a63ae98bd190f1560387211; expires=Fri, 12-Jun-20 00:53:31 GMT; path=/; Domain=www.hackerone.com; HttpOnly; Secure
+X-Geo-Country: DE
+X-Permitted-Cross-Domain-Policies: none
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Cache: MISS
+Accept-Ranges: bytes

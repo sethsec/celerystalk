@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+  <head>
+    <meta charset="utf-8" />
+<meta name="title" content="451 Research Defines 7-Step Roadmap for Hacker-Powered Security Success | HackerOne" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="451 Research Defines 7-Step Roadmap for Hacker-Powered Security Success" />
+<meta name="twitter:description" content="One of the top IT research and advisory companies, 451 Research, recently authored a new “pathfinder report” to help decision-makers better understand the value of bug bounties and a compliant vulnerability disclosure process in their overall software security apparatus." />
+<meta name="twitter:site" content="@Hacker0x01" />
+<meta name="description" content="One of the top IT research and advisory companies, 451 Research, recently authored a new “pathfinder report” advising decision-makers on the value of bug bounties and the importance of a compliant vulnerability disclosure process." />
+<meta name="generator" content="" />
+<meta name="twitter:url" content="https://www.hackerone.com/blog/451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.hackerone.com/blog/451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success" />
+<link rel="canonical" href="/blog/451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success" />
+<link rel="shortlink" href="/node/1351" />
+<link rel="revision" href="/blog/451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success" />
+
+    <title>451 Research Defines 7-Step Roadmap for Hacker-Powered Security Success | HackerOne</title>
+    <meta property="og:site_name" content="HackerOne">
+    <meta property="fb:app_id" content="345444188982280">
+    <link rel="stylesheet" href="/sites/default/files/css/css_PjHbx1pBz4BgG4yxUNTdK-JCceIp0vdR6QKI8AjfSFk.css?psyc7h" media="all" />
+<link rel="stylesheet" href="/sites/default/files/css/css_yOiYRp8A8RnOIrCNQ6UkTnEBep18GQin6E08AssMWes.css?psyc7h" media="all" />
+
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog.rss">
+  </head>
+  <body class="blog_posts blog-451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success -node-1351">
+
+        
+    <div class="search-wrapper">
+    <i class="icon-cross"></i>
+    <div class="inner-container">
+        <form>
+          <div class="search-nav">
+            <i class="icon-search"></i>
+            <input class="search" type="text" placeholder="Search" name="query">
+            <input class="search-results" type="submit" value="See Results">
+          </div>
+        </form>
+    </div>
+</div>
+<div class="js-topbar">
+    <div data-reactroot="" class="topbar">
+        <div class="triangle">
+            <div class="bg-color"></div>
+        </div>
+        <div class="inner-container">
+            <div>
+                <a class="app__logo" href="/"></a>
+                                    <div class="topbar-toggle"><i class="icon-hamburger"></i></div>
+                            </div>
+                        <div class="topbar-subnav-wrapper">
+                <ul class="topbar-subnav">
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/users/sign_in">Sign In </a>&nbsp;|&nbsp;</li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right" style="display:none;"><a class="topbar-subnav-link" href="https://hackerone.com/bugs">Go to Inbox </a></li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/sign_up">Sign Up</a></li>
+                    <li class="topbar-subnav-item"><a class="topbar-subnav-link " href=""><i class="icon-search"></i></a></li>
+                </ul>
+            </div>
+            <div class="topbar-navigation-wrapper">
+                <ul class="topbar-navigation">
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Business</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/product/overview">Product Overview</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/response">HackerOne Response</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/challenge">HackerOne Challenge</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/bounty">HackerOne Bounty</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/resources">Resources</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#case-studies">Case Studies</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#guides">Guides</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#reports">Reports</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#webinars">Webinars</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#videos">Videos</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#infographics">Infographics</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/services">Services</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/customers">Customers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/partners">Partners</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker-community">Meet the Hackers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/live-hacking">Live Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-7b01602e277363db046d8426eb56e69c34a336b6d9152ebd0563b4704a2867c7">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/resources/forrester-total-economic-impact-study-hackerone">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Hackers</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/start-hacking">Start Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker101">Hacker101</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/leaderboard/all-time">Leaderboard</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/internet-bug-bounty">Internet Bug Bounty</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/disclosure-guidelines">Disclosure Guidelines</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--two-quarter cta">
+                                    <div class="views-element-container"><div class="js-view-dom-id-4a011ad97a3a096220f45dca8f917de08d8a1e8f331dfdde37a85055aaf578a4">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/hacker101">  <img src="/sites/default/files/styles/medium/public/H1_194_H101%20Social%20Cards_R1_V1Background_Green.jpg?itok=eUG9c-yC" width="220" height="116" alt="h101" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Learn how to hack</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/hacker101" class="primary-btn">Get Started</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a>
+                            </span>
+                        </span>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">Company</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/about">About Us</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/blog">Blog</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/press">Press</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/careers">Careers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/branding">Brand Assets</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/security">Security</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201086269-Organizations">Help Center</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-f91455089d1d2f945e0c66cb1948df45eb2c58d13bcbf5fc79a4d3a298e2fd82">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/sign_up">Try&nbsp; HackerOne</a>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+                    </div>
+    </div>
+</div>
+
+    
+    <div class="js-full-width-container full-width-container superman-page">
+      <span data-reactroot="">
+        <div>
+          <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div id="page-wrapper">
+  <div id="page">
+
+            <div id="main-wrapper" class="layout-main-wrapper layout-container clearfix">
+      <div id="main" class="layout-main clearfix">
+        
+        <main id="content" class="column main-content" role="main">
+          <section class="section">
+            <a id="main-content" tabindex="-1"></a>
+              <div>
+    <div id="block-hackerone-content" data-block-plugin-id="system_main_block">
+  
+    
+          <div class="superman-hero superman-hero--small">
+        <div class="inner-container inner-container--medium">
+            <h1 class="superman-hero__title spec-superman-hero-title">451 Research Defines 7-Step Roadmap for Hacker-Powered Security Success</h1>
+            <ul class="list list--inline superman-text--small">
+                                    <li><a href="/blog/category/Best Practices">Best Practices</a></li>
+                            </ul>
+        </div>
+    </div>
+    <div class="superman-container superman-container--tiny text-aligned-left ">
+        <div class="inner-container inner-container--medium">
+            <div class="row">
+                <div class="blog-main">
+                    <div class="">
+                        <div class="blog-info">
+                            <div class="date"><i class="fa fa-clock-o" aria-hidden="true"></i>Jul 17 2017
+                            </div>
+                            <div class="author"><i class="fa fa-user" aria-hidden="true"></i>
+                                                        luke                        
+                                                        </div>
+
+                            <div class="share">SHARE
+                                <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.hackerone.com%2Fblog%2F451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-facebook"></i></a>
+                                <a href="https://twitter.com/share?url=https%3A%2F%2Fwww.hackerone.com%2Fblog%2F451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success&amp;text=451%20Research%20Defines%207-Step%20Roadmap%20for%20Hacker-Powered%20Security%20Success" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-twitter"></i></a>
+                                <a href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2Fwww.hackerone.com%2Fblog%2F451-Research-Defines-7-Step-Roadmap-for-Hacker-Powered-Security-Success" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-linkedin"></i></a>
+                            </div>
+                            <div class="back">
+                            <a class="primary-btn" href="/blog">< BACK TO POSTS</a>
+                            </div>
+                        </div>
+                        <div>
+                            
+            <div><p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">One of the top IT research and advisory companies, 451 Research, recently authored a new “pathfinder report” advising decision-makers on the value of bug bounties and the importance of a compliant vulnerability disclosure process. </b></p>
+<a href="/resources/451-pathfinder-research-report"><img alt="roadmap to hacker powered security success - 451 report" data-entity-type="file" data-entity-uuid="95e61614-0981-4dad-8242-61f96aa1f789" src="/sites/default/files/inline-images/451-report-thumbnail-roadmap.png" class="align-center" /></a>
+
+<p class="text-align-center"> </p>
+
+<p class="text-align-center"><a class="superman-button" href="/resources/451-pathfinder-research-report">Download the Report</a></p>
+
+<p><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">The report details how companies can optimize a hacker-powered security program, from “everyone’s first step” of creating a public vulnerability disclosure policy (VDP) to how to run a bug bounty program. The report is well worth the 20-page read. It is a good resource to bring execs up to speed on how VDPs and bounty programs operate. </b></b></p>
+
+<p><b><b>For those execs who don’t have the bandwidth to get past a TL;DR synopsis, we’re cutting to the chase and focusing here on 451 Research’s seven-step “roadmap”. (Feel free to paste this into an email to your exec and take credit for finding it.)</b></b></p>
+
+<h1 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Seven Steps to Hacker-Powered Security Success</b></b></h1>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Hacker-powered security is no longer just for cutting-edge tech firms, although the amazing results they’ve seen have pushed this concept into the fabric of IT security teams across the spectrum. In 2016, Facebook saw a 38% increase over 2014 in the discovery of high-impact bugs thanks to their program, while Google’s Bughunter University noted a 50% increase in reward payouts in 2016 over 2015. </b></b></p>
+
+<p dir="ltr"><b><b>Now, organizations from the U.S. Department of Defense to Starbucks, General Motors to Snapchat, and Intel to Lufthansa are using hacker-powered security methods to better protect their products, data, and customers. </b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">So how does an organization get started down this path of hacker-powered security? Here’s how!</b></b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">1. Create a vulnerability disclosure policy (VDP) and make it easy to find.</b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">It’s shocking — yes, shocking — to realize that 94 percent of the Forbes Global 2000 do not have known vulnerability disclosure policies (<a href="https://www.hackerone.com/resources/hacker-powered-security-report">based on HackerOne’s own research</a>). Read another way, if you’re reading this, you probably don’t have a VDP. That’s bad.</b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Even before you begin to consider and debate the value of bug bounties, 451 Research says “</b></b><strong>a VDP should be considered table stakes for any company with a public footprint.</strong><b>” Simple logic says you should make it easy for people to let you know when they encounter an issue, and a VDP can be as simple as an email address or contact form — solutions that are essentially free to implement.</b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Beyond that, it’s as easy as defining what types of issues and which systems are covered, what level of response to expect, and general “rules of engagement.” Some industry groups have even published templates to make policy creation even easier.</b></b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">2. Ensure that staff managing corporate communications understand how to recognize and handle a disclosure.</b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Getting your corporate communications machine involved early is crucial to a successful VDP. As 451 Research puts it, “there aren’t many security-related incidents that can’t be improved by effective and transparent communication.” And, they go on to explain how a past breach at social media orchestration service Buffer turned the event into “a marketing win, attracting new customers and drawing an outpouring of support and understanding from existing customers.”</b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">“</b></b><strong>Transparency and responsiveness can go a long way in winning over customers and the general public</strong><b>,” according to 451 Research<b>. Of course, the opposite is also true. A hacker found 40 zero-day vulnerabilities in Samsung’s Tizen operating system and, over several months, only received automated email responses to his reports. “Only after being contacted by a journalist for comment did Samsung spring to action and get in touch with the researcher.”</b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Here’s another tip: don’t wait for an embarrassing (or worse) security event to engage with your communications team or create good communications protocols. Do it now so you won’t have to figure it out when you really need it.</b></b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">3. Document and practice vulnerability handling.</b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">So once a vulnerability is reported, what do you do? How you triage the report, communicate with the public and affected parties, and resolve the issue should all be defined and practiced regularly. There are even ISO standards (<a href="https://www.iso.org/standard/45170.html">27147</a> and <a href="https://www.iso.org/standard/53231.html">30111</a>) to help you define your disclosure<br />
+process and vulnerability handling process.</b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Basically, it’s just defining how the process works and writing it down. According to 451 Research’s finding, “</b></b><strong>having a clear, common set of rules and expectations that is easy to locate is critical</strong><b>.”</b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">4. Select your Bug Bounty Platform partner. </b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Using an external bug bounty platform provider will help “reduce the burden of triage and response to reported bugs and give companies the necessary tools to automate many of the steps in vulnerability disclosure and handling,” according to 451 Research. As with any solution, they recommend organizations consider several key elements when choosing a provider:</b></b></p>
+
+<ul><li dir="ltr">
+	<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Disclosure assistance and community support.</b></b></p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Access to the pool of available talent.</b></b></p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Features native to the management platform.</b></b></p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Integration with existing workflows.</b></b></p>
+	</li>
+	<li dir="ltr">
+	<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Capabilities for automation and orchestration.</b></b></p>
+	</li>
+</ul><p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">In the report, 451 Research goes deeply into the nuances of each point, including an additional overview of important metrics to evaluate bug bounty success. According to their findings, important bug bounty metrics include mean time to first vulnerability discovered, mean response time, total reports submitted, percentage of duplicate reports and total payout.</b></b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">5 &amp; 6. Start with a conservative private bounty program. Then launch a public bounty.</b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Yeah, those are two steps jammed into one, but once you get your feet wet with a private program, the evolution to a public program is much easier. </b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">With a private program, you’re inviting a small number of hackers and giving them exclusive (and guided) access to your systems. You get more control, get to iron out the kinks in your internal processes, and as 451 Research suggests, you “have the luxury of finding and fixing the most serious flaws before production release, and with no one the wiser.”</b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">A public bounty, on the other hand, adds not only more and more diverse hackers, it provides positive marketing and communications benefits. “(A public program) conveys a certain confidence and determination to improve quality and security that will likely attract customers.”</b></b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">7. Refine and expand your hacker-powered program as needed.</b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">An “ancient developer proverb” was quoted by 451 Research: Before bug bounty, chop wood, carry water. After bug bounty, chop wood, carry water.</b></b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">A bug bounty program isn’t a one-and-done program. It’s a process that’s “</b></b><strong>most valuable when used as a permanent, perpetual addition to the software development lifecycle</strong><b>.” An ongoing bug bounty program returns more value as hackers get to know your team, products, code, processes, preferences, and other nuances. </b></p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">But the overall goal — of your entire security machine, of which bug bounties are simply a component — should revolve around reducing the number of bugs that ever make it to a bug bounty program. “An improvement in this metric likely indicates an improvement in the quality of software overall. Fewer bugs to fix means less risk and a reduced cost of doing business.” See Figure 3 from the report below:</b></b></p>
+<img alt="Figure 3: Work ow Integration for Bug Bounty Programs   " data-entity-type="file" data-entity-uuid="6162fbe4-3fd2-43fa-b0a0-3b68af083dd5" src="/sites/default/files/inline-images/bug-bounties-secure-sdlc-451.png" class="align-center" /><p dir="ltr"> </p>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">As you think of expanding your bug bounty program beyond just websites and webapps, consider AT&amp;T’s program as inspiration. Their bounty program “covers nearly everything publicly accessible that AT&amp;T owns or sells: DVRs, smartphones, websites, mobile apps – all are valid targets for the bug bounty.” </b></b></p>
+
+<p dir="ltr"><b><b>Other sectors, such as new and relatively unsecured Internet of Things devices, are seeing more, and more public (<a href="https://threatpost.com/mirai-fueled-iot-botnet-behind-ddos-attacks-on-dns-providers/121475/">see: Mirai</a>), security issues. Also, consumer products (<a href="http://money.cnn.com/2017/02/27/technology/cloudpets-data-leak-voices-photos/index.html">see: CloudPets</a>) “with their lower price points and margins, tend to skip even the most basic due diligence before hitting shelves.”</b></b></p>
+
+<h2 dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Conclusion</b></b></h2>
+
+<p dir="ltr"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">The 451 Report, “Bug Bounties and the Path to Secure Software,” was commissioned by HackerOne to bring a third-party’s perspective into how hackers can help discover and mitigate vulnerabilities before malicious individuals exploit them. </b></b></p>
+
+<p><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174"><b id="docs-internal-guid-19c1c508-4ef3-a756-a8e2-879d2b1a8174">Consider the 451 Report your primer and “buyer’s guide” if you will to get started with hacker-powered security. HackerOne is the number one vulnerability coordination and bug bounty platform and we have helped hundreds of organizations with every phase of their crowd-sourced security journey: from implementing a VDP, <a href="https://www.hackerone.com/product/challenge">diving in with a time-bound Challenge</a>, or launching your public or private bug bounty program. HackerOne is the obvious choice  to integrate hacker-powered security into your current security apparatus. Just <a href="https://www.hackerone.com/#">shoot us a note to chat</a> -  we’re friendly people and we’re here to help!</b></b></p>
+
+<p> </p>
+
+<p class="text-align-center" dir="ltr"><span data-reactroot=""> </span></p>
+
+<hr /><p><span data-reactroot=""><span data-reactroot="">HackerOne is the <a href="https://www.hackerone.com/">#1 hacker-powered security platform</a>, helping organizations find and fix critical vulnerabilities before they can be criminally exploited. As the contemporary alternative to traditional <a href="https://www.hackerone.com/product/challenge">penetration testing</a>, our <a href="https://hackerone.com/bug-bounty-programs">bug bounty program</a> solutions encompass <a href="https://www.hackerone.com/product/response">vulnerability assessment</a>, <a href="https://www.hackerone.com/resources/hacker-powered-security-report">crowdsourced testing</a> and <a href="https://www.hackerone.com/resources/responsible-disclosure-overview">responsible disclosure management</a>. Discover more about our <a href="https://www.hackerone.com/product/overview">security testing solutions</a> or <a href="https://hackerone.com/teams/new">Contact Us</a> today.</span></span></p>
+</div>
+      
+                        </div>
+                              
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="inner-container">
+            <div class="row">
+                <div class="blog-sidebar">
+                    <div class="superman-title">
+                        <h2 class="superman-title__content">Related Posts</h2>
+                    </div>
+                                                                  
+                    
+                    <div class="views-element-container"><div class="js-view-dom-id-72cd9769bc3ccc2abf9aa9ee95ccd51f3e8a4569c9d767878a39984509019a9a">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-view-grid horizontal cols-3 clearfix">
+                          <div class="col col--one-third views-col col-1">
+              <div class="panel">
+                  <div class="views-field views-field-field-main-image"><div class="field-content">  <a href="/blog/learn-how-hackerone-can-help-you-crawl-walk-or-run-your-way-bug-bounty-program"><img src="/sites/default/files/styles/large/public/Untitled%20design%20%282%29.png?itok=xJk499bn" width="480" height="240" alt="Hackers at computer " typeof="foaf:Image" />
+
+</a>
+</div></div><fieldset class="featured-text ">
+  
+  <div class="views-field views-field-title"><h6 class="field-content">Learn How HackerOne Can Help You Crawl, Walk, or Run Your Way to a Bug Bounty Program</h6></div><div class="views-field views-field-view-node"><span class="field-content"><a href="/blog/learn-how-hackerone-can-help-you-crawl-walk-or-run-your-way-bug-bounty-program" hreflang="en">Read More&gt;</a></span></div></fieldset>
+
+              </div>
+            </div>
+                    <div class="col col--one-third views-col col-2">
+              <div class="panel">
+                  <div class="views-field views-field-field-main-image"><div class="field-content">  <a href="/blog/Security-Startup-Speed-Enterprise-Grade-Security-Start"><img src="/sites/default/files/styles/large/public/Social-1_0.png?itok=DaG7lVJI" width="480" height="251" alt="start up speed " typeof="foaf:Image" />
+
+</a>
+</div></div><fieldset class="featured-text ">
+  
+  <div class="views-field views-field-title"><h6 class="field-content"> Security at Startup Speed: Enterprise Grade Security from the Start</h6></div><div class="views-field views-field-view-node"><span class="field-content"><a href="/blog/Security-Startup-Speed-Enterprise-Grade-Security-Start" hreflang="en">Read More&gt;</a></span></div></fieldset>
+
+              </div>
+            </div>
+                    <div class="col col--one-third views-col col-3">
+              <div class="panel">
+                  <div class="views-field views-field-field-main-image"><div class="field-content">  <a href="/blog/Your-First-90-Days-Security-Lead-Part-2-Developing-Plan-and-Getting-Work"><img src="/sites/default/files/styles/large/public/First-90-Days-as-Security-Lead-Part-2-blog%20%281%29.jpg?itok=JEbEKFFl" width="480" height="252" alt="Your First 90 Days as Security Lead Part 2" typeof="foaf:Image" />
+
+</a>
+</div></div><fieldset class="featured-text ">
+  
+  <div class="views-field views-field-title"><h6 class="field-content">Your First 90 Days as Security Lead, Part 2: Developing a Plan and Getting to Work</h6></div><div class="views-field views-field-view-node"><span class="field-content"><a href="/blog/Your-First-90-Days-Security-Lead-Part-2-Developing-Plan-and-Getting-Work" hreflang="en">Read More&gt;</a></span></div></fieldset>
+
+              </div>
+            </div>
+              </div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+  </div>
+
+  </div>
+
+          </section>
+        </main>
+                      </div>
+    </div>
+        
+  </div>
+</div>
+
+  </div>
+
+        <div class="superman-footer">
+    <div class="superman-container superman-container--small superman-container--footer">
+        <div class="inner-container">
+            <div class="row row--20">
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Business</h4><a class=" footer superman-text--small" href="/product/overview">Product Overview</a><a class=" footer superman-text--small" href="/product/response">HackerOne Response</a><a class=" footer superman-text--small" href="/product/bounty">HackerOne Bounty</a><a class=" footer superman-text--small" href="/product/challenge">HackerOne Challenge</a><a class=" footer superman-text--small" href="/services">Services</a><a class=" footer superman-text--small" href="/resources">Resources</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="/hacker-community">Meet the Hackers</a><a class=" footer superman-text--small" href="/live-hacking">Live Hacking</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/programs.html">Business Support</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Hackers</h4><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a><a class=" footer superman-text--small" href="/hacker101">Hacker101</a><a class=" footer superman-text--small" href="https://hackerone.com/leaderboard/all-time">Leaderboard</a><a class=" footer superman-text--small" href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a><a class=" footer superman-text--small" href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a><a class=" footer superman-text--small" href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a><a class=" footer superman-text--small" href="/disclosure-guidelines">Disclosure Guidelines</a><a class=" footer superman-text--small" href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Community</h4><a class=" footer superman-text--small" href="/product/community">Community Edition</a><a class=" footer superman-text--small" href="/internet-bug-bounty">Internet Bug Bounty</a><a class=" footer superman-text--small" href="/zerodaily">Zero Daily Newsletter</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Company</h4><a class=" footer superman-text--small" href="/about">About Us</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/">Documentation</a><a class=" footer superman-text--small" href="/blog">Blog</a><a class=" footer superman-text--small" href="/press">Press</a><a class=" footer superman-text--small" href="/careers">Careers</a><a class=" footer superman-text--small" href="/customers">Customers</a><a class=" footer superman-text--small" href="/partners">Partners</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Security</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Contact</h4><a class=" footer superman-text--small" href="/contact">Contact Sales</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Report a Bug</a><a class="footer superman-text--small" href="https://support.hackerone.com/hc/en-us/requests/new">Support</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Try HackerOne</h4><a class=" footer superman-text--small" href="https://hackerone.com/sign_up">Start a Program</a><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a></div>
+            </div>
+            <div class="row">
+                <div class="pull-right"><a href="https://facebook.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-facebook"></i></a><a href="https://twitter.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-twitter"></i></a><a href="https://www.linkedin.com/company/hackerone" class="superman-footer__social-link"><i class="fa-share-linkedin"></i></a></div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <a class="superman-footer__logo" href="/"><img src="/assets/images/logo_transparent.png" alt="HackerOne"></a>
+                </div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <ul class="superman-footer__utility superman-text--small">
+                        <li class="superman-footer__utility-item">2019 © HackerOne.</li>
+                        <li class="superman-footer__utility-item"><a href="/terms">Terms |</a></li>
+                        <li class="superman-footer__utility-item"><a href="/privacy">Privacy |</a></li>
+                        <li class="superman-footer__utility-item"><a href="https://hackerone.com/security">Security</a></li>
+                    </ul>                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </span>
+    </div>
+
+    
+    <form id="mktoForm_1013"></form>
+        <div class="footer-popup">
+      <p>We use cookies to collect information to help us personalise your experience and improve the functionality and performance of our site. By continuing to use our site, you consent to our use of cookies. For more information see our <a href="/privacy#cookie-policy">cookies policy.</a><a class="primary-btn--small" href="">I AGREE</a></p>
+    </div>
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/1351","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","fac":{"search":{"jsonFilesPath":"\/sites\/default\/files\/fac-json\/search\/en\/PFTV77uiuT3RCnW9FPkcX-JqOb3eo33V7odD0jXVIr4\/","inputSelectors":"input.search","keyMinLength":1,"keyMaxLength":10,"breakpoint":0,"emptyResult":"","allResultsLink":false,"allResultsLinkThreshold":0,"highlightingEnabled":false,"resultLocation":""}},"gacsp":{"commands":[["create","UA-49905813-1","auto"],["require","linkid"],["send","pageview"]]},"statistics":{"data":{"nid":"1351"},"url":"\/core\/modules\/statistics\/statistics.php"},"ajax":[],"user":{"uid":0,"permissionsHash":"4942d8c07ab2f619645a6faba5d6d5e39604dc3fdc9354dc6eea99d9a4a9d42d"}}</script>
+<script src="/sites/default/files/js/js_NOKW5uJ-_cH32MDwYAx0rbIXRxqF_KUMhWO-W-AEaSg.js"></script>
+<script src="https://app-sj17.marketo.com/js/forms2/js/forms2.min.js"></script>
+<script src="/sites/default/files/js/js_uha13U1BPFZiLOtE9sGkmvqcnX2izBIxBUsHemTm8PM.js"></script>
+<script src="https://cdn.bizible.com/scripts/bizible.js" async id="bizible-settings" data-native-json="true"></script>
+<script src="/sites/default/files/js/js_09q-2nINZLq-grz_lg6wRjXj61uWzqGBBYfPavnoho0.js"></script>
+
+    <noscript>
+      <img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=682812&fmt=gif" />
+    </noscript>
+  </body>
+</html>
+
+
+
+
+
+
+

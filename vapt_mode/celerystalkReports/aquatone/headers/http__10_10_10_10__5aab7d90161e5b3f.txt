@@ -1,0 +1,9 @@
+200 OK
+Etag: "c9e-54cf3e2c1aa24-gzip"
+Retry-Count: 0
+Date: Sat, 15 Jun 2019 15:27:09 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Last-Modified: Wed, 12 Apr 2017 08:20:48 GMT
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Type: text/plain

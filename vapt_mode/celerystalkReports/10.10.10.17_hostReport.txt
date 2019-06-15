@@ -1,0 +1,149 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.17  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.17/10.10.10.17_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.17/10.10.10.17_nmap_tcp_scan.txt
+--------------------------------------------------
+--------------------------------------------------
+Command Name:	photon
+Command:	python3 /opt/Photon/photon.py -u https://10.10.10.17:443 -o /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_photon -e json && cat /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_photon/exported.json | tee /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_photon.txt
+
+No such file or directory: /pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_photon.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611082
+Run Time:	1618.30624294281
+Command:	nikto -h https://10.10.10.17:443 -ssl -output /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.17
++ Target Port: 443
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The site uses SSL and the Strict-Transport-Security HTTP header is not defined.
++ GET The site uses SSL and Expect-CT header is not present.
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD nginx/1.10.0 appears to be outdated (current is at least 1.14.0)
++ GET The Content-Encoding header is set to "deflate" this may mean that the server is vulnerable to the BREACH attack.
++ GET Hostname '10.10.10.17' does not match certificate's names: brainfuck.htb
+
+--------------------------------------------------
+Command Name:	gobuster_common (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611174
+Run Time:	1.34901094436646
+Command:	wpscan --url https://10.10.10.17:443 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611472
+Run Time:	2.47094416618347
+Command:	docker run --rm wappalyzer/cli https://10.10.10.17:443 | jq . | tee /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://10.10.10.17:443/"
+  ],
+  "applications": [
+    {
+      "name": "Nginx",
+      "confidence": "100",
+      "version": "1.10.0",
+      "icon": "Nginx.svg",
+      "website": "http://nginx.org/en",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": null
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611510
+Run Time:	0.641645193099976
+Command:	cewl https://10.10.10.17:443 -m 6 -w /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Welcome
+support
+server
+successfully
+installed
+working
+Further
+configuration
+required
+online
+documentation
+please
+Commercial
+available
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611654
+Run Time:	135.930762052536
+Command:	whatweb https://10.10.10.17:443 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://10.10.10.17:443 [200 OK] Country[RESERVED][ZZ]
+ HTML5, HTTPServer[Ubuntu Linux][nginx/1.10.0 (Ubuntu)]
+ IP[10.10.10.17]
+ Title[Welcome to nginx!]
+ nginx[1.10.0]
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611790
+Run Time:	0.47953200340271
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.17:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb//10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.17/celerystalkOutput/10.10.10.17_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.17
+http://10.10.10.17/robots.txt

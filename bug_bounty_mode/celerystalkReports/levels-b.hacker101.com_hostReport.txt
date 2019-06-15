@@ -1,0 +1,158 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap levels-b.hacker101.com  -n -sV -Pn -p 443 -oA h1/levels-b.hacker101.com/levels-b.hacker101.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/levels-b.hacker101.com/levels-b.hacker101.com_nmap_tcp_scan.txt
+--------------------------------------------------
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560310087
+Run Time:	2.28907585144043
+Command:	python3 /opt/Photon/photon.py -u https://levels-b.hacker101.com:443 -o h1//levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_photon -e json && cat h1//levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_photon/exported.json | tee h1//levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_photon.txt
+Output File:	h1/levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "https://levels-b.hacker101.com:443"
+    ],
+    "scripts": [],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560310512
+Run Time:	0.396386861801147
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://levels-b.hacker101.com:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee h1//levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_wayback.txt
+Output File:	h1/levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://levels-b.hacker101.com/
+https://levels-b.hacker101.com/level5
+http://levels-b.hacker101.com:80/level6
+http://levels-b.hacker101.com:80/level6/add
+http://levels-b.hacker101.com:80/level6/edit/13541
+http://levels-b.hacker101.com:80/level6/edit/26131
+http://levels-b.hacker101.com:80/level6/edit/26141
+http://levels-b.hacker101.com:80/level6/edit/26151
+http://levels-b.hacker101.com:80/level6/edit/29161
+http://levels-b.hacker101.com:80/level6/edit/29171
+http://levels-b.hacker101.com:80/level6/edit/29181
+http://levels-b.hacker101.com:80/level7?
+http://levels-b.hacker101.com:80/level7/post_index
+http://levels-b.hacker101.com:80/level8
+http://levels-b.hacker101.com/robots.txt
+https://levels-b.hacker101.com/static/favicon.png
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560310517
+Run Time:	3.37262320518494
+Command:	docker run --rm wappalyzer/cli https://levels-b.hacker101.com:443 | jq . | tee h1//levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_wappalyzer_cli.json
+Output File:	h1/levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://levels-b.hacker101.com:443/"
+  ],
+  "applications": [
+    {
+      "name": "CloudFlare",
+      "confidence": "100",
+      "version": "",
+      "icon": "CloudFlare.svg",
+      "website": "http://www.cloudflare.com",
+      "categories": [
+        {
+          "31": "CDN"
+        }
+      ]
+    },
+    {
+      "name": "Google Analytics",
+      "confidence": "100",
+      "version": "UA",
+      "icon": "Google Analytics.svg",
+      "website": "http://google.com/analytics",
+      "categories": [
+        {
+          "10": "Analytics"
+        }
+      ]
+    },
+    {
+      "name": "Bootstrap",
+      "confidence": "100",
+      "version": "4.0.0-beta.2",
+      "icon": "Bootstrap.svg",
+      "website": "https://getbootstrap.com",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "3.2.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560310858
+Run Time:	299.269345998764
+Command:	whatweb https://levels-b.hacker101.com:443 -a4 --colour=never | sed s/],/]\\n/g | tee h1//levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_whatweb.txt
+Output File:	h1/levels-b.hacker101.com/celerystalkOutput/levels-b.hacker101.com_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://levels-b.hacker101.com:443 [302 Found] Country[UNITED STATES][US]
+ HTTPServer[cloudflare]
+ IP[104.18.193.12]
+ RedirectLocation[https://ctf.hacker101.com]
+ Strict-Transport-Security[max-age=31536000; includeSubDomains; preload]
+ UncommonHeaders[x-content-type-options,expect-ct,cf-ray]
+https://ctf.hacker101.com [200 OK] CloudFlare, Cookies[__Host-session,__cfduid]
+ Country[UNITED STATES][US]
+ Google-Analytics[Universal] [UA-49905813-1]
+ HTML5, HTTPServer[cloudflare]
+ HttpOnly[__Host-session,__cfduid]
+ IP[104.18.193.12]
+ JQuery, Script[text/javascript]
+ Strict-Transport-Security[max-age=31536000; includeSubDomains; preload]
+ Title[Hacker101 CTF]
+ UncommonHeaders[x-content-type-options,expect-ct,cf-ray]
+ X-Frame-Options[sameorigin]

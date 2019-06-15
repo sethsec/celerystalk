@@ -1,0 +1,78 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap mta-sts.managed.hackerone.com  -n -sV -Pn -p 443 -oA h1/mta-sts.managed.hackerone.com/mta-sts.managed.hackerone.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/mta-sts.managed.hackerone.com/mta-sts.managed.hackerone.com_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560310152
+Run Time:	1.2548840045929
+Command:	python3 /opt/Photon/photon.py -u https://mta-sts.managed.hackerone.com:443 -o h1//mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_photon -e json && cat h1//mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_photon/exported.json | tee h1//mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_photon.txt
+Output File:	h1/mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [
+        "https://mta-sts.managed.hackerone.com:443:GENERIC_URL:http://example.com/",
+        "https://mta-sts.managed.hackerone.com:443/:GENERIC_URL:http://example.com/",
+        "https://help.github.com/pages/"
+    ],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "https://mta-sts.managed.hackerone.com:443/",
+        "https://mta-sts.managed.hackerone.com:443",
+        "https://mta-sts.managed.hackerone.com:443//"
+    ],
+    "scripts": [],
+    "external": [
+        "https://githubstatus.com",
+        "https://twitter.com/githubstatus",
+        "https://help.github.com/pages/"
+    ],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Command:	docker run --rm wappalyzer/cli https://mta-sts.managed.hackerone.com:443 | jq . | tee h1//mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_wappalyzer_cli.json
+
+No such file or directory: h1/mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_wappalyzer_cli.txt
+--------------------------------------------------
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560311157
+Run Time:	0.666447162628174
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://mta-sts.managed.hackerone.com:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee h1//mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_wayback.txt
+Output File:	h1/mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://mta-sts.managed.hackerone.com/
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560311158
+Run Time:	177.012968063354
+Command:	whatweb https://mta-sts.managed.hackerone.com:443 -a4 --colour=never | sed s/],/]\\n/g | tee h1//mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_whatweb.txt
+Output File:	h1/mta-sts.managed.hackerone.com/celerystalkOutput/mta-sts.managed.hackerone.com_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://mta-sts.managed.hackerone.com:443 [404 Not Found] HTML5, HTTPServer[GitHub.com]
+ IP[185.199.109.153]
+ Title[Page not found &middot; GitHub Pages]
+ UncommonHeaders[access-control-allow-origin,content-security-policy,x-github-request-id,x-served-by,x-cache-hits,x-timer,x-fastly-request-id]
+ Via-Proxy[1.1 varnish]

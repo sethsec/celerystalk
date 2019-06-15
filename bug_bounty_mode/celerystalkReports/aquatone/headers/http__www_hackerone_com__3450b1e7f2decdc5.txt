@@ -1,0 +1,21 @@
+403 Forbidden
+Content-Security-Policy: default-src 'none'; block-all-mixed-content; connect-src 'self'; font-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; frame-ancestors 'none';
+Via: varnish
+Server: cloudflare
+Content-Length: 17
+Cf-Ray: 4e60167d58292559-ORD
+Date: Thu, 13 Jun 2019 00:53:30 GMT
+Set-Cookie: __cfduid=d95bce17438fd7291a808c62ecb7003491560387209; expires=Fri, 12-Jun-20 00:53:29 GMT; path=/; Domain=www.hackerone.com; HttpOnly; Secure
+Referrer-Policy: no-referrer-when-downgrade
+X-Content-Type-Options: nosniff
+X-Xss-Protection: 1; mode=block
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Cache: MISS
+Retry-Count: 0
+Content-Type: text/html; charset=iso-8859-1
+X-Request-Id: v-a924c650-8d75-11e9-9513-2f6df82ec70c
+X-Permitted-Cross-Domain-Policies: none
+Expect-Ct: enforce, max-age=31536000
+Age: 0
+X-Geo-Country: US
+Vary: X-Geo-Country

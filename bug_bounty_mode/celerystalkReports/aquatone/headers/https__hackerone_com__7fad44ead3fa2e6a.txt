@@ -1,0 +1,17 @@
+404 Not Found
+Date: Thu, 13 Jun 2019 00:52:48 GMT
+Retry-Count: 0
+Set-Cookie: __cfduid=d67eb76e71442b2a05105baaab088bbe61560387168; expires=Fri, 12-Jun-20 00:52:48 GMT; path=/; domain=.hackerone.com; HttpOnly; Secure
+X-Request-Id: 16ffcc7d-decf-4301-9068-ee73b9e5c1c0
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Content-Type: text/html; charset=utf-8
+Referrer-Policy: strict-origin-when-cross-origin
+X-Content-Type-Options: nosniff
+X-Download-Options: noopen
+Cf-Ray: 4e601578bf7c7177-ORD
+Expect-Ct: enforce, max-age=86400
+Content-Security-Policy: default-src 'none'; base-uri 'self'; block-all-mixed-content; child-src www.youtube-nocookie.com b5s.hackerone-ext-content.com; connect-src 'self' www.google-analytics.com errors.hackerone.net; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: cover-photos.hackerone-user-content.com hackathon-photos.hackerone-user-content.com profile-photos.hackerone-user-content.com hackerone-us-west-2-production-attachments.s3.us-west-2.amazonaws.com; media-src 'self' hackerone-us-west-2-production-attachments.s3.us-west-2.amazonaws.com; script-src 'self' www.google-analytics.com; style-src 'self' 'unsafe-inline'; report-uri https://errors.hackerone.net/api/30/csp-report/?sentry_key=61c1e2f50d21487c97a071737701f598
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-Xss-Protection: 1; mode=block
+Server: cloudflare

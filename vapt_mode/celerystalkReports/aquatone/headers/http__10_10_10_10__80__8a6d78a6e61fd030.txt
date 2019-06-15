@@ -1,0 +1,10 @@
+200 OK
+Expires: Wed, 11 Jan 1984 05:00:00 GMT
+Content-Type: text/html; charset=UTF-8
+Retry-Count: 0
+Server: Apache/2.4.18 (Ubuntu)
+Set-Cookie: wordpress_test_cookie=WP+Cookie+check; path=/ wordpress_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/wp-admin wordpress_sec_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/wp-admin wordpress_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/wp-content/plugins wordpress_sec_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/wp-content/plugins wordpress_logged_in_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpress_logged_in_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpress_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpress_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpress_sec_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpress_sec_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpressuser_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpresspass_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpressuser_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/ wordpresspass_d42ce816693792820a161ad7f9a3881d=+; expires=Fri, 15-Jun-2018 15:27:08 GMT; Max-Age=-31536000; path=/
+X-Frame-Options: SAMEORIGIN
+Cache-Control: no-cache, must-revalidate, max-age=0
+Date: Sat, 15 Jun 2019 15:27:08 GMT
+Vary: Accept-Encoding

@@ -1,0 +1,17 @@
+200 OK
+Expires: Mon, 20 Aug 1969 09:23:00 GMT
+X-Ua-Compatible: IE=edge
+Vary: Accept-Encoding
+Retry-Count: 0
+Server: Apache/2.4.25 (Debian)
+Pragma: no-cache
+Last-Modified: Sat, 15 Jun 2019 15:27:07 GMT
+X-Frame-Options: sameorigin
+Content-Style-Type: text/css
+Accept-Ranges: none
+Content-Type: text/html; charset=utf-8
+Date: Sat, 15 Jun 2019 15:27:07 GMT
+Cache-Control: no-store, no-cache, must-revalidate post-check=0, pre-check=0, no-transform
+Content-Language: en
+Content-Script-Type: text/javascript
+Set-Cookie: MoodleSession=10utc5kmr9i2krp5b711n0l4b6; path=/moodle/

@@ -1,0 +1,16 @@
+404 Not Found
+Set-Cookie: __cfduid=d326915ed9fc12aadf0c85427a25939d01560387221; expires=Fri, 12-Jun-20 00:53:41 GMT; path=/; Domain=api.hackerone.com; HttpOnly; Secure
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Expect-Ct: enforce, max-age=86400
+Date: Thu, 13 Jun 2019 00:53:42 GMT
+X-Permitted-Cross-Domain-Policies: none
+Referrer-Policy: strict-origin-when-cross-origin
+Server: cloudflare
+Retry-Count: 0
+X-Frame-Options: DENY
+X-Download-Options: noopen
+Content-Security-Policy: default-src 'none'; block-all-mixed-content; connect-src 'self'; font-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; frame-ancestors 'none';
+Cf-Ray: 4e6016c92f559ef1-ORD
+Content-Type: text/html

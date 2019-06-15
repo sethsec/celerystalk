@@ -1,0 +1,20 @@
+200 OK
+X-Github-Request-Id: 4EA0:0D29:46BB80:5C24FB:5D019B09
+Accept-Ranges: bytes
+Via: 1.1 varnish
+Server: GitHub.com
+Last-Modified: Mon, 22 Apr 2019 20:38:35 GMT
+Etag: W/"5cbe264b-187d"
+Cache-Control: max-age=600
+Vary: Accept-Encoding
+Content-Type: text/html; charset=utf-8
+Date: Thu, 13 Jun 2019 00:53:14 GMT
+X-Timer: S1560387195.824962,VS0,VE1
+Expires: Thu, 13 Jun 2019 00:48:33 GMT
+Retry-Count: 0
+X-Served-By: cache-mdw17346-MDW
+X-Cache: HIT
+X-Fastly-Request-Id: de6c78d7ce57d66e95164a889f5c89f5984ca8e7
+Access-Control-Allow-Origin: *
+Age: 31
+X-Cache-Hits: 1

@@ -1,0 +1,486 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap www.hackerone.com  -n -sV -Pn -p 443 -oA h1/www.hackerone.com/www.hackerone.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/www.hackerone.com/www.hackerone.com_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560310468
+Run Time:	4.79816913604736
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://www.hackerone.com:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee h1//www.hackerone.com/celerystalkOutput/www.hackerone.com_443_tcp_wayback.txt
+Output File:	h1/www.hackerone.com/celerystalkOutput/www.hackerone.com_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://www.hackerone.com:80/
+https://www.hackerone.com/&data=02%7C01%7Cluz.santacruz@gfrmedia.com%7C58284d1bb5fe479a901208d51af225d1%7C0664e7ac16864b1c8076da3299c8a5a5%7C0%7C0%7C636444549684051731&sdata=uqiifbvyQRZVnVF2JAZTewU+0MNFQbcaaA992zLXeO8=&reserved=0
+https://hackerone.com/&esheet=51506840&newsitemid=20170208005334&lan=en-US&anchor=HackerOne&index=1&md5=b77a894e68798a0a99475995145e7611
+https://hackerone.com/&esheet=51508633&newsitemid=20170213005131&lan=en-US&anchor=HackerOne&index=2&md5=bf7c4841541d46b16be366aaa5695a3e
+https://hackerone.com/&esheet=51538543&newsitemid=20170410005453&lan=en-US&anchor=HackerOne&index=1&md5=1f7f3da813e94a688fa81a342685819c
+https://hackerone.com/&esheet=51538543&newsitemid=20170410005454&lan=en-US&anchor=HackerOne&index=1&md5=1f7f3da813e94a688fa81a342685819c
+https://hackerone.com/&esheet=51580778&newsitemid=20170628005949&lan=nl-NL&anchor=HackerOne&index=1&md5=e4b35742efbad76bf3a521690ec6e897
+https://hackerone.com/&esheet=51580778&newsitemid=20170628006264&lan=fr-FR&anchor=HackerOne&index=1&md5=3be0969567931ff49b9d7c6782258c64
+https://hackerone.com/&esheet=51580778&newsitemid=20170628006273&lan=de-DE&anchor=HackerOne&index=1&md5=063c04954262804b0f2f43a642565093
+https://hackerone.com/&esheet=51587616&newsitemid=20170711006694&lan=en-US&anchor=HackerOne&index=1&md5=e663e17b05ca188a343fec6de09579da
+https://www.hackerone.com/&esheet=51592232&newsitemid=20170720005319&lan=en-US&anchor=HackerOne&index=1&md5=5f43639e8f6321bb36191bd602a04e00
+https://hackerone.com/&esheet=51667232&newsitemid=20170810005301&lan=en-US&anchor=HackerOne&index=1&md5=38eca43fc879adbc80bc28ec560bc01b
+https://hackerone.com/&esheet=51701635&newsitemid=20171018006598&lan=en-US&anchor=HackerOne&index=1&md5=6437a067c944f1f3b01e0529f7336544
+https://hackerone.com/&esheet=51744399&newsitemid=20180117005430&lan=en-US&anchor=HackerOne&index=1&md5=f9e801af6055f70cc1f304fab290dc5a
+https://www.hackerone.com/&esheet=51748445&newsitemid=20180124006035&lan=en-US&anchor=HackerOne&index=1&md5=fcbac085cd9177d0fffca1ee22d23b28
+https://www.hackerone.com/&esheet=51759221&newsitemid=20180215005220&lan=en-US&anchor=HackerOne&index=1&md5=d071659ade6bfa7cc889a341a37118bb
+https://www.hackerone.com/&esheet=51780040&newsitemid=20180328005304&lan=en-US&anchor=HackerOne&index=1&md5=27b3981bf2774249f410cbf94e2975d0
+https://www.hackerone.com/&esheet=51855787&newsitemid=20180822005141&lan=en-US&anchor=hacker-powered+security+platform&index=6&md5=833290499ce787b87365834c078ef732
+https://www.hackerone.com/&esheet=51855787&newsitemid=20180822005141&lan=en-US&anchor=HackerOne&index=1&md5=742b1df49efeaa81d641b60388458dce
+https://www.hackerone.com/&esheet=51870820&newsitemid=20180921005377&lan=en-US&anchor=hacker-powered+security+platform&index=16&md5=357eedec4d7c8522a3867519bf346497
+https://www.hackerone.com/&esheet=51870820&newsitemid=20180921005377&lan=en-US&anchor=HackerOne&index=1&md5=c4753c3eaf5dbb690b9ccd9fba2f6f46
+https://www.hackerone.com/&esheet=51871829&newsitemid=20180925005271&lan=en-US&anchor=hacker-powered+security+platform&index=8&md5=975915d8fb1760df86b9b60b5c569d20
+https://hackerone.com/&esheet=51871829&newsitemid=20180925005271&lan=en-US&anchor=HackerOne&index=1&md5=e3c44691139564d042de8cc83ff8ecc6
+https://www.hackerone.com/&esheet=51875357&newsitemid=20181001005299&lan=en-US&anchor=hacker-powered+security+platform&index=3&md5=d315f31557e0b5a82c09bb5f345d33df
+https://www.hackerone.com/&esheet=51877241&newsitemid=20181003005605&lan=en-US&anchor=hacker-powered+security+platform&index=8&md5=77ea7741192a96e6eaf3f203f68e0a3e
+https://www.hackerone.com/&esheet=51877241&newsitemid=20181003005605&lan=en-US&anchor=HackerOne&index=1&md5=60072875ee187580a30fc0c7e0a6d304
+https://www.hackerone.com/&esheet=51887875&newsitemid=20181024005184&lan=en-US&anchor=hacker-powered+security+platform&index=12&md5=43b99c4de4fa6f4a9dc0eb9ca900aff4
+https://www.hackerone.com/&esheet=51887875&newsitemid=20181024005184&lan=en-US&anchor=HackerOne&index=1&md5=1399253a6f2ae3b1b491e75480de77a5
+https://www.hackerone.com/&esheet=51908672&newsitemid=20181204005338&lan=en-US&anchor=HackerOne&index=1&md5=a97dce5982e48efa4ad1f41278d27f80
+https://www.hackerone.com/&esheet=51917112&newsitemid=20181220006005&lan=en-US&anchor=hacker-powered+security+platform&index=3&md5=65d70bb3a9e62c34fbfeb3f146af87e1
+https://www.hackerone.com/&esheet=51917112&newsitemid=20181220006005&lan=en-US&anchor=HackerOne&index=1&md5=3710b5bbed1b58daf2dd75af432aa1e2
+https://www.hackerone.com/&esheet=51917218&newsitemid=20181220005150&lan=en-US&anchor=hacker-powered+security+platform&index=10&md5=52fe0b69de28bcfb538f67659fe66e76
+https://www.hackerone.com/&esheet=51917218&newsitemid=20181220005150&lan=en-US&anchor=HackerOne&index=1&md5=0ebdc59891044d6deb2427abf6cca3b4
+https://www.hackerone.com/&esheet=51923395&newsitemid=20190109005484&lan=en-US&anchor=hacker-powered+security+platform&index=4&md5=8b554805256ca3f60123c9d652602f4f
+http://www.hackerone.com/&esheet=51923395&newsitemid=20190109005484&lan=en-US&anchor=HackerOne&index=2&md5=d4f4457f4831e04f8ea081dd62473a70
+http://www.hackerone.com/.htaccess
+https://hackerone.com/003random
+https://hackerone.com/007dave007
+https://hackerone.com/007dave007?disclosed=true
+https://hackerone.com/00day
+https://hackerone.com/00day/thanks
+https://hackerone.com/00day?disclosed=true
+https://hackerone.com/0689
+https://hackerone.com/0a1e1f11-257e-4b46-b949-c7151212ffbb/embedded_submissions/new
+https://hackerone.com/0ang3el
+https://hackerone.com/0ctac0der
+https://hackerone.com/0ctac0der/thanks
+https://hackerone.com/0ctac0der?disclosed=true
+https://hackerone.com/0dayexploit
+https://hackerone.com/0daystolive
+https://hackerone.com/0kn0ck
+https://hackerone.com/0kn0ck?disclosed=true
+https://hackerone.com/0rbit
+https://hackerone.com/0thm4n_whitehatsecurity
+https://hackerone.com/0thm4n_whitehatsecurity/thanks
+https://hackerone.com/0thm4n_whitehatsecurity?disclosed=true
+https://hackerone.com/0x0
+https://hackerone.com/0x0a
+https://hackerone.com/0x4148
+https://hackerone.com/0x4148?disclosed=true
+https://hackerone.com/0x4464
+https://hackerone.com/0xacb
+https://hackerone.com/0xamir
+https://hackerone.com/0xcccc
+https://hackerone.com/0xhimanshu
+https://hackerone.com/0xlabs
+https://hackerone.com/0xsobky
+https://hackerone.com/0xsobky/thanks
+https://hackerone.com/0xsobky?disclosed=true
+https://hackerone.com/0xyukimm
+https://hackerone.com/1-2
+https://hackerone.com/101
+https://hackerone.com/101?disclosed=true
+https://hackerone.com/1110vijaykumar
+https://hackerone.com/1110vijaykumar?disclosed=true
+https://hackerone.com/1234123123
+https://hackerone.com/1lastbr3ath
+https://hackerone.com/1lastbr3ath/thanks
+https://hackerone.com/1lastbr3ath?disclosed=true
+https://hackerone.com/1n3
+https://hackerone.com/1n3/thanks
+https://hackerone.com/1n3?disclosed=true
+https://hackerone.com/2342342423
+https://hackerone.com/23ranjan
+https://hackerone.com/23ranjan/thanks
+https://hackerone.com/23ranjan?disclosed=true
+https://hackerone.com/24shubham02
+https://hackerone.com/24shubham02?disclosed=true
+https://hackerone.com/2day
+https://hackerone.com/2day?disclosed=true
+https://hackerone.com/2john4tv
+https://hackerone.com/34300394
+https://hackerone.com/39dc43393486a3abef92e6f4
+https://hackerone.com/39dc43393486a3abef92e6f4?disclosed=true
+https://hackerone.com/3apa3a
+https://hackerone.com/3apa3a?disclosed=true
+https://hackerone.com/41w4r10r
+https://hackerone.com/4815162342
+https://hackerone.com/4815162342?disclosed=true
+https://hackerone.com/4cad
+https://hackerone.com/4cad/badges
+https://hackerone.com/4cad/thanks
+https://hackerone.com/4chan
+https://hackerone.com/4chan/thanks
+https://hackerone.com/4kh
+https://hackerone.com/4kh?disclosed=true
+https://hackerone.com/4lemon
+https://hackerone.com/4lemon/badges
+https://hackerone.com/4lemon/thanks
+https://hackerone.com/4lemon?disclosed=true
+https://hackerone.com/4lemon?page=2
+https://hackerone.com/4lemon?show_all=true
+https://hackerone.com/4n0nym0us
+https://hackerone.com/4n0nym0us?disclosed=true
+https://hackerone.com/4p00rv
+https://hackerone.com/50m-ctf
+https://hackerone.com/50m-ctf/thanks
+https://hackerone.com/51201
+https://hackerone.com/53n5h1_
+https://hackerone.com/53n5h1_?disclosed=true
+https://hackerone.com/5haked
+https://hackerone.com/5z6ar7lu15
+https://hackerone.com/678
+https://hackerone.com/678?disclosed=true
+https://hackerone.com/8ayac
+https://hackerone.com/93c08539
+https://hackerone.com/93c08539/thanks
+https://hackerone.com/93c08539?disclosed=true
+https://hackerone.com/93c08539?utm_source=h1&utm_medium=blog&utm_content=hacker&utm_campaign=top-reports-2016
+https://hackerone.com/962d7e24-cb51-4f8a-9edc-5ed966857d44/embedded_submissions/new
+https://hackerone.com/99designs
+https://hackerone.com/99designs/reports/new
+https://hackerone.com/99designs/thanks
+https://hackerone.com/99designs/thanks/2014
+https://hackerone.com/99designs/thanks/2015
+https://hackerone.com/99designs/thanks?limit=5
+https://hackerone.com/99designs?show_all=true
+http://www.hackerone.com/?afdt=KMq0YhuRjJ8KEwjohOP-sqObAhUKTscKHRgeVNcYAyAAMIrwoAM4DVCK8KADUNH2qAM&search=%22%3E%3Cscript%3Ealert%2822%29%3C%2Fscript%3E
+http://hackerone.com/?ref=producthunt
+https://www.hackerone.com/?source=GovDelivery
+https://hackerone.com/?utm_medium=referral&utm_source=zeef.com&utm_campaign=ZEEF
+https://hackerone.com/a0005
+https://hackerone.com/a0005/thanks
+https://hackerone.com/a0005?disclosed=true
+https://hackerone.com/a0xnirudh
+https://hackerone.com/a0xnirudh/thanks
+https://hackerone.com/a0xnirudh?disclosed=true
+https://hackerone.com/a1
+https://hackerone.com/a2
+https://hackerone.com/a7medel-ma7alawy
+https://hackerone.com/a7medel-ma7alawy?disclosed=true
+https://hackerone.com/a_rrahmani
+https://hackerone.com/a_rrahmani?disclosed=true
+https://hackerone.com/a_yudakov
+https://hackerone.com/a_yudakov?disclosed=true
+https://hackerone.com/aa23
+https://hackerone.com/aaaelis
+https://hackerone.com/aaditya_purani
+https://hackerone.com/aaj
+https://hackerone.com/aaj?disclosed=true
+https://hackerone.com/aaj__
+https://hackerone.com/aaj__/thanks
+https://hackerone.com/aaj__?disclosed=true
+https://hackerone.com/aam1t5
+https://hackerone.com/aam1t5?disclosed=true
+https://hackerone.com/aamir
+https://hackerone.com/aamir/thanks
+https://hackerone.com/aamir?disclosed=true
+https://hackerone.com/aarc_rekc
+https://hackerone.com/aarc_rekc?disclosed=true
+https://hackerone.com/aarizkhan
+https://hackerone.com/aarizkhan?disclosed=true
+https://hackerone.com/aarmageddon
+https://hackerone.com/aarmageddon?disclosed=true
+https://hackerone.com/aaro_nullger3_h4
+https://hackerone.com/aaro_nullger3_h4?sort_type=latest_disclosable_activity_at&filter=type%3Aall%20from%3Aaaro_nullger3_h4&page=1&range=forever
+https://hackerone.com/aaron8456
+https://hackerone.com/aaron_costello
+https://hackerone.com/aaron_costello?disclosed=true
+https://hackerone.com/abdelhafid
+https://hackerone.com/abdellahyal
+https://hackerone.com/abdellahyal?disclosed=true
+https://hackerone.com/abdul1ah
+https://hackerone.com/abdul_r3hman
+https://hackerone.com/abdullah
+https://hackerone.com/abdullah?disclosed=true
+https://hackerone.com/abdulraheem30042
+https://hackerone.com/abdulraheem30042/thanks
+https://hackerone.com/abdulraheem30042?disclosed=true
+https://hackerone.com/abdulwasay
+https://hackerone.com/abdulwasay?disclosed=true
+https://hackerone.com/abessadek
+https://hackerone.com/abessadek?disclosed=true
+https://hackerone.com/abhartiya
+https://hackerone.com/abhijeth
+https://hackerone.com/abhijeth/thanks
+https://hackerone.com/abhijeth?disclosed=true
+https://hackerone.com/abhinandanreddy
+https://hackerone.com/abhishekdashora271
+https://hackerone.com/abhishekdashora271?disclosed=true
+https://hackerone.com/abhisheksingh
+https://hackerone.com/abhisheksingh/thanks
+https://hackerone.com/abhisheksingh?disclosed=true
+https://hackerone.com/abhrahan
+https://hackerone.com/abid
+https://hackerone.com/abigboy
+https://hackerone.com/abigboy?disclosed=true
+https://hackerone.com/abiral
+https://hackerone.com/aboukir
+https://hackerone.com/aboukir/thanks
+https://hackerone.com/aboukir?disclosed=true
+https://hackerone.com/about
+https://www.hackerone.com/about/ircs:/irc.freenode.net:6697/hackerone
+https://hackerone.com/abr1k0s
+https://hackerone.com/abr1k0s/thanks
+https://hackerone.com/abr1k0s?disclosed=true
+https://hackerone.com/abraxyss
+https://hackerone.com/abraxyss?disclosed=true
+https://hackerone.com/absolute
+https://hackerone.com/absolute?disclosed=true
+http://www.hackerone.com:80/Accesorios-Para-Golf.html?afdt=lbhWxv3pAJYKEwjohOP-sqObAhUKTscKHRgeVNcYASAOMIrwoAM4DVCK8KADUNH2qAM
+https://hackerone.com/achaykin
+https://hackerone.com/achempion
+https://hackerone.com/achilli3st
+https://hackerone.com/achilli3st/thanks
+https://hackerone.com/achilli3st?disclosed=true
+https://hackerone.com/acid_basic
+https://hackerone.com/acid_creative
+https://hackerone.com/acid_creative/thanks
+https://hackerone.com/acid_creative?disclosed=true
+https://hackerone.com/acon
+https://hackerone.com/activities/
+https://hackerone.com/acuotaff
+https://hackerone.com/acuse52bc
+https://hackerone.com/acuse52bc?disclosed=true
+https://hackerone.com/adambutler
+https://hackerone.com/adapcare
+https://hackerone.com/adapcare?claim=true
+https://hackerone.com/adapcare?view_policy=true
+https://hackerone.com/adawling
+https://hackerone.com/addelindh
+https://hackerone.com/adeelimtiaz90
+https://hackerone.com/adeelimtiaz90/thanks
+https://hackerone.com/adeelimtiaz90?disclosed=true
+https://hackerone.com/adelos
+https://hackerone.com/adelos/thanks
+https://hackerone.com/adelos?disclosed=true
+https://hackerone.com/adiivascu
+https://hackerone.com/adiivascu/thanks
+https://hackerone.com/adiivascu?disclosed=true
+https://hackerone.com/adiivascu?page=2
+https://hackerone.com/adiivascu?show_all=true
+https://hackerone.com/aditya
+https://hackerone.com/aditya?disclosed=true
+https://hackerone.com/adl
+https://hackerone.com/adl/thanks
+https://hackerone.com/adl?disclosed=true
+https://hackerone.com/adobe
+https://hackerone.com/adobe/reports/new
+https://hackerone.com/adobe/thanks
+https://hackerone.com/adobe/thanks/2015
+https://hackerone.com/adobe/thanks/2016
+https://hackerone.com/adobe/thanks/prior
+https://hackerone.com/adobe/thanks?limit=5
+https://hackerone.com/adobe?show_all=true
+https://hackerone.com/adobe?view_policy=true
+https://hackerone.com/adrianbelen
+https://hackerone.com/adrianbelen/thanks
+https://hackerone.com/adrianbelen?disclosed=true
+https://hackerone.com/adrianbelen?page=2
+https://hackerone.com/adrianbelen?page=3
+https://hackerone.com/adrianbelen?page=4
+https://hackerone.com/adrianbelen?show_all=true
+https://hackerone.com/adrianomarcmont
+https://hackerone.com/adrianomarcmont/thanks
+https://hackerone.com/adrianomarcmont?disclosed=true
+https://hackerone.com/aerox
+https://hackerone.com/aesteral
+https://hackerone.com/aesteral/thanks
+https://hackerone.com/aesteral?disclosed=true
+https://hackerone.com/aesteral?utm_source=h1&utm_medium=blog&utm_content=hacker&utm_campaign=top-reports-2016
+https://hackerone.com/aeternity
+https://hackerone.com/afinepl
+https://hackerone.com/afr1ka
+https://hackerone.com/aftapper
+https://hackerone.com/aftapper?disclosed=true
+https://hackerone.com/afx
+https://hackerone.com/agarri_fr
+https://hackerone.com/agarri_fr/thanks
+https://hackerone.com/agarri_fr?disclosed=true
+https://hackerone.com/agh
+https://hackerone.com/aghora
+https://hackerone.com/agnidevan
+https://hackerone.com/ahmed_abdalla
+https://hackerone.com/ahmed_abdalla/thanks
+https://hackerone.com/ahmed_abdalla?disclosed=true
+https://hackerone.com/ahmedadel
+https://hackerone.com/ahmedkhouja
+https://hackerone.com/ahsan111
+https://hackerone.com/ahsan111?disclosed=true
+
+Snip... Only displaying first 300 of the total 21996 lines...
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560310552
+Run Time:	234.986832141876
+Command:	whatweb https://www.hackerone.com:443 -a4 --colour=never | sed s/],/]\\n/g | tee h1//www.hackerone.com/celerystalkOutput/www.hackerone.com_443_tcp_whatweb.txt
+Output File:	h1/www.hackerone.com/celerystalkOutput/www.hackerone.com_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://www.hackerone.com:443 [200 OK] CloudFlare, Content-Language[en]
+ Cookies[__cfduid]
+ Country[UNITED STATES][US]
+ Drupal, HTML5, HTTPServer[cloudflare]
+ HttpOnly[__cfduid]
+ IP[104.16.99.52]
+ Open-Graph-Protocol[345444188982280]
+ Script[application/json]
+ Strict-Transport-Security[max-age=31536000; includeSubDomains; preload]
+ Title[Bug Bounty - Hacker Powered Security Testing | HackerOne]
+ UncommonHeaders[x-drupal-dynamic-cache,link,x-generator,content-security-policy,x-drupal-cache,x-request-id,x-ah-environment,x-geo-country,referrer-policy,x-content-type-options,x-permitted-cross-domain-policies,expect-ct,x-cache-hits,cf-ray]
+ Via-Proxy[varnish]
+ X-Frame-Options[DENY]
+ X-UA-Compatible[IE=edge]
+ X-XSS-Protection[1; mode=block]
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560310684
+Run Time:	7.05778121948242
+Command:	docker run --rm wappalyzer/cli https://www.hackerone.com:443 | jq . | tee h1//www.hackerone.com/celerystalkOutput/www.hackerone.com_443_tcp_wappalyzer_cli.json
+Output File:	h1/www.hackerone.com/celerystalkOutput/www.hackerone.com_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://www.hackerone.com:443/"
+  ],
+  "applications": [
+    {
+      "name": "Acquia Cloud",
+      "confidence": "100",
+      "version": "",
+      "icon": "acquia-cloud.png",
+      "website": "https://www.acquia.com/",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "CloudFlare",
+      "confidence": "100",
+      "version": "",
+      "icon": "CloudFlare.svg",
+      "website": "http://www.cloudflare.com",
+      "categories": [
+        {
+          "31": "CDN"
+        }
+      ]
+    },
+    {
+      "name": "Drupal",
+      "confidence": "100",
+      "version": "8",
+      "icon": "Drupal.svg",
+      "website": "http://drupal.org",
+      "categories": [
+        {
+          "1": "CMS"
+        }
+      ]
+    },
+    {
+      "name": "Google Analytics",
+      "confidence": "100",
+      "version": "UA",
+      "icon": "Google Analytics.svg",
+      "website": "http://google.com/analytics",
+      "categories": [
+        {
+          "10": "Analytics"
+        }
+      ]
+    },
+    {
+      "name": "Marketo",
+      "confidence": "100",
+      "version": "",
+      "icon": "Marketo.png",
+      "website": "https://www.marketo.com",
+      "categories": [
+        {
+          "32": "Marketing Automation"
+        }
+      ]
+    },
+    {
+      "name": "React",
+      "confidence": "100",
+      "version": "",
+      "icon": "React.png",
+      "website": "http://facebook.github.io/react",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "Varnish",
+      "confidence": "100",
+      "version": "",
+      "icon": "Varnish.svg",
+      "website": "http://www.varnish-cache.org",
+      "categories": [
+        {
+          "23": "Cache Tools"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "3.2.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery UI",
+      "confidence": "100",
+      "version": "1.12.1",
+      "icon": "jQuery UI.svg",
+      "website": "http://jqueryui.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "PHP",
+      "confidence": "0",
+      "version": "",
+      "icon": "PHP.svg",
+      "website": "http://php.net",
+      "categories": [
+        {
+          "27": "Programming Languages"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}

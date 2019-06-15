@@ -1,0 +1,20 @@
+200 OK
+X-Cache: MISS
+Server: GitHub.com
+Etag: W/"5cbe264b-1381"
+Expires: Thu, 13 Jun 2019 01:03:19 GMT
+Cache-Control: max-age=600
+Date: Thu, 13 Jun 2019 00:53:19 GMT
+Age: 0
+X-Timer: S1560387200.777145,VS0,VE17
+Vary: Accept-Encoding
+Content-Type: text/html; charset=utf-8
+X-Github-Request-Id: F97C:019A:3EB20D:52165A:5D019E7F
+Accept-Ranges: bytes
+Via: 1.1 varnish
+Access-Control-Allow-Origin: *
+Retry-Count: 0
+X-Cache-Hits: 0
+Last-Modified: Mon, 22 Apr 2019 20:38:35 GMT
+X-Served-By: cache-mdw17337-MDW
+X-Fastly-Request-Id: a0c873586d5409a373086076a0ace0b7e2e01dae

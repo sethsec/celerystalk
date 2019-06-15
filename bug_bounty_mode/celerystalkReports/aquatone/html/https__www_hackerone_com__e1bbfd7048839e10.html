@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+  <head>
+    <meta charset="utf-8" />
+<meta name="title" content="The $30,000 Gem: Part 1 | HackerOne" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The $30,000 Gem: Part 1" />
+<meta name="twitter:description" content="Opening your database to the world is a scary thought! But that’s exactly what we wanted to do by implementing a GraphQL endpoint. Feeling stuck with the classic REST-ish JSON API, there were a multitude of problems that we were looking to get rid of." />
+<meta name="twitter:site" content="@Hacker0x01" />
+<meta name="description" content="*/
+
+/*--&gt;*/
+Opening your database to the world is a scary thought! But that’s exactly what we wanted to do by implementing a GraphQL endpoint. Feeling stuck with the classic REST-ish JSON API, there were a multitude of problems that we were looking to get rid of." />
+<meta name="generator" content="" />
+<meta name="twitter:url" content="https://www.hackerone.com/blog/the-30-thousand-dollar-gem-part-1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.hackerone.com/blog/the-30-thousand-dollar-gem-part-1" />
+<link rel="canonical" href="/blog/the-30-thousand-dollar-gem-part-1" />
+<link rel="shortlink" href="/node/1086" />
+<link rel="revision" href="/blog/the-30-thousand-dollar-gem-part-1" />
+
+    <title>The $30,000 Gem: Part 1 | HackerOne</title>
+    <meta property="og:site_name" content="HackerOne">
+    <meta property="fb:app_id" content="345444188982280">
+    <link rel="stylesheet" href="/sites/default/files/css/css_PjHbx1pBz4BgG4yxUNTdK-JCceIp0vdR6QKI8AjfSFk.css?psyc7h" media="all" />
+<link rel="stylesheet" href="/sites/default/files/css/css_yOiYRp8A8RnOIrCNQ6UkTnEBep18GQin6E08AssMWes.css?psyc7h" media="all" />
+
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog.rss">
+  </head>
+  <body class="blog_posts blog-the-30-thousand-dollar-gem-part-1 -node-1086">
+
+        
+    <div class="search-wrapper">
+    <i class="icon-cross"></i>
+    <div class="inner-container">
+        <form>
+          <div class="search-nav">
+            <i class="icon-search"></i>
+            <input class="search" type="text" placeholder="Search" name="query">
+            <input class="search-results" type="submit" value="See Results">
+          </div>
+        </form>
+    </div>
+</div>
+<div class="js-topbar">
+    <div data-reactroot="" class="topbar">
+        <div class="triangle">
+            <div class="bg-color"></div>
+        </div>
+        <div class="inner-container">
+            <div>
+                <a class="app__logo" href="/"></a>
+                                    <div class="topbar-toggle"><i class="icon-hamburger"></i></div>
+                            </div>
+                        <div class="topbar-subnav-wrapper">
+                <ul class="topbar-subnav">
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/users/sign_in">Sign In </a>&nbsp;|&nbsp;</li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right" style="display:none;"><a class="topbar-subnav-link" href="https://hackerone.com/bugs">Go to Inbox </a></li>
+                    <li class="topbar-subnav-item topbar-subnav-item--pull-right"><a class="topbar-subnav-link" href="https://hackerone.com/sign_up">Sign Up</a></li>
+                    <li class="topbar-subnav-item"><a class="topbar-subnav-link " href=""><i class="icon-search"></i></a></li>
+                </ul>
+            </div>
+            <div class="topbar-navigation-wrapper">
+                <ul class="topbar-navigation">
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Business</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/product/overview">Product Overview</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/response">HackerOne Response</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/challenge">HackerOne Challenge</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/product/bounty">HackerOne Bounty</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/resources">Resources</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#case-studies">Case Studies</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#guides">Guides</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#reports">Reports</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#webinars">Webinars</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#videos">Videos</a></li>
+                                    <li class="topbar__dropdown-item"><a class="topbar__dropdown-link" href="/resources#infographics">Infographics</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/services">Services</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/customers">Customers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/partners">Partners</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker-community">Meet the Hackers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/live-hacking">Live Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-d298e090745794c75ef9c8f9b15636d500e376fc93be644697a1c93b42d48e90">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/resources/forrester-total-economic-impact-study-hackerone">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">For Hackers</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/start-hacking">Start Hacking</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/hacker101">Hacker101</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/leaderboard/all-time">Leaderboard</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/internet-bug-bounty">Internet Bug Bounty</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/disclosure-guidelines">Disclosure Guidelines</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown col col--two-quarter cta">
+                                    <div class="views-element-container"><div class="js-view-dom-id-2983baef92203022fbe81e3cb70e1852daad23cab4e6c6a99e2a152d2f0d5772">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content"><a href="/hacker101">  <img src="/sites/default/files/styles/medium/public/H1_194_H101%20Social%20Cards_R1_V1Background_Green.jpg?itok=eUG9c-yC" width="220" height="116" alt="h101" typeof="foaf:Image" />
+
+
+</a></div></div><div class="views-field views-field-title"><span class="field-content">Learn how to hack</span></div><div class="views-field views-field-field-external-url-1"><div class="field-content primary-btn"><a href="/hacker101" class="primary-btn">Get Started</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a>
+                            </span>
+                        </span>
+                    </li>
+                    <li class="topbar-navigation-item"><span class="topbar-navigation-desktop-link"><span class="topbar-navigation-link">Company</span></span>
+                        <div class="topbar-navigation-item-sections">
+                            <div class="topbar-navigation-sections-wrapper inner-container">
+                                <ul class="topbar__dropdown col offset--one-quarter col--one-quarter">
+                                    <li class="topbar__dropdown-item"><a href="/about">About Us</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/events">Events</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/blog">Blog</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/press">Press</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/careers">Careers</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/branding">Brand Assets</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://hackerone.com/security">Security</a></li>
+                                    <li class="topbar__dropdown-item"><a href="https://support.hackerone.com/hc/en-us/sections/201086269-Organizations">Help Center</a></li>
+                                    <li class="topbar__dropdown-item"><a href="/contact">Contact Us</a></li>
+                                </ul>
+                                <ul class="topbar__dropdown cta col col--one-quarter">
+                                    <div class="views-element-container"><div class="js-view-dom-id-ec64376d222cc7c41185dd3c830b7dc7ce4f3953ab1354d71fa58e7dfc4d53ff">
+  
+  
+  
+
+  
+  
+  
+
+      <div class="views-row"><div class="views-field views-field-field-preview-image"><div class="field-content">  <img src="/sites/default/files/styles/medium/public/tei-web-thumbnail.png?itok=SFBPTO2t" width="220" height="184" alt="tei-web-thumbnail" typeof="foaf:Image" />
+
+
+</div></div><div class="views-field views-field-title"><span class="field-content">Forrester Total Economic Impact™ Study: HackerOne</span></div><div class="views-field views-field-field-external-url"><div class="field-content primary-btn"><a href="/resources/forrester-total-economic-impact-study-hackerone" class="primary-btn">Download</a></div></div></div>
+
+  
+  
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="topbar-navigation-item">
+                        <span class="topbar-navigation-desktop-link">
+                            <span class="topbar-navigation-link">
+                                <a href="https://hackerone.com/sign_up">Try&nbsp; HackerOne</a>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+                    </div>
+    </div>
+</div>
+
+    
+    <div class="js-full-width-container full-width-container superman-page">
+      <span data-reactroot="">
+        <div>
+          <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div id="page-wrapper">
+  <div id="page">
+
+            <div id="main-wrapper" class="layout-main-wrapper layout-container clearfix">
+      <div id="main" class="layout-main clearfix">
+        
+        <main id="content" class="column main-content" role="main">
+          <section class="section">
+            <a id="main-content" tabindex="-1"></a>
+              <div>
+    <div id="block-hackerone-content" data-block-plugin-id="system_main_block">
+  
+    
+          <div class="superman-hero superman-hero--small">
+        <div class="inner-container inner-container--medium">
+            <h1 class="superman-hero__title spec-superman-hero-title">The $30,000 Gem: Part 1</h1>
+            <ul class="list list--inline superman-text--small">
+                            </ul>
+        </div>
+    </div>
+    <div class="superman-container superman-container--tiny text-aligned-left ">
+        <div class="inner-container inner-container--medium">
+            <div class="row">
+                <div class="blog-main">
+                    <div class="">
+                        <div class="blog-info">
+                            <div class="date"><i class="fa fa-clock-o" aria-hidden="true"></i>Jun 8 2017
+                            </div>
+                            <div class="author"><i class="fa fa-user" aria-hidden="true"></i>
+                                                        siebejan                        
+                                                        </div>
+
+                            <div class="share">SHARE
+                                <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.hackerone.com%2Fblog%2Fthe-30-thousand-dollar-gem-part-1" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-facebook"></i></a>
+                                <a href="https://twitter.com/share?url=https%3A%2F%2Fwww.hackerone.com%2Fblog%2Fthe-30-thousand-dollar-gem-part-1&amp;text=The%20%2430%2C000%20Gem%3A%20Part%201" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-twitter"></i></a>
+                                <a href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2Fwww.hackerone.com%2Fblog%2Fthe-30-thousand-dollar-gem-part-1" class="superman-social-link" target="_blank" rel="noopener noreferrer"><i class="fa-share-linkedin"></i></a>
+                            </div>
+                            <div class="back">
+                            <a class="primary-btn" href="/blog">< BACK TO POSTS</a>
+                            </div>
+                        </div>
+                        <div>
+                            
+            <div><style type="text/css">
+<!--/*--><![CDATA[/* ><!--*/
+.CodeRay { font: 90% Courier, monospace; line-height: 1.5; } .inner-container--small { max-width: 980px; } body { color: #000; }
+
+/*--><!]]>*/
+</style><p dir="ltr">Opening your database to the world is a scary thought! But that’s exactly what we wanted to do by implementing a GraphQL endpoint. Feeling stuck with the classic REST-ish JSON API, there were a multitude of problems that we were looking to get rid of. Not being able to reuse endpoints because of under- or over-fetching, having to worry about security at every field, and dealing with inconsistencies were becoming a real headache. GraphQL seemed like a promising tool to solve that. It would allow front-end engineers to execute arbitrary queries to fetch any data they needed. Moreover, GraphQL would allow us to concentrate any and all internal data fetching calls to a single endpoint. Meaning that engineers wouldn’t have to worry about doing the right ACL check for every individual endpoint. Everybody would be able to query the GraphQL endpoint and rely on it always returning safe data.<br /><br />
+However, as the internal discussion around GraphQL started to take off, it was clear that everybody was anxious about how we would be able to make sure that the endpoint is secure. It became apparent that it would be necessary to somehow restrict access to certain objects and attributes based on the requesting user’s relationship with those objects. For example, if you created a report, you’re allowed to see all of the details. The program that you reported it to should also certainly see the details. But other users should not be given the same privileges. In this example, there are three users who each have three different relationships with the report. Based on their relationship they are allowed to view different attributes for different reasons.<br /><br />
+Having learned from a <a href="https://hackerone.com/reports/182358">healthy number</a> of <a href="https://hackerone.com/reports/188719">security</a> <a href="https://hackerone.com/reports/186230">issues</a> -- hence “the $30,000 Gem” -- we went to work on designing a layer between GraphQL and our database. This layer would be responsible for making sure that querying GraphQL would always return safe data -- and never something you would not be allowed to access. This is what this post is about. We hope to walk you through the security layer that we’ve implemented, the core principles that helped shape this layer, and what we hope to do with it next. Furthermore, we hope that this opens the door for more discussions with and suggestions from the open-source community on how we can further improve this functionality.</p>
+
+<h3 dir="ltr"><a href="https://github.com/Hacker0x01/protected_attribute">Protected Attribute</a></h3>
+
+<p><sub><span><em>Lacking the creativity to come up with a funny name, we settled for a boring one.</em></span></sub></p>
+
+<p dir="ltr">Hiding entire rows is an easy problem. By using the correct predicate for a where-statement, we can easily hide an entire row for users who are not allowed to interact with it. It is far more challenging to provide a “filtered” version of the same object, where you are given partial access. Some fields are viewable, and others are not. For example, in HackerOne we have the concept of reports. A report can be private, or it could be publicly disclosed. Participants, meaning the reporter and the various team members, are allowed to see both the title and the vulnerability. Other users, however, are not allowed to see these attributes. This complicates the issue even more. A report could, at some point during its lifetime, be publicly disclosed. At that point, anybody would be allowed to see the title and vulnerability.<br /><br />
+In this example, we’re continuously looking at the same object, but from the perspective of different users. For every type of relationship (reporter, member, other), there is a different set of attributes that the user is allowed to access. Also, for the publicly disclosed case, the privilege to access certain attributes depends on the state that the object itself is in. If the report is publicly disclosed, you are given access to more attributes than when it is not publicly disclosed. Not to mention that this is a clean-room example. The actual report model in HackerOne has many more properties, making the situation even more complicated.<br /><br />
+To cope with all of this, we needed a framework that would allow us to determine the relationship between the current or acting user, and the object with attributes that they were trying to access. Given this information, we would then be able to define what attributes the user is allowed to view based on their role. Essentially this allows us to present different versions of the same object to different users, hiding information where necessary. Ideally, this framework would be easy to read and extend. It should be hard to make mistakes, and it should be easy to explore and review. Put concretely: the question “How do we determine if a user is allowed to see the vulnerability of a report?” should be answerable by anybody within seconds.</p>
+
+<h3 dir="ltr">Code Talks</h3>
+
+<p dir="ltr">Alright, enough armchair-developing! Let’s see what this thing looks like in practice. Here is an example of how Protected Attribute would be able to protect our report model:</p>
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+<span>class</span> <span>ReportProtector</span>
+  include <span>Protector</span>
+
+  allow <span>:id</span>, has_property(<span>:public</span>) | has_role(<span>:participant</span>)
+  allow <span>:title</span>, has_property(<span>:public</span>) | has_role(<span>:participant</span>)
+  allow <span>:vulnerability</span>,
+    has_role(<span>:participant</span>) | (has_property(<span>:public</span>) &amp; has_property(<span>:full_disclosed</span>))
+  allow <span>:assigned_to</span>, has_role(<span>:team_member</span>)
+  allow <span>:some_unreleased_feature</span>, has_feature(<span>:here_to_win</span>)
+<span>end</span>
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+Let’s walk through this example step-by-step, and see what’s going on.</p>
+<!-- HTML generated using hilite.me -->
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+allow <span>:id</span>, has_property(<span>:public</span>) | has_role(<span>:participant</span>)
+allow <span>:title</span>, has_property(<span>:public</span>) | has_role(<span>:participant</span>)
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+Right off the bat, we start defining what attributes a report has, and who is allowed to read those attributes. For both the id and the title the same rules apply: you are allowed to view this attribute if you are a participant, or if the report is publicly disclosed. This is expressed by combining the two predicates with an OR<em> </em>operator.</p>
+<!-- HTML generated using hilite.me -->
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+allow <span>:vulnerability</span>,
+  has_role(<span>:participant</span>) | (has_property(<span>:public</span>) &amp; has_property(<span>:full_disclosed</span>))
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+Much like id and title, the actual vulnerability is also only visible for participants. However, not only must the report be publicly disclosed, it must be <em>fully</em> publicly disclosed. You see, a report can be made public in several ways. Fully public means that all the information is published, while partially public means that only select information is made public.</p>
+<!-- HTML generated using hilite.me -->
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+allow <span>:assigned_to</span>, has_role(<span>:team_member</span>)
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+This attribute is private information that is strictly meant for team members. No other roles, including the reporter, are allowed to view this information. As you’ll note, this means that the user making the request actually has multiple roles: they are part of both the participant's role as well as the team member role.</p>
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+allow <span>:some_unreleased_feature</span>, has_feature(<span>:here_to_win</span>)
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+For the last attribute, you’ll note that we’re not using roles at all to determine the visibility. Here we have an unreleased feature that is in development, and by using a feature toggle, we can switch it on or off for particular users. Similarly to roles, when the feature is not available for the current user, the field will not be accessible.</p>
+
+<p dir="ltr">Okay, now that we know how to define a protected version of a model, it’s time to figure out how to use it. Let’s get started!</p>
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+<span>def</span> <span>report_protector_factory</span>(current_user, report)
+  features = current_user.enabled_features.pluck <span>:name</span>
+  role = <span>if</span> current_user == report.reporter
+           <span>:reporter</span>
+         <span>elsif</span> current_user.in? report.team.members
+           <span>:member</span>
+         <span>else</span>
+           <span>:other</span>
+         <span>end</span>
+
+  properties = [
+    (<span>:public</span> <span>if</span> report.public?),
+    (<span>:full_disclosed</span> <span>if</span> report.full_disclosed?),
+  ].compact
+
+  <span>ReportProtector</span>.new \
+    report,
+    <span>features</span>: features,
+    <span>properties</span>: properties,
+    <span>role</span>: role
+<span>end</span>
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+Now, this is fairly essential. Here’s where we determine what the role of the user is. Similarly to <em>has_feature</em>, this is how Protected Attribute knows what to do when the <em>has_role</em> function is used. As you can see, even for this fairly simple example we already have three distinct roles. Depending on your use case, your objects may be even more complex. Also note that every user is only permitted to have one, distinct role. There is currently no support for having a user with multiple roles.</p>
+<!-- HTML generated using hilite.me -->
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+properties = [
+  (<span>:public</span> <span>if</span> report.public?),
+  (<span>:full_disclosed</span> <span>if</span> report.full_disclosed?),
+].compact
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+Aside from roles and features, there is one more type of check that can be done. Here we instantiate a list of features which describe the state that the object is in. This is used for the <em>has_property</em> method.</p>
+<!-- HTML generated using hilite.me -->
+
+<div class="CodeRay">
+<div class="code">
+<pre>
+<span>ReportProtector</span>.new \
+  report, 
+  <span>features</span>: features,
+  properties: properties,
+  <span>role</span>: role
+</pre>
+</div>
+</div>
+
+<p dir="ltr"><br />
+Now that we have all the information we need, it’s time to simply instantiate the protected version of the report. From here on out, Protected Attribute will protect the instance. When calling an attribute that you are not allowed to access, Protected Attribute will return an empty value. Conversely, if you are allowed to view that attribute, the call will be proxied to the protected object (report), and you’ll be able to see the actual value.</p>
+
+<p dir="ltr">And this is pretty much how to use the Protected Attribute gem! You can specify what conditions should be met before somebody is allowed to access a certain attribute. Be it their role, the state of the object, or even something external, such as a feature toggle.</p>
+
+<h3 dir="ltr">Request For Comments</h3>
+
+<p dir="ltr">This concludes the guided tour of Protected Attribute. We hope it was a valuable and informative experience. While we tried our best to be confident, to be completely frank, we’re not sure how useful our solution actually is. So far, Protected Attribute performs great in our GraphQL endpoint, and our coworkers find it easy to understand and extend. But there’s always room for improvement. That's why we’d love to hear suggestions from you! Is there a use-case we’ve overlooked, or is there something else we can improve upon? We’d also love to compare Protected Attribute against solutions that you build. Perhaps there are ideas that can be borrowed between multiple solutions. In short, we hope you give Protected Attribute a try real soon and <a href="https://github.com/Hacker0x01/protected_attribute/issues">tell us what you think about it on GitHub</a>.</p>
+
+<h3 dir="ltr">The Grand Plan</h3>
+
+<p dir="ltr">Alright. Up until this point, we’ve focused solely on direct object references. This is where an object is presented to a user, but not all of its attributes. There’s another side to this story that we haven’t touched upon yet.<br /><br />
+Imagine that, instead of trying to access a single report, we want to show you a collection of reports. Moreover, you are allowed to filter and sort this collection. Now, it could very well be the case that this collection contains one or more reports of which you are not allowed to see. For example, you’re not allowed to see the title of some reports. However, if you’re still able to sort on the title, you might be able to implicitly infer the title from the report’s position in the list. If it is listed alphabetically, and the report is listed after reports starting with ‘C’, but before reports starting with ‘E’, you could assume the report title starts the character ‘D’. Given enough time, you would technically be able to infer the entire title this way.<br /><br />
+The issue here is that our database back-end (e.g. PostgreSQL) doesn’t share the notion of protected objects that our application has. It has no idea what attributes (read: columns) the current user is allowed to see, and so cannot take this into account. This problem is something that we hope to tackle in an upcoming sequel to this blog post. We’d love to share more details with you, so please, stay tuned for Part 2!</p>
+
+<p class="text-align-right" dir="ltr"><a href="https://github.com/willianvdv">Willian van der Velde</a><br /><a href="https://github.com/mvgijssel">Maarten van Gijssel</a><br /><a href="https://github.com/esjee">Siebe Jan Stoker</a></p>
+
+<p class="text-align-center" dir="ltr" style="box-sizing: border-box; margin: 0px 0px 24px; padding: 0px; border: 0px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-variant-numeric: inherit; font-variant-east-asian: inherit; font-weight: 300; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73); text-align: center; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-style: initial; text-decoration-color: initial;"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"> </span></span></span></span></p>
+
+<hr style="box-sizing: border-box; color: rgb(73, 70, 73); font-family: EffraLight; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 300; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-style: initial; text-decoration-color: initial;" /><p style="box-sizing: border-box; margin: 0px 0px 24px; padding: 0px; border: 0px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-variant-numeric: inherit; font-variant-east-asian: inherit; font-weight: 300; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73); letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-style: initial; text-decoration-color: initial;"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);"><span data-reactroot="" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.5; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(73, 70, 73);">HackerOne is the<span> </span><a href="https://www.hackerone.com/" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">#1 hacker-powered security platform</a>, helping organizations find and fix critical vulnerabilities before they can be criminally exploited. As the contemporary alternative to traditional<span> </span><a href="https://www.hackerone.com/product/challenge" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">penetration testing</a>, our<span> </span><a href="https://hackerone.com/bug-bounty-programs" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">bug bounty program</a><span> </span>solutions encompass<span> </span><a href="https://www.hackerone.com/product/response" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">vulnerability assessment</a>,<span> </span><a href="https://www.hackerone.com/resources/hacker-powered-security-report" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">crowdsourced testing</a><span> </span>and<span> </span><a href="https://www.hackerone.com/resources/responsible-disclosure-overview" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">responsible disclosure management</a>. Discover more about our<span> </span><a href="https://www.hackerone.com/product/overview" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">security testing solutions</a><span> </span>or<span> </span><a href="https://hackerone.com/teams/new" style="box-sizing: border-box; margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 1.56; font-family: EffraLight; font-size: 16px; vertical-align: baseline; color: rgb(236, 16, 117); text-decoration: none;">Contact Us</a><span> </span>today.</span></span></span></span></span></p>
+</div>
+      
+                        </div>
+                              
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="inner-container">
+            <div class="row">
+                <div class="blog-sidebar">
+                    <div class="superman-title">
+                        <h2 class="superman-title__content">Related Posts</h2>
+                    </div>
+                                        
+                    <div class="views-element-container"></div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+  </div>
+
+  </div>
+
+          </section>
+        </main>
+                      </div>
+    </div>
+        
+  </div>
+</div>
+
+  </div>
+
+        <div class="superman-footer">
+    <div class="superman-container superman-container--small superman-container--footer">
+        <div class="inner-container">
+            <div class="row row--20">
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Business</h4><a class=" footer superman-text--small" href="/product/overview">Product Overview</a><a class=" footer superman-text--small" href="/product/response">HackerOne Response</a><a class=" footer superman-text--small" href="/product/bounty">HackerOne Bounty</a><a class=" footer superman-text--small" href="/product/challenge">HackerOne Challenge</a><a class=" footer superman-text--small" href="/services">Services</a><a class=" footer superman-text--small" href="/resources">Resources</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="/hacker-community">Meet the Hackers</a><a class=" footer superman-text--small" href="/live-hacking">Live Hacking</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/programs.html">Business Support</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">For Hackers</h4><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a><a class=" footer superman-text--small" href="/hacker101">Hacker101</a><a class=" footer superman-text--small" href="https://hackerone.com/leaderboard/all-time">Leaderboard</a><a class=" footer superman-text--small" href="https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&filter=type%3Aall&page=1&range=forever">Hacktivity</a><a class=" footer superman-text--small" href="https://hackerone.com/directory?query=type%3Ahackerone&sort=resolved_reports_closed%3Adescending&page=1">Program Directory</a><a class=" footer superman-text--small" href="https://support.hackerone.com/hc/en-us/sections/201108659-Hackers">Hacker Support</a><a class=" footer superman-text--small" href="/disclosure-guidelines">Disclosure Guidelines</a><a class=" footer superman-text--small" href="https://hackerone.com/disclosure-assistance">Disclosure Assistance</a>
+                </div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Community</h4><a class=" footer superman-text--small" href="/product/community">Community Edition</a><a class=" footer superman-text--small" href="/internet-bug-bounty">Internet Bug Bounty</a><a class=" footer superman-text--small" href="/zerodaily">Zero Daily Newsletter</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Company</h4><a class=" footer superman-text--small" href="/about">About Us</a><a class=" footer superman-text--small" href="/events">Events</a><a class=" footer superman-text--small" href="https://docs.hackerone.com/">Documentation</a><a class=" footer superman-text--small" href="/blog">Blog</a><a class=" footer superman-text--small" href="/press">Press</a><a class=" footer superman-text--small" href="/careers">Careers</a><a class=" footer superman-text--small" href="/customers">Customers</a><a class=" footer superman-text--small" href="/partners">Partners</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Security</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Contact</h4><a class=" footer superman-text--small" href="/contact">Contact Sales</a><a class=" footer superman-text--small" href="https://hackerone.com/security">Report a Bug</a><a class="footer superman-text--small" href="https://support.hackerone.com/hc/en-us/requests/new">Support</a></div>
+                <div class="col superman-footer--column text-aligned-left">
+                    <h4 class="superman-footer__heading">Try HackerOne</h4><a class=" footer superman-text--small" href="https://hackerone.com/sign_up">Start a Program</a><a class=" footer superman-text--small" href="/start-hacking">Start Hacking</a></div>
+            </div>
+            <div class="row">
+                <div class="pull-right"><a href="https://facebook.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-facebook"></i></a><a href="https://twitter.com/Hacker0x01" class="superman-footer__social-link"><i class="fa-share-twitter"></i></a><a href="https://www.linkedin.com/company/hackerone" class="superman-footer__social-link"><i class="fa-share-linkedin"></i></a></div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <a class="superman-footer__logo" href="/"><img src="/assets/images/logo_transparent.png" alt="HackerOne"></a>
+                </div>
+            </div>
+            <div class="row row--20">
+                <div class="pull-right">
+                    <ul class="superman-footer__utility superman-text--small">
+                        <li class="superman-footer__utility-item">2019 © HackerOne.</li>
+                        <li class="superman-footer__utility-item"><a href="/terms">Terms |</a></li>
+                        <li class="superman-footer__utility-item"><a href="/privacy">Privacy |</a></li>
+                        <li class="superman-footer__utility-item"><a href="https://hackerone.com/security">Security</a></li>
+                    </ul>                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </span>
+    </div>
+
+    
+    <form id="mktoForm_1013"></form>
+        <div class="footer-popup">
+      <p>We use cookies to collect information to help us personalise your experience and improve the functionality and performance of our site. By continuing to use our site, you consent to our use of cookies. For more information see our <a href="/privacy#cookie-policy">cookies policy.</a><a class="primary-btn--small" href="">I AGREE</a></p>
+    </div>
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/1086","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","fac":{"search":{"jsonFilesPath":"\/sites\/default\/files\/fac-json\/search\/en\/PFTV77uiuT3RCnW9FPkcX-JqOb3eo33V7odD0jXVIr4\/","inputSelectors":"input.search","keyMinLength":1,"keyMaxLength":10,"breakpoint":0,"emptyResult":"","allResultsLink":false,"allResultsLinkThreshold":0,"highlightingEnabled":false,"resultLocation":""}},"gacsp":{"commands":[["create","UA-49905813-1","auto"],["require","linkid"],["send","pageview"]]},"statistics":{"data":{"nid":"1086"},"url":"\/core\/modules\/statistics\/statistics.php"},"ajax":[],"user":{"uid":0,"permissionsHash":"4942d8c07ab2f619645a6faba5d6d5e39604dc3fdc9354dc6eea99d9a4a9d42d"}}</script>
+<script src="/sites/default/files/js/js_NOKW5uJ-_cH32MDwYAx0rbIXRxqF_KUMhWO-W-AEaSg.js"></script>
+<script src="https://app-sj17.marketo.com/js/forms2/js/forms2.min.js"></script>
+<script src="/sites/default/files/js/js_uha13U1BPFZiLOtE9sGkmvqcnX2izBIxBUsHemTm8PM.js"></script>
+<script src="https://cdn.bizible.com/scripts/bizible.js" async id="bizible-settings" data-native-json="true"></script>
+<script src="/sites/default/files/js/js_09q-2nINZLq-grz_lg6wRjXj61uWzqGBBYfPavnoho0.js"></script>
+
+    <noscript>
+      <img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=682812&fmt=gif" />
+    </noscript>
+  </body>
+</html>
+
+
+
+
+
+
+

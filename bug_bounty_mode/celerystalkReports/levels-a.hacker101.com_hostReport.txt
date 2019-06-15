@@ -1,0 +1,149 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap levels-a.hacker101.com  -n -sV -Pn -p 443 -oA h1/levels-a.hacker101.com/levels-a.hacker101.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/levels-a.hacker101.com/levels-a.hacker101.com_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560310441
+Run Time:	0.386937856674194
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://levels-a.hacker101.com:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee h1//levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_wayback.txt
+Output File:	h1/levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://levels-a.hacker101.com/
+https://levels-a.hacker101.com/levels/0/
+https://levels-a.hacker101.com/levels/1/
+https://levels-a.hacker101.com/levels/2/
+https://levels-a.hacker101.com/levels/3/
+https://levels-a.hacker101.com/levels/4/
+http://levels-a.hacker101.com/robots.txt
+
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560310512
+Run Time:	2.31298208236694
+Command:	python3 /opt/Photon/photon.py -u https://levels-a.hacker101.com:443 -o h1//levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_photon -e json && cat h1//levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_photon/exported.json | tee h1//levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_photon.txt
+Output File:	h1/levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "https://levels-a.hacker101.com:443"
+    ],
+    "scripts": [],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560310788
+Run Time:	322.20032787323
+Command:	whatweb https://levels-a.hacker101.com:443 -a4 --colour=never | sed s/],/]\\n/g | tee h1//levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_whatweb.txt
+Output File:	h1/levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://levels-a.hacker101.com:443 [302 Found] Country[UNITED STATES][US]
+ HTTPServer[cloudflare]
+ IP[104.18.193.12]
+ RedirectLocation[https://ctf.hacker101.com]
+ Strict-Transport-Security[max-age=31536000; includeSubDomains; preload]
+ UncommonHeaders[x-content-type-options,expect-ct,cf-ray]
+https://ctf.hacker101.com [200 OK] CloudFlare, Cookies[__Host-session,__cfduid]
+ Country[UNITED STATES][US]
+ Google-Analytics[Universal] [UA-49905813-1]
+ HTML5, HTTPServer[cloudflare]
+ HttpOnly[__Host-session,__cfduid]
+ IP[104.18.193.12]
+ JQuery, Script[text/javascript]
+ Strict-Transport-Security[max-age=31536000; includeSubDomains; preload]
+ Title[Hacker101 CTF]
+ UncommonHeaders[x-content-type-options,expect-ct,cf-ray]
+ X-Frame-Options[sameorigin]
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560310996
+Run Time:	3.30872917175293
+Command:	docker run --rm wappalyzer/cli https://levels-a.hacker101.com:443 | jq . | tee h1//levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_wappalyzer_cli.json
+Output File:	h1/levels-a.hacker101.com/celerystalkOutput/levels-a.hacker101.com_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://levels-a.hacker101.com:443/"
+  ],
+  "applications": [
+    {
+      "name": "CloudFlare",
+      "confidence": "100",
+      "version": "",
+      "icon": "CloudFlare.svg",
+      "website": "http://www.cloudflare.com",
+      "categories": [
+        {
+          "31": "CDN"
+        }
+      ]
+    },
+    {
+      "name": "Google Analytics",
+      "confidence": "100",
+      "version": "UA",
+      "icon": "Google Analytics.svg",
+      "website": "http://google.com/analytics",
+      "categories": [
+        {
+          "10": "Analytics"
+        }
+      ]
+    },
+    {
+      "name": "Bootstrap",
+      "confidence": "100",
+      "version": "4.0.0-beta.2",
+      "icon": "Bootstrap.svg",
+      "website": "https://getbootstrap.com",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "3.2.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}

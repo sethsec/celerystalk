@@ -1,0 +1,19 @@
+200 OK
+Set-Cookie: __cfduid=d5b04a73e115350b9d226a5009d65198b1560387171; expires=Fri, 12-Jun-20 00:52:51 GMT; path=/; domain=.hackerone.com; HttpOnly; Secure _cfuid=7227211f-3828-4f4d-8ee2-9864582ddf2b; path=/; expires=Mon, 13 Jun 2039 00:52:51 -0000; secure; HttpOnly __Host-session=eXFVc2lUVzdqOSsxbUVUM29RUzB3MlMwZTNCSzg3UEtiUWZtSGJ6WlFuamxZaEF6dFJqQmtRT2ZkVHJYM0tIZHUrdHNnVnZ1V29uNmlMMWZMcitlbEZyQlNTVU1NRXN2czNVcTdHeTh5ZlRHbFVhVWNWQ253NUxNdVlnNlY4RDdTbldkSk0vUE1TZ0QzT1ExMUlCY2p3PT0tLXZZeUJlNVB1L0V5bFJTMHhSN01jekE9PQ%3D%3D--f7d4c53a16a11834fff40d2d10632db04fb0b7c0; path=/; expires=Thu, 27 Jun 2019 00:52:51 -0000; secure; HttpOnly
+X-Request-Id: 2db59561-976d-4504-9dd4-a46d48dc3106
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Server: cloudflare
+Cf-Ray: 4e60158ebf549db3-ORD
+Cache-Control: no-cache, no-store
+Referrer-Policy: strict-origin-when-cross-origin
+X-Content-Type-Options: nosniff
+X-Permitted-Cross-Domain-Policies: none
+Retry-Count: 0
+Content-Disposition: inline; filename="response.html"
+Content-Security-Policy: default-src 'none'; base-uri 'self'; block-all-mixed-content; child-src www.youtube-nocookie.com b5s.hackerone-ext-content.com; connect-src 'self' www.google-analytics.com errors.hackerone.net; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: cover-photos.hackerone-user-content.com hackathon-photos.hackerone-user-content.com profile-photos.hackerone-user-content.com hackerone-us-west-2-production-attachments.s3.us-west-2.amazonaws.com; media-src 'self' hackerone-us-west-2-production-attachments.s3.us-west-2.amazonaws.com; script-src 'self' www.google-analytics.com; style-src 'self' 'unsafe-inline'; report-uri https://errors.hackerone.net/api/30/csp-report/?sentry_key=61c1e2f50d21487c97a071737701f598
+X-Download-Options: noopen
+X-Frame-Options: DENY
+Date: Thu, 13 Jun 2019 00:52:51 GMT
+Content-Type: text/html; charset=utf-8
+Expect-Ct: enforce, max-age=86400
+X-Xss-Protection: 1; mode=block

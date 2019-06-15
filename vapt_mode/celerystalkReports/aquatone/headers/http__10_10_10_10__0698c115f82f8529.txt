@@ -1,0 +1,9 @@
+200 OK
+Last-Modified: Wed, 12 Apr 2017 08:52:02 GMT
+Etag: "9b61940d8a0f59c28a983c61fd295527-gzip"
+Vary: Accept-Encoding
+Content-Type: application/rss+xml; charset=UTF-8
+Date: Sat, 15 Jun 2019 15:27:09 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Link: <http://10.10.10.10/index.php/wp-json/>; rel="https://api.w.org/"
+Retry-Count: 0

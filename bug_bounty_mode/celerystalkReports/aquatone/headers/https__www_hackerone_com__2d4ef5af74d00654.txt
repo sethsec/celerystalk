@@ -1,0 +1,31 @@
+200 OK
+Link: <https://www.hackerone.com/blog/GitHub-Embraces-Hacker-Powered-Security-To-Protect-55-million-projects>; rel="alternate"; hreflang="en" </blog/GitHub-Embraces-Hacker-Powered-Security-To-Protect-55-million-projects>; rel="canonical" </node/1146>; rel="shortlink" </blog/GitHub-Embraces-Hacker-Powered-Security-To-Protect-55-million-projects>; rel="revision"
+Last-Modified: Thu, 13 Jun 2019 00:04:12 GMT
+X-Cache: MISS
+Date: Thu, 13 Jun 2019 00:53:33 GMT
+X-Drupal-Dynamic-Cache: MISS
+Cache-Control: max-age=300, public
+Etag: "1560384252"
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Content-Type: text/html; charset=UTF-8
+Expires: Sun, 19 Nov 1978 05:00:00 GMT
+X-Request-Id: v-ab12c886-8d75-11e9-b503-8bc99dec2a94
+X-Permitted-Cross-Domain-Policies: none
+X-Generator: Drupal 8 (https://www.drupal.org)
+X-Ah-Environment: prod
+Expect-Ct: enforce, max-age=31536000
+Via: varnish
+X-Frame-Options: DENY
+X-Geo-Country: US
+Retry-Count: 0
+Cf-Ray: 4e6016925e4c9f15-ORD
+X-Ua-Compatible: IE=edge
+Content-Language: en
+Content-Security-Policy: default-src 'none'; base-uri 'self'; block-all-mixed-content; child-src js.driftt.com www.youtube-nocookie.com app-sj17.marketo.com; connect-src 'self' api.lever.co distillery.wistia.com pipedream.wistia.com embedwistia-a.akamaihd.net *.litix.io embed-ssl.wistia.com hackerone.com *.mktoresp.com checkout.stripe.com; font-src 'self' data: fonts.gstatic.com; form-action 'self' syndication.twitter.com platform.twitter.com; frame-ancestors 'self'; frame-src fast.wistia.com js.driftt.com www.youtube.com www.youtube-nocookie.com app-sj17.marketo.com platform.twitter.com syndication.twitter.com checkout.stripe.com; object-src 'self'; img-src 'self' data: go.techtarget.com cdn.ttgtmedia.com embedwistia-a.akamaihd.net fast.wistia.com www.google-analytics.com syndication.twitter.com platform.twitter.com *.twimg.com q.stripe.com cdn.bizible.com; media-src 'self' blob: data: embedwistia-a.akamaihd.net fast.wistia.com; script-src 'self' 'sha256-XrP50Mq6s78GLH2Vyt4BfKhn8rx4OdU6FYqQGbxRuZc=' 'sha256-chw1FVji+ddLlO/RrcP3fhKOLsJUUh+FaKbjsOC2BiQ=' 'sha256-D6d37gZGDMRuNu3bDdYkGuOfCaaNGdTrB3eF5d5IU/Y=' *.techtarget.com *.linkedin.com snap.licdn.com fast.wistia.com js.driftt.com www.google-analytics.com app-sj17.marketo.com munchkin.marketo.net  platform.twitter.com cdn.syndication.twimg.com checkout.stripe.com cdn.bizible.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com fast.wistia.com app-sj17.marketo.com platform.twitter.com checkout.stripe.com; report-uri https://errors.hackerone.net/api/30/csp-report/?sentry_key=61c1e2f50d21487c97a071737701f598
+X-Drupal-Cache: HIT
+X-Content-Type-Options: nosniff
+Age: 0
+Vary: Cookie,Accept-Encoding,X-Geo-Country
+Referrer-Policy: no-referrer-when-downgrade
+X-Xss-Protection: 1; mode=block
+Server: cloudflare

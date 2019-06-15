@@ -1,0 +1,335 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.119  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.119/10.10.10.119_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.119/10.10.10.119_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	ncrack_ssh_best15
+Start Time:	1560611064
+Run Time:	39.0143640041351
+Command:	ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.119 | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_ncrack_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_ncrack_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Starting Ncrack 0.6 ( http://ncrack.org ) at 2019-06-15 11:04 EDT
+
+ssh://10.10.10.119:22 finished.
+
+
+Ncrack done: 1 service scanned in 39.00 seconds.
+Probes sent: 10 | timed-out: 0 | prematurely-closed: 0
+
+Ncrack finished.
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611074
+Run Time:	38.2691390514374
+Command:	nikto -h http://10.10.10.119:80 -output /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.119
++ Target Port: 80
++ GET Retrieved x-powered-by header: PHP/5.4.16
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
+
+
+--------------------------------------------------
+Command Name:	hydra_ssh_best15
+Start Time:	1560611094
+Run Time:	38.4317939281464
+Command:	hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.119 ssh | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_hydra_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_hydra_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hydra v8.8 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2019-06-15 11:04:54
+[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+[DATA] attacking ssh://10.10.10.119:22/
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "1234" - 2 of 16 [child 0] (0/1)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "12345" - 3 of 17 [child 0] (0/2)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "123456" - 4 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "1234567" - 5 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "12345678" - 6 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "abc123" - 7 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "dragon" - 8 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "iloveyou" - 9 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "letmein" - 10 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "monkey" - 11 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "password" - 12 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "qwerty" - 13 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "tequiero" - 14 of 18 [child 0] (0/3)
+[ATTEMPT] target 10.10.10.119 - login "root" - pass "test" - 15 of 18 [child 0] (0/3)
+[REDO-ATTEMPT] target 10.10.10.119 - login "root" - pass "111111" - 16 of 18 [child 0] (1/3)
+[REDO-ATTEMPT] target 10.10.10.119 - login "root" - pass "1234" - 17 of 18 [child 0] (2/3)
+[REDO-ATTEMPT] target 10.10.10.119 - login "root" - pass "12345" - 18 of 18 [child 0] (3/3)
+1 of 1 target completed, 0 valid passwords found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2019-06-15 11:05:32
+
+--------------------------------------------------
+Command Name:	gobuster_common (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	ldap_searchsploit
+Start Time:	1560611205
+Run Time:	0.174846887588501
+Command:	searchsploit ldap | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_389_tcp_ldap_searchsploit.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_389_tcp_ldap_searchsploit.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------
+ Exploit Title                                                                                                                                                  |  Path
+                                                                                                                                                                | (/usr/share/exploitdb/)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------
+Apache mod_rewrite - [01;31m[KLDAP[m[K protocol Buffer Overflow (Metasploit)                                                                                                 | exploits/windows/remote/16752.rb
+Apple Mac OSX 10.4.x - Open[01;31m[KLDAP[m[K Denial of Service                                                                                                               | exploits/osx/dos/28135.pl
+Barracuda Spam Firewall 3.5.11 - '[01;31m[Kldap[m[K_test.cgi' Cross-Site Scripting                                                                                           | exploits/hardware/remote/31828.txt
+Claroline E-Learning 1.75 - '[01;31m[Kldap[m[K.inc.php' Remote File Inclusion                                                                                                | exploits/php/webapps/1766.pl
+CommuniGate Pro 5.0.6 - Server [01;31m[KLDAP[m[K Denial of Service                                                                                                           | exploits/linux/dos/27144.py
+Dokeos Lms 1.6.4 - 'auth[01;31m[Kldap[m[K.php' Remote File Inclusion                                                                                                         | exploits/php/webapps/1765.pl
+FortiGate FortiOS < 6.0.3 - [01;31m[KLDAP[m[K Credential Disclosure                                                                                                          | exploits/hardware/webapps/46171.py
+IBM Lotus Domino [01;31m[KLDAP[m[K - Bind Request Remote Code Execution                                                                                                      | exploits/windows/dos/16190.pl
+IBM Tivoli Directory Server 6.0 - [01;31m[KLDAP[m[K Memory Corruption                                                                                                        | exploits/multiple/dos/27196.txt
+IBM iSeries AS400 [01;31m[KLDAP[m[K Server - Remote Information Disclosure                                                                                                   | exploits/unix/remote/25335.txt
+IPSwitch IMail [01;31m[KLDAP[m[K Daemon/Service - Remote Buffer Overflow                                                                                                     | exploits/windows/remote/157.c
+IPSwitch IMail [01;31m[KLDAP[m[K Daemon/Service - Remote Buffer Overflow (Metasploit)                                                                                        | exploits/windows/remote/16824.rb
+Intel Corporation Shiva Access Manager 5.0 - Solaris World Readable [01;31m[KLDAP[m[K Password                                                                               | exploits/solaris/local/20003.txt
+Ipswitch IMail 5.0 - [01;31m[KLDAP[m[K Buffer Overflow (Denial of Service) (PoC)                                                                                             | exploits/multiple/dos/19378.txt
+Isode M-Vault Server 11.3 - [01;31m[KLDAP[m[K Memory Corruption                                                                                                              | exploits/multiple/dos/27212.txt
+Kerio MailServer 5.x/6.x - Remote [01;31m[KLDAP[m[K Denial of Service                                                                                                        | exploits/windows/dos/29039.py
+[01;31m[KLDAP[m[K - Injection                                                                                                                                                | exploits/multiple/local/11364.txt
+[01;31m[KLDAP[m[K Account Manager 3.4.0 - 'selfserviceSaveOk' Cross-Site Scripting                                                                                           | exploits/php/webapps/35684.txt
+Lemon[01;31m[KLDAP[m[K:NG 0.9.3.1 - User Enumeration / Cross-Site Scripting                                                                                                  | exploits/cgi/webapps/32734.txt
+Lotus Domino 7.0.x/8.0/8.5 - [01;31m[KLDAP[m[K Message Remote Denial of Service                                                                                              | exploits/multiple/dos/27730.py
+McAfee Security Center IsO[01;31m[KldAp[m[KpInstalled - ActiveX Buffer Overflow                                                                                              | exploits/windows/remote/3893.c
+Microsoft Active Directory [01;31m[KLDAP[m[K Server - 'Username' Enumeration                                                                                                 | exploits/windows/remote/32586.py
+Microsoft Windows Server 2008/2012 - [01;31m[KLDAP[m[K RootDSE Netlogon Denial of Service                                                                                    | exploits/windows/dos/40703.pl
+NetIQ Privileged User Manager 2.3.1 - '[01;31m[Kldap[m[Kagnt_eval()' Perl Remote Code Execution (Metasploit)                                                                 | exploits/windows/remote/22903.rb
+Netscape Professional Services FTP Server ([01;31m[KLDAP[m[K Aware) 1.3.6 - FTP Server                                                                                       | exploits/unix/remote/20046.txt
+Network Associates PGP KeyServer 7 - [01;31m[KLDAP[m[K Buffer Overflow (Metasploit)                                                                                          | exploits/windows/remote/16823.rb
+Novell Groupwise Internet Agent - [01;31m[KLDAP[m[K BIND Request Overflow                                                                                                    | exploits/windows/dos/22707.txt
+Novell NetIQ Privileged User Manager 2.3.1 - '[01;31m[Kldap[m[Kagnt.dll' [01;31m[Kldap[m[Kagnt_eval() Perl Code Evaluation Remote Code Execution                                          | exploits/windows/remote/22738.txt
+Novell eDirectory 8.8 and Netware [01;31m[KLDAP[m[K-SSL Daemon - Denial of Service                                                                                           | exploits/multiple/dos/35753.pl
+Novell eDirectory 883ftf3 - n[01;31m[Kldap[m[K module Denial of Service                                                                                                      | exploits/windows/dos/10062.py
+Open[01;31m[KLDAP[m[K 1.2.7/1.2.8/1.2.9/1.2.10 - '/usr/tmp/' Symlink                                                                                                         | exploits/linux/local/19946.txt
+Open[01;31m[KLDAP[m[K 2.2.29 - Remote Denial of Service (Metasploit)                                                                                                         | exploits/linux/dos/2730.pm
+Open[01;31m[KLDAP[m[K 2.3.39 - MODRDN Remote Denial of Service                                                                                                               | exploits/multiple/dos/10077.txt
+Open[01;31m[KLDAP[m[K 2.3.41 - BER Decoding Remote Denial of Service                                                                                                         | exploits/linux/dos/32000.txt
+Open[01;31m[KLDAP[m[K 2.4.22 - 'modrdn' Multiple Vulnerabilities                                                                                                             | exploits/linux/dos/34348.txt
+Open[01;31m[KLDAP[m[K 2.4.3 - 'KBIND' Remote Buffer Overflow                                                                                                                 | exploits/linux/remote/2933.c
+Open[01;31m[KLDAP[m[K 2.4.42 - ber_get_next Denial of Service                                                                                                                | exploits/linux/dos/38145.txt
+Open[01;31m[KLDAP[m[K 2.4.x - 'modrdn' NULL OldDN Remote Denial of Service                                                                                                   | exploits/linux/dos/35445.txt
+Oracle (oid[01;31m[Kldap[m[Kd connect) - Local Command Line Overflow                                                                                                         | exploits/linux/local/183.c
+Oracle Internet Directory 10.1.2.0.2 - 'oid[01;31m[Kldap[m[Kd' Remote Memory Corruption                                                                                      | exploits/multiple/dos/33532.txt
+Oracle Internet Directory 2.0.6 - oid[01;31m[Kldap[m[K                                                                                                                       | exploits/linux/local/20312.c
+PineApp Mail-SeCure - '[01;31m[Kldap[m[Ksyncnow.php' Arbitrary Command Execution (Metasploit)                                                                                | exploits/php/remote/27294.rb
+SIDVault [01;31m[KLDAP[m[K Server - Remote Buffer Overflow                                                                                                                   | exploits/linux/remote/4315.py
+SmarterMail < 7.2.3925 - [01;31m[KLDAP[m[K Injection                                                                                                                         | exploits/asp/webapps/15189.txt
+Solaris 8 libs[01;31m[Kldap[m[K - Local Buffer Overflow (1)                                                                                                                  | exploits/solaris/local/20969.c
+Solaris 8 libs[01;31m[Kldap[m[K - Local Buffer Overflow (2)                                                                                                                  | exploits/solaris/local/20970.c
+Sun SUNWl[01;31m[Kldap[m[K Library Hostname - Local Buffer Overflow                                                                                                          | exploits/solaris/local/4.c
+Surge[01;31m[KLDAP[m[K 1.0 - 'User.cgi' Directory Traversal                                                                                                                  | exploits/cgi/remote/23987.txt
+Surge[01;31m[KLDAP[m[K 1.0 - Web Administration Authentication Bypass                                                                                                        | exploits/cgi/webapps/24094.txt
+Surge[01;31m[KLDAP[m[K 1.0 d - 'User.cgi' Cross-Site Scripting                                                                                                               | exploits/cgi/webapps/23025.txt
+Surge[01;31m[KLDAP[m[K 1.0 d - Full Path Disclosure                                                                                                                          | exploits/multiple/remote/23024.txt
+Symantec Brightmail 10.6.0-7 - [01;31m[KLDAP[m[K Credentials Disclosure (Metasploit)                                                                                         | exploits/java/webapps/39715.rb
+WeBid - Multiple Cross-Site Scripting / [01;31m[KLDAP[m[K Injection Vulnerabilities                                                                                          | exploits/php/webapps/39249.txt
+Wireshark 0.99.8 - [01;31m[KLDAP[m[K Dissector Denial of Service                                                                                                             | exploits/linux/dos/31553.txt
+Zabbix 2.0.5 - Cleartext [01;31m[Kldap[m[K_bind_Password Password Disclosure (Metasploit)                                                                                    | exploits/php/webapps/36157.rb
+php[01;31m[KLDAP[m[Kadmin - Local File Inclusion                                                                                                                             | exploits/php/webapps/10410.txt
+php[01;31m[KLDAP[m[Kadmin 0.9.4b - Denial of Service                                                                                                                         | exploits/php/dos/18023.java
+php[01;31m[KLDAP[m[Kadmin 0.9.6/0.9.7 - 'welcome.php' Arbitrary File Inclusion                                                                                               | exploits/php/webapps/26211.txt
+php[01;31m[KLDAP[m[Kadmin 0.9.8 - 'compare_form.php' Cross-Site Scripting                                                                                                    | exploits/php/webapps/27717.txt
+php[01;31m[KLDAP[m[Kadmin 0.9.8 - 'copy_form.php' Cross-Site Scripting                                                                                                       | exploits/php/webapps/27718.txt
+php[01;31m[KLDAP[m[Kadmin 0.9.8 - 'rename_form.php' Cross-Site Scripting                                                                                                     | exploits/php/webapps/27719.txt
+php[01;31m[KLDAP[m[Kadmin 0.9.8 - 'search.php' Cross-Site Scripting                                                                                                          | exploits/php/webapps/27721.txt
+php[01;31m[KLDAP[m[Kadmin 0.9.8 - 'template_engine.php' Cross-Site Scripting                                                                                                 | exploits/php/webapps/27722.txt
+php[01;31m[KLDAP[m[Kadmin 1.2.0.5-2 - 'server_id' Cross-Site Scripting                                                                                                       | exploits/php/webapps/36655.txt
+php[01;31m[KLDAP[m[Kadmin 1.2.1.1 - Remote PHP Code Injection (1)                                                                                                            | exploits/php/webapps/18021.php
+php[01;31m[KLDAP[m[Kadmin 1.2.1.1 - Remote PHP Code Injection (Metasploit) (2)                                                                                               | exploits/php/webapps/18031.rb
+php[01;31m[KLDAP[m[Kadmin 1.2.2 - 'base' Cross-Site Scripting                                                                                                                | exploits/php/webapps/36654.txt
+php[01;31m[KLDAP[m[Kadmin 1.2.2 - 'server_id' [01;31m[KLDAP[m[K Injection (Username)                                                                                                      | exploits/php/webapps/44926.txt
+yaplap 0.6.1b - '[01;31m[Kldap[m[K.php' Remote File Inclusion                                                                                                                | exploits/php/webapps/2930.pl
+---------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------
+Shellcodes: No Result
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611313
+Run Time:	0.948241949081421
+Command:	wpscan --url http://10.10.10.119:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The url supplied 'http://10.10.10.119/' seems to be down (Couldn't connect to server)
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1560611363
+Run Time:	12.3469789028168
+Command:	nmap 10.10.10.119 -p 389 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_389_tcp_nmap_service_scan.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_389_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Sat Jun 15 11:09:23 2019 as: nmap -p 389 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_389_tcp_nmap_service_scan.txt 10.10.10.119
+Nmap scan report for 10.10.10.119
+Host is up (0.052s latency).
+
+PORT    STATE SERVICE VERSION
+389/tcp open  ldap    OpenLDAP 2.2.X - 2.3.X
+| ssl-cert: Subject: commonName=lightweight.htb
+| Subject Alternative Name: DNS:lightweight.htb, DNS:localhost, DNS:localhost.localdomain
+| Issuer: commonName=lightweight.htb
+| Public Key type: rsa
+| Public Key bits: 1024
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2018-06-09T13:32:51
+| Not valid after:  2019-06-09T13:32:51
+| MD5:   0e61 1374 e591 83bd fd4a ee1a f448 547c
+|_SHA-1: 8e10 be17 d435 e99d 3f93 9f40 c5d9 433c 47dd 532f
+|_ssl-date: TLS randomness does not represent time
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 15 11:09:36 2019 -- 1 IP address (1 host up) scanned in 12.33 seconds
+
+
+--------------------------------------------------
+Command Name:	medusa
+Start Time:	1560611440
+Run Time:	31.1509120464325
+Command:	medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.119 - 22 -M ssh | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_medusa.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_medusa.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+ACCOUNT CHECK: [ssh] Host: 10.10.10.119 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.119 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.119 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.119 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.119 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.119 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611509
+Run Time:	0.936911106109619
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.119:80 -o /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_photon -e json && cat /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [
+        "http://10.10.10.119:80/user.php:IPV4:10.10.14.3",
+        "https://github.com/joseluisq/slendr"
+    ],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.119:80",
+        "http://10.10.10.119:80/",
+        "http://10.10.10.119:80/info.php",
+        "http://10.10.10.119:80/reset.php",
+        "http://10.10.10.119:80/user.php"
+    ],
+    "scripts": [
+        "http://10.10.10.119:80/js/index.js"
+    ],
+    "external": [
+        "https://github.com/joseluisq/slendr"
+    ],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1560611520
+Run Time:	0.704822063446045
+Command:	nmap 10.10.10.119 -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_nmap_service_scan.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Sat Jun 15 11:12:00 2019 as: nmap -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_22_tcp_nmap_service_scan.txt 10.10.10.119
+Nmap scan report for 10.10.10.119
+Host is up (0.048s latency).
+
+PORT   STATE    SERVICE VERSION
+22/tcp filtered ssh
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 15 11:12:00 2019 -- 1 IP address (1 host up) scanned in 0.68 seconds
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611523
+Run Time:	321.095175981522
+Command:	whatweb http://10.10.10.119:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.119:80 [200 OK] Apache[2.4.6][mod_fcgid/2.3.9]
+ Country[RESERVED][ZZ]
+ HTML5, HTTPServer[CentOS][Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips mod_fcgid/2.3.9 PHP/5.4.16]
+ IP[10.10.10.119]
+ OpenSSL[1.0.2k-fips]
+ PHP[5.4.16]
+ Script, Title[Lightweight slider evaluation page - slendr]
+ X-Powered-By[PHP/5.4.16]
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611602
+Run Time:	1.9297559261322
+Command:	docker run --rm wappalyzer/cli http://10.10.10.119:80 | jq . | tee /pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.119/celerystalkOutput/10.10.10.119_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.119:80/"
+  ],
+  "applications": [],
+  "meta": {}
+}
+
+--------------------------------------------------
+Command Name:	cewl (No data produced)
+--------------------------------------------------
+--------------------------------------------------
+Command Name:	wayback (No data produced)
+--------------------------------------------------

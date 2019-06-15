@@ -1,0 +1,18 @@
+200 OK
+Expect-Ct: enforce, max-age=86400
+Cf-Ray: 4e6016c88b89c538-ORD
+Retry-Count: 0
+X-Content-Type-Options: nosniff
+Etag: W/"5d01271f-1ff"
+X-Xss-Protection: 1; mode=block
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Type: text/html
+X-Download-Options: noopen
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Server: cloudflare
+Set-Cookie: __cfduid=d1d73094d35bf51314fa11246123911881560387221; expires=Fri, 12-Jun-20 00:53:41 GMT; path=/; Domain=api.hackerone.com; HttpOnly; Secure
+Last-Modified: Wed, 12 Jun 2019 16:23:59 GMT
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+Content-Security-Policy: default-src 'none'; block-all-mixed-content; connect-src 'self'; font-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; frame-ancestors 'none';
+Date: Thu, 13 Jun 2019 00:53:41 GMT

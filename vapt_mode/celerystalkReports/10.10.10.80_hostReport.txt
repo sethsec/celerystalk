@@ -1,0 +1,282 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.80  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.80/10.10.10.80_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.80/10.10.10.80_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611063
+Run Time:	10.6615960597992
+Command:	docker run --rm wappalyzer/cli http://10.10.10.80:80 | jq . | tee /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.80:80/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.25",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Bootstrap",
+      "confidence": "100",
+      "version": "3.3.7",
+      "icon": "Bootstrap.svg",
+      "website": "https://getbootstrap.com",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "1.11.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611081
+Run Time:	0.721068143844604
+Command:	cewl http://10.10.10.80:80 -m 6 -w /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+fsociety
+Bootstrap
+Wanted
+Portfolio
+credit
+databases
+backups
+AllSafe
+Related
+Anderson
+FSociety
+Custom
+Navigation
+Toggle
+navigation
+Upload
+Copyright
+Profit
+Satire
+container
+jQuery
+JavaScript
+Content
+Heading
+Description
+ransomware
+encrypted
+destroyed
+compromising
+Corporation
+provided
+security
+solutions
+believed
+leader
+insider
+Infected
+Vendor
+overheat
+building
+Attacked
+Phones
+emergency
+response
+center
+prison
+infected
+trojan
+BadUSB
+Projects
+Suspects
+Elliot
+Tyrell
+Wellick
+Darlene
+Angela
+Injection
+Submission
+Removed
+database
+requirement
+changing
+submit
+create
+information
+arrest
+member
+rewarded
+genorously
+Information
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611104
+Run Time:	1.27698993682861
+Command:	wpscan --url http://10.10.10.80:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611138
+Run Time:	443.595934152603
+Command:	nikto -h http://10.10.10.80:80 -output /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.80
++ Target Port: 80
++ GET Cookie admin created without the httponly flag
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.25 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ GET IP address found in the 'location' header. The IP is "127.0.1.1".
++ OSVDB-630: GET The web server may reveal its internal or real IP in the Location header via a request to /images over HTTP/1.0. The value is "127.0.1.1".
++ EYEMAKJW Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ OSVDB-3268: GET /css/: Directory indexing found.
++ OSVDB-3092: GET /css/: This might be interesting...
++ OSVDB-3268: GET /images/: Directory indexing found.
++ OSVDB-3233: GET /icons/README: Apache default file found.
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611184
+Run Time:	66.7472128868103
+Command:	whatweb http://10.10.10.80:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.80:80 [200 OK] Apache[2.4.25]
+ Cookies[admin]
+ Country[RESERVED][ZZ]
+ HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.25 (Ubuntu)]
+ IP[10.10.10.80]
+ JQuery, Script, Title[FBIs Most Wanted: FSociety]
+ X-UA-Compatible[IE=edge]
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611598
+Run Time:	0.902523994445801
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.80:80 -o /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_photon -e json && cat /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.80:80/?op=upload",
+        "http://10.10.10.80:80",
+        "http://10.10.10.80:80/?op=home"
+    ],
+    "scripts": [
+        "http://10.10.10.80:80/js/bootstrap.min.js",
+        "http://10.10.10.80:80/js/jquery.js"
+    ],
+    "external": [],
+    "fuzzable": [
+        "http://10.10.10.80:80/?op=upload",
+        "http://10.10.10.80:80/?op=home"
+    ],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611724
+Run Time:	23.733206987381
+Command:	gobuster -u http://10.10.10.80:80 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.80:80/.hta/
+http://10.10.10.80:80/.htpasswd/
+http://10.10.10.80:80/.htaccess/
+http://10.10.10.80:80/css/
+http://10.10.10.80:80/fonts/
+http://10.10.10.80:80/icons/
+http://10.10.10.80:80/images/
+http://10.10.10.80:80/index.php/
+http://10.10.10.80:80/javascript/
+http://10.10.10.80:80/js/
+http://10.10.10.80:80/server-status/
+http://10.10.10.80:80/uploads/
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611790
+Run Time:	0.445297002792358
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.80:80&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.80/celerystalkOutput/10.10.10.80_80_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.80
+http://10.10.10.80/robots.txt

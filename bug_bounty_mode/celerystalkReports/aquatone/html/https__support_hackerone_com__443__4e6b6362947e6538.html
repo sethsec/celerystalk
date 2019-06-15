@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Zendesk</title>
+  <meta name="application-name" content="Help Center">
+  <meta name="msapplication-config" content="https://static.zdassets.com/knowledge/lists/aa50f1e8d1a61faab8669e609bce8ef1.xml">
+  <link rel="apple-touch-icon" href="https://static.zdassets.com/knowledge/lists/c3c79aee9b89a54fe6abeb9e30926694.png">
+  <link rel="shortcut icon" href="https://static.zdassets.com/knowledge/lists/c8648cc086c2167d1f4a95585520d7c7.ico">
+
+  <script>(function() {
+  function hasFlexboxSupport() {
+    var style = document.createElement("div").style;
+
+    return (
+      typeof style.flexWrap !== "undefined" ||
+      typeof style.msFlexWrap !== "undefined" ||
+      typeof style.mozFlexWrap !== "undefined" ||
+      typeof style.oFlexWrap !== "undefined" ||
+      typeof style.webkitFlexWrap !== "undefined"
+    );
+  }
+
+  function isIE10() {
+    return navigator.appVersion.indexOf("MSIE 10") !== -1;
+  }
+
+  if (!hasFlexboxSupport() || isIE10()) {
+    window.location = "/knowledge/unsupported";
+  }
+})();
+</script>
+
+  
+    <link href="https://static.zdassets.com/knowledge/lists/1.8de674a88ed9ff52bf64.css" rel="stylesheet">
+  
+    <link href="https://static.zdassets.com/knowledge/lists/app.8de674a88ed9ff52bf64.css" rel="stylesheet">
+  
+  <style>/**
+ * Copyright Zendesk, Inc.
+ *
+ * Use of this source code is governed under the Apache License, Version 2.0
+ * found at http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+html,
+body,
+#placeholder {
+  overflow: hidden;
+  height: 100%;
+}
+
+#placeholder {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  overflow-y: hidden;
+  opacity: 1;
+  pointer-events: none;
+}
+
+#placeholder.leave {
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+
+#placeholder .guide-navbar {
+  height: 50px;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  background: white;
+}
+
+#placeholder .guide-sidebar {
+  width: 60px;
+  background: rgb(3, 54, 61);
+}
+
+#placeholder .guide-content {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+#placeholder .container {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  background: white;
+}
+
+#placeholder .sidebar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  overflow-y: auto;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 330px;
+  padding: 30px;
+  background: rgb(248, 248, 248);
+  border-right: 1px solid rgb(221, 221, 221);
+}
+
+[dir=rtl] #placeholder .sidebar {
+  border-right: none;
+  border-left: 1px solid rgb(221, 221, 221);
+}
+
+#placeholder .item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 50px;
+  padding: 0 20px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+#placeholder .item:first-child {
+  margin-top: 5px;
+}
+
+#placeholder .item > .string {
+  width: 16px;
+  height: 10px;
+  border-radius: 10px;
+  background: #eee;
+}
+
+#placeholder .overview {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  background-color: white;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+</style>
+<script>window.kbEnvironment={"rollbar":{"accessToken":"c1ce0c2388cc4ee4a755055714ce7c94","endpoint":"https://rollbar-us.zendesk.com/api/1/item/"},"zendesk":{"host":"zendesk.com"}}</script></head>
+<body>
+  <div id="placeholder">
+    <div class="guide-sidebar"></div>
+    <div class="guide-content">
+      <div class="guide-navbar"></div>
+      <div class="container">
+        <div class="sidebar">
+          <div class="item">
+            <div class="string" style="width: 70px;"></div>
+            <div class="string"></div>
+          </div>
+          <div class="item">
+            <div class="string" style="width: 38px;"></div>
+            <div class="string"></div>
+          </div>
+          <div class="item">
+            <div class="string" style="width: 107px;"></div>
+            <div class="string"></div>
+          </div>
+        </div>
+        <div class="overview"></div>
+      </div>
+    </div>
+  </div>
+  <script>(function() {
+  var rtlLanguages = [
+    "ar" /* 'العربية', Arabic */,
+    "arc" /* Aramaic */,
+    "bcc" /* 'بلوچی مکرانی', Southern Balochi */,
+    "bqi" /* 'بختياري', Bakthiari */,
+    "ckb" /* 'Soranî / کوردی', Sorani */,
+    "dv" /* Dhivehi */,
+    "fa" /* 'فارسی', Persian */,
+    "glk" /* 'گیلکی', Gilaki */,
+    "he" /* 'עברית', Hebrew */,
+    "ku" /* 'Kurdî / كوردی', Kurdish */,
+    "mzn" /* 'مازِرونی', Mazanderani */,
+    "pnb" /* 'پنجابی', Western Punjabi */,
+    "ps" /* 'پښتو', Pashto, */,
+    "sd" /* 'سنڌي', Sindhi */,
+    "ug" /* 'Uyghurche / ئۇيغۇرچە', Uyghur */,
+    "ur" /* 'اردو', Urdu */,
+    "yi" /* 'ייִדיש', Yiddish */,
+  ];
+
+  try {
+    var contextValue = window.sessionStorage.getItem("kb.context");
+    var context = JSON.parse(contextValue);
+    var locale = context.token && context.token.user.locale;
+    var language = locale && locale.split("-")[0].toLowerCase();
+    var isRtlLanguage = rtlLanguages.some(function(rtlLanguage) {
+      return rtlLanguage === language;
+    });
+
+    var dir = isRtlLanguage ? "rtl" : "ltr";
+    document.body.setAttribute("dir", dir);
+  } catch (e) {
+    document.body.setAttribute("dir", "ltr");
+  }
+})();
+</script>
+  <div class="app"></div>
+
+  
+    <script src="https://static.zdassets.com/knowledge/lists/vendors~app.8de674a88ed9ff52bf64.v2.js"></script>
+  
+    <script src="https://static.zdassets.com/knowledge/lists/app.8de674a88ed9ff52bf64.v2.js"></script>
+  
+</body>
+</html>

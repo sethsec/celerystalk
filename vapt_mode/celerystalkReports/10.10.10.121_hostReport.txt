@@ -1,0 +1,552 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap 10.10.10.121  -n -sV -Pn -p- -oA /pentest/htb/10.10.10.121/10.10.10.121_nmap_tcp_scan.txt
+
+No such file or directory: /pentest/htb/10.10.10.121/10.10.10.121_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611063
+Run Time:	74.9493911266327
+Command:	whatweb http://10.10.10.121:80 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.121:80 [200 OK] Apache[2.4.18]
+ Country[RESERVED][ZZ]
+ HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)]
+ IP[10.10.10.121]
+ Title[Apache2 Ubuntu Default Page: It works]
+
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611063
+Run Time:	6.37301206588745
+Command:	wpscan --url http://10.10.10.121:3000 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+[i] Updating the Database ...
+[i] Update completed.
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	hydra_ssh_best15
+Start Time:	1560611063
+Run Time:	94.5295298099518
+Command:	hydra -f -V -t 1 -l root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -s 22 10.10.10.121 ssh | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_hydra_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_hydra_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hydra v8.8 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2019-06-15 11:04:23
+[DATA] max 1 task per 1 server, overall 1 task, 15 login tries (l:1/p:15), ~15 tries per task
+[DATA] attacking ssh://10.10.10.121:22/
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "111111" - 1 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "1234" - 2 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "12345" - 3 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "123456" - 4 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "1234567" - 5 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "12345678" - 6 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "abc123" - 7 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "dragon" - 8 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "iloveyou" - 9 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "letmein" - 10 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "monkey" - 11 of 15 [child 0] (0/0)
+[STATUS] 11.00 tries/min, 11 tries in 00:01h, 4 to do in 00:01h, 1 active
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "password" - 12 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "qwerty" - 13 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "tequiero" - 14 of 15 [child 0] (0/0)
+[ATTEMPT] target 10.10.10.121 - login "root" - pass "test" - 15 of 15 [child 0] (0/0)
+1 of 1 target completed, 0 valid passwords found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2019-06-15 11:05:58
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611112
+Run Time:	2.06510591506958
+Command:	docker run --rm wappalyzer/cli http://10.10.10.121:3000 | jq . | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [],
+  "applications": [],
+  "meta": {}
+}
+
+
+--------------------------------------------------
+Command Name:	gobuster_common
+Start Time:	1560611114
+Run Time:	24.3772420883179
+Command:	gobuster -u http://10.10.10.121:80 -f -k -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,204,302,307,403,500' -e -n -q | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_gobuster_common.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_gobuster_common.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.121:80/.htaccess/
+http://10.10.10.121:80/.htpasswd/
+http://10.10.10.121:80/.hta/
+http://10.10.10.121:80/icons/
+http://10.10.10.121:80/javascript/
+http://10.10.10.121:80/server-status/
+http://10.10.10.121:80/support/
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611132
+Run Time:	0.397011041641235
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.121:3000&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.121
+http://10.10.10.121/robots.txt
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611178
+Run Time:	0.615317106246948
+Command:	cewl http://10.10.10.121:80 -m 6 -w /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Ubuntu
+configuration
+apache
+Apache
+server
+default
+enabled
+Debian
+located
+respective
+document
+Default
+installation
+systems
+installed
+should
+before
+Configuration
+different
+itself
+package
+directories
+modules
+virtual
+available
+Please
+report
+Modified
+original
+updated
+launchpad
+CONTENTS
+Changes
+Config
+welcome
+correct
+operation
+equivalent
+packaging
+derived
+working
+properly
+replace
+continuing
+operate
+normal
+probably
+currently
+unavailable
+maintenance
+problem
+persists
+please
+contact
+administrator
+Overview
+upstream
+several
+optimized
+interaction
+system
+documented
+README
+documentation
+Documentation
+accessing
+manual
+layout
+follows
+pieces
+together
+including
+remaining
+starting
+always
+included
+determine
+listening
+incoming
+connections
+customized
+anytime
+contain
+particular
+snippets
+manage
+global
+fragments
+configurations
+respectively
+activated
+symlinking
+counterparts
+managed
+helpers
+dismod
+ensite
+dissite
+enconf
+disconf
+detailed
+information
+binary
+called
+environment
+variables
+started
+stopped
+Calling
+directly
+Document
+access
+through
+browser
+public
+applications
+elsewhere
+whitelist
+directory
+previous
+releases
+provides
+better
+security
+Reporting
+Problems
+ubuntu
+However
+existing
+reports
+reporting
+specific
+others
+packages
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611178
+Run Time:	0.813010931015015
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.121:80 -o /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_photon -e json && cat /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_photon/exported.json | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [
+        "http://10.10.10.121:80/manual:IPV4:10.10.10.121",
+        "http://10.10.10.121:80/manual:EMAIL:Server at 10.10.10.121"
+    ],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.121:80",
+        "http://10.10.10.121:80/",
+        "http://10.10.10.121:80/manual",
+        "http://10.10.10.121:80//manual"
+    ],
+    "scripts": [],
+    "external": [
+        "http://manpages.debian.org/cgi-bin/man.cgi?query=a2dissite",
+        "http://manpages.debian.org/cgi-bin/man.cgi?query=a2ensite",
+        "http://manpages.debian.org/cgi-bin/man.cgi?query=a2dismod",
+        "http://manpages.debian.org/cgi-bin/man.cgi?query=a2disconf",
+        "http://manpages.debian.org/cgi-bin/man.cgi?query=a2enmod",
+        "http://httpd.apache.org/docs/2.4/mod/mod_userdir.html",
+        "http://manpages.debian.org/cgi-bin/man.cgi?query=a2enconf"
+    ],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611182
+Run Time:	99.1860182285309
+Command:	nikto -h http://10.10.10.121:3000 -output /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.121
++ Target Port: 3000
++ GET Retrieved x-powered-by header: Express
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ OPTIONS Allowed HTTP Methods: GET, HEAD 
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560611282
+Run Time:	0.371724128723145
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://10.10.10.121:80&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_wayback.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.121
+http://10.10.10.121/robots.txt
+
+--------------------------------------------------
+Command Name:	gobuster_common (No data produced)
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	wpscan
+Start Time:	1560611349
+Run Time:	1.31179118156433
+Command:	wpscan --url http://10.10.10.121:80 --disable-tls-checks --no-banner -f cli-no-color --enumerate p t tt u | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_wpscan.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_wpscan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Scan Aborted: The remote website is up, but does not seem to be running WordPress.
+
+
+--------------------------------------------------
+Command Name:	ncrack_ssh_best15
+Start Time:	1560611350
+Run Time:	21.0119390487671
+Command:	ncrack -vv -p 22 --user root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt 10.10.10.121 | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_ncrack_ssh_best15.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_ncrack_ssh_best15.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+
+Starting Ncrack 0.6 ( http://ncrack.org ) at 2019-06-15 11:09 EDT
+
+ssh://10.10.10.121:22 finished.
+
+
+Ncrack done: 1 service scanned in 21.00 seconds.
+Probes sent: 10 | timed-out: 0 | prematurely-closed: 0
+
+Ncrack finished.
+
+
+--------------------------------------------------
+Command Name:	nikto
+Start Time:	1560611376
+Run Time:	445.669885873795
+Command:	nikto -h http://10.10.10.121:80 -output /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_nikto.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_nikto.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+- Nikto v2.1.6/2.1.5
++ Target Host: 10.10.10.121
++ Target Port: 80
++ GET The anti-clickjacking X-Frame-Options header is not present.
++ GET The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ GET The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ HEAD Apache/2.4.18 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ GET Server may leak inodes via ETags, header found with file /, inode: 2c39, size: 57ba5b7e5205d, mtime: gzip
++ OPTIONS Allowed HTTP Methods: OPTIONS, GET, HEAD, POST 
++ GET Cookie PHPSESSID created without the httponly flag
++ GET Cookie lang created without the httponly flag
++ OSVDB-3092: GET /support/: This might be interesting...
++ OSVDB-3233: GET /icons/README: Apache default file found.
+
+
+--------------------------------------------------
+Command Name:	nmap_service_scan
+Start Time:	1560611525
+Run Time:	2.27599716186523
+Command:	nmap 10.10.10.121 -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_nmap_service_scan.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_nmap_service_scan.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+# Nmap 7.70 scan initiated Sat Jun 15 11:12:05 2019 as: nmap -p 22 -sC -sV -v -Pn -oN /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_nmap_service_scan.txt 10.10.10.121
+Nmap scan report for 10.10.10.121
+Host is up (0.050s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.6 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 e5:bb:4d:9c:de:af:6b:bf:ba:8c:22:7a:d8:d7:43:28 (RSA)
+|   256 d5:b0:10:50:74:86:a3:9f:c5:53:6f:3b:4a:24:61:19 (ECDSA)
+|_  256 e2:1b:88:d3:76:21:d4:1e:38:15:4a:81:11:b7:99:07 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 15 11:12:07 2019 -- 1 IP address (1 host up) scanned in 2.25 seconds
+
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560611528
+Run Time:	2.28984093666077
+Command:	docker run --rm wappalyzer/cli http://10.10.10.121:80 | jq . | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_wappalyzer_cli.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_80_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "http://10.10.10.121:80/"
+  ],
+  "applications": [
+    {
+      "name": "Apache",
+      "confidence": "100",
+      "version": "2.4.18",
+      "icon": "Apache.svg",
+      "website": "http://apache.org",
+      "categories": [
+        {
+          "22": "Web Servers"
+        }
+      ]
+    },
+    {
+      "name": "Ubuntu",
+      "confidence": "100",
+      "version": "",
+      "icon": "Ubuntu.png",
+      "website": "http://www.ubuntu.com/server",
+      "categories": [
+        {
+          "28": "Operating Systems"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": null
+  }
+}
+
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560611531
+Run Time:	67.159322977066
+Command:	whatweb http://10.10.10.121:3000 -a4 --colour=never | sed s/],/]\\n/g | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_whatweb.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://10.10.10.121:3000 [200 OK] Country[RESERVED][ZZ]
+ IP[10.10.10.121]
+ X-Powered-By[Express]
+
+
+--------------------------------------------------
+Command Name:	medusa
+Start Time:	1560611607
+Run Time:	38.4045870304108
+Command:	medusa -u root -P /usr/share/seclists/Passwords/Common-Credentials/best15.txt -e ns -h 10.10.10.121 - 22 -M ssh | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_medusa.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_22_tcp_medusa.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password:  (1 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: root (2 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 111111 (3 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234 (4 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345 (5 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 123456 (6 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 1234567 (7 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: 12345678 (8 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: abc123 (9 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: dragon (10 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: iloveyou (11 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: letmein (12 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: monkey (13 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: password (14 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: qwerty (15 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: tequiero (16 of 17 complete)
+ACCOUNT CHECK: [ssh] Host: 10.10.10.121 (1 of 1, 0 complete) User: root (1 of 1, 0 complete) Password: test (17 of 17 complete)
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560611646
+Run Time:	0.490248918533325
+Command:	cewl http://10.10.10.121:3000 -m 6 -w /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_cewl.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+message
+access
+please
+credentials
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560611793
+Run Time:	0.641744136810303
+Command:	python3 /opt/Photon/photon.py -u http://10.10.10.121:3000 -o /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_photon -e json && cat /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_photon/exported.json | tee /pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_photon.txt
+Output File:	/pentest/htb/10.10.10.121/celerystalkOutput/10.10.10.121_3000_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "http://10.10.10.121:3000"
+    ],
+    "scripts": [],
+    "external": [],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}

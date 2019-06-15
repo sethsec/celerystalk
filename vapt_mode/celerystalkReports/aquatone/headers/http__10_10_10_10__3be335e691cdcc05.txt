@@ -1,0 +1,9 @@
+200 OK
+Content-Type: text/css
+Date: Sat, 15 Jun 2019 15:27:09 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Accept-Ranges: bytes
+Retry-Count: 0
+Last-Modified: Wed, 12 Apr 2017 08:20:48 GMT
+Etag: "13f99-54cf3e2c1b9c4-gzip"
+Vary: Accept-Encoding

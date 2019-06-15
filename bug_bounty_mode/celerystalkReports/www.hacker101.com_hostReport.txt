@@ -1,0 +1,993 @@
+
+--------------------------------------------------
+Command Name:	nmap_tcp_scan
+Command:	nmap www.hacker101.com  -n -sV -Pn -p 443 -oA h1/www.hacker101.com/www.hacker101.com_nmap_tcp_scan.txt
+
+No such file or directory: h1/www.hacker101.com/www.hacker101.com_nmap_tcp_scan.txt
+--------------------------------------------------
+
+--------------------------------------------------
+Command Name:	whatweb
+Start Time:	1560310261
+Run Time:	176.509253025055
+Command:	whatweb https://www.hacker101.com:443 -a4 --colour=never | sed s/],/]\\n/g | tee h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_whatweb.txt
+Output File:	h1/www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_whatweb.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+https://www.hacker101.com:443 [200 OK] Google-Analytics[Universal] [UA-49905813-1]
+ HTML5, HTTPServer[GitHub.com]
+ IP[185.199.110.153]
+ JQuery, Meta-Author[HackerOne]
+ MetaGenerator[Jekyll v3.8.5]
+ Open-Graph-Protocol, PoweredBy[HackerOne]
+ Script[application/ld+json,text/javascript]
+ Title[Home | Hacker101]
+ UncommonHeaders[access-control-allow-origin,x-github-request-id,x-served-by,x-cache-hits,x-timer,x-fastly-request-id]
+ Via-Proxy[1.1 varnish]
+ X-UA-Compatible[IE=edge]
+
+
+--------------------------------------------------
+Command Name:	wayback
+Start Time:	1560310441
+Run Time:	0.402846097946167
+Command:	curl -sX GET "http://web.archive.org/cdx/search/cdx?url=http://www.hacker101.com:443&output=text&fl=original&collapse=urlkey&matchType=prefix" | tee h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_wayback.txt
+Output File:	h1/www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_wayback.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+http://www.hacker101.com:80/
+https://www.hacker101.com/&esheet=51748445&newsitemid=20180124006035&lan=en-US&anchor=Hacker101&index=2&md5=c1e779c7c55dbef815894a10c2eefeb8
+https://www.hacker101.com/&esheet=51748445&newsitemid=20180124006035&lan=en-US&nchor=Hacker101&index=5&md5=a98866aab822cf8d9750dbb8b318da38
+https://www.hacker101.com/&esheet=51908672&newsitemid=20181204005338&lan=en-US&anchor=capture+the+flag+(CTF)&index=5&md5=2e6398a4165a0e70e46cf6cd1187123a
+https://www.hacker101.com/&esheet=51908672&newsitemid=20181204005338&lan=en-US&anchor=Hacker101&index=4&md5=50b4c8271766768ae46446adccb1057d
+https://www.hacker101.com/&esheet=51948450&newsitemid=20190301005093&lan=en-US&anchor=Hacker101&index=5&md5=2273c5fa43dec8aff3b66933e16ec1d1
+https://www.hacker101.com/&index=8&md5=30b835a40cdb86b41147a0d86c48fae1
+http://hacker101.com/'http://hacker101.com/?j=-1&d=hacker101.com'
+http://hacker101.com/?d=hacker101.com
+http://hacker101.com/?d=hacker101.com&fl=1&flr=-1
+http://www.hacker101.com:80/affiliates.html
+http://hacker101.com/assets/banners/banner.css
+http://hacker101.com/assets/colors/color025.css
+https://www.hacker101.com/assets/css/style.css
+https://www.hacker101.com/assets/css/style.css?v=664b32764ad8c9e05b7f08a4f6d7e9974badee84
+https://www.hacker101.com/assets/ctf.png
+https://www.hacker101.com/assets/images/alert1.png
+https://www.hacker101.com/assets/images/decrypted.jpg
+https://www.hacker101.com/assets/images/encrypted-message-1.jpg
+https://www.hacker101.com/assets/images/encrypted-message-2.jpg
+https://www.hacker101.com/assets/images/github-404.png
+https://www.hacker101.com/assets/images/h1.png
+https://www.hacker101.com/assets/images/h101_angle.png
+https://www.hacker101.com/assets/images/hero-background.jpg
+https://www.hacker101.com/assets/images/key.jpg
+https://www.hacker101.com/assets/images/message.jpg
+https://www.hacker101.com/assets/images/subdomain-takeover.png
+https://www.hacker101.com/assets/javascript/bootstrap/bootstrap.bundle.min.js
+https://www.hacker101.com/assets/javascript/bootstrap/jquery.min.js
+http://hacker101.com/assets/layouts/006/default.css
+https://www.hacker101.com/assets/lessons.png
+https://www.hacker101.com/assets/main.css
+http://hacker101.com/caf_clicks.php?caf&pp=6&position=main&type=ad&nterm=
+http://hacker101.com/caf_clicks.php?caf&pp=7&position=main&type=ad&nterm=
+https://www.hacker101.com/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js
+http://www.hacker101.com:80/cgi-bin/mailnow.cgi?short=yes
+http://hacker101.com/common/js/jquery-1.3.2.js
+http://hacker101.com/common/js/premium.js
+http://www.hacker101.com:80/contact.html
+http://hacker101.com:80/contact.php
+https://www.hacker101.com/coursework/level0
+https://www.hacker101.com/coursework/level0.html
+https://www.hacker101.com/coursework/level1
+https://www.hacker101.com/coursework/level1.html
+https://www.hacker101.com/coursework/level2
+https://www.hacker101.com/coursework/level2.html
+https://www.hacker101.com/coursework/level3
+https://www.hacker101.com/coursework/level3.html
+https://www.hacker101.com/coursework/level4
+https://www.hacker101.com/coursework/level4.html
+https://www.hacker101.com/coursework/level5
+https://www.hacker101.com/coursework/level5.html
+https://www.hacker101.com/coursework/level6
+https://www.hacker101.com/coursework/level6.html
+https://www.hacker101.com/coursework/level7
+https://www.hacker101.com/coursework/level7.html
+https://www.hacker101.com/coursework/level8
+https://www.hacker101.com/coursework/level8.html
+http://www.hacker101.com:80/domains.html
+http://www.hacker101.com:80/domains.shtml
+http://hacker101.com/error.html
+http://hacker101.com/favicon.ico
+http://www.hacker101.com:80/help.html
+http://hacker101.com:80/img/1.jpg
+http://www.hacker101.com:80/img/bottom.gif
+http://hacker101.com:80/img/clickhere.gif
+http://www.hacker101.com:80/img/hdr_index.gif
+http://hacker101.com:80/img/kit-free.jpg
+http://www.hacker101.com:80/img/nav/abutt1a.gif
+http://hacker101.com:80/img/nav/abutt1b.gif
+http://www.hacker101.com:80/img/nav/abutt2a.gif
+http://hacker101.com:80/img/nav/abutt2b.gif
+http://www.hacker101.com:80/img/nav/abutt3a.gif
+http://hacker101.com:80/img/nav/abutt3b.gif
+http://hacker101.com:80/img/nav/abutt4a.gif
+http://hacker101.com:80/img/nav/abutt4b.gif
+http://www.hacker101.com:80/img/nav/abutt5a.gif
+http://hacker101.com:80/img/nav/abutt5b.gif
+http://hacker101.com:80/img/nav/abutt6a.gif
+http://hacker101.com:80/img/nav/abutt6b.gif
+http://hacker101.com:80/img/nav/abutt7a.gif
+http://hacker101.com:80/img/nav/abutt7b.gif
+http://hacker101.com:80/img/navbot.gif
+http://hacker101.com:80/img/navtop.gif
+http://hacker101.com:80/img/p3.jpg
+http://hacker101.com:80/img/p4.jpg
+http://hacker101.com:80/img/s6a.gif
+http://hacker101.com:80/img/s6b.gif
+http://hacker101.com:80/img/s6c.gif
+http://hacker101.com:80/img/s6d.gif
+http://hacker101.com:80/img/side1.gif
+http://hacker101.com:80/img/space.gif
+http://www.hacker101.com:80/index.shtml
+http://hacker101.com/inquiry.php
+http://hacker101.com/linkid.js
+http://www.hacker101.com:80/moreinfo.shtml
+https://www.hacker101.com/playlists/newcomers
+http://www.hacker101.com:80/privacy.html
+http://hacker101.com/privacy.php
+http://hacker101.com:80/quicklogin.gif
+https://www.hacker101.com/resources/hackerone_threat_model
+https://www.hacker101.com/resources/hackerone_threat_model.html
+http://www.hacker101.com:80/robots.txt
+http://hacker101.com:80/scrolldown.gif
+https://www.hacker101.com/sessions/burp101
+https://www.hacker101.com/sessions/burp101.html
+https://www.hacker101.com/sessions/burp201
+https://www.hacker101.com/sessions/burp201.html
+https://www.hacker101.com/sessions/burp301
+https://www.hacker101.com/sessions/burp301.html
+https://www.hacker101.com/sessions/clickjacking
+https://www.hacker101.com/sessions/clickjacking.html
+https://www.hacker101.com/sessions/crypto_attacks
+https://www.hacker101.com/sessions/crypto_attacks.html
+https://www.hacker101.com/sessions/crypto_crash_course
+https://www.hacker101.com/sessions/crypto_crash_course.html
+https://www.hacker101.com/sessions/crypto_wrap-up
+https://www.hacker101.com/sessions/crypto_wrap-up.html
+https://www.hacker101.com/sessions/file_inclusion
+https://www.hacker101.com/sessions/file_inclusion.html
+https://www.hacker101.com/sessions/file_uploads
+https://www.hacker101.com/sessions/file_uploads.html
+https://www.hacker101.com/sessions/good_reports
+https://www.hacker101.com/sessions/good_reports.html
+https://www.hacker101.com/sessions/introduction
+https://www.hacker101.com/sessions/introduction.html
+https://www.hacker101.com/sessions/null_termination
+https://www.hacker101.com/sessions/null_termination.html
+https://www.hacker101.com/sessions/password_storage
+https://www.hacker101.com/sessions/password_storage.html
+https://www.hacker101.com/sessions/secure_architecture
+https://www.hacker101.com/sessions/secure_architecture.html
+https://www.hacker101.com/sessions/session_fixation
+https://www.hacker101.com/sessions/session_fixation.html
+https://www.hacker101.com/sessions/sqli
+https://www.hacker101.com/sessions/sqli.html
+https://www.hacker101.com/sessions/threat_modeling
+https://www.hacker101.com/sessions/threat_modeling.html
+https://www.hacker101.com/sessions/unchecked_redirects
+https://www.hacker101.com/sessions/unchecked_redirects.html
+https://www.hacker101.com/sessions/web_in_depth
+https://www.hacker101.com/sessions/web_in_depth.html
+https://www.hacker101.com/sessions/xss
+https://www.hacker101.com/sessions/xss.html
+http://www.hacker101.com:80/signup.shtml
+https://www.hacker101.com/sitemap.xml
+http://hacker101.com/static/common/css/common.css
+http://hacker101.com/static/common/css/listing.css
+http://hacker101.com/static/common/css/signupapp.css
+http://hacker101.com/static/common/images/banner/bf/bg_bf_footer.jpg
+http://hacker101.com/static/common/images/banner/bf/bg_bf_header.jpg
+http://hacker101.com/static/common/images/banner/bf/txt_ft_blackfriday.png
+http://hacker101.com/static/common/images/banner/bf/txt_hd_blackfriday.png
+http://hacker101.com/static/common/images/bg.png
+http://hacker101.com/static/common/images/btn_signup.png
+http://hacker101.com/static/common/images/button.png
+http://hacker101.com/static/common/images/spacer.gif
+http://hacker101.com/static/common/images/star_x_grey.gif
+http://hacker101.com/static/common/images/star_x_orange.gif
+http://hacker101.com/static/common/images/txt_hd.png
+http://hacker101.com/static/common/js/FormManager.js
+http://hacker101.com/static/common/OpenSans-Regular.ttf
+http://hacker101.com/static/common/OpenSans-Semibold.ttf
+http://hacker101.com/static/template/modern-template-3/images/image1.jpg
+http://hacker101.com/static/template/modern-template-3/images/image2.jpg
+http://hacker101.com/static/template/modern-template-3/images/image3.jpg
+http://hacker101.com/static/template/modern-template-3/images/image4.jpg
+http://hacker101.com/static/template/modern-template-3/images/topimage1.jpg
+http://hacker101.com/static/template/modern-template-3/images/topimage2.jpg
+http://hacker101.com/static/template/modern-template-3/images/topimage3.jpg
+http://hacker101.com/static/template/modern-template-3/images/topimage4.jpg
+http://hacker101.com/static/template/webfile/images/gradbg2.gif
+http://hacker101.com:80/top.php
+http://hacker101.com/top.php?d=hacker101.com
+http://hacker101.com/uniques.php?d=hacker101.com
+https://www.hacker101.com/videos&esheet=51908672&newsitemid=20181204005338&lan=en-US&anchor=Hacker101&index=2&md5=b95326ae9c0d66b2ad1e6d4f19579b68
+https://www.hacker101.com/vulnerabilities/clickjacking
+https://www.hacker101.com/vulnerabilities/clickjacking.html
+https://www.hacker101.com/vulnerabilities/command_injection
+https://www.hacker101.com/vulnerabilities/command_injection.html
+https://www.hacker101.com/vulnerabilities/csrf
+https://www.hacker101.com/vulnerabilities/csrf.html
+https://www.hacker101.com/vulnerabilities/directory_traversal
+https://www.hacker101.com/vulnerabilities/directory_traversal.html
+https://www.hacker101.com/vulnerabilities/file_inclusion
+https://www.hacker101.com/vulnerabilities/file_inclusion.html
+https://www.hacker101.com/vulnerabilities/improper_authorization
+https://www.hacker101.com/vulnerabilities/improper_authorization.html
+https://www.hacker101.com/vulnerabilities/insecure_password_storage
+https://www.hacker101.com/vulnerabilities/insecure_password_storage.html
+https://www.hacker101.com/vulnerabilities/null_termination
+https://www.hacker101.com/vulnerabilities/null_termination.html
+https://www.hacker101.com/vulnerabilities/padding_oracle
+https://www.hacker101.com/vulnerabilities/padding_oracle.html
+https://www.hacker101.com/vulnerabilities/reflected_xss
+https://www.hacker101.com/vulnerabilities/reflected_xss.html
+https://www.hacker101.com/vulnerabilities/session_fixation
+https://www.hacker101.com/vulnerabilities/session_fixation.html
+https://www.hacker101.com/vulnerabilities/sqli
+https://www.hacker101.com/vulnerabilities/sqli.html
+https://www.hacker101.com/vulnerabilities/stored_xss
+https://www.hacker101.com/vulnerabilities/stored_xss.html
+https://www.hacker101.com/vulnerabilities/stream_reuse
+https://www.hacker101.com/vulnerabilities/stream_reuse.html
+https://www.hacker101.com/vulnerabilities/subdomain_takeover
+https://www.hacker101.com/vulnerabilities/subdomain_takeover.html
+https://www.hacker101.com/vulnerabilities/unchecked_redirect
+https://www.hacker101.com/vulnerabilities/unchecked_redirect.html
+http://www.hacker101.com:80/whowhy.html
+
+
+--------------------------------------------------
+Command Name:	cewl
+Start Time:	1560310503
+Run Time:	8.90654802322388
+Command:	cewl https://www.hacker101.com:443 -m 6 -w h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_cewl.txt
+Output File:	h1/www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_cewl.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+Hacker
+security
+Jekyll
+Resources
+HackerOne
+hacking
+bounties
+Source
+Videos
+interest
+Discord
+Whether
+programmer
+seasoned
+professional
+something
+Github
+Powered
+Follow
+Twitter
+session
+useful
+applications
+Android
+analysis
+Course
+Crypto
+series
+mobile
+hacker
+curated
+especially
+rather
+embedded
+decompiler
+binaries
+discuss
+Mitigation
+JavaScript
+testing
+vulnerabilities
+source
+review
+powerful
+native
+devices
+bounty
+Mobile
+through
+programs
+Python
+Setting
+extensive
+comprehensive
+playlist
+resources
+Injection
+Programming
+injection
+Exploitation
+attacks
+started
+Introduction
+Review
+Server
+Quickstart
+things
+languages
+important
+nearly
+libraries
+exploitation
+essential
+allows
+intended
+highlight
+platform
+Windows
+Playlist
+cryptography
+Detection
+sessions
+Capture
+Lessons
+lessons
+Native
+Newcomers
+Authorization
+Session
+Inclusion
+Attacks
+Getting
+Hunters
+concepts
+recommend
+programming
+structure
+easier
+advanced
+arbitrary
+Instructions
+threat
+requests
+Friends
+Fixation
+Clickjacking
+Unchecked
+Redirects
+Password
+Storage
+Threat
+Modeling
+Reports
+Started
+Maximizing
+Bounty
+Secure
+Architecture
+Request
+Forgery
+External
+Cookie
+Hacking
+invitations
+private
+starting
+strictly
+automating
+exploiting
+critical
+common
+server
+itself
+virtual
+machine
+ability
+application
+popular
+circles
+nature
+featureset
+recommended
+servers
+DirBuster
+performing
+manipulation
+decompilation
+dotPeek
+standard
+Hopper
+Binary
+includes
+debugging
+reverse
+engineering
+extremely
+firmware
+strings
+architecture
+Protections
+Switch
+practical
+techniques
+skills
+practice
+levels
+Cryptography
+Upload
+Termination
+Writing
+Entities
+Tampering
+Techniques
+hunting
+address
+Common
+oriented
+hunters
+Command
+command
+account
+Useful
+relevant
+understanding
+exploit
+hidden
+system
+functionality
+absolute
+obscure
+everything
+Unicorn
+Engine
+writing
+editors
+emulator
+number
+systems
+bypass
+Memory
+Buffer
+attacker
+Encoding
+Assembler
+Authentication
+overflow
+Exploiting
+basics
+Included
+passwords
+second
+tricks
+Determining
+modeling
+report
+Intruder
+Repeater
+history
+Manipulating
+cookies
+Testing
+certificate
+educational
+resource
+developed
+empower
+community
+theory
+called
+progress
+receive
+learned
+Congratulations
+taking
+becoming
+playlists
+completed
+working
+watching
+prerequisites
+speaking
+accelerate
+education
+language
+majority
+Understanding
+because
+actually
+Commonly
+various
+activities
+during
+general
+accessing
+manipulating
+Knowledge
+discovering
+Networking
+Terminology
+understand
+Numbers
+numbers
+associated
+services
+related
+commands
+become
+Virtualbox
+distribution
+familiarity
+valuable
+signing
+checking
+Additionally
+hackers
+making
+interesting
+impactful
+successful
+notable
+automation
+particularly
+albeit
+mostly
+Objective
+Kotlin
+produced
+decompilers
+roughly
+equivalent
+original
+compiled
+assembly
+lowest
+abstraction
+mitmproxy
+written
+beginners
+sqlmap
+discovery
+
+Snip... Only displaying first 300 of the total 768 lines...
+
+
+--------------------------------------------------
+Command Name:	photon
+Start Time:	1560310531
+Run Time:	20.4045531749725
+Command:	python3 /opt/Photon/photon.py -u https://www.hacker101.com:443 -o h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_photon -e json && cat h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_photon/exported.json | tee h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_photon.txt
+Output File:	h1/www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_photon.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+    "files": [
+        "http://www.skyfree.org/linux/references/ELF_Format.pdf",
+        "https://www.qualcomm.com/media/documents/files/whitepaper-pointer-authentication-on-armv8-3.pdf",
+        "https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf",
+        "https://www.piotrbania.com/all/articles/pbania-jit-mitigations2010.pdf",
+        "https://info.lookout.com/rs/051-ESQ-475/images/pegasus-exploits-technical-details.pdf",
+        "https://www.usenix.org/system/files/conference/woot18/woot18-paper-gawlik.pdf",
+        "https://media.blackhat.com/bh-us-12/Briefings/Serna/BH_US_12_Serna_Leak_Era_Slides.pdf",
+        "https://www.comp.nus.edu.sg/~liangzk/papers/asiaccs11.pdf",
+        "https://www.blackhat.com/presentations/bh-europe-07/Sotirov/Presentation/bh-eu-07-sotirov-apr19.pdf"
+    ],
+    "intel": [],
+    "robots": [],
+    "custom": [],
+    "failed": [],
+    "internal": [
+        "https://www.hacker101.com/sessions/videos",
+        "https://www.hacker101.com/playlists/sessions/resources",
+        "https://www.hacker101.com/sessions/crypto_crash_course.html",
+        "https://www.hacker101.com/sessions/native_code_crash_course.html",
+        "https://www.hacker101.com:443/sessions/null_termination",
+        "https://www.hacker101.com/sessions/secure_architecture",
+        "https://www.hacker101.com:443//",
+        "https://www.hacker101.com:443/sessions/crypto_wrap-up",
+        "https://www.hacker101.com:443/sessions/unchecked_redirects",
+        "https://www.hacker101.com:443/resources",
+        "https://www.hacker101.com/sessions//resources",
+        "https://www.hacker101.com:443/sessions/crypto_attacks",
+        "https://www.hacker101.com/sessions/crypto_attacks.html",
+        "https://www.hacker101.com/sessions/ssrf.html",
+        "https://www.hacker101.com//videos",
+        "https://www.hacker101.com/sessions/xxe",
+        "https://www.hacker101.com/sessions/introduction.html",
+        "https://www.hacker101.com/sessions/password_storage.html",
+        "https://www.hacker101.com:443/sessions/source_review",
+        "https://www.hacker101.com/sessions/burp301",
+        "https://www.hacker101.com:443/sessions/xxe",
+        "https://www.hacker101.com/sessions/",
+        "https://www.hacker101.com/sessions/null_termination.html",
+        "https://www.hacker101.com/resources/discord",
+        "https://www.hacker101.com:443//discord",
+        "https://www.hacker101.com/sessions/resources/resources",
+        "https://www.hacker101.com:443/sessions/file_inclusion",
+        "https://www.hacker101.com:443/sessions/burp301",
+        "https://www.hacker101.com/sessions/good_reports.html",
+        "https://www.hacker101.com:443//resources",
+        "https://www.hacker101.com/sessions/burp101.html",
+        "https://www.hacker101.com:443/sessions/clickjacking",
+        "https://www.hacker101.com/sessions/sqli",
+        "https://www.hacker101.com/playlists/sessions/crypto_crash_course.html",
+        "https://www.hacker101.com/sessions/clickjacking.html",
+        "https://www.hacker101.com:443/playlists/cryptography",
+        "https://www.hacker101.com/playlists/newcomers.html",
+        "https://www.hacker101.com/playlists/mailto:support@github.com",
+        "https://www.hacker101.com/discord",
+        "https://www.hacker101.com:443/sessions/introduction",
+        "https://www.hacker101.com/sessions/resources",
+        "https://www.hacker101.com/resources/mailto:support@github.com",
+        "https://www.hacker101.com/resources",
+        "https://www.hacker101.com/playlists/sessions/crypto_attacks.html",
+        "https://www.hacker101.com:443/playlists/burp_suite",
+        "https://www.hacker101.com/resources/videos",
+        "https://www.hacker101.com:443//videos",
+        "https://www.hacker101.com/sessions/mobile_crash_course.html",
+        "https://www.hacker101.com:443/sessions/secure_architecture",
+        "https://www.hacker101.com/playlists/sessions/burp301.html",
+        "https://www.hacker101.com/sessions/file_inclusion",
+        "https://www.hacker101.com/sessions/burp201",
+        "https://www.hacker101.com///",
+        "https://www.hacker101.com/sessions/native_code_crash_course",
+        "https://www.hacker101.com:443/sessions/mobile_crash_course",
+        "https://www.hacker101.com/resources//",
+        "https://www.hacker101.com/sessions/file_uploads.html",
+        "https://www.hacker101.com/playlists/sessions/",
+        "https://www.hacker101.com/sessions/ios_quickstart",
+        "https://www.hacker101.com/sessions/resources/",
+        "https://www.hacker101.com/playlists/sessions/burp101.html",
+        "https://www.hacker101.com/playlists//resources",
+        "https://www.hacker101.com/playlists/sessions/sqli.html",
+        "https://www.hacker101.com/sessions/android_quickstart",
+        "https://www.hacker101.com/playlists/cryptography",
+        "https://www.hacker101.com:443/videos",
+        "https://www.hacker101.com//",
+        "https://www.hacker101.com/sessions/resources/discord",
+        "https://www.hacker101.com/sessions/sqli.html",
+        "https://www.hacker101.com/sessions/xss.html",
+        "https://www.hacker101.com/sessions/mobile_crash_course",
+        "https://www.hacker101.com/sessions/burp101",
+        "https://www.hacker101.com:443/sessions/good_reports",
+        "https://www.hacker101.com/sessions/ssrf",
+        "https://www.hacker101.com/resources//videos",
+        "https://www.hacker101.com:443/sessions/ios_quickstart",
+        "https://www.hacker101.com/sessions/crypto_attacks",
+        "https://www.hacker101.com/sessions/password_storage",
+        "https://www.hacker101.com/sessions//videos",
+        "https://www.hacker101.com:443/sessions/crypto_crash_course",
+        "https://www.hacker101.com/sessions/resources/hackerone_threat_model",
+        "https://www.hacker101.com//discord",
+        "https://www.hacker101.com/resources//resources",
+        "https://www.hacker101.com/resources/",
+        "https://www.hacker101.com:443/sessions/cookie_tampering",
+        "https://www.hacker101.com/playlists/resources",
+        "https://www.hacker101.com/playlists/burp_suite",
+        "https://www.hacker101.com/sessions/crypto_crash_course",
+        "https://www.hacker101.com:443/sessions/burp101",
+        "https://www.hacker101.com/sessions/source_review",
+        "https://www.hacker101.com/sessions/threat_modeling",
+        "https://www.hacker101.com/sessions/unchecked_redirects.html",
+        "https://www.hacker101.com:443/sessions/password_storage",
+        "https://www.hacker101.com/sessions/good_reports",
+        "https://www.hacker101.com/discord.html",
+        "https://www.hacker101.com/sessions/xss",
+        "https://www.hacker101.com/sessions//",
+        "https://www.hacker101.com///videos",
+        "https://www.hacker101.com:443/playlists/newcomers",
+        "https://www.hacker101.com/resources/resources",
+        "https://www.hacker101.com/sessions/session_fixation.html",
+        "https://www.hacker101.com/resources.html",
+        "https://www.hacker101.com/sessions/cookie_tampering.html",
+        "https://www.hacker101.com/sessions/burp201.html",
+        "https://www.hacker101.com:443/sessions/native_code_crash_course",
+        "https://www.hacker101.com/playlists/sessions/password_storage.html",
+        "https://www.hacker101.com/playlists/",
+        "https://www.hacker101.com/",
+        "https://www.hacker101.com:443/sessions/file_uploads",
+        "https://www.hacker101.com/videos.html",
+        "https://www.hacker101.com/videos",
+        "https://www.hacker101.com/playlists//discord",
+        "https://www.hacker101.com/playlists/sessions/videos",
+        "https://www.hacker101.com:443/sessions/xss",
+        "https://www.hacker101.com/sessions/crypto_wrap-up",
+        "https://www.hacker101.com/sessions/source_review.html",
+        "https://www.hacker101.com/sessions/xxe.html",
+        "https://www.hacker101.com/sessions/crypto_wrap-up.html",
+        "https://www.hacker101.com//resources",
+        "https://www.hacker101.com/sessions/web_in_depth",
+        "https://www.hacker101.com/playlists//",
+        "https://www.hacker101.com/sessions/threat_modeling.html",
+        "https://www.hacker101.com/resources//discord",
+        "https://www.hacker101.com:443/sessions/sqli",
+        "https://www.hacker101.com:443/sessions/session_fixation",
+        "https://www.hacker101.com:443/",
+        "https://www.hacker101.com/playlists/discord",
+        "https://www.hacker101.com/sessions/secure_architecture.html",
+        "https://www.hacker101.com/sessions/unchecked_redirects",
+        "https://www.hacker101.com/sessions/cookie_tampering",
+        "https://www.hacker101.com/playlists/newcomers",
+        "https://www.hacker101.com/sessions/ios_quickstart.html",
+        "https://www.hacker101.com:443",
+        "https://www.hacker101.com/sessions/burp301.html",
+        "https://www.hacker101.com/sessions/mailto:support@github.com",
+        "https://www.hacker101.com/sessions/android_quickstart.html",
+        "https://www.hacker101.com/playlists/burp_suite.html",
+        "https://www.hacker101.com/playlists//videos",
+        "https://www.hacker101.com/playlists/sessions/xss.html",
+        "https://www.hacker101.com:443/sessions/web_in_depth",
+        "https://www.hacker101.com:443/discord",
+        "https://www.hacker101.com:443/sessions/android_quickstart",
+        "https://www.hacker101.com/playlists/sessions/discord",
+        "https://www.hacker101.com/sessions/discord",
+        "https://www.hacker101.com/resources/hackerone_threat_model.html",
+        "https://www.hacker101.com/sessions/web_in_depth.html",
+        "https://www.hacker101.com/sessions/introduction",
+        "https://www.hacker101.com///discord",
+        "https://www.hacker101.com/sessions/session_fixation",
+        "https://www.hacker101.com/sessions/file_uploads",
+        "https://www.hacker101.com:443/sessions/burp201",
+        "https://www.hacker101.com/playlists/sessions/burp201.html",
+        "https://www.hacker101.com/sessions//discord",
+        "https://www.hacker101.com:443/sessions/ssrf",
+        "https://www.hacker101.com///resources",
+        "https://www.hacker101.com:443/sessions/threat_modeling",
+        "https://www.hacker101.com/playlists/sessions/crypto_wrap-up.html",
+        "https://www.hacker101.com/playlists/cryptography.html",
+        "https://www.hacker101.com/sessions/clickjacking",
+        "https://www.hacker101.com/sessions/null_termination",
+        "https://www.hacker101.com/playlists/videos",
+        "https://www.hacker101.com/playlists/sessions/web_in_depth.html",
+        "https://www.hacker101.com/sessions/file_inclusion.html",
+        "https://www.hacker101.com/playlists/sessions/introduction.html",
+        "https://www.hacker101.com/sessions/resources/videos"
+    ],
+    "scripts": [
+        "https://www.hacker101.com:443/assets/javascript/bootstrap/jquery.min.js",
+        "https://www.hacker101.com:443/assets/javascript/bootstrap/bootstrap.bundle.min.js"
+    ],
+    "external": [
+        "http://www.ollydbg.de/",
+        "https://security.stackexchange.com/questions/18556/how-do-aslr-and-dep-work",
+        "http://jd.benow.ca/",
+        "https://www.unicorn-engine.org/",
+        "https://binary.ninja/",
+        "https://www.genymotion.com/",
+        "https://developer.android.com/studio",
+        "https://amir.rachum.com/blog/2016/09/17/shared-libraries/",
+        "https://googleprojectzero.blogspot.com/2019/02/examining-pointer-authentication-on.html",
+        "https://googleprojectzero.blogspot.com/2019/04/splitting-atoms-in-xnu.html",
+        "http://lcamtuf.coredump.cx/afl/",
+        "http://jd.benow.ca",
+        "https://www.youtube.com/watch?v=xkdPjbaLngE&amp;feature=youtu.be",
+        "https://github.com/Hacker0x01/hacker101",
+        "https://www.ssllabs.com/ssltest/",
+        "https://www.linux.com/learn/easy-lamp-server-installation",
+        "https://hackerone.com/reports/354650",
+        "https://www.frida.re/",
+        "https://sqlbolt.com/",
+        "https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools",
+        "https://hackerone.com/reports/283063",
+        "https://docs.python.org/3/tutorial/",
+        "http://sqlmap.org/",
+        "https://lldb.llvm.org/",
+        "https://ctf.hacker101.com/",
+        "https://en.wikipedia.org/wiki/W%5EX",
+        "https://github.com/JonathanSalwan/ROPgadget",
+        "http://codearcana.com/posts/2013/05/28/introduction-to-return-oriented-programming-rop.html",
+        "https://www.suavetech.com/0xed/",
+        "https://github.com/trailofbits/mcsema",
+        "https://mitmproxy.org/",
+        "https://www.aldeid.com/wiki/PEiD",
+        "https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format",
+        "http://phrack.org/issues/58/4.html",
+        "http://shell-storm.org/online/Online-Assembler-and-Disassembler/",
+        "https://www.gnu.org/software/gdb/",
+        "https://github.com/sashs/Ropper",
+        "https://github.com/nabla-c0d3/ssl-kill-switch2",
+        "https://hackerone.com/reports/174069",
+        "https://www.hackerone.com/start-hacking",
+        "https://www.hex-rays.com/products/ida/",
+        "https://cryptopals.com/",
+        "https://www.utilizewindows.com/list-of-common-network-port-numbers/",
+        "https://ibotpeaches.github.io/Apktool/",
+        "https://www.hackerone.com/",
+        "https://twitter.com/Hacker0x01",
+        "https://llvm.org/docs/LibFuzzer.html",
+        "https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project",
+        "https://en.wikipedia.org/wiki/CPU_cache",
+        "https://www.owasp.org/index.php/Application_Threat_Modeling",
+        "https://mh-nexus.de/en/hxd/",
+        "http://valgrind.org/",
+        "https://github.com/BishopFox/bfinject",
+        "https://javascript.info/",
+        "https://www.cs.virginia.edu/~evans/cs216/guides/x86.html",
+        "https://wiki.osdev.org/Expanded_Main_Page",
+        "https://wiki.osdev.org/Memory_management",
+        "https://github.com/radare/radare2",
+        "https://www.coranac.com/tonc/text/asm.htm",
+        "https://github.com/pxb1988/dex2jar",
+        "https://www.hopperapp.com/",
+        "https://twitter.com/albinowax",
+        "https://en.wikibooks.org/wiki/QEMU/Debugging_with_QEMU",
+        "https://medium.com/@mattklein123/meltdown-spectre-explained-6bc8634cc0c2",
+        "https://www.jetbrains.com/decompiler/",
+        "http://www.cydiaimpactor.com/",
+        "http://www.cycript.org/",
+        "https://googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html",
+        "https://medium.com/@peckshield/reproducing-the-eos-out-of-bound-write-vulnerability-in-nodeos-6a0487070ced",
+        "https://en.wikipedia.org/wiki/NX_bit",
+        "https://portswigger.net/burp/documentation/desktop/tools/mobile-assistant",
+        "https://hackerone.com/reports/31408",
+        "https://en.wikipedia.org/wiki/GNU_Assembler",
+        "https://www.digitalocean.com/community/tutorials/an-introduction-to-networking-terminology-interfaces-and-protocols",
+        "https://github.com/GDSSecurity/PadBuster",
+        "https://lowlevelbits.org/parsing-mach-o-files/",
+        "https://en.wikipedia.org/wiki/Strings_(Unix)",
+        "https://daeken.svbtle.com/nintendo-switch-nvservices-info-leak",
+        "https://en.wikipedia.org/wiki/Buffer_overflow_protection",
+        "https://blog.netspi.com/four-ways-bypass-android-ssl-verification-certificate-pinning/",
+        "http://sandpile.org/",
+        "http://www.heaventools.com/overview.htm",
+        "http://phrack.org/issues/49/14.html",
+        "https://en.wikipedia.org/wiki/Netwide_Assembler",
+        "https://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything",
+        "https://googleprojectzero.blogspot.com/2019/01/voucherswap-exploiting-mig-reference.html",
+        "https://www.nsa.gov/resources/everyone/ghidra/",
+        "https://cirt.net/Nikto2",
+        "https://www.qemu.org/",
+        "https://hackerone.com/reports/470520",
+        "https://hackerone.com/reports/47234",
+        "https://github.com/nahamsec/lazyrecon",
+        "https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool",
+        "http://www.phrack.org/papers/attacking_javascript_engines.html",
+        "https://hackerone.com/reports/207321",
+        "https://www.purehacking.com/blog/lloyd-simon/an-introduction-to-use-after-free-vulnerabilities",
+        "https://github.com/ReFirmLabs/binwalk",
+        "https://linuxconfig.org/how-to-install-kali-linux-on-virtualbox",
+        "https://www.youtube.com/watch?v=9vKG8-TnawY",
+        "https://discord.gg/32ZNZVN"
+    ],
+    "fuzzable": [],
+    "endpoints": [],
+    "keys": []
+}
+
+--------------------------------------------------
+Command Name:	wappalyzer_cli
+Start Time:	1560310678
+Run Time:	3.1146547794342
+Command:	docker run --rm wappalyzer/cli https://www.hacker101.com:443 | jq . | tee h1//www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_wappalyzer_cli.json
+Output File:	h1/www.hacker101.com/celerystalkOutput/www.hacker101.com_443_tcp_wappalyzer_cli.txt
+Status:		COMPLETED
+--------------------------------------------------
+
+{
+  "urls": [
+    "https://www.hacker101.com:443/"
+  ],
+  "applications": [
+    {
+      "name": "Fastly",
+      "confidence": "100",
+      "version": "",
+      "icon": "Fastly.svg",
+      "website": "https://www.fastly.com",
+      "categories": [
+        {
+          "31": "CDN"
+        }
+      ]
+    },
+    {
+      "name": "GitHub Pages",
+      "confidence": "100",
+      "version": "",
+      "icon": "GitHub.svg",
+      "website": "https://pages.github.com/",
+      "categories": [
+        {
+          "31": "CDN"
+        }
+      ]
+    },
+    {
+      "name": "Google Analytics",
+      "confidence": "100",
+      "version": "UA",
+      "icon": "Google Analytics.svg",
+      "website": "http://google.com/analytics",
+      "categories": [
+        {
+          "10": "Analytics"
+        }
+      ]
+    },
+    {
+      "name": "Jekyll",
+      "confidence": "100",
+      "version": "v3.8.5",
+      "icon": "Jekyll.png",
+      "website": "http://jekyllrb.com",
+      "categories": [
+        {
+          "57": "Static Site Generator"
+        }
+      ]
+    },
+    {
+      "name": "Bootstrap",
+      "confidence": "100",
+      "version": "4.1.0",
+      "icon": "Bootstrap.svg",
+      "website": "https://getbootstrap.com",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "Varnish",
+      "confidence": "100",
+      "version": "",
+      "icon": "Varnish.svg",
+      "website": "http://www.varnish-cache.org",
+      "categories": [
+        {
+          "23": "Cache Tools"
+        }
+      ]
+    },
+    {
+      "name": "jQuery",
+      "confidence": "100",
+      "version": "3.3.1",
+      "icon": "jQuery.svg",
+      "website": "https://jquery.com",
+      "categories": [
+        {
+          "12": "JavaScript Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "Ruby on Rails",
+      "confidence": "0",
+      "version": "",
+      "icon": "Ruby on Rails.png",
+      "website": "http://rubyonrails.org",
+      "categories": [
+        {
+          "18": "Web Frameworks"
+        }
+      ]
+    },
+    {
+      "name": "Ruby",
+      "confidence": "0",
+      "version": "",
+      "icon": "Ruby.png",
+      "website": "http://ruby-lang.org",
+      "categories": [
+        {
+          "27": "Programming Languages"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "language": "en"
+  }
+}
