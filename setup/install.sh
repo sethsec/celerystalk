@@ -26,12 +26,16 @@ echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
+    apt-get update -y
+    apt-get install curl gnupg2 -y
     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
     apt-get update -y
     apt-get remove docker docker-engine docker.io containerd runc -y
     apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
+    apt-get update -y
+    apt-get install curl gnupg2 -y
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
     apt-get update -y
