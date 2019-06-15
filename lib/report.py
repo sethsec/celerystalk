@@ -315,7 +315,7 @@ def report(workspace,config_file,target_list=None):
     filter_html_body = '''<div id="myBtnContainer">\n'''
     #filter_html_body = filter_html_body + '''<font size="5">celerystalk Report</font><br>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('all')"> Show all</button>\n'''
-    filter_html_body = filter_html_body + '''<a class="btn" href="/aquatone/aquatone_report.html" target="_blank">Aquatone Report</a>\n'''
+    filter_html_body = filter_html_body + '''<a class="btn" href="aquatone/aquatone_report.html" target="_blank">Aquatone Report</a>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('services')"> Services</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('screenshots')"> Screenshots</button>\n'''
     filter_html_body = filter_html_body + '''<button class="btn" onclick="filterSelection('hostheader')"> Host Header</button>\n'''
