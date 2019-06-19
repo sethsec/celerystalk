@@ -2,6 +2,9 @@
 
 DISTRO=`grep "^ID=" /etc/os-release | cut -d\= -f2`
 
+# https://stackoverflow.com/questions/3349105/how-to-set-current-working-directory-to-the-directory-of-the-script
+cd "${0%/*}"
+
 if [[ $EUID -ne 0 ]]; then
    echo " [!]This script must be run as root" 1>&2
    exit 1

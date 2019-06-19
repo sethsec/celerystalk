@@ -63,8 +63,7 @@ try:
     from docopt import docopt
 except:
     print("[!] To install celerystalk:")
-    print("[!]   cd setup")
-    print("[!]   ./install.sh")
+    print("[!]   ./setup/install.sh")
     exit()
 import os
 from time import sleep
@@ -90,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(205)
+build=str(206)
 
 def print_banner():
 
