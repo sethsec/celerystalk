@@ -34,7 +34,7 @@ Analysis | ./celerystalk report | celerystalk
 **You must install and run celerystalk as root**   
 
 ```
-# git clone https://github.com/sethsec/celerystalk.git
+# git clone https://github.com/sethsec/celerystalk.git -b master
 # cd celerystalk/setup
 # ./install.sh
 # cd ..

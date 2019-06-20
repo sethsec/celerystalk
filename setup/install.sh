@@ -31,7 +31,9 @@ echo ""
 if [ "$DISTRO" == "kali" ]; then
     apt-get update -y
     if [[ $? > 0 ]]; then
-        echo "apt-get update failed, exiting..."
+        echo
+        echo
+        echo "[!] apt-get update failed, exiting..."
         exit
     fi
     apt-get install curl gnupg2 -y
@@ -43,7 +45,9 @@ if [ "$DISTRO" == "kali" ]; then
 elif [ "$DISTRO" == "ubuntu" ]; then
     apt-get update -y
     if [[ $? > 0 ]]; then
-        echo "apt-get update failed, exiting..."
+        echo
+        echo
+        echo "[!]  apt-get update failed, exiting..."
         exit
     fi
     apt-get install curl gnupg2 -y
@@ -53,8 +57,6 @@ elif [ "$DISTRO" == "ubuntu" ]; then
     apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
 fi
 
-
-CELERYSTALK_DIR=`pwd`
 
 echo ""
 echo "**************************************"
@@ -178,11 +180,11 @@ fi
 #    echo "y" | cmsmap -U P
 #fi
 
-cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
 cd .. && ./celerystalk -h
+CELERYSTALK_DIR=`pwd`
 echo ""
-echo "[+] Back up a directory and you are ready to go."
+echo "[+] Navigate to " + $CELERYSTALK_DIR + " and you are ready to go."
 echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
