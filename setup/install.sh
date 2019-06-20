@@ -58,6 +58,8 @@ elif [ "$DISTRO" == "ubuntu" ]; then
 fi
 
 
+CELERYSTALK_DIR=`pwd`
+
 echo ""
 echo "**************************************"
 echo "*      Starting redis-server          *"
@@ -180,11 +182,11 @@ fi
 #    echo "y" | cmsmap -U P
 #fi
 
+cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
 cd .. && ./celerystalk -h
-CELERYSTALK_DIR=`pwd`
+
 echo ""
-echo "[+] Navigate to " + $CELERYSTALK_DIR + " and you are ready to go."
 echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
