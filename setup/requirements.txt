@@ -1,5 +1,4 @@
 python-libnmap
-python-libnessus
 netaddr
 simplejson
 requests

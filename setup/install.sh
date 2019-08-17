@@ -79,6 +79,20 @@ echo ""
 pip install -r requirements.txt --upgrade
 
 
+echo ""
+echo "**************************************"
+echo "*      Starting python-libnessus     *"
+echo "**************************************"
+echo ""
+
+if [ ! -f /opt/python-libnessus/python_libnessus.egg-info ]; then
+    cd /opt/
+    git clone https://github.com/bmx0r/python-libnessus.git
+    cd python-libnessus
+    python setup.py install
+fi
+
+
 if [ ! -f /opt/amass/amass ]; then
     echo ""
     echo "****************************************"
