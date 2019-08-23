@@ -2,7 +2,7 @@
 import re
 import lib.db
 import lib.utils
-import urlparse
+from urllib import parse as urlparse
 
 
 #TODO: Add this when i move project to python3

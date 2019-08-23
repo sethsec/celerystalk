@@ -926,7 +926,7 @@ def populate_report_data(report_file,vhost,workspace):
                         report_file.write("Output File:\t" + normalized_output_file + '\n')
                         report_file.write("Status:\t\t" + status + '\n')
                         report_file.write('-' * 50 + '\n\n')
-                except OSError, e:
+                except OSError:
                     report_file.write('\n')
                     report_file.write('-' * 50 + '\n')
                     report_file.write("Command Name:\t" + command_name+ '\n')
@@ -947,7 +947,7 @@ def populate_report_data(report_file,vhost,workspace):
                 if linecount > 300:
                     report_file.write("\nSnip... Only displaying first 300 of the total " + str(
                         linecount) + " lines...\n")
-        except IOError, e:
+        except IOError:
             #dont tell the user at the concole that file didnt exist.
             pass
 
@@ -1015,7 +1015,7 @@ def get_command_header_and_info(vhost,normalized_output_file,command_name,comman
             command_header_html_string = command_header_html_string + "<tr><td>Status:</td><td>" + status + ' [No Output Data]</td></tr>\n'
         else:
             command_header_html_string = command_header_html_string + "<tr><td>Status:</td><td>" + status + '</td></tr>\n'
-    except OSError, e:
+    except OSError:
         command_header_html_string = command_header_html_string + "<tr><td>Command:</td><td>" + command + '</td></tr>\n'
         command_header_html_string = command_header_html_string + "\nError!: No such file or directory: " + normalized_output_file + "</td></tr>\n"
         # command_header_html_string = command_header_html_string +  "{0} did not produce any data\n".format(command_name))
@@ -1046,7 +1046,7 @@ def convert_file_contents_to_html(normalized_output_file):
             if linecount > 300:
                 file_html_string = file_html_string + "\nSnip... Only displaying first 300 of the total " + str(
                     linecount) + " lines...\n"
-    except IOError, e:
+    except IOError:
         # dont tell the user at the concole that file didnt exist.
         pass
     file_html_string = file_html_string + "        </div>"
@@ -1064,4 +1064,4 @@ def convert_file_contents_to_html2(normalized_output_file):
 
 def command_footer_html(tasks_for_output_file):
     for task in tasks_for_output_file:
-        print {}
+        print(task)

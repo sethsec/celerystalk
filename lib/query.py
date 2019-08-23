@@ -1,5 +1,5 @@
 import time
-import db
+import lib.db
 import os
 from lib.utils import get_terminal_width
 

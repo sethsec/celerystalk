@@ -5,7 +5,7 @@ import sys
 import lib.db
 import lib.utils
 from lib import db
-import urlparse
+from urllib import parse as urlparse
 import os
 import csv
 
@@ -85,7 +85,7 @@ def import_scope(scope_file,workspace):
                                 else:
                                     db_vhost = (ip, ip, 1, 0, 0, workspace)  # add it to the vhosts db and mark as in scope
                                     lib.db.create_vhost(db_vhost)
-                    except Exception, e:
+                    except Exception as e:
                         # Putting this try/except here because i have a feeling that at some point we will see
                         # something like 192.168.0.0-192.168.200.255 or something like that.  Not handling that
                         # right now.
@@ -185,7 +185,7 @@ def import_url(url,workspace,output_base_dir):
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)
     if not vhost_explicitly_out_of_scope:  # and if the vhost is not explicitly out of scope
         if in_scope == 0:
-            answer = raw_input(
+            answer = input(
                 "[+] {0} is not in scope. Would you like to to add {1}/{0} to the list of in scope hosts?".format(vhost,
                                                                                                                   ip))
             if (answer == "Y") or (answer == "y") or (answer == ""):

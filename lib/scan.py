@@ -7,7 +7,7 @@ from celery.utils import uuid
 from celery import chain
 import socket
 import re
-import urlparse
+from urllib import parse as urlparse
 import lib.db
 from random import shuffle
 
@@ -108,7 +108,7 @@ def aquatone_host(urls_to_screenshot,vhost,workspace,simulation,scan_output_base
                 populated_command = replace_user_config_options(config_file,populated_command)
 
                 #print(populated_command)
-        except Exception, e:
+        except Exception as e:
             print(e)
             print("[!] Error: In the config file, there needs to be one (and only one) enabled aquatone command.")
             exit()

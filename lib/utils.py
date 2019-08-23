@@ -6,11 +6,11 @@ from libnmap.process import NmapProcess
 from libnessus.parser import NessusParser
 from netaddr import IPAddress, IPRange, IPNetwork
 import socket
-import db
+from lib import db
+from lib import config_parser
 import os
 import re
-import lib.db
-import lib.config_parser
+
 
 
 def task_splitter(id):
@@ -147,7 +147,7 @@ def start_celery_worker(config_file):
         popen_string = "celery -A tasks worker --concurrency=%s -Ofair -q --pidfile ./%%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1" % (str(concurrent_tasks))
         p = Popen(popen_string, shell=True)
 
-    except Exception, e:
+    except Exception as e:
         #print(e)
         p = Popen(
             "celery -A tasks worker -Ofair -q --pidfile ./%n.pid --logfile ./log/celeryWorker.log > /dev/null 2>&1",
@@ -223,7 +223,7 @@ def target_splitter(target_networks):
                             # Putting this try/except here because i have a feeling that at some point we will see
                             # something like 192.168.0.0-192.168.200.255 or something like that.  Not handling that
                             # right now.
-                            print(error)
+                            print("error")
                 else:
                     # If there is no "-" in the line, we can deal with it as a simple network or IPAddress. Luckily
                     # IPNetwork automatically converts an IP without a CIDR into /32 CIDR, and it works just like
@@ -275,7 +275,7 @@ def check_for_new_default_config():
     if user_config_age < default_config_age:
         print("[!] [config_default.ini] pulled from git is newer than the the current [config.ini] file.")
         print("[!] This is most likely because a new tool or possibly a new feature has been added.\n")
-        answer = raw_input("[+] Would you like backup your current config and replace [config.ini] with the new version? (y\N)")
+        answer = input("[+] Would you like backup your current config and replace [config.ini] with the new version? (y|N)")
         print("")
         if (answer == "Y") or (answer == "y"):
             from shutil import copyfile

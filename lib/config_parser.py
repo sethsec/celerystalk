@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from ConfigParser import ConfigParser
+import configparser
 
 
 class MultiOrderedDict(OrderedDict):
@@ -13,7 +13,7 @@ class MultiOrderedDict(OrderedDict):
 
 
 def read_config_ini(config_file=None):
-    config = ConfigParser()
+    config = configparser.ConfigParser()
     config.read([config_file])
     supported_services = []
     for (key,val) in config.items("nmap-service-names"):
@@ -46,7 +46,7 @@ def get_user_config(config_file):
 
 
 def extract_bb_nmap_options(config_file=None):
-    config = ConfigParser(allow_no_value=True)
+    config = configparser.ConfigParser(allow_no_value=True)
     config.read([config_file])
 
     for (key, val) in config.items("nmap-commands"):
@@ -56,7 +56,7 @@ def extract_bb_nmap_options(config_file=None):
             return options
 
 def extract_udp_scan_nmap_options(config_file=None):
-    config = ConfigParser(allow_no_value=True)
+    config = configparser.ConfigParser(allow_no_value=True)
     config.read([config_file])
 
     for (key, val) in config.items("nmap-commands"):
@@ -66,7 +66,7 @@ def extract_udp_scan_nmap_options(config_file=None):
             return options
 
 def read_bb_scope_ini(bb_scope_file):
-    bb_config = ConfigParser(allow_no_value=True)
+    bb_config = configparser.ConfigParser(allow_no_value=True)
     bb_config.read([bb_scope_file])
 
     in_scope_domains = []

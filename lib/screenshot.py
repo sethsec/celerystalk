@@ -88,7 +88,7 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
                 if cmd_name == "aquatone":
                     populated_command = celery_path + "/celerystalk db paths_only limit | " + cmd.replace("[OUTPUT]", outdir)
                     #print(populated_command)
-            except Exception, e:
+            except Exception as e:
                 print(e)
                 print("[!] Error: In the config file, there needs to be one (and only one) enabled aquatone command.")
                 exit()

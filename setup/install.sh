@@ -54,7 +54,7 @@ elif [ "$DISTRO" == "ubuntu" ]; then
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
     apt-get update -y
-    apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
+    apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq python3-pip -y
 fi
 
 
@@ -76,7 +76,7 @@ echo "******************************************"
 echo "* Installing python requirements via pip *"
 echo "******************************************"
 echo ""
-pip install -r requirements.txt --upgrade
+pip3 install -r requirements.txt --upgrade
 
 
 echo ""
@@ -89,7 +89,7 @@ if [ ! -f /opt/python-libnessus/python_libnessus.egg-info ]; then
     cd /opt/
     git clone https://github.com/bmx0r/python-libnessus.git
     cd python-libnessus
-    python setup.py install
+    python3 setup.py install
 fi
 
 

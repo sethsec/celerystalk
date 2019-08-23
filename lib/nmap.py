@@ -1,19 +1,19 @@
 import sys
-from ConfigParser import ConfigParser
+import configparser
 from celery import chain
 from kombu import uuid
-
 import lib.utils
 import tasks
-from lib import config_parser, utils
 import lib.db
+import lib.config_parser
+import lib.utils
 import os
 
 
 def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_file=None):
     celery_path = sys.path[0]
     config_nmap_options = config_parser.extract_bb_nmap_options(config_file=config_file)
-    config = ConfigParser(allow_no_value=True)
+    config = configparser.ConfigParser(allow_no_value=True)
     config.read(['config.ini'])
 
     vhost_explicitly_out_of_scope = lib.db.is_vhost_explicitly_out_of_scope(vhost, workspace)

@@ -23,7 +23,7 @@ def restore_all_workspaces(restore_file):
     workspaces = lib.db.get_all_workspaces()
     if workspaces:
         print("[!] There is already a current workspace.  This will backup the currnt DB and OVERWRITE it with the new one.")
-        answer = raw_input("Are you sure you want to continue? (y\N): ")
+        answer = input("Are you sure you want to continue? (y|N): ")
         print("")
         if (answer == "Y") or (answer == "y"):
             backup_all_workspaces()

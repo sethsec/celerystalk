@@ -12,3 +12,4 @@ selenium
 prettytable
 pyvirtualdisplay
 ansi2html
+configparser==3.7.4
