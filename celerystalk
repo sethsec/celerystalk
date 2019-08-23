@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 """
 Usage:
@@ -89,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(215)
+build=str(216)
 
 def print_banner():
 
@@ -466,7 +466,7 @@ def main(arguments):
         if arguments["reset"]:
             lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
             print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
-            answer = raw_input("Are you sure you want to continue? (y\N): ")
+            answer = input("Are you sure you want to continue? (y|N): ")
             print("")
             if (answer == "Y") or (answer == "y"):
                 from subprocess import Popen
@@ -505,7 +505,7 @@ def main(arguments):
     #         exit()
     #     lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
     #     print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
-    #     answer = raw_input("Are you sure you want to continue? (y\N): ")
+    #     answer = input("Are you sure you want to continue? (y|N): ")
     #     print("")
     #     if (answer == "Y") or (answer == "y"):
     #         from subprocess import Popen
@@ -551,7 +551,7 @@ def main(arguments):
 
         screenshots = lib.screenshot.does_aquatone_folder_exixst()
         if screenshots == False:
-            answer = raw_input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
+            answer = input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
             if (answer == "Y") or (answer == "y") or (answer == ""):
                 lib.screenshot.screenshot_command(arguments)
                 exit()
@@ -694,7 +694,7 @@ def main(arguments):
                 if arguments["limit"]:
                     paths = lib.screenshot.get_max_screenshots(workspace,config_file)
                     for path in paths:
-                        print path
+                        print(path)
                 else:
                     paths_rows = lib.db.get_all_paths(workspace)
                     for row in paths_rows:
@@ -888,14 +888,14 @@ def main(arguments):
                 if str(vhost) not in all_submitted_vhosts_list:
                     print("[!] [{0}] has never been submitted, so it can't be rescanned.".format(vhost))
                 else:
-                    answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+                    answer = input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
                     if (answer == "Y") or (answer == "y") or (answer == ""):
                         ip = db.get_vhost_ip(vhost, workspace)[0][0]
                         db.update_vhosts_submitted(ip, vhost, workspace, 0)
         else:
             for submitted_vhost in all_submitted_vhosts:
                 vhost = submitted_vhost[0]
-                answer = raw_input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
+                answer = input("[!] {0} has already been scanned. Scan it again? [Y\\n] ".format(vhost))
                 if (answer == "Y") or (answer == "y") or (answer == ""):
                     ip = db.get_vhost_ip(vhost,workspace)[0][0]
                     db.update_vhosts_submitted(ip, vhost, workspace, 0)
