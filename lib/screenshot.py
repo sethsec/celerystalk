@@ -43,9 +43,9 @@ def screenshot_command(arguments):
     paths_len = len(lib.db.get_all_paths(workspace))
     max_paths_len = len(get_max_screenshots(workspace,config_file))
     max = lib.config_parser.get_screenshot_max(config_file)
-    print("[+]\n[+] There are [{0}] paths in the DB").format(str(paths_len))
+    print("[+]\n[+] There are [{0}] paths in the DB" % (str(paths_len)))
     #print("[+] max_screenshots_per_vhost set to: [{0}]").format(str(max))
-    print("[+] Tasking aquatone to take [{0}] screenshots per host for a total of [{1}] screenshots\n[+]\n[+]").format(str(max),str(max_paths_len))
+    print("[+] Tasking aquatone to take [{0}] screenshots per host for a total of [{1}] screenshots\n[+]\n[+]" % str(max),str(max_paths_len))
     lib.screenshot.aquatone_all_paths(workspace)
 
 def get_max_screenshots(workspace,config_file):

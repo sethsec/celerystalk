@@ -71,7 +71,7 @@ def aquatone_parse_paths():
     with open(aquatone_session_file, 'r') as aquatone_file:
         aquatone_file_json = simplejson.load(aquatone_file)
 
-        for key,value in aquatone_file_json['pages'].iteritems():
+        for key,value in aquatone_file_json['pages'].items():
             #print(page)
             path = value['url']
             screenshot_path = value['screenshotPath']
@@ -239,7 +239,7 @@ def report(workspace,config_file,target_list=None):
 
     print("*" * terminal_width)
     banner = "Text based report file per target"
-    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner)
+    print(" " * int((terminal_width / 2) - (len(banner) / 2)) + banner)
     print("*" * terminal_width + "\n")
 
     # HTML Report
@@ -507,7 +507,7 @@ function myFunction() {
     print("\n")
     print("*" * terminal_width)
     banner = "Combined Report files"
-    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner )
+    print(" " * int((terminal_width / 2) - (len(banner) / 2)) + banner)
     print("*" * terminal_width + "\n")
 
     print("[+] Report file (All workspace hosts): {0} (has screenshots!!!)".format(combined_report_file_name))
@@ -515,7 +515,7 @@ function myFunction() {
 
     print("*" * terminal_width)
     banner = "Suggestions for viewing your html report:"
-    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner )
+    print(" " * int((terminal_width / 2) - (len(banner) / 2)) + banner)
     print("*" * terminal_width + "\n")
     print("[+] Option 1: Open with local firefox (works over ssh with x forwarding)")
     print("\t\tfirefox " + combined_report_file_name + " &")
@@ -1032,7 +1032,8 @@ def convert_file_contents_to_html(normalized_output_file):
     try:
         with open(normalized_output_file, "r") as scan_file:
             for line in scan_file:
-                line = unicode(line, errors='ignore')
+                # disabling this for python3. this might cause issues.
+                #line = unicode(line, errors='ignore')
                 try:
                     sanitized = bleach.clean(line)
                 except:

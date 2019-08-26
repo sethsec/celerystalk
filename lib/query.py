@@ -9,20 +9,20 @@ def query_sqlite(workspace, target=None, repeat=None, summary=None):
     if not terminal_width:
         terminal_width = 80
 
-    completed_count = db.get_completed_task_count(workspace)
-    pending_count = db.get_pending_task_count(workspace)
-    total_count = db.get_total_tasks(workspace)
-    running_rows = db.get_running_tasks(workspace)
-    completed_rows = db.get_completed_tasks(workspace)
-    pending_rows = db.get_pending_tasks(workspace)
-    cancelled_rows = db.get_cancelled_tasks(workspace)
-    paused_rows = db.get_paused_tasks(workspace)
+    completed_count = lib.db.get_completed_task_count(workspace)
+    pending_count = lib.db.get_pending_task_count(workspace)
+    total_count = lib.db.get_total_tasks(workspace)
+    running_rows = lib.db.get_running_tasks(workspace)
+    completed_rows = lib.db.get_completed_tasks(workspace)
+    pending_rows = lib.db.get_pending_tasks(workspace)
+    cancelled_rows = lib.db.get_cancelled_tasks(workspace)
+    paused_rows = lib.db.get_paused_tasks(workspace)
 
     loadavg = float("{0:.1f}".format(os.getloadavg()[0]))
     banner = "celerystalk Status | Workspace Name: {0}  | CPU Load Avg: {1}".format(workspace,loadavg)
     print("*" * terminal_width)
-    print(" " * ((terminal_width / 2) - (len(banner) / 2)) + banner)
-    print("\n" + " " * ((terminal_width / 2) - 40) + "Submitted: {0} | Queued: {3} | Running: {2} | Completed: {1}  | Cancelled: {4}  | Paused: {5}".format(total_count[0][0], completed_count[0][0], len(running_rows), pending_count[0][0], len(cancelled_rows), len(paused_rows)))
+    print(" " * int((terminal_width / 2) - (len(banner) / 2)) + banner)
+    print("\n" + " " * int((terminal_width / 2) - 40) + "Submitted: {0} | Queued: {3} | Running: {2} | Completed: {1}  | Cancelled: {4}  | Paused: {5}".format(total_count[0][0], completed_count[0][0], len(running_rows), pending_count[0][0], len(cancelled_rows), len(paused_rows)))
     print("*" * terminal_width)
 
     if summary:

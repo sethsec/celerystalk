@@ -24,6 +24,7 @@ def cancel_tasks(id, workspace,ip=None):
     elif ip:
         running_tasks = db.get_running_tasks(workspace,ip)
         pending_tasks = db.get_pending_tasks(workspace,ip)
+        paused_tasks = db.get_paused_tasks(workspace)
         running_pending_paused_task_list = running_tasks + pending_tasks + paused_tasks
         for task in running_pending_paused_task_list:
             task_list.append(task[0])

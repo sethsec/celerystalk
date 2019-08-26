@@ -76,7 +76,7 @@ def process_db_vhosts(workspace, simulation, target_list=None,dont_scan_ips=None
 def replace_user_config_options(config_file,populated_command):
     rep = lib.config_parser.get_user_config(config_file)
     rep = dict((k, v) for k, v in rep)
-    for k,v in rep.iteritems():
+    for k,v in rep.items():
         k = k.upper()
         populated_command = populated_command.replace("[" + k + "]",v)
     return populated_command
