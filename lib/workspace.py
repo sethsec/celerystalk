@@ -3,6 +3,30 @@ import lib.db
 from prettytable import PrettyTable
 
 
+def create_default_workspace(path):
+    workspace_name = "Default"
+    workspace_path = os.path.join(path + "/default_workspace")
+    mode = "bb"
+
+
+    all_workspaces = lib.db.get_all_workspaces()
+    if not all_workspaces:  # If there is not at least one workspace in the DB
+        db_workspace = (workspace_name, workspace_path, mode)  # and create the workspace
+
+        try:
+            os.stat(workspace_path)
+        except:
+            print("[+] Output directory does not exist. Creating " + workspace_path)
+            os.makedirs(workspace_path)
+
+
+        # This will create a workspace, only if one does not exist with that name.
+        lib.db.create_workspace(db_workspace)
+        print("[+] Workspace successfully created: " + workspace_name + "\n")
+
+        lib.db.set_initial_current_workspace((workspace_name,))
+
+
 def create_workspace(workspace,arguments):
     workspaces_exist = "False"
     workspace_match = "False"

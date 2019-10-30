@@ -284,7 +284,7 @@ def report(workspace,config_file,target_list=None):
     #combined_report_file.write('''<font size="5">celerystalk</font><br>\n''')
 
     for vhost,report in sorted_report_hosts:
-        hash=hashlib.md5(vhost).hexdigest()
+        hash=hashlib.md5(vhost.encode('utf-8')).hexdigest()
         #TODO: This is static and will be buggy. I think i need to use a regex here to get the hostname which is in between /hostname/celerystalkoutput
         #host=report.split("/celerystalkOutput")[0].split("/")[2]
         #combined_report_file.write("""  <a href="#{0}">{0}</a>\n""".format(vhost))
@@ -332,7 +332,8 @@ def report(workspace,config_file,target_list=None):
     combined_report_file.write("""<a name="top"></a>""")
     # Create the rest of the report
     for vhost,report in sorted_report_hosts:
-        hash = hashlib.md5(vhost).hexdigest()
+
+        hash = hashlib.md5(vhost.encode('utf-8')).hexdigest()
         report_string = ""
         ip = lib.db.get_vhost_ip(vhost, workspace)
         ip = ip[0][0]

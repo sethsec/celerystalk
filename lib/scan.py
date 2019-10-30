@@ -664,9 +664,9 @@ def determine_if_domains_are_in_scope(vhosts,process_domain_tuple):
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     for vhost in vhosts:
         #This checks for spaces in vhosts and is a dirty way to filter out error messages and other stuff.
-        if ' ' not in vhost:
+        if b' ' not in vhost:
             #print("raw:\t" + vhost)
-            vhost = ansi_escape.sub('', vhost)
+            #vhost = ansi_escape.sub(b'', vhost)
             #print("escaped:\t" + vhost)
             if re.match(r'\w', vhost):
                 in_scope, ip = utils.domain_scope_checker(vhost, workspace)

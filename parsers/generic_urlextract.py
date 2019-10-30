@@ -3,7 +3,8 @@ import re
 import lib.db
 import lib.utils
 from urllib import parse as urlparse
-
+import requests
+from collections import namedtuple
 
 #TODO: Add this when i move project to python3
 # def extract_urls_urlextractor(tool_output):
@@ -21,6 +22,7 @@ from urllib import parse as urlparse
 
 def extract_urls_regex(tool_output):
     intereseting_urls = []
+    tool_output = tool_output.decode('utf-8')
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tool_output)
     not_interesting_extensions = [".png", ".ico", ".js", ".css", ".woff2", ".ttf", ".jpg", ".jpeg", ".svg", ".eot", ".woff",".gif"]
     for url in urls:
@@ -65,16 +67,31 @@ def is_url_in_scope(url):
 def insert_url_into_db(vhost,port,url,workspace):
     db_path = (vhost, port, url, 0, "", workspace)
     lib.db.insert_new_path(db_path)
-    print("Found Url: " + str(url))
+    print("Found live Url: " + str(url))
 
 def extract_in_scope_urls_from_task_output(tool_output):
     urls = extract_urls(tool_output)
     for url in urls:
         exists,vhost,port,url,workspace = is_url_in_scope(url)
         if exists == "True":
-            insert_url_into_db(vhost,port,url,workspace)
+            url_status = check_if_page_exists(url)
+            if url_status:
+                insert_url_into_db(vhost,port,url,workspace)
 
 
 
 
+
+def check_if_page_exists(url):
+    try:
+        response = requests.head(url, timeout=5)
+        status_code = response.status_code
+        reason = response.reason
+    except requests.exceptions.ConnectionError:
+        status_code = 999
+        reason = 'ConnectionError'
+    if status_code == 200:
+        return status_code
+    else:
+        print("Skipping Url (not found): " + str(url))
 
