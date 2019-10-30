@@ -266,7 +266,8 @@ def create_task(command_name, populated_command, ip, output_dir, workspace, task
 
 
 def check_for_new_default_config():
-    user_config_file = 'config.ini'
+
+    user_config_file = check_if_config_ini_exists()
     default_config_file = 'setup/config_default.ini'
     user_config_age=os.path.getmtime(user_config_file)
     #print(user_config_age)
@@ -290,6 +291,17 @@ def check_for_new_default_config():
             populated_command = "touch " + path
             p = Popen(populated_command, shell=True)
             p.communicate()
+
+
+
+def check_if_config_ini_exists():
+    if os.path.exists(os.path.join(os.getcwd(), 'config.ini')):
+        config_file = 'config.ini'
+    else:
+        print("[!] The default config file does not exist. Run ./setup/install.sh and try again.")
+        exit()
+    return config_file
+
 
 def check_for_dependencies():
     try:
