@@ -2,6 +2,9 @@
 
 DISTRO=`grep "^ID=" /etc/os-release | cut -d\= -f2`
 
+# https://stackoverflow.com/questions/3349105/how-to-set-current-working-directory-to-the-directory-of-the-script
+cd "${0%/*}"
+
 if [[ $EUID -ne 0 ]]; then
    echo " [!]This script must be run as root" 1>&2
    exit 1
@@ -26,14 +29,30 @@ echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
-    apt update -y
-    apt install curl gnupg2 -y
+
+    apt-get update -y
+    if [[ $? > 0 ]]; then
+        echo
+        echo
+        echo "[!] apt-get update failed, exiting..."
+        exit
+    fi
+    apt-get install curl gnupg2 -y
+
     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
     apt-get update -y
     apt-get remove docker docker-engine docker.io containerd runc -y
     apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq -y
 elif [ "$DISTRO" == "ubuntu" ]; then
+    apt-get update -y
+    if [[ $? > 0 ]]; then
+        echo
+        echo
+        echo "[!]  apt-get update failed, exiting..."
+        exit
+    fi
+    apt-get install curl gnupg2 -y
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
     apt-get update -y
@@ -48,6 +67,10 @@ echo "**************************************"
 echo "*      Starting redis-server          *"
 echo "**************************************"
 echo ""
+IS_PORT_CONFIGURED=`grep "^port 6379" /etc/redis/redis.conf`
+if [ $? == "1" ]; then
+    echo "port 6379" >> /etc/redis/redis.conf
+fi
 /etc/init.d/redis-server start
 
 echo ""
@@ -56,6 +79,20 @@ echo "* Installing python requirements via pip *"
 echo "******************************************"
 echo ""
 pip install -r requirements.txt --upgrade
+
+
+echo ""
+echo "**************************************"
+echo "*      Starting python-libnessus     *"
+echo "**************************************"
+echo ""
+
+if [ ! -f /opt/python-libnessus/python_libnessus.egg-info ]; then
+    cd /opt/
+    git clone https://github.com/bmx0r/python-libnessus.git
+    cd python-libnessus
+    python setup.py install
+fi
 
 
 if [ ! -f /opt/amass/amass ]; then
@@ -168,8 +205,8 @@ fi
 cd $CELERYSTALK_DIR
 cp bash_completion_file /etc/bash_completion.d/celerystalk.sh
 cd .. && ./celerystalk -h
+
 echo ""
-echo "[+] Back up a directory and you are ready to go."
 echo "[+]"
 echo "[+] To use the fancy bash completion right away, copy/paste the following (you'll only need to do this once):"
 echo "[+]   . /etc/bash_completion.d/celerystalk.sh"
