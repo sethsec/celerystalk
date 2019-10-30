@@ -89,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(223)
+build=str(224)
 
 def print_banner():
 
@@ -130,11 +130,7 @@ def main(arguments):
             print("[!] The specified config file does not exist. Try again?")
             exit()
     else:
-        if os.path.exists(os.path.join(os.getcwd(),'config.ini'))
-            config_file = 'config.ini'
-        else:
-            print("[!] The default config file does not exist. Run ./setup/install.sh and try again.")
-            exit()
+        config_file = 'config.ini'
 
 
     ####################################

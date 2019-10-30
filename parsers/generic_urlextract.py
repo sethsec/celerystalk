@@ -3,6 +3,7 @@ import re
 import lib.db
 import lib.utils
 import urlparse
+import requests
 
 
 #TODO: Add this when i move project to python3
