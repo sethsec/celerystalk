@@ -29,6 +29,7 @@ echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
 if [ "$DISTRO" == "kali" ]; then
+
     apt-get update -y
     if [[ $? > 0 ]]; then
         echo
@@ -37,6 +38,7 @@ if [ "$DISTRO" == "kali" ]; then
         exit
     fi
     apt-get install curl gnupg2 -y
+
     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
     apt-get update -y

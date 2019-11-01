@@ -274,7 +274,9 @@ def check_for_new_default_config():
     default_config_age = os.path.getmtime(default_config_file)
     #print(default_config_age)
     if user_config_age < default_config_age:
+
         print("[!] [config_default.ini] pulled from git is newer than the the current [config.ini] file.")
+
         print("[!] This is most likely because a new tool or possibly a new feature has been added.\n")
         answer = raw_input("[+] Would you like backup your current config and replace [config.ini] with the new version? (y\N)")
         print("")

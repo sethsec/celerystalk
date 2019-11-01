@@ -1,8 +1,10 @@
 # celerystalk
 ![](https://i.imgur.com/tZ4RkOr.png)
+
 Interactive Demo: [Bug Bounty Mode (HackerOne)](https://sethsec.github.io/celerystalk/bug_bounty_mode/celerystalkReports/)
 
 Interactive Demo: [Vulnerability Assessment / PenTest Mode (Retired HackTheBox.eu machines)](https://sethsec.github.io/celerystalk/vapt_mode/celerystalkReports/)
+
 
 ---
 celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
@@ -15,9 +17,11 @@ celerystalk helps you automate your network scanning/enumeration process with as
 * **Screenshots** - Screenshots (aquatone) every in-scope URL that was identified by any tool (you can limit # of screenshots if you'd like)
 ---
 
+
 ## What celerystalk can automate for you
 
 Phase | Command | Examples of tools used
+
 --- | --- | ----
 DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
 Define Scope, Import nmap/nessus | ./celerystalk import [scan_data,scope_files,etc.] | celerystalk     
