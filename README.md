@@ -54,7 +54,6 @@ Analysis | ./celerystalk report | celerystalk
 
 #### Launch all enabled tools against a single URL without having to import scope, nmap, etc. 
 ```
-# ./celerystalk workspace create -o /dir -m {vapt|bb}   # Create default workspace, set output dir and mode
 # ./celerystalk scan -u url                             # Run all enabled commands against this path
 # ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
 # ./celerystalk screenshots                             # Take screenshots
@@ -62,11 +61,6 @@ Analysis | ./celerystalk report | celerystalk
 ```
 
 ### [CTF/HackTheBox/Easy mode] - How to scan one or more hosts
-
-#### Create workspace. Set output dir and mode
-```
-# ./celerystalk workspace create -w htb -o /htb -m vapt 
-```
 
 #### Import nmap xml
 ```
@@ -87,6 +81,11 @@ Analysis | ./celerystalk report | celerystalk
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report
 ```
+
+## Advanced Usage: Bug Bounty Mode vs Vulnerability Assessment Mode
+
+If you are starting with in scope IP addresses/ranges/CIDRs, use Vulnerabilty Assessment and PenTest (VAPT) mode.
+If you are starting with in scope domains, use Bug Bounty (BB) mode. 
 
 ### [Bug Bounty Mode] 
 

@@ -5,6 +5,7 @@ import tasks
 from celery.utils import uuid
 import os
 from lib import config_parser, utils
+from subprocess import Popen
 
 def does_aquatone_folder_exixst():
     workspace = lib.db.get_current_workspace()[0][0]
@@ -94,16 +95,20 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
                 exit()
 
 
-        task_id = uuid()
-        utils.create_task(cmd_name, populated_command, workspace, outdir + "aquatone_report.html", workspace, task_id)
-        result = chain(
-            tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-        )()
-        print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
-        print("[+]\t\t./celerystalk query [watch]")
-        print("[+]\t\t./celerystalk query brief [watch]")
-        print("[+]\t\t./celerystalk query summary [watch]")
-        print("[+]\t\tor\n[+]\t\ttail -f " + outdir + "aquatone_stdout.txt")
-        print("[+]")
-        print("[+] To peak behind the curtain, view log/celeryWorker.log")
-        print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
+
+        p = Popen(populated_command, shell=True)
+        p.communicate()
+
+        # task_id = uuid()
+        # utils.create_task(cmd_name, populated_command, workspace, outdir + "aquatone_report.html", workspace, task_id)
+        # result = chain(
+        #     tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
+        # )()
+        # print("[+]\t\tTo keep an eye on things, run one of these commands: \n[+]")
+        # print("[+]\t\t./celerystalk query [watch]")
+        # print("[+]\t\t./celerystalk query brief [watch]")
+        # print("[+]\t\t./celerystalk query summary [watch]")
+        # print("[+]\t\tor\n[+]\t\ttail -f " + outdir + "aquatone_stdout.txt")
+        # print("[+]")
+        # print("[+] To peak behind the curtain, view log/celeryWorker.log")
+        # print("[+] For a csv compatible record of every command execued, view log/cmdExecutionAudit.log\n")
