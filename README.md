@@ -1,4 +1,8 @@
 # celerystalk
+
+celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
+
+
 ![](https://i.imgur.com/tZ4RkOr.png)
 
 Interactive Demo: [Bug Bounty Mode (HackerOne)](https://sethsec.github.io/celerystalk/bug_bounty_mode/celerystalkReports/)
@@ -6,8 +10,20 @@ Interactive Demo: [Bug Bounty Mode (HackerOne)](https://sethsec.github.io/celery
 Interactive Demo: [Vulnerability Assessment / PenTest Mode (Retired HackTheBox.eu machines)](https://sethsec.github.io/celerystalk/vapt_mode/celerystalkReports/)
 
 
+
+## What celerystalk can automate for you
+
+Phase | Command | Examples of tools used
+--- | --- | ----
+DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
+Define Scope, Import nmap/nessus | ./celerystalk import [scan_data,scope_files,etc.] | celerystalk     
+Port Scanning | ./celerystalk nmap | nmap
+Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, wappalyzer, whatweb, etc.
+Screenshots | ./celerystalk sceenshots | Aquatone
+Analysis | ./celerystalk report | celerystalk
+
 ---
-celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
+celerystalk is: 
 
 * **Configurable** - Some common tools are in the default config, but you can add any tool you want
 * **Service Aware** - Uses Nmap/Nessus service names rather than port numbers to decide which tools to run 
@@ -17,18 +33,6 @@ celerystalk helps you automate your network scanning/enumeration process with as
 * **Screenshots** - Screenshots (aquatone) every in-scope URL that was identified by any tool (you can limit # of screenshots if you'd like)
 ---
 
-
-## What celerystalk can automate for you
-
-Phase | Command | Examples of tools used
-
---- | --- | ----
-DNS Recon/Enumeration | ./celerystalk subdomains -d domain1,domain2 | Amass, sublist3r
-Define Scope, Import nmap/nessus | ./celerystalk import [scan_data,scope_files,etc.] | celerystalk     
-Port Scanning | ./celerystalk nmap | nmap
-Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, wappalyzer, whatweb, etc.
-Screenshots | ./celerystalk sceenshots | Aquatone
-Analysis | ./celerystalk report | celerystalk
 
 ## Install/Setup
 
