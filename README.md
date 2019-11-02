@@ -90,7 +90,7 @@ celerystalk is:
 You define the mode at workspace instantiation. The default workspace is VAPT mode, but you have two options for manually 
 created workspaces.
 
-* If you are starting with in scope IP addresses/ranges/CIDRs, use Vulnerabilty Assessment and PenTest (VAPT) mode.
+* If you are starting with in scope IP addresses/ranges/CIDRs, use Vulnerability Assessment and PenTest (VAPT) mode.
 * If you are starting with in scope domains, use Bug Bounty (BB) mode. 
 
 ### [Bug Bounty Mode] 
