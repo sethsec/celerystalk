@@ -1,19 +1,15 @@
 # celerystalk
+
+celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
+
+
 ![](https://i.imgur.com/tZ4RkOr.png)
+
 Interactive Demo: [Bug Bounty Mode (HackerOne)](https://sethsec.github.io/celerystalk/bug_bounty_mode/celerystalkReports/)
 
 Interactive Demo: [Vulnerability Assessment / PenTest Mode (Retired HackTheBox.eu machines)](https://sethsec.github.io/celerystalk/vapt_mode/celerystalkReports/)
 
----
-celerystalk helps you automate your network scanning/enumeration process with asynchronous jobs (aka *tasks*) while retaining full control of which tools you want to run.    
 
-* **Configurable** - Some common tools are in the default config, but you can add any tool you want
-* **Service Aware** - Uses Nmap/Nessus service names rather than port numbers to decide which tools to run 
-* **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
-* **VirtualHosts** - Supports subdomain recon and virtualhost scanning
-* **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
-* **Screenshots** - Screenshots (aquatone) every in-scope URL that was identified by any tool (you can limit # of screenshots if you'd like)
----
 
 ## What celerystalk can automate for you
 
@@ -25,6 +21,18 @@ Port Scanning | ./celerystalk nmap | nmap
 Directory and File Enumeration, Vulnerability Identification | ./celerystalk scan | Gobuster, Nikto, Photon, sqlmap, wpscan, hydra, medusa, wappalyzer, whatweb, etc.
 Screenshots | ./celerystalk sceenshots | Aquatone
 Analysis | ./celerystalk report | celerystalk
+
+---
+celerystalk is: 
+
+* **Configurable** - Some common tools are in the default config, but you can add any tool you want
+* **Service Aware** - Uses Nmap/Nessus service names rather than port numbers to decide which tools to run 
+* **Scalable** - Designed for scanning multiple hosts, but works well for scanning one host at a time
+* **VirtualHosts** - Supports subdomain recon and virtualhost scanning
+* **Job Control** - Supports canceling, pausing, and resuming of tasks, inspired by Burp scanner
+* **Screenshots** - Screenshots (aquatone) every in-scope URL that was identified by any tool (you can limit # of screenshots if you'd like)
+---
+
 
 ## Install/Setup
 
@@ -46,11 +54,9 @@ Analysis | ./celerystalk report | celerystalk
 
 
 ### [URL Mode] - How to scan a a URL  
-* Use this as a follow up whenever you find an interesting directory, or just as quick way to scan one web app without importing anything.
 
 #### Launch all enabled tools against a single URL without having to import scope, nmap, etc. 
 ```
-# ./celerystalk workspace create -o /dir -m {vapt|bb}   # Create default workspace, set output dir and mode
 # ./celerystalk scan -u url                             # Run all enabled commands against this path
 # ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
 # ./celerystalk screenshots                             # Take screenshots
@@ -58,11 +64,6 @@ Analysis | ./celerystalk report | celerystalk
 ```
 
 ### [CTF/HackTheBox/Easy mode] - How to scan one or more hosts
-
-#### Create workspace. Set output dir and mode
-```
-# ./celerystalk workspace create -w htb -o /htb -m vapt 
-```
 
 #### Import nmap xml
 ```
@@ -83,6 +84,14 @@ Analysis | ./celerystalk report | celerystalk
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report
 ```
+
+## Advanced Usage: Bug Bounty Mode vs Vulnerability Assessment Mode
+
+You define the mode at workspace instantiation. The default workspace is VAPT mode, but you have two options for manually 
+created workspaces.
+
+* If you are starting with in scope IP addresses/ranges/CIDRs, use Vulnerability Assessment and PenTest (VAPT) mode.
+* If you are starting with in scope domains, use Bug Bounty (BB) mode. 
 
 ### [Bug Bounty Mode] 
 

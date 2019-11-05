@@ -3,6 +3,7 @@ import re
 import lib.db
 import lib.utils
 import urlparse
+import requests
 
 
 #TODO: Add this when i move project to python3
@@ -72,9 +73,19 @@ def extract_in_scope_urls_from_task_output(tool_output):
     for url in urls:
         exists,vhost,port,url,workspace = is_url_in_scope(url)
         if exists == "True":
-            insert_url_into_db(vhost,port,url,workspace)
+            url_status = check_if_page_exists(url)
+            if url_status:
+                insert_url_into_db(vhost, port, url, workspace)
 
-
-
-
-
+def check_if_page_exists(url):
+    try:
+        response = requests.head(url, timeout=5)
+        status_code = response.status_code
+        reason = response.reason
+    except requests.exceptions.ConnectionError:
+        status_code = 999
+        reason = 'ConnectionError'
+    if status_code == 200:
+        return status_code
+    else:
+        print("Skipping Url (not found): " + str(url))

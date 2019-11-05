@@ -89,12 +89,13 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(215)
+build=str(227)
+
 
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("    v1.2 \tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.3 \tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
@@ -110,8 +111,10 @@ def main(arguments):
     db.create_current_workspace_table()
     db.create_celerystalk_table()
 
-    celery_path = sys.path[0]
-    db.set_install_path((celery_path,))
+    celerystalk_path = sys.path[0]
+    db.set_install_path((celerystalk_path,))
+
+    lib.workspace.create_default_workspace(celerystalk_path)
 
     lib.utils.check_for_new_default_config()
     lib.utils.check_for_dependencies()
@@ -938,7 +941,7 @@ def main(arguments):
             exit()
 
         lib.utils.start_services(config_file)
-        celery_path = sys.path[0]
+        celerystalk_path = sys.path[0]
 
         if arguments["-w"]:
             output_dir, workspace = lib.workspace.create_workspace(arguments["-w"], arguments)
