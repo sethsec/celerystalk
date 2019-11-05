@@ -43,7 +43,7 @@ if [ "$DISTRO" == "kali" ]; then
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
     apt-get update -y
     apt-get remove docker docker-engine docker.io containerd runc -y
-    apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq -y
+    apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
 elif [ "$DISTRO" == "ubuntu" ]; then
     apt-get update -y
     if [[ $? > 0 ]]; then
@@ -94,19 +94,19 @@ if [ ! -f /opt/python-libnessus/python_libnessus.egg-info ]; then
     python setup.py install
 fi
 
-
-if [ ! -f /opt/amass/amass ]; then
-    echo ""
-    echo "****************************************"
-    echo "* Installing Amass to /opt/amass/amass *"
-    echo "****************************************"
-    echo ""
-    mkdir -p /opt/amass
-    wget https://github.com/OWASP/Amass/releases/download/3.0.3/amass_3.0.3_linux_i386.zip -O /opt/amass/amass_3.0.3_linux_i386.zip
-    unzip /opt/amass/amass_3.0.3_linux_i386.zip -d /opt/amass
-    mv /opt/amass/amass_3.0.3_linux_i386/* /opt/amass/
+if [ "$DISTRO" == "ubuntu" ]; then
+    if [ ! -f /opt/amass/amass ]; then
+        echo ""
+        echo "****************************************"
+        echo "* Installing Amass to /opt/amass/amass *"
+        echo "****************************************"
+        echo ""
+        mkdir -p /opt/amass
+        wget https://github.com/OWASP/Amass/releases/download/3.0.3/amass_3.0.3_linux_i386.zip -O /opt/amass/amass_3.0.3_linux_i386.zip
+        unzip /opt/amass/amass_3.0.3_linux_i386.zip -d /opt/amass
+        mv /opt/amass/amass_3.0.3_linux_i386/* /opt/amass/
+    fi
 fi
-
 
 if [ ! -f /opt/aquatone/aquatone ]; then
     echo ""
