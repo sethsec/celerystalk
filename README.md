@@ -283,7 +283,7 @@ Cancel/Pause/Resume any task(s) that are currently running or in the queue.
 | Option | Description |
 | --- | --- |
 | cancel | <ul><li>Canceling a running task will send a **kill -TERM**</li><li>Canceling a queued task* will make celery ignore it (uses celery's revoke).</li><li>Canceling all tasks* will kill running tasks and revoke all queued tasks.</li></ul>
-| pause | <ul><li>Pausing a single task uses **kill -STOP** to suspend the process.</li><li>Pausing all tasks* attemtps to *kill -STOP* all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.</li></ul>
+| pause | <ul><li>Pausing a single task uses **kill -STOP** to suspend the process.</li><li>Pausing all tasks* attempss to *kill -STOP* all running tasks, but it is a little wonky and you mind need to run it a few times. It is possible a job completed before it was able to be paused, which means you will have a worker that is still accepting new jobs.</li></ul>
 | resume | <ul><li>Resuming tasks* sends a **kill -CONT** which allows the process to start up again where it left off.</li></ul>|
 
 ```
