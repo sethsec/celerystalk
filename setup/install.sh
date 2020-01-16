@@ -57,7 +57,7 @@ if [ "$DISTRO" == "kali" ]; then
         apt-get update -y
         apt-get remove docker docker-engine docker.io containerd runc -y
         apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
-    else:
+    else
         apt-get update -y
         apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
 
