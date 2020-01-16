@@ -268,7 +268,7 @@ def create_task(command_name, populated_command, ip, output_dir, workspace, task
 def check_for_new_default_config():
 
     user_config_file = check_if_config_ini_exists()
-    default_config_file = 'setup/config_default.ini'
+    default_config_file = get_default_config_path()
     user_config_age=os.path.getmtime(user_config_file)
     #print(user_config_age)
     default_config_age = os.path.getmtime(default_config_file)
@@ -294,16 +294,29 @@ def check_for_new_default_config():
             p = Popen(populated_command, shell=True)
             p.communicate()
 
-
+def get_root_dir():
+    return os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        '..'
+    )
 
 def check_if_config_ini_exists():
-    if os.path.exists(os.path.join(os.getcwd(), 'config.ini')):
-        config_file = 'config.ini'
+    config_path = os.path.join(
+        get_root_dir(),
+        'config.ini'
+    )
+    if os.path.exists(config_path):
+        return config_path
     else:
         print("[!] The default config file does not exist. Run ./setup/install.sh and try again.")
         exit()
-    return config_file
 
+def get_default_config_path():
+    return os.path.join(
+        get_root_dir(),
+        'setup',
+        'config_default.ini'
+    )
 
 def check_for_dependencies():
     try:

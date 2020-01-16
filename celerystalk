@@ -131,7 +131,10 @@ def main(arguments):
             print("[!] The specified config file does not exist. Try again?")
             exit()
     else:
-        config_file = 'config.ini'
+        config_file = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'config.ini'
+        )
 
 
     ####################################
