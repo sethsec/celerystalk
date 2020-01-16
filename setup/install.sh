@@ -28,6 +28,19 @@ echo "*************************************************"
 echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
+
+read -p "Would you like to install docker on this host so that you can run dockerized tools? (y/n)" DOCKER_PROMPT
+if [ "$DOCKER_PROMPT" == "y" ] || [ "$DOCKER_PROMPT" == "Y" ]; then
+    INSTALL_DOCKER="true"
+elif [ "$DOCKER_PROMPT" == "n" ] || [ "$DOCKER_PROMPT" == "N" ]; then
+    INSTALL_DOCKER="false"
+else
+    printf "You have to select yes or no\n"
+    exit 1
+fi
+
+
+
 if [ "$DISTRO" == "kali" ]; then
 
     apt-get update -y
@@ -37,13 +50,18 @@ if [ "$DISTRO" == "kali" ]; then
         echo "[!] apt-get update failed, exiting..."
         exit
     fi
-    apt-get install curl gnupg2 -y
+    if [ "$INSTALL_DOCKER" == "true" ]; then
+        apt-get install curl gnupg2 -y
+        curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+        echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
+        apt-get update -y
+        apt-get remove docker docker-engine docker.io containerd runc -y
+        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
+    else:
+        apt-get update -y
+        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
 
-    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-    echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
-    apt-get update -y
-    apt-get remove docker docker-engine docker.io containerd runc -y
-    apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
+    fi
 elif [ "$DISTRO" == "ubuntu" ]; then
     apt-get update -y
     if [[ $? > 0 ]]; then
@@ -52,11 +70,17 @@ elif [ "$DISTRO" == "ubuntu" ]; then
         echo "[!]  apt-get update failed, exiting..."
         exit
     fi
-    apt-get install curl gnupg2 -y
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
-    apt-get update -y
-    apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
+   if [ "$INSTALL_DOCKER" == "true" ]; then
+        apt-get install curl gnupg2 -y
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
+        apt-get update -y
+        apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
+    else
+        apt-get update -y
+        apt-get install python-pip python3-pip unzip redis-server chromium jq -y
+
+    fi
 fi
 
 
