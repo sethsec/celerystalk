@@ -99,10 +99,10 @@ fi
 
 echo ""
 echo "******************************************"
-echo "* Installing python requirements via pip *"
+echo "* Installing celerystalk python requirements via pip *"
 echo "******************************************"
 echo ""
-pip install -r requirements.txt --upgrade
+pip2 install -r requirements.txt --upgrade
 
 
 echo ""
@@ -202,6 +202,15 @@ else
     git pull
     pip3 install -r requirements.txt
 fi
+
+echo ""
+echo "**********************************************"
+echo "*           Installing ssh-audit             *"
+echo "**********************************************"
+echo ""
+pip3 install ssh-audit
+
+
 
 #if [ ! -f /opt/CMSmap/cmsmap.py ]; then
 #    echo ""
