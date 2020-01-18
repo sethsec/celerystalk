@@ -203,6 +203,15 @@ else
     pip3 install -r requirements.txt
 fi
 
+echo ""
+echo "**********************************************"
+echo "*           Installing ssh-audit             *"
+echo "**********************************************"
+echo ""
+pip3 install ssh-audit
+
+
+
 #if [ ! -f /opt/CMSmap/cmsmap.py ]; then
 #    echo ""
 #    echo "**********************************************"
