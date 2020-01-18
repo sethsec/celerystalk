@@ -99,10 +99,10 @@ fi
 
 echo ""
 echo "******************************************"
-echo "* Installing python requirements via pip *"
+echo "* Installing celerystalk python requirements via pip *"
 echo "******************************************"
 echo ""
-pip install -r requirements.txt --upgrade
+pip2 install -r requirements.txt --upgrade
 
 
 echo ""
