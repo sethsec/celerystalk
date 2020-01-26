@@ -5,4 +5,4 @@ jobs:
       - image: ubuntu:latest
     steps:
       - checkout # check out the code in the project directory
-      - run: apt-get update && apt-get install git -y && cd /opt/ && git clone https://github.com/sethsec/celerystalk.git && cd celerystalk && git checkout dev && ./setup/install.sh
+      - run: apt-get update && apt-get install git -y && ./setup/install.sh
