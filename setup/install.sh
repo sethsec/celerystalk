@@ -30,7 +30,7 @@ echo "*************************************************"
 echo ""
 
 
-if [ "$1" != "docker" ]; then
+if [ "$1" == "-d" ]; then
     INSTALL_DOCKER="true"
 fi
 
