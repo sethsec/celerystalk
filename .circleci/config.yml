@@ -4,5 +4,6 @@ jobs:
     docker:
       - image: ubuntu:latest
     steps:
+      - working_directory: /opt/
       - checkout # check out the code in the project directory
-      - run: cd celerystalk && ./setup/install.sh
+      - run: apt-get update && apt-get install git -y && cd celerystalk && ./setup/install.sh
