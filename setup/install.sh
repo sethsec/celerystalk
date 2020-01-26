@@ -69,7 +69,7 @@ elif [ "$DISTRO" == "ubuntu" ]; then
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
         apt-get update -y
-        apt-get install wget docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium-bsu jq -y
+        apt-get install wget docker.io python-pip python3-pip unzip redis-server chromium-bsu jq -y
     else
         apt-get update -y
         apt-get install wget curl python-pip python3-pip unzip redis-server chromium-bsu jq -y
