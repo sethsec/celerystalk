@@ -268,12 +268,32 @@ def send_commands_to_celery(populated_command_tuple,output_base_dir,simulation):
     f.write(populated_command + "\n\n")
     f.close()
 
+
+
+def process_url_param(url, workspace, output_dir, arguments,config_file=None):
+    celery_path = sys.path[0]
+    config, supported_services = config_parser.read_config_ini(config_file)
+    task_id_list = []
+    urls_to_screenshot = []
+    simulation = arguments["--simulation"]
+
+
+    if os.path.isfile(url):
+        with open(url) as urls_file:
+            for line in urls_file:
+                line = line.rstrip()
+                process_url(line, workspace, output_dir, arguments, config_file)
+    else:
+        process_url(url, workspace, output_dir, arguments, config_file)
+
+
 def process_url(url, workspace, output_dir, arguments,config_file=None):
     celery_path = sys.path[0]
     config, supported_services = config_parser.read_config_ini(config_file)
     task_id_list = []
     urls_to_screenshot = []
     simulation = arguments["--simulation"]
+
 
     try:
         parsed_url = urlparse.urlparse(url)
@@ -414,7 +434,7 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
                         f = open(host_audit_log, 'a')
                         f.write(populated_command + "\n\n")
                         f.close()
-        print("[+] Submitted {0} tasks to queue.\n".format(len(task_id_list)))
+        print("[+] Submitted {0} tasks to queue for {1}.".format(len(task_id_list),url))
     else:
         print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
 
