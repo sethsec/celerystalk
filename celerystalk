@@ -89,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(234)
+build=str(235)
 
 
 def print_banner():
@@ -111,7 +111,7 @@ def main(arguments):
     db.create_current_workspace_table()
     db.create_celerystalk_table()
 
-    celerystalk_path = sys.path[0]
+    celerystalk_path = os.path.join(sys.path[0],'')
     db.set_install_path((celerystalk_path,))
 
     lib.workspace.create_default_workspace(celerystalk_path)

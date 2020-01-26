@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 
 def create_default_workspace(path):
     workspace_name = "Default"
-    workspace_path = os.path.join(path + "/default_workspace")
+    workspace_path = os.path.join(path + "default_workspace/")
     mode = "bb"
 
 
