@@ -7,7 +7,7 @@ Usage:
     celerystalk subdomains [-d <domains>] [-c <config_file>] [-s] [-h]
     celerystalk nmap [-t <targets>] [-c <config_file>] [-s] [-h]
     celerystalk scan [-t <targets>] [--noIP] [-c <config_file>] [-s] [-h]
-    celerystalk scan -u <url> [-c <config_file>] [-s] [-h]
+    celerystalk scan -u <url_or_file_with_urls> [-c <config_file>] [-s] [-h]
     celerystalk rescan [-t <targets>] [-c <config_file>] [-s] [-h]
     celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
     celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
@@ -34,7 +34,7 @@ Options:
     -O <outscope_file>  Out of scope hosts file
     -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
-    -u <url>            URL to parse and scan with all configured tools
+    -u <url>            URL to parse and scan with all configured tools (or a filename with multiple URLs)
     -w <workspace>      Workspace
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
@@ -89,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(235)
+build=str(238)
 
 
 def print_banner():
@@ -935,6 +935,8 @@ def main(arguments):
                                 ./celerystalk scan -t sub.domain.com
     Scan URL                    ./celerystalk scan -u http://sub.domain.com/
                                 ./celerystalk scan -u http://sub.domain.com/path/
+    Scan URLs from file         ./celerystalk scan -u urls.txt
+
     Simulation mode:            ./celerystalk scan -s
 
             \n""")
@@ -960,7 +962,7 @@ def main(arguments):
         # Scan - URL - Parse use provided URL and run all celerystalk tools against it
         ####################################
         if arguments["-u"]:
-            lib.scan.process_url(arguments["-u"], workspace, output_dir, arguments,config_file=config_file)
+            lib.scan.process_url_param(arguments["-u"], workspace, output_dir, arguments,config_file=config_file)
             exit()
         elif arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
