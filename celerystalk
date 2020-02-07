@@ -89,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(239)
+build=str(240)
 
 
 def print_banner():
@@ -557,7 +557,6 @@ def main(arguments):
             answer = raw_input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
             if (answer == "Y") or (answer == "y") or (answer == ""):
                 lib.screenshot.screenshot_command(arguments)
-                exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             lib.report.report(workspace,config_file,target_list)
