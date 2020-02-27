@@ -15,7 +15,7 @@ def backup_all_workspaces(backup_file=None):
         for workspace in workspaces:
             archive.add(workspace[1], recursive=True)
     print("[+] Successfully backed up DB and [{0}] workspaces to [{1}]".format(len(workspaces),backup_filename))
-
+    return {'Result':'Success','Workspaces':len(workspaces),'FileName':backup_filename}
 
 
 def restore_all_workspaces(restore_file):
@@ -26,7 +26,7 @@ def restore_all_workspaces(restore_file):
         answer = raw_input("Are you sure you want to continue? (y\N): ")
         print("")
         if (answer == "Y") or (answer == "y"):
-            backup_all_workspaces()
+            backup_result = backup_all_workspaces()
             os.chdir("/")
             tar = tarfile.open(restore_file)
             tar.extractall()

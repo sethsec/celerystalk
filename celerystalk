@@ -89,7 +89,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(239)
+build=str(242)
 
 
 def print_banner():
@@ -467,7 +467,7 @@ def main(arguments):
             lib.utils.restart_services(config_file)
             exit()
         if arguments["reset"]:
-            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+            backup_result = lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
             print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
             answer = raw_input("Are you sure you want to continue? (y\N): ")
             print("")
@@ -482,7 +482,7 @@ def main(arguments):
                 lib.utils.shutdown_background_jobs()
                 exit()
         if arguments["backup"]:
-            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+            backup_result = lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
         if arguments["restore"]:
             if arguments["-f"]:
                 restore_file = arguments["-f"]
@@ -557,7 +557,6 @@ def main(arguments):
             answer = raw_input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
             if (answer == "Y") or (answer == "y") or (answer == ""):
                 lib.screenshot.screenshot_command(arguments)
-                exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             lib.report.report(workspace,config_file,target_list)
