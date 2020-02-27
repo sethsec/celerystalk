@@ -79,7 +79,7 @@ def extract_in_scope_urls_from_task_output(tool_output):
 
 def check_if_page_exists(url):
     try:
-        response = requests.head(url, timeout=5)
+        response = requests.head(url, timeout=5, verify=False)
         status_code = response.status_code
         reason = response.reason
     except requests.exceptions.ConnectionError:
