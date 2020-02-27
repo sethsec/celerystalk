@@ -253,13 +253,6 @@ def send_commands_to_celery(populated_command_tuple,output_base_dir,simulation):
         # run the command. run_task takes care of marking the task as started and then completed.
         # The si tells run_cmd to ignore the data returned from a previous task
         tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-
-        # right now, every executed command gets sent to a generic post_process task that can do
-        # additinoal stuff based on the command that just ran.
-        tasks.post_process.si(cmd_name, populated_command, output_base_dir, workspace, vhost, host_dir,
-                              simulation,
-                              scanned_service_port, scanned_service_name, scanned_service_protocol,
-                              celery_path),
     )()  # .apply_async()
 
     #task_id_list.append(result.task_id)
@@ -421,12 +414,6 @@ def process_url(url, workspace, output_dir, arguments,config_file=None):
                             # run the command. run_task takes care of marking the task as started and then completed.
                             # The si tells run_cmd to ignore the data returned from a previous task
                             tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id).set(task_id=task_id),
-
-                            # right now, every executed command gets sent to a generic post_process task that can do
-                            # additinoal stuff based on the command that just ran.
-                            tasks.post_process.si(cmd_name, populated_command, output_dir, workspace, vhost,
-                                                  host_dir,
-                                                  simulation, port, scheme, proto, celery_path),
                         )()  # .apply_async()
 
                         task_id_list.append(result.task_id)
@@ -614,11 +601,6 @@ def parse_config_and_send_commands_to_celery(scanned_service_name, scanned_servi
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
                         tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id).set(task_id=task_id),
-
-                        # right now, every executed command gets sent to a generic post_process task that can do
-                        # additinoal stuff based on the command that just ran.
-                        tasks.post_process.si(cmd_name, populated_command, output_base_dir, workspace, ip, host_dir, simulation,
-                                        scanned_service_port, scanned_service_name, scanned_service_protocol,celery_path),
                     )()  # .apply_async()
 
                     task_id_list.append(result.task_id)
@@ -659,10 +641,6 @@ def create_dns_recon_tasks(domains,simulation,workspace,output_base_dir,out_of_s
                         # run the command. run_task takes care of marking the task as started and then completed.
                         # The si tells run_cmd to ignore the data returned from a previous task
                         tasks.run_cmd.si(cmd_name, populated_command,celery_path,task_id,process_domain_tuple=process_domain_tuple).set(task_id=task_id),
-
-                        # right now, every executed command gets sent to a generic post_process task that can do
-                        # additinoal stuff based on the command that just ran.
-                        #tasks.post_process_domains.s(cmd_name, populated_command, output_base_dir, workspace, domain, simulation,celery_path,workspace_mode),
                     )()  # .apply_async()
                     task_id_list.append(result.task_id)
 
