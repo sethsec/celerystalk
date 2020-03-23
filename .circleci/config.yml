@@ -10,7 +10,7 @@ jobs:
           command: |
               apt-get update
               apt-get install git -y
-              bash ./setup/install.sh
+              #bash ./setup/install.sh
       - run:
           name: Run unit tests
           command: |
