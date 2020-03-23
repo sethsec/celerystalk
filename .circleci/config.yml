@@ -6,3 +6,4 @@ jobs:
     steps:
       - checkout # check out the code in the project directory
       - run: apt-get update && apt-get install git -y && ./setup/install.sh
+      - run: python -m unittest tests.testing
