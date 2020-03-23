@@ -6,13 +6,18 @@ jobs:
     steps:
       - checkout # check out the code in the project directory
       - run:
-          command: |-
-            apt-get update
-            apt-get install git -y
-            ./setup/install.sh
           name: Install celerystalk
-          command: |-
+          command: |
+              apt-get update
+              apt-get install git -y
+              bash ./setup/install.sh
+      - run:
+          name: Run unit tests
+          command: |
             pwd
             cd ~/project/celerystalk
             python -m unittest tests.testing
-          name: Run unit tests
+
+
+
+
