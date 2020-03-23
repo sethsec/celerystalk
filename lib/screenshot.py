@@ -41,7 +41,7 @@ def screenshot_command(arguments):
 
     # lib.screenshot.screenshot_all_paths(workspace)
     #TODO: change this to reflect number of screenshots taken based on config.ini max
-    paths_len = len(lib.db.get_all_paths(workspace))
+    paths_len = len(lib.db.get_all_paths_exclude_404(workspace))
     max_paths_len = len(get_max_screenshots(workspace,config_file))
     max = lib.config_parser.get_screenshot_max(config_file)
     print("[+]\n[+] There are [{0}] paths in the DB").format(str(paths_len))
@@ -65,7 +65,7 @@ def aquatone_all_paths(workspace,simulation=None,config_file=None):
     #print("in aquatone all_paths")
     urls_to_screenshot = []
     #TODO: Instead of just grabbing all paths here, maybe add some logic to see if only new paths should be scanned or something. at a minimum, as they are grabbed, we need to update the "screenshot taken" column and put the auatone directory or something like that.
-    paths = lib.db.get_all_paths(workspace)
+    paths = lib.db.get_all_paths_exclude_404(workspace)
     celery_path = lib.db.get_current_install_path()[0][0]
     outdir = lib.db.get_output_dir_for_workspace(workspace)[0][0]
     outdir = os.path.join(outdir,'celerystalkReports/aquatone/')

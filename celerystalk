@@ -19,6 +19,7 @@ Usage:
     celerystalk db ([workspaces]|[workspace]|[services]|[ports]|[hosts]|[vhosts]|[paths]|[paths_only]|[tasks]) [-h]
     celerystalk db export [-h]
     celerystalk db paths_only limit [-h]
+    celerystalk db paths_include_404s [-h]
     celerystalk admin ([start]|[stop]|[restart]|[reset]|[backup]|[restore]) [-f <restore_file>] [-h]
     celerystalk interactive [-h]
     celerystalk (help | -h | --help)
@@ -89,7 +90,7 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(243)
+build=str(244)
 
 
 def print_banner():
@@ -611,7 +612,8 @@ def main(arguments):
                                 ./celerystalk db ports
     Show hosts:                 ./celerystalk db hosts
     Show vhosts only            ./celerystalk db vhosts
-    Show paths:                 ./celerystalk db paths
+    Show paths (404s excluded): ./celerystalk db paths
+    Show paths & include 404s   ./celerystalk db paths_include_404s
     Show paths (no table)       ./celerystalk db paths_only     
     Show tasks:                 ./celerystalk db tasks
     Export tables to csv        ./celerystalk db export
@@ -679,15 +681,29 @@ def main(arguments):
                 print(services_table)
                 print("\n\n")
             elif arguments["paths"]:
-                print("[+] Showing paths for the [{0}] workspace\n".format(workspace))
-                columns = ["IP", "Port", "Path"]
+                print("[+] Showing paths for the [{0}] workspace (excluding 404s)\n    To show table with 404s use:\n        ./celerystalk db paths_include_404s\n".format(workspace))
+                columns = ["IP", "Port", "Path","Status"]
+                paths_rows = lib.db.get_all_paths_exclude_404(workspace)
+                paths_table = PrettyTable(columns)
+                paths_table.align[columns[0]] = "l"
+                paths_table.align[columns[1]] = "l"
+                paths_table.align[columns[2]] = "l"
+                paths_table.align[columns[3]] = "l"
+                for row in paths_rows:
+                    paths_table.add_row(row[1:5])
+                print(paths_table)
+                print("\n\n")
+            elif arguments["paths_include_404s"]:
+                print("[+] Showing all paths for the [{0}] workspace\n".format(workspace))
+                columns = ["IP", "Port", "Path","Status"]
                 paths_rows = lib.db.get_all_paths(workspace)
                 paths_table = PrettyTable(columns)
                 paths_table.align[columns[0]] = "l"
                 paths_table.align[columns[1]] = "l"
                 paths_table.align[columns[2]] = "l"
+                paths_table.align[columns[3]] = "l"
                 for row in paths_rows:
-                    paths_table.add_row(row[1:4])
+                    paths_table.add_row(row[1:5])
                 print(paths_table)
                 print("\n\n")
             elif arguments["paths_only"]:
@@ -698,7 +714,7 @@ def main(arguments):
                     for path in paths:
                         print path
                 else:
-                    paths_rows = lib.db.get_all_paths(workspace)
+                    paths_rows = lib.db.get_all_paths_exclude_404(workspace)
                     for row in paths_rows:
                         sys.stdout.write(row[3]+"\n")
                 print("\n")
@@ -752,6 +768,7 @@ def main(arguments):
                 print("[+] Saved all paths in the [{0}] workspace to {1}".format(workspace,paths_output_file))
                 paths_filename = workspace + "_paths.txt"
                 paths_output_file = os.path.join(output_dir, paths_filename)
+                paths_rows = lib.db.get_all_paths_exclude_404(workspace)
                 with open(paths_output_file, 'wb') as f:
                     for path in paths_rows:
                         f.write(path[3] + "\n")

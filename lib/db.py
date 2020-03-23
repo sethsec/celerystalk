@@ -97,8 +97,9 @@ def create_path_table():
                                         ip text NOT NULL,
                                         port int NOT NULL,
                                         path text NOT NULL UNIQUE,
+                                        url_status int,
                                         submitted int,
-                                        url_screenshot_filename text,
+                                        url_screenshot_filename text,                                        
                                         workspace text NOT NULL
                                     ); """
 
@@ -639,31 +640,37 @@ def insert_new_path(db_path):
     :param db_path:
     :return:
     """
-    sql = '''INSERT OR IGNORE INTO paths(ip,port,path,submitted,url_screenshot_filename,workspace)
-              VALUES(?,?,?,?,?,?)  '''
+    sql = '''INSERT OR IGNORE INTO paths(ip,port,path,url_status,submitted,url_screenshot_filename,workspace)
+              VALUES(?,?,?,?,?,?,?)  '''
     CUR.execute(sql, db_path)
     CONNECTION.commit()
 
 def get_all_paths(workspace):
-    CUR.execute("SELECT * FROM paths WHERE workspace = ? ORDER BY ip,port,path", (workspace,))
+    CUR.execute("SELECT * FROM paths WHERE workspace = ? ORDER BY ip,port,path,url_status", (workspace,))
     all_paths = CUR.fetchall()
     CONNECTION.commit()
     return all_paths
 
-def get_all_paths_for_host(ip):
-    CUR.execute("SELECT ip,port,path,url_screenshot_filename,workspace FROM paths WHERE ip = ? ORDER BY port,path", (ip,))
+def get_all_paths_exclude_404(workspace):
+    CUR.execute("SELECT * FROM paths WHERE workspace = ? AND url_status != 404 ORDER BY ip,port,path,url_status", (workspace,))
+    all_paths = CUR.fetchall()
+    CONNECTION.commit()
+    return all_paths
+
+def get_all_paths_for_host_exclude_404(ip):
+    CUR.execute("SELECT ip,port,path,url_screenshot_filename,workspace FROM paths WHERE ip = ? AND url_status != 404 ORDER BY port,path", (ip,))
     all_paths_for_host = CUR.fetchall()
     CONNECTION.commit()
     return all_paths_for_host
 
 def get_all_paths_for_host_path_only(ip,workspace):
-    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ?", (ip,workspace))
+    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ? AND url_status != 404", (ip,workspace))
     all_paths_for_host = CUR.fetchall()
     CONNECTION.commit()
     return all_paths_for_host
 
 def get_x_paths_for_host_path_only(ip,workspace,config_max):
-    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ? LIMIT ?", (ip,workspace,config_max))
+    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ? AND AND url_status != 404 LIMIT ?", (ip,workspace,config_max))
     all_paths_for_host = CUR.fetchall()
     CONNECTION.commit()
     return all_paths_for_host

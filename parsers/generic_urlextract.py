@@ -63,29 +63,29 @@ def is_url_in_scope(url):
     else:
         return str(False)
 
-def insert_url_into_db(vhost,port,url,workspace):
-    db_path = (vhost, port, url, 0, "", workspace)
+def insert_url_into_db(vhost,port,url,url_status, workspace):
+    db_path = (vhost, port, url, url_status, 0, "", workspace)
     lib.db.insert_new_path(db_path)
-    print("Found Url: " + str(url))
 
 def extract_in_scope_urls_from_task_output(tool_output):
     urls = extract_urls(tool_output)
+    valid_url_count = 0
     for url in urls:
-        exists,vhost,port,url,workspace = is_url_in_scope(url)
-        if exists == "True":
+        is_in_scope,vhost,port,url,workspace = is_url_in_scope(url)
+        if is_in_scope == "True":
             url_status = check_if_page_exists(url)
-            if url_status:
-                insert_url_into_db(vhost, port, url, workspace)
+            print(url,url_status)
+            if url_status != 999:
+                insert_url_into_db(vhost, port, url, url_status, workspace)
+                valid_url_count += 1
+    return valid_url_count
+
+
 
 def check_if_page_exists(url):
     try:
         response = requests.head(url, timeout=5, verify=False)
         status_code = response.status_code
-        reason = response.reason
     except requests.exceptions.ConnectionError:
         status_code = 999
-        reason = 'ConnectionError'
-    if status_code == 200:
-        return status_code
-    else:
-        print("Skipping Url (not found): " + str(url))
+    return status_code
