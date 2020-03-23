@@ -600,8 +600,13 @@ def main(arguments):
             help_table.add_row(["ports", "Same as ports."])
             help_table.add_row(["hosts", "Show all hosts, whether they are in-scope, out of scope, or submitted."])
             help_table.add_row(["vhosts", "Same as hosts command, but excludes vhosts that are IP addresses."])
-            help_table.add_row(["paths", "Show all paths that have been identified by vhost."])
+            help_table.add_row(["paths", "Show all paths that have been identified by vhost, excluding 404s."])
+            help_table.add_row(["paths_include_404s", "Show all paths that have been identified by vhost."])
+            help_table.add_row(["paths_only", "Skip the table and show just the paths for easy copy/paste into other tools."])
             help_table.add_row(["tasks", "Show all tasks in the DB."])
+            help_table.add_row(["export", "Export hosts, services and paths (with 404s) as CSVs, and also export paths (excluding 404s) as a txt file."])
+            help_table.add_row(["export_paths_only", "export paths (excluding 404s) as a txt file."])
+
 
             print(help_table)
             print("\n")
