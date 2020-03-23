@@ -10,6 +10,7 @@ import time
 
 class ServicesTest(unittest.TestCase):
     def setUp(self):
+        print("Starting Services")
         config_file = 'config.ini'
         lib.utils.start_services(config_file)
 

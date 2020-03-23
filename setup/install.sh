@@ -89,6 +89,7 @@ IS_PORT_CONFIGURED=`grep "^port 6379" /etc/redis/redis.conf`
 if [ $? == "1" ]; then
     echo "port 6379" >> /etc/redis/redis.conf
 fi
+sed -i .bak /^bind/s/::1//g /etc/redis/redis.conf
 /etc/init.d/redis-server start
 
 echo ""
