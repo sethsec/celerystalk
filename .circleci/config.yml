@@ -5,6 +5,14 @@ jobs:
       - image: ubuntu:latest
     steps:
       - checkout # check out the code in the project directory
-      - run: apt-get update && apt-get install git -y && ./setup/install.sh
-      - run: ls -altR
-      - run: cd celerystalk && python -m unittest tests.testing
+      - run:
+          command: |-
+            apt-get update
+            apt-get install git -y
+            ./setup/install.sh
+          name: Install celerystalk
+          command: |-
+            pwd
+            cd ~/project/celerystalk
+            python -m unittest tests.testing
+          name: Run unit tests
