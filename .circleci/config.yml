@@ -15,6 +15,7 @@ jobs:
           name: Run unit tests
           command: |
             pwd
+            ls -altR
             cd ~/project/celerystalk
             python -m unittest tests.testing
 
