@@ -53,11 +53,11 @@ celerystalk is:
 ## Using celerystalk - The basics
 
 
-### [URL Mode] - How to scan a a URL  
+### [URL Mode] - How to scan a a URL (or multiple URLs in a file) 
 
-#### Launch all enabled tools against a single URL without having to import scope, nmap, etc. 
+#### Launch all enabled tools against a URL or many URLs in a file without having to import scope, nmap, etc. 
 ```
-# ./celerystalk scan -u url                             # Run all enabled commands against this path
+# ./celerystalk scan -u url or filename                 # Run all enabled commands against specified url(s)
 # ./celerystalk query watch (then Ctrl+c)               # Wait for scans to finish
 # ./celerystalk screenshots                             # Take screenshots
 # ./celerystalk report                                  # Generate report

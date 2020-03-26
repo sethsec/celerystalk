@@ -7,7 +7,7 @@ Usage:
     celerystalk subdomains [-d <domains>] [-c <config_file>] [-s] [-h]
     celerystalk nmap [-t <targets>] [-c <config_file>] [-s] [-h]
     celerystalk scan [-t <targets>] [--noIP] [-c <config_file>] [-s] [-h]
-    celerystalk scan -u <url> [-c <config_file>] [-s] [-h]
+    celerystalk scan -u <url_or_file_with_urls> [-c <config_file>] [-s] [-h]
     celerystalk rescan [-t <targets>] [-c <config_file>] [-s] [-h]
     celerystalk query ([full] | [summary] | [brief]) [watch] [-h]
     celerystalk query [watch] ([full] | [summary] | [brief]) [-h]
@@ -34,7 +34,7 @@ Options:
     -O <outscope_file>  Out of scope hosts file
     -D <subdomains_file> Subdomains import file
     -t <targets>        Target(s): IP, IP Range, CIDR
-    -u <url>            URL to parse and scan with all configured tools
+    -u <url>            URL to parse and scan with all configured tools (or a filename with multiple URLs)
     -w <workspace>      Workspace
     -d --domains        Domains to scan for vhosts
     -s --simulation     Simulation mode.  Submit tasks comment out all commands
@@ -89,13 +89,13 @@ import csv
 
 from lib.nmap import nmapcommand
 
-build=str(235)
+build=str(243)
 
 
 def print_banner():
 
     print("\ncelerystalk  -\tAn asynchronous network enumeration/vulnerability scanner ")
-    print("    v1.3 \tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
+    print("    v1.3.1 \tRun all your tools against all your hosts (IPs/virtual hosts/subdomains)")
     print("\t\tby @sethsec")
     print("\t\tBuild: {0}\n".format(build))
 
@@ -467,7 +467,7 @@ def main(arguments):
             lib.utils.restart_services(config_file)
             exit()
         if arguments["reset"]:
-            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+            backup_result = lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
             print("[!] WARNING: This action destroy the celerystalk database and flush the redis DB.")
             answer = raw_input("Are you sure you want to continue? (y\N): ")
             print("")
@@ -482,7 +482,7 @@ def main(arguments):
                 lib.utils.shutdown_background_jobs()
                 exit()
         if arguments["backup"]:
-            lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
+            backup_result = lib.administrative.backup_all_workspaces(backup_file=arguments["-f"])
         if arguments["restore"]:
             if arguments["-f"]:
                 restore_file = arguments["-f"]
@@ -557,7 +557,6 @@ def main(arguments):
             answer = raw_input("[!] Would you like to take screenshots of all paths before generating the report? [Y\\n] ")
             if (answer == "Y") or (answer == "y") or (answer == ""):
                 lib.screenshot.screenshot_command(arguments)
-                exit()
         if arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])
             lib.report.report(workspace,config_file,target_list)
@@ -935,6 +934,8 @@ def main(arguments):
                                 ./celerystalk scan -t sub.domain.com
     Scan URL                    ./celerystalk scan -u http://sub.domain.com/
                                 ./celerystalk scan -u http://sub.domain.com/path/
+    Scan URLs from file         ./celerystalk scan -u urls.txt
+
     Simulation mode:            ./celerystalk scan -s
 
             \n""")
@@ -960,7 +961,7 @@ def main(arguments):
         # Scan - URL - Parse use provided URL and run all celerystalk tools against it
         ####################################
         if arguments["-u"]:
-            lib.scan.process_url(arguments["-u"], workspace, output_dir, arguments,config_file=config_file)
+            lib.scan.process_url_param(arguments["-u"], workspace, output_dir, arguments,config_file=config_file)
             exit()
         elif arguments["-t"]:
             target_list = lib.utils.target_splitter(arguments["-t"])

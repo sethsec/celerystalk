@@ -29,16 +29,10 @@ echo "*        Installing applications via apt        *"
 echo "*************************************************"
 echo ""
 
-read -p "Would you like to install docker on this host so that you can run dockerized tools? (y/n)" DOCKER_PROMPT
-if [ "$DOCKER_PROMPT" == "y" ] || [ "$DOCKER_PROMPT" == "Y" ]; then
-    INSTALL_DOCKER="true"
-elif [ "$DOCKER_PROMPT" == "n" ] || [ "$DOCKER_PROMPT" == "N" ]; then
-    INSTALL_DOCKER="false"
-else
-    printf "You have to select yes or no\n"
-    exit 1
-fi
 
+if [ "$1" == "-d" ]; then
+    INSTALL_DOCKER="true"
+fi
 
 
 if [ "$DISTRO" == "kali" ]; then
@@ -75,10 +69,10 @@ elif [ "$DISTRO" == "ubuntu" ]; then
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
         apt-get update -y
-        apt-get install docker-ce docker-ce-cli containerd.io python-pip python3-pip unzip redis-server chromium jq -y
+        apt-get install wget docker.io python-pip python3-pip unzip redis-server chromium-bsu jq -y
     else
         apt-get update -y
-        apt-get install python-pip python3-pip unzip redis-server chromium jq -y
+        apt-get install wget curl python-pip python3-pip unzip redis-server chromium-bsu jq -y
 
     fi
 fi
