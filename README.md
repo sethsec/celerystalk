@@ -49,6 +49,14 @@ celerystalk is:
 # ./celerystalk -h
 ```
 
+## Docker Build
+```
+
+# git clone https://github.com/sethsec/celerystalk.git
+# cd celerystalk
+# docker build -t celerystalk .
+docker build -t celerystalk .
+```
 
 ## Using celerystalk - The basics
 
