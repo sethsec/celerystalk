@@ -1,0 +1,7 @@
+https://www.google.com
+https://github.com/sethsec/celerystalk
+http://s3.amazonaws.com/celerystalk/index.html
+http://s3.amazonaws.com/celerystalk/doesnotexist.html
+http://s3.amazonaws.com/celerystalk/doesnotexist/
+http://s3.amazonaws.com/celerystalk/
+https://www.bing.com/

@@ -381,7 +381,7 @@ def report(workspace,config_file,target_list=None):
         combined_report_file.write("\n<br>" + services_table_html + "\n<br>")
         combined_report_file.write("\n</div>")
 
-        all_paths = lib.db.get_all_paths_for_host(vhost)
+        all_paths = lib.db.get_all_paths_for_host_exclude_404(vhost)
         #print(str(all_paths))
         #print(len(all_paths))
         if len(all_paths) > 0:

@@ -237,7 +237,7 @@ def import_url(url,workspace,output_base_dir):
                     url_path = ''
 
                 url_screenshot_filename = scan_output_base_file_dir + url_path.replace("/", "_") + ".png"
-                db_path = (vhost, port, url.rstrip("/"), 0, url_screenshot_filename, workspace)
+                db_path = (vhost, port, url.rstrip("/"), 0, 0, url_screenshot_filename,workspace)
                 db.insert_new_path(db_path)
                 # print("Found Url: " + str(url))
                 #urls_to_screenshot.append((url, url_screenshot_filename))
@@ -246,7 +246,7 @@ def import_url(url,workspace,output_base_dir):
                 # print(result)
 
 
-            db_path = (vhost, port, url.rstrip("/"), 0, url_screenshot_filename, workspace)
+            db_path = (vhost, port, url.rstrip("/"), 0, 0, url_screenshot_filename, workspace)
             lib.db.insert_new_path(db_path)
     else:
         print("[!] {0} is explicitly marked as out of scope. Skipping...".format(vhost))
@@ -527,7 +527,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
                     db_path = db.get_path(path, workspace)
                     if not db_path:
                         url_screenshot_filename = scan_output_base_file_dir + ".png"
-                        db_path = (ip, scanned_service_port, path, 0, url_screenshot_filename, workspace)
+                        db_path = (ip, scanned_service_port, path, 0, 0, url_screenshot_filename, workspace)
                         db.insert_new_path(db_path)
 
 
@@ -558,7 +558,7 @@ def process_nmap_data(nmap_report,workspace, target=None):
                         db_path = db.get_path(path, workspace)
                         if not db_path:
                             url_screenshot_filename = scan_output_base_file_dir + ".png"
-                            db_path = (vhost, scanned_service_port, path, 0, url_screenshot_filename, workspace)
+                            db_path = (vhost, scanned_service_port, path, 0, 0, url_screenshot_filename, workspace)
                             db.insert_new_path(db_path)
 
 
