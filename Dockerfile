@@ -12,4 +12,4 @@ RUN	git clone https://github.com/sethsec/celerystalk.git && \
 	cd setup && \
     	./install.sh
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["bash"]

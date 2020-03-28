@@ -42,21 +42,28 @@ celerystalk is:
 **You must install and run celerystalk as root**   
 
 ```
-# git clone https://github.com/sethsec/celerystalk.git
-# cd celerystalk/setup
-# ./install.sh
-# cd ..
-# ./celerystalk -h
+git clone https://github.com/sethsec/celerystalk.git
+cd celerystalk/setup
+./install.sh
+cd ..
+./celerystalk -h
 ```
+
+## Use docker container from Dockerhub
+
+```
+docker pull sethsec/celerystalk:latest
+docker run -p 27007:27007 -ti celerystalk
+```
+
 
 ## Docker Build
 ```
-
-# git clone https://github.com/sethsec/celerystalk.git
-# cd celerystalk
-# docker build -t celerystalk .
-docker build -t celerystalk .
+docker build -t celerystalk https://github.com/sethsec/celerystalk.git
+docker run -p 27007:27007 -ti celerystalk 
 ```
+
+
 
 ## Using celerystalk - The basics
 
