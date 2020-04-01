@@ -19,6 +19,7 @@ def read_config_ini(config_file=None):
     for (key,val) in config.items("nmap-service-names"):
         services = val.split(",")
         for service in services:
+            service = service.strip()
             supported_services.append(service)
     return config,supported_services
 
