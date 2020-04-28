@@ -58,6 +58,9 @@ if [ "$DISTRO" == "kali" ]; then
     fi
 elif [ "$DISTRO" == "ubuntu" ]; then
     apt-get update -y
+    apt-get install software-properties-common -y
+    apt-add-repository universe
+    apt-get update
     if [[ $? > 0 ]]; then
         echo
         echo
@@ -72,7 +75,7 @@ elif [ "$DISTRO" == "ubuntu" ]; then
         apt-get install wget docker.io python-pip python3-pip unzip redis-server chromium-bsu jq -y
     else
         apt-get update -y
-        apt-get install wget curl vim python-pip python3-pip unzip redis-server chromium-bsu jq -y
+        apt-get install wget python-pip python3-pip unzip redis-server chromium-bsu jq -y
 
     fi
 fi
