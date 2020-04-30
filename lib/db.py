@@ -1,7 +1,14 @@
+import os
 import sqlite3
 from sqlite3 import Error
 
-CONNECTION = sqlite3.connect("csdb.sqlite3")
+CONNECTION = sqlite3.connect(
+    os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "..",
+        "csdb.sqlite3"
+    )
+)
 CUR = CONNECTION.cursor()
 
 #############################
