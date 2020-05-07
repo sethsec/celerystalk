@@ -20,7 +20,7 @@ app = Celery('tasks', broker='redis://localhost:6379', backend='db+sqlite:///res
 
 
 @app.task
-def run_cmd(command_name, populated_command,celery_path,task_id,path=None,process_domain_tuple=None):
+def run_cmd(command_name, populated_command,celery_path,task_id,path=None,process_domain_tuple=None,process_nmap=None,output_file=None):
     """
 
     :param command_name:
@@ -76,66 +76,19 @@ def run_cmd(command_name, populated_command,celery_path,task_id,path=None,proces
         #putting this here because i want to parse scan tool output for urls, not subdomain tools output
         parsers.generic_urlextract.extract_in_scope_urls_from_task_output(out)
 
+    if process_nmap:
+        nmap_xml = output_file + ".xml"
+        nmap_report = NmapParser.parse_fromfile(nmap_xml)
+        workspace = lib.db.get_current_workspace()[0][0]
+        lib.csimport.process_nmap_data(nmap_report, workspace)
     return out
 
-    #post.post_process(populated_command, output_base_dir, workspace, ip)
 
 
 
-@app.task()
-def cel_create_task(*args,**kwargs):
-    command_name, populated_command, ip, output_dir, workspace, task_id = args
-    db_task = (task_id, 1, command_name, populated_command, ip, output_dir, 'SUBMITTED', workspace)
-    db.create_task(db_task)
-    #return populated_command
-
-
-@app.task()
-def cel_nmap_scan(cmd_name, populated_command, host, config_nmap_options, celery_path, task_id,workspace):
-    """
-    :param cmd_name:
-    :param populated_command:
-    :param host:
-    :param config_nmap_options:
-    :param celery_path:
-    :param task_id:
-    :param workspace:
-    :return:
-    """
-    # Without the sleep, some jobs were showing as submitted even though
-    # they were started. Not sure why.
-    #time.sleep(3)
-    path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(lib.scan.__file__)),".."))
-    audit_log = path + "/log/cmdExecutionAudit.log"
-    f = open(audit_log, 'a')
-    start_time = time.time()
-    start_time_int = int(start_time)
-    start_ctime = time.ctime(start_time)
-    start = timer()
-
-    print(populated_command)
-
-    print("[+] Kicking off nmap scan for " + host)
-    lib.db.update_task_status_started("STARTED", task_id, 0, start_time_int)
-    nm = NmapProcess(host, options=config_nmap_options)
-    rc = nm.run()
-    nmap_report = NmapParser.parse(nm.stdout)
-    end = timer()
-    end_ctime = time.ctime(end)
-    run_time = end - start
-    db.update_task_status_completed("COMPLETED", task_id, run_time)
-
-    #f.write("\n" + str(end_ctime) + "," + "CMD COMPLETED" + ","" + str(run_time) + " - " + populated_command + "\n")
-
-    f.write(str(start_ctime)  + "," + str(end_ctime) + "," + str(run_time) + cmd_name + "\n")
-    f.close()
-    lib.csimport.process_nmap_data(nmap_report, workspace)
-    return nmap_report
 
 
 
-@app.task()
-def cel_process_db_services(output_base_dir, simulation, workspace):
-    lib.scan.process_db_services(output_base_dir, simulation, workspace)
+
 
 

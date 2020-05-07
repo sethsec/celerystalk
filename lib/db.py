@@ -670,7 +670,7 @@ def get_all_paths_for_host_path_only(ip,workspace):
     return all_paths_for_host
 
 def get_x_paths_for_host_path_only(ip,workspace,config_max):
-    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ? AND AND url_status != 404 LIMIT ?", (ip,workspace,config_max))
+    CUR.execute("SELECT path FROM paths WHERE ip = ? AND workspace = ? AND url_status != 404 LIMIT ?", (ip,workspace,config_max))
     all_paths_for_host = CUR.fetchall()
     CONNECTION.commit()
     return all_paths_for_host

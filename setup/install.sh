@@ -50,10 +50,10 @@ if [ "$DISTRO" == "kali" ]; then
         echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
         apt-get update -y
         apt-get remove docker docker-engine docker.io containerd runc -y
-        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common docker-ce gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
+        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common docker-ce vim curl gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
     else
         apt-get update -y
-        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
+        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common vim curl gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
 
     fi
 elif [ "$DISTRO" == "ubuntu" ]; then
@@ -72,7 +72,7 @@ elif [ "$DISTRO" == "ubuntu" ]; then
         apt-get install wget docker.io python-pip python3-pip unzip redis-server chromium-bsu jq -y
     else
         apt-get update -y
-        apt-get install wget curl python-pip python3-pip unzip redis-server chromium-bsu jq -y
+        apt-get install wget curl vim python-pip python3-pip unzip redis-server chromium-bsu jq -y
 
     fi
 fi

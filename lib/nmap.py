@@ -23,7 +23,7 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
     except:
         os.makedirs(output_host_dir)
 
-    output_file = os.path.normpath(os.path.join(output_host_dir, vhost + "_nmap_tcp_scan.txt"))
+    output_file = os.path.normpath(os.path.join(output_host_dir, vhost + "_nmap_tcp_scan"))
     if not vhost_explicitly_out_of_scope:
         #print(config_nmap_options)
         cmd_name = "nmap_tcp_scan"
@@ -39,7 +39,7 @@ def nmap_scan_subdomain_host(vhost,workspace,simulation,output_base_dir,config_f
         task_id = uuid()
         utils.create_task(cmd_name, populated_command, vhost, output_file, workspace, task_id)
         result = chain(
-            tasks.cel_nmap_scan.si(cmd_name, populated_command, vhost, config_nmap_options, celery_path, task_id,workspace).set(task_id=task_id),
+        tasks.run_cmd.si(cmd_name, populated_command, celery_path, task_id,output_file=output_file,process_nmap=True).set(task_id=task_id),
         )()
 
 def nmapcommand(simulation,targets,config_file=None):

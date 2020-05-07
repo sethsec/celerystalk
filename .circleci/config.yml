@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: ubuntu:latest
+      - image: ubuntu:18.04
     steps:
       - checkout # check out the code in the project directory
       - run:

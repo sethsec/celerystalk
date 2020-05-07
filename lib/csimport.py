@@ -418,6 +418,7 @@ def process_qualys_data(qualys_port_services,workspace,target=None):
 
 
 def process_nmap_data(nmap_report,workspace, target=None):
+    print("in proc nmap data")
     workspace_mode = lib.db.get_workspace_mode(workspace)[0][0]
     services_file = open('/etc/services', mode='r')
     services_file_data = services_file.readlines()
