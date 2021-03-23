@@ -50,10 +50,14 @@ if [ "$DISTRO" == "kali" ]; then
         echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
         apt-get update -y
         apt-get remove docker docker-engine docker.io containerd runc -y
-        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common docker-ce vim curl gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
+        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common docker-ce vim curl gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server chromium python-setuptools python3-pip wpscan jq amass -y
+        wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
+        python2 get-pip.py
     else
         apt-get update -y
-        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common vim curl gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server seclists chromium python-pip python3-pip wpscan jq amass -y
+        apt-get install apt-transport-https ca-certificates curl wget gnupg2 software-properties-common vim curl gobuster nikto cewl whatweb sqlmap nmap sslscan sslyze hydra medusa dnsrecon enum4linux ncrack crowbar onesixtyone smbclient redis-server chromium python-setuptools python3-pip wpscan jq amass -y
+        wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
+        python2 get-pip.py
 
     fi
 elif [ "$DISTRO" == "ubuntu" ]; then
@@ -110,7 +114,7 @@ if [ ! -f /opt/python-libnessus/python_libnessus.egg-info ]; then
     cd /opt/
     git clone https://github.com/bmx0r/python-libnessus.git
     cd python-libnessus
-    python setup.py install
+    python2 setup.py install
 fi
 
 if [ "$DISTRO" == "ubuntu" ]; then
