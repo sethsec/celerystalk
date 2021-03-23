@@ -2,3 +2,4 @@
 *.pid
 *.sqlite3
 *.pyc
+.devcontainer
